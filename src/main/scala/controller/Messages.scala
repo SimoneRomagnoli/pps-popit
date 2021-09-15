@@ -1,6 +1,7 @@
 package controller
 
 import akka.actor.typed.ActorRef
+import model.tower.Position.Position
 
 object Messages {
   //TRAITS
@@ -26,5 +27,13 @@ object Messages {
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
   case class UpdateEntity(elapsedTime: Double, entities: List[Any], replyTo: ActorRef[Update]) extends Update
   case class EntityUpdated(entity: Any) extends Update
+
+  //TOWER
+  case class SearchBalloon(replyTo: ActorRef[Update], position: Position, radius: Double) extends Update
+  case class CollisionDetected() extends Update
+  case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
+  case class Tick(replyTo: ActorRef[Update]) extends Update
+  case class BalloonMoved(balloon: Any) extends Update
+  case class Start() extends Input
 
 }

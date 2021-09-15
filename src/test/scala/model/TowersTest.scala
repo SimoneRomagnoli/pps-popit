@@ -3,7 +3,7 @@ package model
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.TowersTest.{balloon, balloonPosition, towerPosition}
 import model.tower.Position.Position
-import model.tower.Tower.{SimpleTower, Tower}
+import model.tower.Tower.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
 
 object TowersTest {
@@ -24,14 +24,14 @@ object TowersTest {
 
 class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
-  val tower: Tower = Tower(towerPosition)
+  val tower: Tower = Tower(towerPosition, 1.0)
 
   "At the beginning" when {
     "tower and balloon has just spawned" should {
       "be across the map and not collide" in {
         tower.position shouldBe towerPosition
         balloon.position shouldBe balloonPosition
-        tower intersects(balloon.position, balloon.radius) shouldBe false
+        tower collidesWith (balloon.position, balloon.radius) shouldBe false
       }
     }
     "balloon goes near the tower" should {
@@ -40,7 +40,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         tower.position shouldBe towerPosition
         balloon.position.x should be < balloonPosition.x
         balloon.position.y should be < balloonPosition.y
-        tower intersects(balloon.position, balloon.radius) shouldBe true
+        tower collidesWith (balloon.position, balloon.radius) shouldBe true
       }
     }
   }

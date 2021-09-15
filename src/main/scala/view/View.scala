@@ -15,7 +15,6 @@ object View {
     val board: Board = Board(Seq(canvas))
 
     def apply(): Behavior[Render] = Behaviors.setup { ctx =>
-
       Behaviors.receiveMessage {
         //case RenderEntities(entities: List[Any]) => ...
         case _ => Behaviors.same
@@ -26,11 +25,10 @@ object View {
   case class Board(var elements: Seq[Node]) extends Pane {
     children = elements
 
-    def draw(entities: List[Any]): Unit = {
+    def draw(entities: List[Any]): Unit =
       Platform.runLater {
         //entities foreach ...
       }
-    }
   }
 
 }

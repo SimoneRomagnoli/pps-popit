@@ -1,9 +1,9 @@
 package controller
 
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.GameLoopActor
-import controller.Messages.{Input, NewGame, Render, Update}
+import controller.Messages.{ Input, NewGame, Render, Update }
 import model.Model.ModelActor
 
 object Controller {

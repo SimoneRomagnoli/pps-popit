@@ -24,7 +24,9 @@ object Messages {
 
   //MODEL
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
-  case class UpdateEntity(elapsedTime: Double, entities: List[Any], replyTo: ActorRef[Update]) extends Update
+
+  case class UpdateEntity(elapsedTime: Double, entities: List[Any], replyTo: ActorRef[Update])
+      extends Update
   case class EntityUpdated(entity: Any) extends Update
 
 }

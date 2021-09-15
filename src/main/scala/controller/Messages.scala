@@ -31,7 +31,8 @@ object Messages {
   case class EntityUpdated(entity: Any) extends Update
 
   //TOWER
-  case class SearchBalloon(replyTo: ActorRef[Update], position: Position, radius: Double) extends Update
+  case class SearchBalloon(replyTo: ActorRef[Update], position: Position, radius: Double)
+      extends Update
   case class CollisionDetected() extends Update
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
   case class Tick(replyTo: ActorRef[Update]) extends Update

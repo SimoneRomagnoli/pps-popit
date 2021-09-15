@@ -1,14 +1,15 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
+import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.GameLoopActor
 import controller.GameLoopTest._
 import controller.Messages._
 import org.scalatest.wordspec.AnyWordSpecLike
 
 object GameLoopTest {
+
   case class Counter(var value: Double = 0.0) {
     def inc(amount: Double): Unit = value = value + amount
   }
@@ -16,13 +17,14 @@ object GameLoopTest {
   val counter: Counter = Counter()
   val fastCounter: Counter = Counter()
 
-  val dummyModel: Counter => Behavior[Update] = counter => Behaviors.receiveMessage {
-    case TickUpdate(elapsedTime, replyTo) =>
-      counter.inc(elapsedTime)
-      replyTo ! ModelUpdated(List())
-      Behaviors.same
-    case _ => Behaviors.same
-  }
+  val dummyModel: Counter => Behavior[Update] = counter =>
+    Behaviors.receiveMessage {
+      case TickUpdate(elapsedTime, replyTo) =>
+        counter.inc(elapsedTime)
+        replyTo ! ModelUpdated(List())
+        Behaviors.same
+      case _ => Behaviors.same
+    }
 
   def waitSomeTime(): Unit = Thread.sleep(500)
 }
@@ -84,4 +86,3 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     }
   }
 }
-

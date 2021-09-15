@@ -2,12 +2,12 @@ package model.tower
 
 import model.tower.Position.Position
 
-import scala.language.{implicitConversions, postfixOps}
+import scala.language.{ implicitConversions, postfixOps }
 
 object Position {
-  def apply(x: Double, y: Double): Position = {
-    (x,y)
-  }
+
+  def apply(x: Double, y: Double): Position =
+    (x, y)
 
   case class Position(var x: Double, var y: Double) {
     def setX(v: Double): Unit = x = v
@@ -29,8 +29,8 @@ object Tower {
 
   trait Tower {
     /*
-    * TODO: add shot ratio and aim direction
-    * */
+     * TODO: add shot ratio and aim direction
+     * */
 
     def position: Position
     def sightRange: Double
@@ -51,9 +51,8 @@ object Tower {
       this
     }
 
-    override def collidesWith(pos: Position, radius: Double): Boolean = {
+    override def collidesWith(pos: Position, radius: Double): Boolean =
       (position distance pos) < (radius + sightRange)
-    }
   }
 
   class SimpleTower() extends Tower with CollisionBox {
@@ -73,11 +72,11 @@ object Tower {
   }
 
   object Tower {
-    def apply(position: Position, range: Double): Tower = {
-      new SimpleTower() in position withSightRangeOf range
-    }
 
-    implicit def fromPositionAndSight(tuple:  (Position, Double)): Tower = Tower(tuple._1, tuple._2)
+    def apply(position: Position, range: Double): Tower =
+      new SimpleTower() in position withSightRangeOf range
+
+    implicit def fromPositionAndSight(tuple: (Position, Double)): Tower = Tower(tuple._1, tuple._2)
   }
 
 }

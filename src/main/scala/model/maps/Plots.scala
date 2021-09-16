@@ -6,6 +6,7 @@ import model.maps.Tracks.Directions.{Direction, LEFT, NONE, RIGHT, turnBetween}
 
 import scala.collection.mutable.{Stack => MutableStack}
 import scala.annotation.tailrec
+import scala.language.postfixOps
 
 object Plots {
 

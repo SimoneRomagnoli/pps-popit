@@ -60,6 +60,7 @@ object Cells {
         case DOWN => GridCell(x, y + 1)
         case LEFT => GridCell(x - 1, y)
         case RIGHT => GridCell(x + 1, y)
+        case _ => cell
       }
     }
 

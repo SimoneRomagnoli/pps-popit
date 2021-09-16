@@ -3,6 +3,7 @@ package model.maps
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Plots.{PushDownAutomatonPlotter, TrackPlotter}
+import scala.language.postfixOps
 
 object Tracks {
 

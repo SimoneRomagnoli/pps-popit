@@ -2,7 +2,7 @@ package model.entities
 
 import model.Positions.Vector2D
 import model.entities.Balloons.{Balloon, complex, simple}
-import model.entities.Entities.{Entity, MovementAbility}
+import model.entities.Entities.{Entity, MovementAbility, Poppable}
 
 import scala.annotation.tailrec
 import scala.language.postfixOps
@@ -11,7 +11,7 @@ object Balloons {
   /**
    * A [[Balloon]] is an [[Entity]] with the ability to move thanks to [[MovementAbility]].
    */
-  sealed trait Balloon extends Entity with MovementAbility {
+  sealed trait Balloon extends Entity with MovementAbility with Poppable {
     @tailrec
     private def retrieve(f: Balloon => Any): Any = this match {
       case Complex(balloon) => balloon retrieve f
@@ -26,6 +26,16 @@ object Balloons {
     }
     override def at(s: Vector2D): Balloon = change(Simple(position, s))
     override def in(p: Vector2D): Balloon = change(Simple(p, speed))
+
+    override def pop(bullet: Entity): Option[Balloon] = this match {
+      case Complex(balloon) => Some(balloon)
+      case _ => None
+    }
+
+    override def life: Int = this match {
+      case Complex(balloon) => 1 + balloon.life
+      case _ => 1
+    }
   }
 
   /**
@@ -38,34 +48,29 @@ object Balloons {
 
   def simple(): Balloon = Simple()
   def complex(balloon: Balloon): Balloon = Complex(balloon)
-
-  def pop(b: Balloon): Option[Balloon] = b match {
-    case Complex(internal) => Some(internal)
-    case _ => None
-  }
 }
 
 /**
  * Provides a DSL to define new balloons.
  */
 object BalloonType {
-  sealed trait BalloonType {
+  sealed trait BalloonLife {
     def life: Int
   }
 
-  sealed class BalloonTypeImpl(override val life: Int) extends BalloonType
-  case object Red extends BalloonTypeImpl(1)
-  case object Blue extends BalloonTypeImpl(2)
-  case object Green extends BalloonTypeImpl(3)
+  sealed class BalloonLifeImpl(override val life: Int) extends BalloonLife
+  case object Red extends BalloonLifeImpl(1)
+  case object Blue extends BalloonLifeImpl(2)
+  case object Green extends BalloonLifeImpl(3)
 
-  object BalloonType {
-    def apply(life: Int): BalloonTypeImpl = new BalloonTypeImpl(life)
-    def unapply(b: BalloonType): Option[Int] = Some(b.life)
+  object BalloonLife {
+    def apply(life: Int): BalloonLifeImpl = new BalloonLifeImpl(life)
+    def unapply(b: BalloonLife): Option[Int] = Some(b.life)
   }
 
-  implicit class RichBalloonType(b: BalloonTypeImpl) {
+  implicit class RichBalloonType(b: BalloonLifeImpl) {
     def balloon: Balloon = b match {
-      case BalloonType(n) if n > 1 => complex(BalloonType(n - 1) balloon)
+      case BalloonLife(n) if n > 1 => complex(BalloonLife(n - 1) balloon)
       case _ => simple()
     }
   }

@@ -28,4 +28,9 @@ object Entities {
     abstract override def update(dt: Double): Entity = super.update(dt) in (position + (speed * dt))
   }
 
+  trait Poppable extends Entity {
+    def life: Int
+    def pop(bullet: Entity): Option[Entity]
+  }
+
 }

@@ -66,4 +66,13 @@ class BalloonsTest extends AnyWordSpec with Matchers {
       }
     }
   }
+
+  "A simple balloon" when {
+    "popped" should {
+      "pop his outer layer" in {
+        (Red balloon).pop(null) shouldBe None
+        (Green balloon).pop(null) shouldBe Some(complex(simple()))
+      }
+    }
+  }
 }

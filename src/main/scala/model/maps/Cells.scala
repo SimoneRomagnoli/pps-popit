@@ -81,15 +81,35 @@ object Cells {
       case _ => false
     }
 
+    /*
     def turnFromTrack(track: Seq[Cell]): Cell = cell direction match {
       case LEFT | RIGHT => if (cell.direct(UP) hasFreeWayFrom track) cell direct UP else cell direct DOWN
       case UP | DOWN => if (cell.direct(LEFT) hasFreeWayFrom track) cell direct LEFT else cell direct RIGHT
       case _ => cell
     }
 
-    def distanceFrom(other: Cell): Int = {
-      Math.abs(cell.x - other.x) + Math.abs(cell.y - other.y)
+     */
+
+    def turnFromTrackAheadOfOne(track: Seq[Cell]): Cell = {
+      val bumpInto: (Cell, Int) = track.zipWithIndex.filter(c => c._1.x == cell.nextOnTrack.x && c._1.y == cell.nextOnTrack.y).head
+      if(bumpInto._1.direction != cell.direction) {
+        cell.direct(bumpInto._1.direction.opposite)
+      } else {
+        cell.direct(track(bumpInto._2-1).direction)
+      }
     }
+
+    def turnFromTrackAheadOfTwo(track: Seq[Cell]): Cell = {
+      val bumpInto: (Cell, Int) = track.zipWithIndex.filter(c => c._1.x == cell.nextOnTrack.direct(cell.direction).nextOnTrack.x && c._1.y == cell.nextOnTrack.direct(cell.direction).nextOnTrack.y).head
+      if(bumpInto._1.direction != cell.direction) {
+        cell.direct(bumpInto._1.direction.opposite)
+      } else {
+        cell.direct(track(bumpInto._2-1).direction)
+      }
+    }
+
+    def distanceFrom(other: Cell): Int =
+      Math.abs(cell.x - other.x) + Math.abs(cell.y - other.y)
 
     def nextOnTrack: Cell = cell match {
       case GridCell(x, y, dir) => dir match {

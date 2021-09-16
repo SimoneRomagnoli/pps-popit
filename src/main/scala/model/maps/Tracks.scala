@@ -2,10 +2,11 @@ package model.maps
 
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.{Direction, LEFT, RIGHT}
+import model.maps.Tracks.Directions.{Direction, LEFT, NONE, RIGHT, turnBetween}
 import model.maps.Tracks.Plots.{TrackPlotter, randomTrackPlotter}
 
 import scala.annotation.tailrec
+import scala.collection.mutable.{Stack => MutableStack}
 
 object Tracks {
 
@@ -38,6 +39,14 @@ object Tracks {
     case object DOWN extends Direction
     case object LEFT extends Direction
     case object RIGHT extends Direction
+
+    def turnBetween(first: Direction, second: Direction): Direction = first match {
+      case UP if second == RIGHT || second == LEFT => second
+      case DOWN if second == RIGHT || second == LEFT => second.opposite
+      case LEFT if second == UP || second == DOWN => second.turnRight
+      case RIGHT if second == UP || second == DOWN => second.turnLeft
+      case _ => NONE
+    }
   }
 
   /**
@@ -79,7 +88,8 @@ object Tracks {
         def _plot(track: Seq[Cell], last: Cell): Seq[Cell] = next(track)(last) match {
           case cell if cell pointsOutOf grid => if (track.size > grid.width) track :+ last :+ cell else _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
           case cell if cell isGoingOutOf grid => _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
-          case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.x, cell.nextOnTrack.y)) => _plot(track :+ last, cell.direct(track.filter(c => c.x == cell.nextOnTrack.x && c.y == cell.nextOnTrack.y).head.direction.opposite))
+          case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.x, cell.nextOnTrack.y)) => _plot(track :+ last, cell turnFromTrackAheadOfOne track)
+          case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.direct(cell.direction).nextOnTrack.x, cell.nextOnTrack.direct(cell.direction).nextOnTrack.y)) => _plot(track :+ last, cell turnFromTrackAheadOfTwo track)
           case cell => _plot(track :+ last, cell)
         }
 
@@ -108,9 +118,37 @@ object Tracks {
 
     val randomTrackPlotter: TrackPlotter = (track: Seq[Cell], last: Cell) => {
       val prev: Direction = last.direction
+      val directionStack: MutableStack[Direction] = directionsStack(track)
+      println(directionStack)
       val sameDirectionCounter: Int = if(track isEmpty) 1 else track.size - track.zipWithIndex.reverse.find(_._1.direction != prev).getOrElse((track.last, 0))._2
       if (Math.random() < 1 - 0.1 * sameDirectionCounter) prev
-      else if (Math.random() < 0.5) prev.turnRight else prev.turnLeft
+      else if (directionStack.size >= 2) {
+        directionStack.head match {
+          case LEFT => prev.turnRight
+          case RIGHT => prev.turnLeft
+          case _ => prev
+        }
+      } else if (Math.random() < 0.5) prev.turnRight else prev.turnLeft
+
+    }
+
+    def directionsStack(track: Seq[Cell]): MutableStack[Direction] = {
+      @tailrec
+      def _directionsStack(stack: MutableStack[Direction], dirs: Seq[Direction]): MutableStack[Direction] = dirs match {
+        case h +: t => if(t.nonEmpty && turnBetween(h, t.head) != NONE) directionPDA(stack, turnBetween(h, t.head)); _directionsStack(stack, t)
+        //case Seq(h) => if(turnBetween(stack.head, h) != NONE) directionPDA(stack, turnBetween(stack.head, h)); stack
+        case Seq() => stack
+      }
+
+      _directionsStack(MutableStack[Direction](), track.map(_.direction))
+    }
+
+    def directionPDA(stack: MutableStack[Direction], nextDirection: Direction): Unit = {
+      if (stack.isEmpty || stack.head == nextDirection) {
+        stack.push(nextDirection)
+      } else {
+        stack.pop()
+      }
     }
   }
 

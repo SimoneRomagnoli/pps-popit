@@ -76,6 +76,9 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "applied to the view" should {
       "design a red path" in {
         val track: Track = Track(Grid(20, 10))
+        track.cells.zipWithIndex.foreach { c =>
+          println(c._1+" "+c._2)
+        }
         track.cells.zipWithIndex foreach { cell =>
           canvas.graphicsContext2D.setFill(Color.Red)
           canvas.graphicsContext2D.fillRect(cell._1.x*cellSize, cell._1.y*cellSize, cellSize, cellSize)

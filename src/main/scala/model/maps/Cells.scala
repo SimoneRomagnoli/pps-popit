@@ -58,9 +58,9 @@ object Cells {
 
     def turnLeft(): Cell = cell.direct(cell.direction.turnLeft)
 
-    def turnFromBorder(grid: Grid)(track: Seq[Cell]): Cell = cell nearestBorderIn grid match {
+    def turnFromBorder(grid: Grid)(track: Seq[Cell])(last: Cell): Cell = cell nearestBorderIn grid match {
       case LEFT => if (cell.turnLeft() hasFreeWayFrom track) cell.turnLeft() else cell.turnRight()
-      case UP | DOWN => cell direct RIGHT
+      case dir if dir == UP || dir == DOWN => if (last.direction != LEFT) cell direct RIGHT else cell direct dir
       case RIGHT => if(track.partition(_.y < cell.y)._1.size > track.size / 2) cell.turnRight() else cell.turnLeft()
       case _ => cell
     }

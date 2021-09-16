@@ -77,8 +77,8 @@ object Tracks {
       def plot(grid: Grid): Seq[Cell] = {
         @tailrec
         def _plot(track: Seq[Cell], last: Cell): Seq[Cell] = next(track)(last) match {
-          case cell if (cell pointsOutOf grid) && (track.size > grid.width) => track :+ last :+ cell
-          case cell if cell isGoingOutOf grid => _plot(track :+ last, cell.turnFromBorder(grid)(track))
+          case cell if cell pointsOutOf grid => if (track.size > grid.width) track :+ last :+ cell else _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
+          case cell if cell isGoingOutOf grid => _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
           case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.x, cell.nextOnTrack.y)) => _plot(track :+ last, cell.direct(track.filter(c => c.x == cell.nextOnTrack.x && c.y == cell.nextOnTrack.y).head.direction.opposite))
           case cell => _plot(track :+ last, cell)
         }
@@ -109,7 +109,7 @@ object Tracks {
     val randomTrackPlotter: TrackPlotter = (track: Seq[Cell], last: Cell) => {
       val prev: Direction = last.direction
       val sameDirectionCounter: Int = if(track isEmpty) 1 else track.size - track.zipWithIndex.reverse.find(_._1.direction != prev).getOrElse((track.last, 0))._2
-      if (Math.random() < 1 - 0.05 * sameDirectionCounter) prev
+      if (Math.random() < 1 - 0.1 * sameDirectionCounter) prev
       else if (Math.random() < 0.5) prev.turnRight else prev.turnLeft
     }
   }

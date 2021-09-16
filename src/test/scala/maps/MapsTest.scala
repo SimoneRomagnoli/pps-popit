@@ -1,0 +1,5 @@
+package maps
+
+object MapsTest {
+
+}

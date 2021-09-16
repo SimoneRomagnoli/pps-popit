@@ -56,7 +56,7 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           canvas.graphicsContext2D.setFill(Color.White)
           canvas.graphicsContext2D.fillRect(cell.x*cellSize, cell.y*cellSize, cellSize-0.5, cellSize-0.5)
         }
-        appBuilder().main(Array())
+        //appBuilder().main(Array())
       }
     }
   }
@@ -70,22 +70,21 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         Track(grid).cells.forall(_.direction != NONE) shouldBe true
       }
       "do not repeat" in {
-
+        val track: Track = Track(grid)
+        track.cells.foreach { cell =>
+          track.cells.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
+        }
       }
     }
     "applied to the view" should {
       "design a red path" in {
-        val track: Track = Track(Grid(20, 10))
-        track.cells.zipWithIndex.foreach { c =>
-          println(c._1+" "+c._2)
-        }
-        track.cells.zipWithIndex foreach { cell =>
+          Track(Grid(20, 10)).cells.zipWithIndex foreach { cell =>
           canvas.graphicsContext2D.setFill(Color.Red)
           canvas.graphicsContext2D.fillRect(cell._1.x*cellSize, cell._1.y*cellSize, cellSize, cellSize)
           canvas.graphicsContext2D.setFill(Color.White)
           canvas.graphicsContext2D.fillText(cell._2.toString, cell._1.x*cellSize+17.5, cell._1.y*cellSize+30)
         }
-        appBuilder().main(Array())
+        //appBuilder().main(Array())
       }
     }
   }

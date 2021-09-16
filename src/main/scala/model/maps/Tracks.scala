@@ -89,7 +89,7 @@ object Tracks {
           case cell if cell pointsOutOf grid => if (track.size > grid.width) track :+ last :+ cell else _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
           case cell if cell isGoingOutOf grid => _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
           case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.x, cell.nextOnTrack.y)) => _plot(track :+ last, cell turnFromTrackAheadOfOne track)
-          case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.direct(cell.direction).nextOnTrack.x, cell.nextOnTrack.direct(cell.direction).nextOnTrack.y)) => _plot(track :+ last, cell turnFromTrackAheadOfTwo track)
+          //case cell if track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.direct(cell.direction).nextOnTrack.x, cell.nextOnTrack.direct(cell.direction).nextOnTrack.y)) => _plot(track :+ last, cell turnFromTrackAheadOfTwo track)
           case cell => _plot(track :+ last, cell)
         }
 
@@ -119,8 +119,7 @@ object Tracks {
     val randomTrackPlotter: TrackPlotter = (track: Seq[Cell], last: Cell) => {
       val prev: Direction = last.direction
       val directionStack: MutableStack[Direction] = directionsStack(track)
-      println(directionStack)
-      val sameDirectionCounter: Int = if(track isEmpty) 1 else track.size - track.zipWithIndex.reverse.find(_._1.direction != prev).getOrElse((track.last, 0))._2
+      val sameDirectionCounter: Int = if(track.isEmpty) 1 else track.size - track.zipWithIndex.reverse.find(_._1.direction != prev).getOrElse((track.last, 0))._2
       if (Math.random() < 1 - 0.1 * sameDirectionCounter) prev
       else if (directionStack.size >= 2) {
         directionStack.head match {
@@ -136,7 +135,6 @@ object Tracks {
       @tailrec
       def _directionsStack(stack: MutableStack[Direction], dirs: Seq[Direction]): MutableStack[Direction] = dirs match {
         case h +: t => if(t.nonEmpty && turnBetween(h, t.head) != NONE) directionPDA(stack, turnBetween(h, t.head)); _directionsStack(stack, t)
-        //case Seq(h) => if(turnBetween(stack.head, h) != NONE) directionPDA(stack, turnBetween(stack.head, h)); stack
         case Seq() => stack
       }
 

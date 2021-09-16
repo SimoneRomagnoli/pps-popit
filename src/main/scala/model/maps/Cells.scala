@@ -2,6 +2,7 @@ package model.maps
 
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{DOWN, Direction, LEFT, NONE, RIGHT, UP}
+import scala.language.postfixOps
 
 object Cells {
 
@@ -80,15 +81,6 @@ object Cells {
       case RIGHT => track.filter(_.x > cell.x).forall(_.y != cell.y)
       case _ => false
     }
-
-    /*
-    def turnFromTrack(track: Seq[Cell]): Cell = cell direction match {
-      case LEFT | RIGHT => if (cell.direct(UP) hasFreeWayFrom track) cell direct UP else cell direct DOWN
-      case UP | DOWN => if (cell.direct(LEFT) hasFreeWayFrom track) cell direct LEFT else cell direct RIGHT
-      case _ => cell
-    }
-
-     */
 
     def turnFromTrackAheadOfOne(track: Seq[Cell]): Cell = {
       val bumpInto: (Cell, Int) = track.zipWithIndex.filter(c => c._1.x == cell.nextOnTrack.x && c._1.y == cell.nextOnTrack.y).head

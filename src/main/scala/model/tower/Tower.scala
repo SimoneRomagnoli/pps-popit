@@ -1,6 +1,6 @@
 package model.tower
 
-import model.tower.Position.Position
+import model.tower.Position._
 
 import scala.language.{ implicitConversions, postfixOps }
 

@@ -9,14 +9,18 @@ import scalafx.scene.Scene
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.layout.Pane
 import MapsRenderingTest._
+import javafx.scene.paint.ImagePattern
 import model.maps.Tracks.Track
 import org.scalatest.Ignore
+import javafx.scene.image.Image
 import scalafx.scene.paint.Color
 
+import java.io.File
+
 object MapsRenderingTest {
-  val canvas: Canvas = new Canvas(1200, 600)
   val cellSize: Int = 60
-  val appBuilder: Unit => JFXApp = _ => new JFXApp {
+  val canvas: Canvas = new Canvas(1200, 600)
+  val appBuilder: Canvas => JFXApp = canvas => new JFXApp {
     stage = new PrimaryStage {
       title = "Test"
       scene = new Scene(1200, 600) {
@@ -38,7 +42,15 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           canvas.graphicsContext2D.setFill(Color.White)
           canvas.graphicsContext2D.fillRect(cell.x*cellSize, cell.y*cellSize, cellSize-0.5, cellSize-0.5)
         }
-        appBuilder().main(Array())
+        appBuilder(canvas).main(Array())
+      }
+      "design grass" in {
+        val img: File = new File("res/grass-pattern.png")
+        Grid(20, 10).cells foreach { cell =>
+          canvas.graphicsContext2D.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          canvas.graphicsContext2D.fillRect(cell.x*cellSize, cell.y*cellSize, cellSize-0.5, cellSize-0.5)
+        }
+        appBuilder(canvas).main(Array())
       }
     }
     "testing tracks" should {
@@ -49,7 +61,7 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           canvas.graphicsContext2D.setFill(Color.White)
           canvas.graphicsContext2D.fillText(cell._2.toString, cell._1.x*cellSize+17.5, cell._1.y*cellSize+30)
         }
-        appBuilder().main(Array())
+        appBuilder(canvas).main(Array())
       }
     }
   }

@@ -8,15 +8,15 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            java: 8
+            java: 11
           - os: ubuntu-latest
             java: 15
           - os: windows-latest
-            java: 8
+            java: 11
           - os: windows-latest
             java: 15
           - os: macos-latest
-            java: 8
+            java: 11
           - os: macos-latest
             java: 15
     runs-on: ${{ matrix.os }}

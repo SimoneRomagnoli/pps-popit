@@ -1,7 +1,7 @@
-package maps
+package model.maps
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
-import maps.MapsTest._
+import model.maps.MapsTest._
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.NONE
@@ -12,13 +12,24 @@ import scala.language.postfixOps
 
 object MapsTest {
   val singleGrid: Seq[Cell] = Seq(Cell(0, 0))
-  val threeForThreeGrid: Seq[Cell] = Seq(Cell(0, 0), Cell(0, 1), Cell(0, 2),
-    Cell(1, 0), Cell(1, 1), Cell(1, 2), Cell(2, 0), Cell(2, 1), Cell(2, 2))
+
+  val threeForThreeGrid: Seq[Cell] = Seq(
+    Cell(0, 0),
+    Cell(0, 1),
+    Cell(0, 2),
+    Cell(1, 0),
+    Cell(1, 1),
+    Cell(1, 2),
+    Cell(2, 0),
+    Cell(2, 1),
+    Cell(2, 2)
+  )
   val threeForThreeArea: Int = 9
   val grid: Grid = Grid(40, 40)
 }
 
 class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+
   "The Grids" when {
     "just created" should {
       "be made of cells" in {
@@ -31,6 +42,7 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       }
     }
   }
+
   "The Tracks" when {
     "just created" should {
       "be long enough" in {

@@ -6,14 +6,11 @@ import controller.Messages.{Render, RenderMap}
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.maps.Cells.{Cell, GridCell}
-import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
-import model.maps.Tracks.Track
 import scalafx.application.Platform
 import scalafx.scene.Node
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.layout.Pane
-import scalafx.scene.paint.Color
 
 import java.io.File
 
@@ -23,7 +20,7 @@ object View {
     val canvas: Canvas = new Canvas(1200, 600)
     val board: Board = Board(Seq(canvas))
 
-    def apply(): Behavior[Render] = Behaviors.setup { ctx =>
+    def apply(): Behavior[Render] = Behaviors.setup { _ =>
 
       Behaviors.receiveMessage {
         //case RenderEntities(entities: List[Any]) => ...

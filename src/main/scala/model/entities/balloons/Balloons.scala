@@ -1,8 +1,8 @@
-package model.entities
+package model.entities.balloons
 
 import model.Positions.Vector2D
-import model.entities.Balloons.{Balloon, complex, simple}
 import model.entities.Entities.{Entity, MovementAbility, Poppable}
+import model.entities.balloons.Balloons._
 
 import scala.annotation.tailrec
 import scala.language.postfixOps
@@ -11,7 +11,7 @@ object Balloons {
   /**
    * A [[Balloon]] is an [[Entity]] with the ability to move thanks to [[MovementAbility]].
    */
-  sealed trait Balloon extends Entity with MovementAbility with Poppable {
+  trait Balloon extends Entity with MovementAbility with Poppable {
     @tailrec
     private def retrieve(f: Balloon => Any): Any = this match {
       case Complex(balloon) => balloon retrieve f
@@ -54,6 +54,8 @@ object Balloons {
  * Provides a DSL to define new balloons.
  */
 object BalloonType {
+
+
   sealed trait BalloonLife {
     def life: Int
   }

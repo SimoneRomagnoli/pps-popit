@@ -1,17 +1,16 @@
-package model.entities
+package model.entities.balloons
 
-import model.Positions
-import model.Positions.toVector
-import model.entities.BalloonType.{Green, Red}
-import model.entities.Balloons.{Balloon, Simple, complex, simple}
+import model.Positions.{Vector2D, toVector}
+import model.entities.balloons.BalloonType.{Green, Red}
+import model.entities.balloons.Balloons.{Balloon, Simple, complex, simple}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.language.{implicitConversions, postfixOps}
 
 class BalloonsTest extends AnyWordSpec with Matchers {
-  val zeroVector: Positions.Vector2DImpl = toVector((0.0, 0.0))
-  val oneVector: Positions.Vector2DImpl = toVector((1.0, 1.0))
+  val zeroVector: Vector2D = (0.0, 0.0)
+  val oneVector: Vector2D = (1.0, 1.0)
 
   "A balloon" when {
     "being created" should {
@@ -65,9 +64,6 @@ class BalloonsTest extends AnyWordSpec with Matchers {
         ((Red balloon) at toVector((2.0, 2.0))).update(5.0).position shouldBe toVector((10.0, 10.0))
       }
     }
-  }
-
-  "A simple balloon" when {
     "popped" should {
       "pop his outer layer" in {
         (Red balloon).pop(null) shouldBe None

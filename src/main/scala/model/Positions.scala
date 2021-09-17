@@ -1,7 +1,8 @@
 package model
 
-import scala.language.{implicitConversions, postfixOps}
 import model.entities.Entities.Entity
+
+import scala.language.{implicitConversions, postfixOps}
 
 object Positions {
 

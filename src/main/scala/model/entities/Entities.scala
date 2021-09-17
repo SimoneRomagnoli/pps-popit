@@ -25,7 +25,8 @@ object Entities {
   trait MovementAbility extends Entity {
     def speed: Vector2D
     def at(speed: Vector2D): Entity
-    abstract override def update(dt: Double): Entity = super.update(dt) in (position + (speed * dt))
+    private def move(dt: Double): Entity = this in (position + (speed * dt))
+    abstract override def update(dt: Double): Entity = super.update(dt).asInstanceOf[MovementAbility] move dt
   }
 
   trait Poppable extends Entity {

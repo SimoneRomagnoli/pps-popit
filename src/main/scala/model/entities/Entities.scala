@@ -29,6 +29,9 @@ object Entities {
     abstract override def update(dt: Double): Entity = super.update(dt).asInstanceOf[MovementAbility] move dt
   }
 
+  /**
+   * Adds to the [[Entity]] the ability to be popped.
+   */
   trait Poppable extends Entity {
     def life: Int
     def pop(bullet: Entity): Option[Entity]

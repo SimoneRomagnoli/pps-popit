@@ -54,8 +54,6 @@ object Balloons {
  * Provides a DSL to define new balloons.
  */
 object BalloonType {
-
-
   sealed trait BalloonLife {
     def life: Int
   }

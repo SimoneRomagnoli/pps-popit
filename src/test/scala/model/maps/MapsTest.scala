@@ -25,7 +25,7 @@ object MapsTest {
     Cell(2, 2)
   )
   val threeForThreeArea: Int = 9
-  val grid: Grid = Grid(40, 40)
+  val grid: Grid = Grid(20, 20)
 }
 
 class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
@@ -51,7 +51,7 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       "have directions" in {
         Track(grid).cells.forall(_.direction != NONE) shouldBe true
       }
-      "do not repeat" in {
+      "not repeat" in {
         val track: Track = Track(grid)
         track.cells.foreach { cell =>
           track.cells.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1

@@ -1,7 +1,7 @@
 package model.maps
 
 import model.maps.Cells.Cell
-import model.maps.Tracks.Directions.{Direction, LEFT, RIGHT, UP, DOWN}
+import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
 import scala.language.postfixOps
 
 import scala.util.Random
@@ -14,7 +14,6 @@ object Grids {
 
   /**
    * Represents the logical structure of the game beneath the map.
-   *
    */
   trait Grid {
 
@@ -31,32 +30,38 @@ object Grids {
   /**
    * Represents a normal grid formed of square cells.
    *
-   * @param width, the number of cells on the x-axis
-   * @param height, the number of cells on the y-axis
+   * @param width,
+   *   the number of cells on the x-axis
+   * @param height,
+   *   the number of cells on the y-axis
    */
   case class GridMap(override val width: Int, override val height: Int) extends Grid {
 
-    override def cells: Seq[Cell] = for (x <- 0 until width; y <- 0 until height) yield Cell(x, y)
+    override def cells: Seq[Cell] = for {
+      x <- 0 until width
+      y <- 0 until height
+    } yield Cell(x, y)
   }
 
   object Grid {
 
-    def apply(width: Int, height: Int): Grid = {
+    def apply(width: Int, height: Int): Grid =
       GridMap(width, height)
-    }
 
     /**
      * Represents the DSL of the grid.
      *
-     * @param grid, the base grid on which it relies on
+     * @param grid,
+     *   the base grid on which it relies on
      */
     implicit class RichGrid(grid: Grid) {
+
       def border(direction: Direction): Seq[Cell] = direction match {
-        case LEFT => grid.cells.filter(_.x == 0)
-        case UP => grid.cells.filter(_.y == 0)
-        case RIGHT => grid.cells.filter(_.x == grid.width-1)
-        case DOWN => grid.cells.filter(_.y == grid.height-1)
-        case _ => grid cells
+        case LEFT  => grid.cells.filter(_.x == 0)
+        case UP    => grid.cells.filter(_.y == 0)
+        case RIGHT => grid.cells.filter(_.x == grid.width - 1)
+        case DOWN  => grid.cells.filter(_.y == grid.height - 1)
+        case _     => grid cells
       }
 
       def startFrom(direction: Direction): Cell =

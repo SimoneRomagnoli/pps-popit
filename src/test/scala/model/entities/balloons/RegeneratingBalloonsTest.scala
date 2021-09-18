@@ -1,8 +1,8 @@
 package model.entities.balloons
 
-import model.Positions.{Vector2D, toVector}
-import model.entities.balloons.BalloonType.{Blue, Green, Red}
-import model.entities.balloons.RegeneratingBalloons.{Regenerating, regenerating, regenerationTime}
+import model.Positions.{ toVector, Vector2D }
+import model.entities.balloons.BalloonType.{ Blue, Green, Red }
+import model.entities.balloons.RegeneratingBalloons.{ regenerating, regenerationTime, Regenerating }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

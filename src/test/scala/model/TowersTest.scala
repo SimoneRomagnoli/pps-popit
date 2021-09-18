@@ -4,6 +4,7 @@ import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages._
+import model.Positions.Vector2D
 import model.TowersTest.{
   balloon,
   balloonPosition,
@@ -16,29 +17,24 @@ import model.TowersTest.{
   Balloon
 }
 import model.actors.TowerActor
-import model.tower.Position.Position
-import model.tower.Tower.Tower
+import model.entities.towers.Towers.{ CollisionBox, Tower }
 import org.scalatest.wordspec.AnyWordSpecLike
 
 object TowersTest {
 
-  val balloonPosition: Position = (6.0, 8.0)
-  val towerPosition: Position = (2.0, 1.0)
+  val balloonPosition: Vector2D = (6.0, 8.0)
+  val towerPosition: Vector2D = (2.0, 1.0)
   var collided: Boolean = false
 
-  val frameRate: Double = 60.0
-  val truncate: Double => Double = n => (n * 1000).round / 1000.toDouble
-  val delay: Double => Double = n => truncate(1.0 / n)
+  case class Balloon(var radius: Double, var position: Vector2D) {
 
-  case class Balloon(var radius: Double, var position: Position) {
-
-    def moveTo(to: Position): Balloon = {
+    def moveTo(to: Vector2D): Balloon = {
       position = to
       this
     }
   }
 
-  val tower: Tower = Tower(towerPosition, 1.0)
+  val tower: CollisionBox = Tower(towerPosition)
   var balloon: Balloon = Balloon(1.0, balloonPosition)
 
   val dummyBalloonActor: Balloon => Behavior[Update] = balloon =>
@@ -72,7 +68,7 @@ object TowersTest {
 
 class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
-  val towerActor: ActorRef[Update] = testKit.spawn(TowerActor(Tower(towerPosition, 1.0)))
+  val towerActor: ActorRef[Update] = testKit.spawn(TowerActor(Tower(towerPosition)))
   val model: ActorRef[Update] = testKit.spawn(dummyModel(towerActor))
 
   val balloonActor: ActorRef[Update] =

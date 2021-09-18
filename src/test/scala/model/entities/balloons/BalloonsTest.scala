@@ -1,12 +1,12 @@
 package model.entities.balloons
 
-import model.Positions.{Vector2D, toVector}
-import model.entities.balloons.BalloonType.{Green, Red}
-import model.entities.balloons.Balloons.{Balloon, Simple, complex, simple}
+import model.Positions.{ toVector, Vector2D }
+import model.entities.balloons.BalloonType.{ Green, Red }
+import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.language.{implicitConversions, postfixOps}
+import scala.language.{ implicitConversions, postfixOps }
 
 class BalloonsTest extends AnyWordSpec with Matchers {
   val zeroVector: Vector2D = (0.0, 0.0)

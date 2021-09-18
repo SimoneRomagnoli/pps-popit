@@ -1,7 +1,7 @@
 package controller
 
 import akka.actor.typed.ActorRef
-import model.tower.Position.Position
+import model.Positions.Vector2D
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 
@@ -35,7 +35,7 @@ object Messages {
   case class EntityUpdated(entity: Any) extends Update
 
   //TOWER
-  case class SearchBalloon(replyTo: ActorRef[Update], position: Position, radius: Double)
+  case class SearchBalloon(replyTo: ActorRef[Update], position: Vector2D, radius: Double)
       extends Update
   case class CollisionDetected() extends Update
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update

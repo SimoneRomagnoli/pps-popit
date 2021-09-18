@@ -35,4 +35,13 @@ object Positions {
    */
   implicit def toVector(t: (Double, Double)): Vector2DImpl = Vector2DImpl(t._1, t._2)
 
+  /**
+   * Calculates the distance between two points.
+   * @param from
+   * @param to
+   * @return
+   */
+  def distance(from: Vector2D)(to: Vector2D): Double =
+    Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2))
+
 }

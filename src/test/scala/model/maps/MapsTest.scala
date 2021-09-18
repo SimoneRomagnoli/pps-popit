@@ -6,6 +6,7 @@ import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.NONE
 import model.maps.Tracks.Track
+import org.scalatest.Ignore
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import scala.language.postfixOps
@@ -28,6 +29,7 @@ object MapsTest {
   val grid: Grid = Grid(20, 20)
 }
 
+@Ignore
 class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   "The Grids" when {

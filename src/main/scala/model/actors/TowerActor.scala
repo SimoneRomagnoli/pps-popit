@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages.{ CollisionDetected, SearchBalloon, Update }
+import controller.Messages.{ BalloonDetected, SearchBalloon, Update }
 import model.entities.towers.Towers.Tower
 
 import scala.language.postfixOps
@@ -19,7 +19,7 @@ case class TowerActor(ctx: ActorContext[Update], tower: Tower) {
   private def searching: Behavior[Update] = Behaviors.receiveMessage {
     case SearchBalloon(replyTo, balloon) =>
       if (tower canSee balloon) {
-        replyTo ! CollisionDetected()
+        replyTo ! BalloonDetected()
       }
       Behaviors.same
     case _ => Behaviors.same

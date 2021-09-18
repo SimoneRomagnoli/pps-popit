@@ -36,7 +36,7 @@ object Messages {
 
   //TOWER
   case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update
-  case class CollisionDetected() extends Update
+  case class BalloonDetected() extends Update
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
   case class Tick(replyTo: ActorRef[Update]) extends Update
   case class BalloonMoved(balloon: Balloon) extends Update

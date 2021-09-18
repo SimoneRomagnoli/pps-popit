@@ -7,12 +7,21 @@ import scala.language.{ implicitConversions, postfixOps }
 
 object Towers {
 
+  /**
+   * A [[Tower]] is an [[Entity]] with the ability of see [[Balloon]] object in its sight range
+   */
   trait Tower extends Entity with SightAbility {
     type Boundary = Double
 
     override def withSightRangeOf(radius: Double): Tower
   }
 
+  /**
+   * A [[SimpleTower]] is an instance of a [[Tower]] with a defined:
+   *   - position in the map
+   *   - sight range to detect near balloon
+   *   - boundary to specify the collision box
+   */
   case class SimpleTower(
       override val position: Vector2D = (0.0, 0.0),
       override val sightRange: Double = 1.0,

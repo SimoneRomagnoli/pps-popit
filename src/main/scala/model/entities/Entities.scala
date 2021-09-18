@@ -2,16 +2,22 @@ package model.entities
 
 import model.Positions.Vector2D
 import model.Positions._
+import model.entities.balloons.Balloons.Balloon
+
+import scala.language.postfixOps
 
 object Entities {
 
   /**
    * Basic entity of the system which:
+   *   - has a boundary
    *   - has a position
    *   - can update its position
    *   - can update itself
    */
   trait Entity {
+    type Boundary
+    def boundary: Boundary
     def position: Vector2D
     def in(position: Vector2D): Entity
     def update(dt: Double): Entity = this
@@ -37,6 +43,17 @@ object Entities {
   trait Poppable extends Entity {
     def life: Int
     def pop(bullet: Entity): Option[Entity]
+  }
+
+  /**
+   * Adds to the [[Entity]] the ability to see other entities within his sight range.
+   */
+  trait SightAbility extends Entity {
+    def sightRange: Double
+    def withSightRangeOf(radius: Double): SightAbility
+
+    def canSee(balloon: Balloon): Boolean =
+      distance(position)(balloon position) < ((balloon boundary) + sightRange)
   }
 
 }

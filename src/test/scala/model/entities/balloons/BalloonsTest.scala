@@ -30,6 +30,10 @@ class BalloonsTest extends AnyWordSpec with Matchers {
         ((Red balloon) speed) shouldBe zeroVector
         ((Green balloon) speed) shouldBe zeroVector
       }
+      "have default boundary" in {
+        ((Red balloon) boundary) shouldBe 1.0
+        ((Green balloon) boundary) shouldBe 1.0
+      }
     }
     "changing his speed" should {
       "have the specified speed" in {

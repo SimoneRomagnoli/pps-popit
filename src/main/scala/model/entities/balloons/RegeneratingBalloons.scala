@@ -26,8 +26,9 @@ object RegeneratingBalloons {
 
   class RegeneratingSimple(
       override val position: Vector2D = (0.0, 0.0),
-      override val speed: Vector2D = (0.0, 0.0))
-      extends Simple(position, speed)
+      override val speed: Vector2D = (0.0, 0.0),
+      override val boundary: Double = 1.0)
+      extends Simple(position, speed, boundary)
       with Regenerating
 
   class RegeneratingComplex(override val balloon: Balloon)
@@ -36,7 +37,7 @@ object RegeneratingBalloons {
 
   def regenerating(b: Balloon): Regenerating = b match {
     case Complex(balloon) => new RegeneratingComplex(regenerating(balloon))
-    case Simple(p, s)     => new RegeneratingSimple(p, s)
+    case Simple(p, s, b)  => new RegeneratingSimple(p, s, b)
     case _                => new RegeneratingSimple()
   }
 }

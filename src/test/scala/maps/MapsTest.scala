@@ -18,7 +18,7 @@ object MapsTest {
   val threeForThreeGrid: Seq[Cell] = Seq(Cell(0, 0), Cell(0, 1), Cell(0, 2),
     Cell(1, 0), Cell(1, 1), Cell(1, 2), Cell(2, 0), Cell(2, 1), Cell(2, 2))
   val threeForThreeArea: Int = 9
-  val grid: Grid = Grid(40, 40)
+  val suitableWidth: Int = 16
   val engine: Term => SeqView[SolveInfo] = mkPrologEngine("res/grids.pl")
   val iterator: Iterator[SolveInfo] = engine("allPath(c(0,3), c(15,3), P).").iterator
 }
@@ -39,7 +39,7 @@ class MapsTest extends AnyWordSpec with Matchers {
   "The Tracks" when {
     "just created" should {
       "be long enough" in {
-        getTrack(iterator.next()).cells.size should be >= grid.width
+        getTrack(iterator.next()).cells.size should be >= suitableWidth
       }
       "have directions" in {
         getTrack(iterator.next()).cells.forall(_.direction != NONE) shouldBe true

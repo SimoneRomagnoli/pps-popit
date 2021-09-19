@@ -52,7 +52,9 @@ object Cells {
 
     def turnLeft(): Cell = cell.direct(cell.direction.turnLeft)
 
-    def alreadyIn(track: Seq[Cell]): Boolean = track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.x, cell.nextOnTrack.y))
+    def alreadyIn(track: Seq[Cell]): Boolean = track.map(c => (c.x, c.y)).contains((cell.x, cell.y))
+
+    def nextAlreadyIn(track: Seq[Cell]): Boolean = track.map(c => (c.x, c.y)).contains((cell.nextOnTrack.x, cell.nextOnTrack.y))
 
     def nextOnTrack: Cell = cell match {
       case GridCell(x, y, dir) => dir match {
@@ -64,26 +66,47 @@ object Cells {
       }
     }
 
+    def directTowards(other: Cell): Cell = other match {
+      case GridCell(x, _, _) if x == cell.x+1 => cell direct RIGHT
+      case GridCell(x, _, _) if x == cell.x-1 => cell direct LEFT
+      case GridCell(_, y, _) if y == cell.y+1 => cell direct DOWN
+      case GridCell(_, y, _) if y == cell.y-1 => cell direct UP
+      case _ => cell
+    }
+
+    def endsOutOf(grid: Grid): Boolean = cell match {
+      case GridCell(x, _, _) if x >= grid.width-1 => true
+      case _ => false
+    }
+
     def pointsOutOf(grid: Grid): Boolean = cell match {
-      case GridCell(0, _, LEFT) => true
-      case GridCell(_, 0, UP) => true
-      case GridCell(x, _, RIGHT) if x == grid.width-1 => true
-      case GridCell(_, y, DOWN) if y == grid.height-1 => true
+      case GridCell(x, _, LEFT) if x < 1 => true
+      case GridCell(_, y, UP) if y < 1 => true
+      case GridCell(_, y, DOWN) if y > grid.height-2 => true
+      case _ => false
+    }
+
+    def isBorderlineOf(grid: Grid): Boolean = cell match {
+      case GridCell(x, _, _) if (x == 0) || (x == grid.width-1) => true
+      case GridCell(_, y, _) if (y == 0) || (y == grid.height-1) => true
       case _ => false
     }
 
     def isGoingOutOf(grid: Grid): Boolean = cell match {
-      case GridCell(1, _, LEFT) => true
-      case GridCell(_, 1, UP) => true
-      case GridCell(x, _, RIGHT) if x == grid.width-2 => true
-      case GridCell(_, y, DOWN) if y == grid.height-2 => true
+      case GridCell(x, _, LEFT) if x < 2 => true
+      case GridCell(_, y, UP) if y < 2 => true
+      case GridCell(_, y, DOWN) if y > grid.height-3 => true
       case _ => false
     }
 
-    def turnFromBorder(grid: Grid)(track: Seq[Cell])(last: Cell): Cell = cell nearestBorderIn grid match {
-      case LEFT => if (cell.turnLeft() hasFreeWayFrom track) cell.turnLeft() else cell.turnRight()
-      case dir if dir == UP || dir == DOWN => if (last.direction != LEFT) cell direct RIGHT else cell direct dir
-      case RIGHT => if(track.partition(_.y < cell.y)._1.size > track.size / 2) cell.turnRight() else cell.turnLeft()
+    def turnFromBorderLine(grid: Grid)(track: Seq[Cell])(last: Cell): Cell = cell nearestBorderIn grid match {
+      case LEFT => if (GridCell(cell.x, cell.y, cell.direction.turnLeft) hasFreeWayFrom track) cell.turnLeft() else cell.turnRight()
+      case _ => cell direct RIGHT
+    }
+
+    def turnFromBorder(grid: Grid)(track: Seq[Cell])(last: Cell): Cell = cell pointingBorderIn grid match {
+      case LEFT => if (GridCell(cell.x, cell.y, cell.direction.turnLeft) hasFreeWayFrom track) cell.turnLeft() else cell.turnRight()
+      case UP | DOWN => if (last.direction != LEFT) cell direct RIGHT else cell
       case _ => cell
     }
 
@@ -92,15 +115,28 @@ object Cells {
       if(bumpInto._1.direction != cell.direction) {
         cell.direct(bumpInto._1.direction.opposite)
       } else {
-        cell.direct(track(bumpInto._2-1).direction)
+        cell.direct(track(bumpInto._2-1).direction.opposite)
       }
+    }
+
+    def canTurnFromTrack(track: Seq[Cell])(last: Cell): Boolean = {
+      val bumpInto: Cell = track.filter(c => c.x == cell.nextOnTrack.x && c.y == cell.nextOnTrack.y).head
+      bumpInto.direction != cell.direction && bumpInto.direction != last.direction
+    }
+
+    def pointingBorderIn(grid: Grid): Direction = cell match {
+      case GridCell(x, _, LEFT) if x < 2 => LEFT
+      case GridCell(_, y, UP) if y < 2 => UP
+      case GridCell(x, _, RIGHT) if x > grid.width-3 => RIGHT
+      case GridCell(_, y, DOWN) if y > grid.height-3 => DOWN
+      case _ => NONE
     }
 
     def nearestBorderIn(grid: Grid): Direction = cell match {
       case GridCell(x, _, _) if x < 2 => LEFT
       case GridCell(_, y, _) if y < 2 => UP
-      case GridCell(x, _, _) if x > grid.width-3 => RIGHT
       case GridCell(_, y, _) if y > grid.height-3 => DOWN
+      case GridCell(x, _, _) if x > grid.width-3 => RIGHT
       case _ => NONE
     }
 

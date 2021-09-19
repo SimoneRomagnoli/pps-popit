@@ -69,5 +69,8 @@ object Tracks {
 
     def apply(grid: Grid)(implicit trackPlotter: TrackPlotter = PushDownAutomatonPlotter.pdaPlotter): Track =
       TrackMap(trackPlotter plot grid)
+
+    def apply(cells: Seq[Cell]): Track =
+      TrackMap(cells)
   }
 }

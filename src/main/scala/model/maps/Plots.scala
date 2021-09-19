@@ -27,10 +27,12 @@ object Plots {
     def plot(grid: Grid): Seq[Cell] = {
       @tailrec
       def _plot(track: Seq[Cell], last: Cell): Seq[Cell] = next(track)(last) match {
-        case cell if cell pointsOutOf grid => if (track.size > grid.width) track :+ last :+ cell else _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
-        case cell if cell isGoingOutOf grid => _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
-        case cell if cell alreadyIn track => _plot(track :+ last, cell turnFromTrack track)
-        case cell => _plot(track :+ last, cell)
+        case cell if cell endsOutOf grid => println("end");track :+ last :+ cell.direct(RIGHT)
+        //case cell if cell isGoingOutOf grid => println("OUT: "+cell+" -> "+cell.turnFromBorder(grid)(track)(last)); _plot(track :+ last, cell.turnFromBorder(grid)(track)(last))
+        case cell if cell pointsOutOf grid => println("OUT: "+cell+" -> "+cell.turnFromBorder(grid)(track)(last)); _plot(track, last.turnFromBorder(grid)(track)(track.last))
+        case cell if cell nextAlreadyIn track => println("TRACK: "+cell+" -> "+cell.turnFromTrack(track)); _plot(track :+ last, cell turnFromTrack track)
+        //case cell if cell isBorderlineOf grid => println("border");_plot(track :+ last, cell.turnFromBorderLine(grid)(track)(last))
+        case cell => println("normal");_plot(track :+ last, cell)
       }
 
       _plot(Seq(), grid startFrom LEFT direct RIGHT)
@@ -67,16 +69,27 @@ object Plots {
     val stackMaximumSize: Int = 2
 
     val pdaPlotter: TrackPlotter = (track: Seq[Cell], last: Cell) => Math.random() match {
-      case forward if forward < 1 - 0.1 * cellsWithoutTurning(track)(last) => last direction
+      case forward if forward < 1 - 0.3 * cellsWithoutTurning(track)(last) => last direction
       case _ => directionsStack(track) match {
         case fullStack if fullStack.size >= stackMaximumSize => fullStack.head match {
-          case LEFT => last.direction.turnRight
-          case RIGHT => last.direction.turnLeft
+          case LEFT => println("pda force turn right");last.direction.turnRight
+          case RIGHT => println("pda force turn left");last.direction.turnLeft
           case _ => last.direction
         }
         case _ if Math.random() < 0.5 => last.direction.turnRight
         case _ => last.direction.turnLeft
       }
+
+    }
+
+    def lastTwoDirectionChanges(track: Seq[Cell])(last: Cell): Seq[Direction] = {
+      @tailrec
+      def _directions(dirs: Seq[Direction], acc: Seq[Direction]): Seq[Direction] = dirs match {
+        case h +: t => if (t.nonEmpty && turnBetween(h, t.head) != NONE) acc :+ turnBetween(h, t.head); _directions(t, acc)
+        case Seq() => if(turnBetween(track.last.direction, last.direction) != NONE) acc :+ turnBetween(track.last.direction, last.direction) else acc
+      }
+
+      _directions(track.map(_.direction), Seq()).takeRight(2)
     }
 
     /**
@@ -87,7 +100,7 @@ object Plots {
      * @return the number of consecutive straight cells
      */
     def cellsWithoutTurning(track: Seq[Cell])(last: Cell): Int = track match {
-      case Seq() => 1
+      case Seq() => 0
       case _ => track.size - track.zipWithIndex.reverse.find(_._1.direction != last.direction).getOrElse((track.last, 0))._2
     }
 
@@ -118,7 +131,8 @@ object Plots {
       if (stack.isEmpty || stack.head == nextDirection) {
         stack.push(nextDirection)
       } else {
-        stack.pop()
+        stack.clear()
+        //stack.pop()
       }
     }
   }

@@ -1,13 +1,16 @@
 package maps
 
-import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
+import alice.tuprolog.{SolveInfo, Term}
 import maps.MapsTest._
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
+import model.maps.Scala2P._
 import model.maps.Tracks.Directions.NONE
 import model.maps.Tracks.Track
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
+import scala.collection.SeqView
 import scala.language.postfixOps
 
 object MapsTest {
@@ -16,9 +19,11 @@ object MapsTest {
     Cell(1, 0), Cell(1, 1), Cell(1, 2), Cell(2, 0), Cell(2, 1), Cell(2, 2))
   val threeForThreeArea: Int = 9
   val grid: Grid = Grid(40, 40)
+  val engine: Term => SeqView[SolveInfo] = mkPrologEngine("res/grids.pl")
+  val iterator: Iterator[SolveInfo] = engine("allPath(c(0,3), c(15,3), P).").iterator
 }
 
-class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+class MapsTest extends AnyWordSpec with Matchers {
   "The Grids" when {
     "just created" should {
       "be made of cells" in {
@@ -34,13 +39,13 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   "The Tracks" when {
     "just created" should {
       "be long enough" in {
-        Track(grid).cells.size should be >= grid.width
+        getTrack(iterator.next()).cells.size should be >= grid.width
       }
       "have directions" in {
-        Track(grid).cells.forall(_.direction != NONE) shouldBe true
+        getTrack(iterator.next()).cells.forall(_.direction != NONE) shouldBe true
       }
       "do not repeat" in {
-        val track: Track = Track(grid)
+        val track: Track = getTrack(iterator.next())
         track.cells.foreach { cell =>
           track.cells.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
         }

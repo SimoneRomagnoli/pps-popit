@@ -2,7 +2,9 @@ package model.maps
 
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Plots.{PushDownAutomatonPlotter, TrackPlotter}
+import model.maps.Plots.{Plotter, PrologPlotter}
+import model.maps.Tracks.Directions.{LEFT, RIGHT}
+
 import scala.language.postfixOps
 
 object Tracks {
@@ -63,14 +65,13 @@ object Tracks {
     def cells: Seq[Cell]
   }
 
-  case class TrackMap(override val cells: Seq[Cell]) extends Track
+  case class TrackMap(plotter: Plotter) extends Track {
+    override def cells: Seq[Cell] = plotter.plot
+  }
 
   object Track {
 
-    def apply(grid: Grid)(implicit trackPlotter: TrackPlotter = PushDownAutomatonPlotter.pdaPlotter): Track =
-      TrackMap(trackPlotter plot grid)
-
-    def apply(cells: Seq[Cell]): Track =
-      TrackMap(cells)
+    def apply(grid: Grid)(plot: Plotter = PrologPlotter()): Track =
+      TrackMap(plot in grid startingFrom LEFT endingAt RIGHT)
   }
 }

@@ -1,12 +1,10 @@
+node(c(X,Y)):-member(X,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]),member(Y,[0,1,2,3,4,5,6,7]).
+
 % NotMember function
 notMember(E, L) :- \+ member(E, L).
 
-% Node structure
-node(X, Y):- node(c(X,Y)).
-node(c(X,Y)):-member(X,[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]),member(Y,[0,1,2,3,4,5,6,7]).
-
 % Suitable node
-suitable(X, Y, Path) :- node(X, Y), notMember(c(X, Y), Path).
+suitable(X, Y, Path) :- node(c(X, Y)), notMember(c(X, Y), Path).
 
 % Random functions
 upperProbability(P) :- rand_int(100, R), R >= P.

@@ -10,6 +10,11 @@ import scala.collection.SeqView
 import scala.io.Source
 
 object PrologUtils {
+
+  /**
+   * Contains useful operators for building a theory.
+   *
+   */
   object Theories {
 
     val theoryResourceName: String = "res/theory.pl"
@@ -27,6 +32,12 @@ object PrologUtils {
     implicit def fileToTheory[T](s: String): Theory =
       Theory.parseWithStandardOperators(s)
 
+    /**
+     * Build a Prolog theory for the specified [[Grid]].
+     *
+     * @param grid, the starting [[Grid]]
+     * @return a [[Theory]] containing all the nodes in the grid.
+     */
     def from(grid: Grid): Theory = {
       val source = Source.fromFile(theoryResourceName)
       val baseTheory: String = source.mkString
@@ -35,6 +46,10 @@ object PrologUtils {
     }
   }
 
+  /**
+   * Contains constructs for building a Prolog engine.
+   *
+   */
   object Engines {
 
     trait Engine {
@@ -44,6 +59,11 @@ object PrologUtils {
     implicit def stringToTerm(s: String): Term = Term.createTerm(s)
     implicit def seqToTerm[T](s: Seq[T]): Term = s.mkString("[",",","]")
 
+    /**
+     * A Prolog engine that solves queries.
+     *
+     * @param theory, the theory that the engine uses to solve queries.
+     */
     case class PrologEngine(theory: Theory) extends Engine {
       val engine: Prolog = new Prolog
       engine.setTheory(theory)
@@ -86,6 +106,10 @@ object PrologUtils {
     }
   }
 
+  /**
+   * Contains elegant operators for building queries to be consumed from a Prolog engine.
+   *
+   */
   object Queries {
 
     def prologCell(cell: Cell): String =
@@ -101,6 +125,10 @@ object PrologUtils {
     }
   }
 
+  /**
+   * Contains useful methods for deserializing Prolog solutions.
+   *
+   */
   object Solutions {
 
     def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] = {

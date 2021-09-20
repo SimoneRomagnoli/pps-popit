@@ -29,6 +29,16 @@ object Plots {
     def plot: Seq[Cell]
   }
 
+  /**
+   * Builds a [[TuPrologPlotter]] which starts a Prolog engine and finds a path into a [[Grid]].
+   *
+   */
+  object PrologPlotter {
+
+    def apply(grid: Grid = Grid(16, 8), start: Direction = LEFT, end: Direction = RIGHT): Plotter =
+      TuPrologPlotter(grid, start, end)
+  }
+
   case class TuPrologPlotter(override val grid: Grid, override val start: Direction, override val end: Direction) extends Plotter {
     override def in(set: Grid): Plotter = PrologPlotter(grid = set)
 
@@ -40,11 +50,5 @@ object Plots {
       val solutionStream: SeqView[SolveInfo] = Engine(Theories from grid).solve(PrologQuery(from = grid randomInBorder start, to = grid randomInBorder end))
       Solutions.trackFromPrologSolution(solutionStream.head)
     }
-  }
-
-  object PrologPlotter {
-
-    def apply(grid: Grid = Grid(16, 8), start: Direction = LEFT, end: Direction = RIGHT): Plotter =
-      TuPrologPlotter(grid, start, end)
   }
 }

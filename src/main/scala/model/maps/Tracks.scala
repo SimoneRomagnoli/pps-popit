@@ -2,7 +2,9 @@ package model.maps
 
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Plots.{ PushDownAutomatonPlotter, TrackPlotter }
+import model.maps.Plots.{ Plotter, PrologPlotter }
+import model.maps.Tracks.Directions.{ LEFT, RIGHT }
+
 import scala.language.postfixOps
 
 object Tracks {
@@ -37,24 +39,6 @@ object Tracks {
     case object DOWN extends Direction
     case object LEFT extends Direction
     case object RIGHT extends Direction
-
-    /**
-     * Given the ordered first and second direction, it determines if they form a left or right turn
-     *
-     * @param first
-     *   [[Direction]]
-     * @param second
-     *   [[Direction]]
-     * @return
-     *   [[LEFT]], [[RIGHT]] or [[NONE]]
-     */
-    def turnBetween(first: Direction, second: Direction): Direction = first match {
-      case UP if second == RIGHT || second == LEFT   => second
-      case DOWN if second == RIGHT || second == LEFT => second.opposite
-      case LEFT if second == UP || second == DOWN    => second.turnRight
-      case RIGHT if second == UP || second == DOWN   => second.turnLeft
-      case _                                         => NONE
-    }
   }
 
   /**
@@ -70,8 +54,7 @@ object Tracks {
 
   object Track {
 
-    def apply(grid: Grid)(implicit
-        trackPlotter: TrackPlotter = PushDownAutomatonPlotter.pdaPlotter): Track =
-      TrackMap(trackPlotter plot grid)
+    def apply(grid: Grid, plotter: Plotter = PrologPlotter()): Track =
+      TrackMap(plotter in grid startingFrom LEFT endingAt RIGHT plot)
   }
 }

@@ -9,11 +9,15 @@ import scalafx.scene.Scene
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.layout.Pane
 import MapsRenderingTest._
+import akka.actor.typed.{ActorRef, ActorSystem}
+import akka.actor.typed.scaladsl.Behaviors
+import controller.Messages.{Message, Render, RenderMap}
 import javafx.scene.paint.ImagePattern
 import model.maps.Tracks.Track
 import org.scalatest.Ignore
 import javafx.scene.image.Image
 import scalafx.scene.paint.Color
+import view.View.ViewActor
 
 import java.io.File
 
@@ -87,6 +91,15 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           )
         }
         appBuilder(canvas).main(Array())
+      }
+      "design the road" in {
+        ActorSystem[Message](Behaviors.setup[Message] { ctx =>
+          val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
+          val grid: Grid = Grid(16, 8)
+          view ! RenderMap(grid, Track(grid))
+          Behaviors.empty
+        }, "system")
+        appBuilder(ViewActor.canvas).main(Array())
       }
     }
   }

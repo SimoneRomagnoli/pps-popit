@@ -1,13 +1,16 @@
 package model.maps
 
-import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
-import model.maps.MapsTest._
+import alice.tuprolog.SolveInfo
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.NONE
+import model.maps.MapsTest._
+import model.maps.Tracks.Directions.{ LEFT, NONE, RIGHT }
 import model.maps.Tracks.Track
-import org.scalatest.Ignore
-import org.scalatest.wordspec.AnyWordSpecLike
+import model.maps.prolog.PrologUtils.Engines._
+import model.maps.prolog.PrologUtils.Queries.PrologQuery
+import model.maps.prolog.PrologUtils.{ Solutions, Theories }
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.language.postfixOps
 
@@ -26,11 +29,16 @@ object MapsTest {
     Cell(2, 2)
   )
   val threeForThreeArea: Int = 9
-  val grid: Grid = Grid(20, 20)
+
+  val grid: Grid = Grid(16, 8)
+  val engine: Engine = Engine(Theories from grid)
+
+  val iterator: Iterator[SolveInfo] = engine
+    .solve(PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT))
+    .iterator
 }
 
-@Ignore
-class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+class MapsTest extends AnyWordSpec with Matchers {
 
   "The Grids" when {
     "just created" should {
@@ -46,7 +54,22 @@ class MapsTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   }
 
   "The Tracks" when {
-    "just created" should {
+    "created with prolog" should {
+      "be long enough" in {
+        Solutions.trackFromPrologSolution(iterator.next()).size should be >= grid.width
+      }
+      "have directions" in {
+        Solutions.trackFromPrologSolution(iterator.next()).forall(_.direction != NONE) shouldBe true
+      }
+      "not repeat" in {
+        val track: Seq[Cell] = Solutions.trackFromPrologSolution(iterator.next())
+        track.foreach { cell =>
+          track.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
+        }
+      }
+    }
+
+    "created from object" should {
       "be long enough" in {
         Track(grid).cells.size should be >= grid.width
       }

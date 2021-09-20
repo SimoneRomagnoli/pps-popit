@@ -26,6 +26,7 @@ libraryDependencies ++= javaFXModules
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+  "it.unibo.alice.tuprolog" % "2p-core" % "4.1.1",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
   "org.scalafx" %% "scalafx" % "15.0.1-R21",

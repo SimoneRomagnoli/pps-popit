@@ -64,8 +64,11 @@ object Grids {
         case _     => grid cells
       }
 
-      def startFrom(direction: Direction): Cell =
+      def randomInBorder(direction: Direction): Cell =
         (Random shuffle grid.border(direction)) head
+
+      def startFrom(direction: Direction): Cell =
+        randomInBorder(direction)
     }
   }
 

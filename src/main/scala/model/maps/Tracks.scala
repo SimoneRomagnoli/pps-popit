@@ -65,13 +65,11 @@ object Tracks {
     def cells: Seq[Cell]
   }
 
-  case class TrackMap(plotter: Plotter) extends Track {
-    override def cells: Seq[Cell] = plotter.plot
-  }
+  case class TrackMap(override val cells: Seq[Cell]) extends Track
 
   object Track {
 
-    def apply(grid: Grid)(plot: Plotter = PrologPlotter()): Track =
-      TrackMap(plot in grid startingFrom LEFT endingAt RIGHT)
+    def apply(grid: Grid, plotter: Plotter = PrologPlotter()): Track =
+      TrackMap(plotter in grid startingFrom LEFT endingAt RIGHT plot)
   }
 }

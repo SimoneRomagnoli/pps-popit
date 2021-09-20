@@ -1,9 +1,14 @@
 package model.maps
 
+import alice.tuprolog.SolveInfo
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{Direction, LEFT, RIGHT}
+import model.maps.prolog.PrologUtils.Engines._
+import model.maps.prolog.PrologUtils.Queries.PrologQuery
+import model.maps.prolog.PrologUtils.{Solutions, Theories}
 
+import scala.collection.SeqView
 import scala.language.postfixOps
 
 object Plots {
@@ -31,7 +36,10 @@ object Plots {
 
     override def endingAt(direction: Direction): Plotter = PrologPlotter(end = direction)
 
-    override def plot: Seq[Cell] = ???
+    override def plot: Seq[Cell] = {
+      val solutionStream: SeqView[SolveInfo] = Engine(Theories from grid).solve(PrologQuery(from = grid randomInBorder start, to = grid randomInBorder end))
+      Solutions.trackFromPrologSolution(solutionStream.head)
+    }
   }
 
   object PrologPlotter {

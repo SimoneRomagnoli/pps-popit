@@ -21,11 +21,11 @@ object Plots {
    */
   trait Plotter {
     def grid: Grid
-    def in(g: Grid): Plotter
+    def in(newGrid: Grid): Plotter
     def start: Direction
-    def startingFrom(direction: Direction): Plotter
+    def startingFrom(newStart: Direction): Plotter
     def end: Direction
-    def endingAt(direction: Direction): Plotter
+    def endingAt(newEnd: Direction): Plotter
     def plot: Seq[Cell]
   }
 
@@ -40,11 +40,11 @@ object Plots {
   }
 
   case class TuPrologPlotter(override val grid: Grid, override val start: Direction, override val end: Direction) extends Plotter {
-    override def in(set: Grid): Plotter = PrologPlotter(grid = set)
+    override def in(newGrid: Grid): Plotter = PrologPlotter(newGrid, start, end)
 
-    override def startingFrom(direction: Direction): Plotter = PrologPlotter(start = direction)
+    override def startingFrom(newStart: Direction): Plotter = PrologPlotter(grid, newStart, end)
 
-    override def endingAt(direction: Direction): Plotter = PrologPlotter(end = direction)
+    override def endingAt(newEnd: Direction): Plotter = PrologPlotter(grid, start, newEnd)
 
     override def plot: Seq[Cell] = {
       val solutionStream: SeqView[SolveInfo] = Engine(Theories from grid).solve(PrologQuery(from = grid randomInBorder start, to = grid randomInBorder end))

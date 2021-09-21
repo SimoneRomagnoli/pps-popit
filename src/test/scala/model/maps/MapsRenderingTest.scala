@@ -21,6 +21,7 @@ import view.View.ViewActor
 
 import java.io.File
 
+@Ignore
 object MapsRenderingTest {
   val cellSize: Int = 60
   val canvas: Canvas = new Canvas(1200, 600)

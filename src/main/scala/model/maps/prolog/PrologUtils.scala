@@ -16,7 +16,7 @@ object PrologUtils {
    */
   object Theories {
 
-    val theoryResourceName: String = "res/theory.pl"
+    val theoryResourceName: String = "src/main/resources/theories/tracks.pl"
 
     def nodesToString(length: Int): String =
       LazyList

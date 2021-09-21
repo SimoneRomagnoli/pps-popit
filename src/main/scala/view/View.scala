@@ -27,7 +27,7 @@ object View {
         case RenderMap(grid, track) =>
           val cellSize: Int = 75
           Platform.runLater {
-            val img: File = new File("res/grass-pattern.png")
+            val img: File = new File("src/main/resources/images/backgrounds/GRASS.png")
             grid.cells foreach { cell =>
               canvas.graphicsContext2D.setFill(new ImagePattern(new Image(img.toURI.toString)))
               canvas.graphicsContext2D.fillRect(
@@ -40,7 +40,7 @@ object View {
             track.cells.prepended(GridCell(-1, 0, RIGHT)).sliding(2).foreach { couple =>
               val name: String =
                 couple.head.direction.toString + "-" + couple.last.direction.toString + ".png"
-              val img: File = new File("res/" + name)
+              val img: File = new File("src/main/resources/images/roads/" + name)
               canvas.graphicsContext2D.setFill(new ImagePattern(new Image(img.toURI.toString)))
               val cell: Cell = couple.last
               canvas.graphicsContext2D

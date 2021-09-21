@@ -4,6 +4,7 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.Time._
 import controller.Messages._
+import model.maps.Grids.Grid
 
 import scala.concurrent.duration.DurationDouble
 
@@ -14,7 +15,8 @@ object GameLoop {
     def apply(model: ActorRef[Update], view: ActorRef[Render]): Behavior[Input] = Behaviors.setup {
       ctx =>
         Behaviors.receiveMessage {
-          case NewGame() =>
+          case Start() =>
+            model ! NewMap(ctx.self)
             Behaviors.withTimers { timers =>
               timers.startTimerWithFixedDelay(Tick, delay(frameRate).seconds)
               GameLoopActor(ctx, model, view).running()
@@ -39,6 +41,9 @@ object GameLoop {
     private def running(): Behavior[Input] = Behaviors.receiveMessage {
       case Tick =>
         model ! TickUpdate(elapsedTime(frameRate)(timeRatio), ctx.self)
+        Behaviors.same
+      case MapCreated(grid, track) =>
+        view ! RenderMap(grid, track)
         Behaviors.same
       case ModelUpdated(entities) =>
         view ! RenderEntities(entities)

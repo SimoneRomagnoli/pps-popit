@@ -3,7 +3,7 @@ package controller
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.GameLoopActor
-import controller.Messages.{ Input, NewGame, Render, Update }
+import controller.Messages.{ Input, NewGame, Render, Start, Update }
 import model.Model.ModelActor
 
 object Controller {
@@ -16,7 +16,7 @@ object Controller {
           val model: ActorRef[Update] = ctx.spawn(ModelActor(), "model")
           val gameLoop: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")
 
-          gameLoop ! NewGame()
+          gameLoop ! Start()
           Behaviors.same
 
         case _ => Behaviors.same

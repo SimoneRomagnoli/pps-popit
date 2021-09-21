@@ -22,16 +22,22 @@ object Messages {
   case class PauseGame() extends Input
   case class ResumeGame() extends Input
   case class NewTimeRatio(value: Double) extends Input
-  case class NewMap() extends Input
 
   //GAME LOOP
   case object Tick extends Input
+  case class Start() extends Input
+  case class MapCreated(grid: Grid, track: Track) extends Input
   case class ModelUpdated(entities: List[Entity]) extends Input
 
   //MODEL
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
+  case class NewMap(replyTo: ActorRef[Input]) extends Update
 
-  case class UpdateEntity(elapsedTime: Double, entities: List[Entity], replyTo: ActorRef[Update])
+  case class UpdateEntity(
+      elapsedTime: Double,
+      entities: List[Entity],
+      replyTo: ActorRef[Update],
+      track: Track)
       extends Update
   case class EntityUpdated(entity: Entity) extends Update
 
@@ -41,6 +47,4 @@ object Messages {
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
   case class Tick(replyTo: ActorRef[Update]) extends Update
   case class BalloonMoved(balloon: Balloon) extends Update
-  case class Start() extends Input
-
 }

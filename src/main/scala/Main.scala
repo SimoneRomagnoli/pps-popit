@@ -5,6 +5,7 @@ import controller.Messages.{ Input, Message, NewGame, Render }
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
+import utils.Constants
 import view.View.ViewActor
 
 object Main extends JFXApp {
@@ -21,8 +22,9 @@ object Main extends JFXApp {
 
   stage = new PrimaryStage {
     title = "Pop-It!"
+    resizable = false
 
-    scene = new Scene(800, 600) {
+    scene = new Scene(Constants.width, Constants.height) {
       root = ViewActor.board
     }
   }

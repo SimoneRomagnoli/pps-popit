@@ -1,9 +1,15 @@
 package model.maps
 
+import model.Positions._
+import model.Positions.Vector2D
 import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, NONE, RIGHT, UP }
+import utils.Constants
+
 import scala.language.postfixOps
 
 object Cells {
+
+  val cellSize: Double = Constants.width / Constants.widthRatio
 
   /**
    * Represents a cell with two integer coordinates.
@@ -75,5 +81,20 @@ object Cells {
       case GridCell(_, y, _) if y == cell.y - 1 => cell direct UP
       case _                                    => cell
     }
+
+    def topLeftPosition: Vector2D = (cell.x * cellSize, cell.y * cellSize)
+
+    def exactPosition(previous: Direction)(percentage: Double): Vector2D = percentage match {
+      case x if x < 0.5 => centralPosition(previous)(percentage)
+      case _            => centralPosition(cell direction)(percentage)
+    }
+
+    def centralPosition(direction: Direction)(percentage: Double): Vector2D = direction match {
+      case UP    => cell.topLeftPosition + (cellSize / 2, cellSize * (1 - percentage))
+      case DOWN  => cell.topLeftPosition + (cellSize / 2, cellSize * percentage)
+      case LEFT  => cell.topLeftPosition + (cellSize * (1 - percentage), cellSize / 2)
+      case RIGHT => cell.topLeftPosition + (cellSize * percentage, cellSize / 2)
+    }
+
   }
 }

@@ -8,6 +8,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.BalloonType.Red
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
+import utils.Constants
 
 object Model {
 
@@ -17,7 +18,7 @@ object Model {
 
     def init(ctx: ActorContext[Update]): Behavior[Update] = Behaviors.receiveMessage {
       case NewMap(replyTo) =>
-        val grid: Grid = Grid(16, 8)
+        val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
         val track: Track = Track(grid)
         replyTo ! MapCreated(grid, track)
         val entities: List[Entity] = List((Red balloon) in track.start.topLeftPosition)

@@ -2,15 +2,11 @@ package model.maps
 
 import model.maps.Cells.Cell
 import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
-import scala.language.postfixOps
 
+import scala.language.postfixOps
 import scala.util.Random
 
 object Grids {
-
-  /** The actual values of the map. */
-  val width: Double = 800
-  val height: Double = 600
 
   /**
    * Represents the logical structure of the game beneath the map.
@@ -66,9 +62,6 @@ object Grids {
 
       def randomInBorder(direction: Direction): Cell =
         (Random shuffle grid.border(direction)) head
-
-      def startFrom(direction: Direction): Cell =
-        randomInBorder(direction)
     }
   }
 

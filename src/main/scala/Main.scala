@@ -1,7 +1,7 @@
 import akka.actor.typed.{ ActorRef, ActorSystem }
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Controller.ControllerActor
-import controller.Messages.{ Input, Message, Render }
+import controller.Messages.{ Input, Message, NewGame, Render }
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
@@ -13,7 +13,7 @@ object Main extends JFXApp {
     Behaviors.setup[Message] { ctx =>
       val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
       val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
-      //controller ! NewSimulation()
+      controller ! NewGame()
       Behaviors.empty
     },
     "system"

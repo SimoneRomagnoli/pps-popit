@@ -94,6 +94,7 @@ object Cells {
       case DOWN  => cell.topLeftPosition + (cellSize / 2, cellSize * percentage)
       case LEFT  => cell.topLeftPosition + (cellSize * (1 - percentage), cellSize / 2)
       case RIGHT => cell.topLeftPosition + (cellSize * percentage, cellSize / 2)
+      case _     => cell.topLeftPosition + (cellSize / 2, cellSize / 2)
     }
 
   }

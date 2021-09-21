@@ -47,7 +47,7 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "started" should {
       "update the model" in {
         counter.value shouldBe 0.0
-        gameLoop ! NewGame()
+        gameLoop ! Start()
         waitSomeTime()
         counter.value should be > 0.0
       }
@@ -74,7 +74,7 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     }
     "his time ratio gets changed" should {
       "update the model according to the new time ratio" in {
-        fastGameLoop ! NewGame()
+        fastGameLoop ! Start()
         fastGameLoop ! NewTimeRatio(2.0)
 
         val initialValue: (Double, Double) = (counter.value, fastCounter.value)

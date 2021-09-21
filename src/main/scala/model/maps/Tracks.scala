@@ -48,6 +48,9 @@ object Tracks {
 
     /** Returns the cells in the [[Track]]. */
     def cells: Seq[Cell]
+
+    def start: Cell = cells.head
+    def finish: Cell = cells.last
   }
 
   case class TrackMap(override val cells: Seq[Cell]) extends Track

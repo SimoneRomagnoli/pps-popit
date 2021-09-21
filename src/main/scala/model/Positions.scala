@@ -23,6 +23,7 @@ object Positions {
    */
   implicit class Positions(v: Vector2D) {
     def +(other: Vector2D): Vector2D = (v.x + other.x, v.y + other.y)
+    def -(other: Vector2D): Vector2D = (v.x - other.x, v.y - other.y)
     def *(value: Double): Vector2D = (v.x * value, v.y * value)
   }
 

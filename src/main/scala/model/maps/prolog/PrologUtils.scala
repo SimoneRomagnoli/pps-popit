@@ -23,9 +23,8 @@ object PrologUtils {
         .iterate(0)(_ + 1)
         .take(length)
         .toList
-        .toString()
-        .replace("List(", "")
-        .replace(")", "")
+        .map(_.toString)
+        .reduce((a, b) => a + "," + b)
 
     def theoryNodesIn(grid: Grid): String =
       "node(c(X,Y)):-member(X,[" + nodesToString(grid.width) + "]), member(Y,[" + nodesToString(
@@ -136,7 +135,7 @@ object PrologUtils {
   object Solutions {
 
     def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] = {
-      val directionlessTrack: List[Cell] = prologInfo
+      val track: List[Cell] = prologInfo
         .getTerm("P")
         .castTo(classOf[Struct])
         .listStream()
@@ -148,11 +147,10 @@ object PrologUtils {
         .toList
         .map(_.asInstanceOf[Cell])
 
-      var track: Seq[Cell] = Seq()
-      for (i <- 0 until directionlessTrack.size - 1)
-        track = track :+ directionlessTrack(i).directTowards(directionlessTrack(i + 1))
-      track = track :+ directionlessTrack.last.direct(RIGHT)
-      track
+      track.zipWithIndex.map {
+        case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)
+        case (cell, i)                        => cell.directTowards(track(i + 1))
+      }
     }
   }
 }

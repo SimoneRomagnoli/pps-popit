@@ -2,13 +2,22 @@ package model.entities.towers
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages._
 import model.Positions.Vector2D
 import model.actors.TowerActor
-import model.entities.balloons.Balloons.{Balloon, Simple}
+import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.towers.Towers.Tower
-import model.entities.towers.TowersTest.{balloon, balloonDetected, balloonPosition, dummyBalloonActor, dummyModel, tower, towerPosition, waitSomeTime}
+import model.entities.towers.TowersTest.{
+  balloon,
+  balloonDetected,
+  balloonPosition,
+  dummyBalloonActor,
+  dummyModel,
+  tower,
+  towerPosition,
+  waitSomeTime
+}
 import org.scalatest.wordspec.AnyWordSpecLike
 
 object TowersTest {

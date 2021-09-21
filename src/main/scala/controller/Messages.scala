@@ -1,6 +1,7 @@
 package controller
 
 import akka.actor.typed.ActorRef
+import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
@@ -13,7 +14,7 @@ object Messages {
   trait Update extends Message
 
   //VIEW
-  case class RenderEntities(entities: List[Any]) extends Render
+  case class RenderEntities(entities: List[Entity]) extends Render
   case class RenderMap(grid: Grid, track: Track) extends Render
 
   //CONTROLLER
@@ -25,14 +26,14 @@ object Messages {
 
   //GAME LOOP
   case object Tick extends Input
-  case class ModelUpdated(entities: List[Any]) extends Input
+  case class ModelUpdated(entities: List[Entity]) extends Input
 
   //MODEL
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
 
-  case class UpdateEntity(elapsedTime: Double, entities: List[Any], replyTo: ActorRef[Update])
+  case class UpdateEntity(elapsedTime: Double, entities: List[Entity], replyTo: ActorRef[Update])
       extends Update
-  case class EntityUpdated(entity: Any) extends Update
+  case class EntityUpdated(entity: Entity) extends Update
 
   //TOWER
   case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update

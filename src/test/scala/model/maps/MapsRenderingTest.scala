@@ -11,17 +11,19 @@ import scalafx.scene.layout.Pane
 import MapsRenderingTest._
 import akka.actor.typed.{ ActorRef, ActorSystem }
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Messages.{ Message, Render, RenderMap }
+import controller.Messages.{ Message, Render, RenderEntities, RenderMap }
 import javafx.scene.paint.ImagePattern
 import model.maps.Tracks.Track
 import org.scalatest.Ignore
 import javafx.scene.image.Image
 import scalafx.scene.paint.Color
 import view.View.ViewActor
+import model.entities.balloons.BalloonType._
+
+import scala.language.postfixOps
 
 import java.io.File
 
-@Ignore
 object MapsRenderingTest {
   val cellSize: Int = 60
   val canvas: Canvas = new Canvas(1200, 600)
@@ -43,6 +45,7 @@ object MapsRenderingTest {
     }
 }
 
+@Ignore
 class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   "The Rendering" when {
@@ -93,6 +96,19 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         appBuilder(canvas).main(Array())
       }
       "design the road" in {
+        ActorSystem[Message](
+          Behaviors.setup[Message] { ctx =>
+            val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
+            val grid: Grid = Grid(16, 8)
+            view ! RenderMap(grid, Track(grid))
+            view ! RenderEntities(List((Red balloon) in (300.0, 300.0)))
+            Behaviors.empty
+          },
+          "system"
+        )
+        appBuilder(ViewActor.canvas).main(Array())
+      }
+      "design balloons on the road" in {
         ActorSystem[Message](
           Behaviors.setup[Message] { ctx =>
             val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")

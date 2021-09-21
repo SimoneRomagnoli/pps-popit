@@ -2,9 +2,11 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Messages.{ Render, RenderMap }
+import controller.Messages.{ Render, RenderEntities, RenderMap }
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
+import model.entities.Entities.Entity
+import model.entities.balloons.Balloons.Balloon
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Tracks.Directions.RIGHT
 import scalafx.application.Platform
@@ -22,7 +24,22 @@ object View {
 
     def apply(): Behavior[Render] = Behaviors.setup { _ =>
       Behaviors.receiveMessage {
-        //case RenderEntities(entities: List[Any]) => ...
+        case RenderEntities(entities: List[Entity]) =>
+          Platform.runLater {
+            entities foreach {
+              case balloon: Balloon =>
+                val img: File = new File("src/main/resources/images/balloons/RED.png")
+                canvas.graphicsContext2D.setFill(new ImagePattern(new Image(img.toURI.toString)))
+                canvas.graphicsContext2D.fillRect(
+                  balloon.position.x,
+                  balloon.position.y,
+                  balloon.boundary * 0.75,
+                  balloon.boundary
+                )
+              case _ => println("vaffa")
+            }
+          }
+          Behaviors.same
 
         case RenderMap(grid, track) =>
           val cellSize: Int = 75

@@ -4,6 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages
 import controller.Messages.{ EntityUpdated, TickUpdate, Update, UpdateEntity }
+import model.entities.Entities.Entity
 
 object Model {
 
@@ -15,7 +16,7 @@ object Model {
 
     def running(
         ctx: ActorContext[Update],
-        entities: List[Any],
+        entities: List[Entity],
         actors: Seq[ActorRef[Update]]): Behavior[Update] =
       Behaviors.receiveMessage { case TickUpdate(elapsedTime, replyTo) =>
         actors foreach {
@@ -26,7 +27,7 @@ object Model {
 
     def updating(
         ctx: ActorContext[Update],
-        entities: List[Any],
+        entities: List[Entity],
         actors: Seq[ActorRef[Update]],
         replyTo: ActorRef[Messages.Input]): Behavior[Update] =
       Behaviors.receiveMessage {

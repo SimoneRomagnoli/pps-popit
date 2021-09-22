@@ -3,6 +3,7 @@ package model.entities
 import model.Positions.Vector2D
 import model.Positions._
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.Bullets.BasicBullet
 
 import scala.language.postfixOps
 
@@ -54,6 +55,14 @@ object Entities {
 
     def canSee(balloon: Balloon): Boolean =
       distance(position)(balloon position) < (balloon.boundary._2 + sightRange)
+  }
+
+  trait ShotAbility extends Entity {
+    def shotRatio: Double
+    def withShotRatioOf(ratio: Double): ShotAbility
+
+    def canAttackAfter: Double => Boolean =
+      lastShotTime => (System.currentTimeMillis() - lastShotTime) / 1000.0 >= shotRatio
   }
 
 }

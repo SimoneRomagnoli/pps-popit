@@ -7,26 +7,31 @@ import controller.Messages._
 import model.Positions.Vector2D
 import model.actors.TowerActor
 import model.entities.balloons.Balloons.{ Balloon, Simple }
-import model.entities.towers.Towers.Tower
+import model.entities.towers.Towers.{ BasicTower, Tower }
 import model.entities.towers.TowersTest.{
   balloon,
   balloonDetected,
   balloonPosition,
   dummyBalloonActor,
   dummyModel,
+  lastShotTime,
   tower,
   towerPosition,
   waitSomeTime
 }
 import org.scalatest.wordspec.AnyWordSpecLike
+import utils.Constants.{ shotRatio, sightRange }
+
+import scala.language.postfixOps
 
 object TowersTest {
 
   val balloonPosition: Vector2D = (6.0, 8.0)
   val towerPosition: Vector2D = (2.0, 1.0)
   var balloonDetected: Boolean = false
+  var lastShotTime: Double = 0.0
 
-  val tower: Tower = Tower(towerPosition)
+  val tower: Tower = new BasicTower(towerPosition, sightRange, shotRatio)
   var balloon: Balloon = Simple(balloonPosition)
 
   val dummyBalloonActor: Balloon => Behavior[Update] = b =>
@@ -60,32 +65,56 @@ object TowersTest {
 
 class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
-  val towerActor: ActorRef[Update] = testKit.spawn(TowerActor(Tower(towerPosition)))
+  val towerActor: ActorRef[Update] =
+    testKit.spawn(TowerActor(new BasicTower(towerPosition, sightRange, shotRatio)))
   val model: ActorRef[Update] = testKit.spawn(dummyModel(towerActor))
 
   val balloonActor: ActorRef[Update] =
     testKit.spawn(dummyBalloonActor(Simple(balloonPosition)))
 
-  "During local running" when {
+  "During a simple running" when {
     "tower and balloon has just spawned, the tower" should {
       "not see the balloon because it is across the map" in {
-        tower.position shouldBe towerPosition
-        balloon.position shouldBe balloonPosition
+        (tower position) shouldBe towerPosition
+        (balloon position) shouldBe balloonPosition
         tower canSee balloon shouldBe false
       }
     }
     "the balloon goes near the tower, it" should {
       "see the balloon because it is in tower's sight range" in {
         balloon = balloon in ((3.0, 2.0))
-        tower.position shouldBe towerPosition
+        (tower position) shouldBe towerPosition
         balloon.position.x should be < balloonPosition.x
         balloon.position.y should be < balloonPosition.y
         tower canSee balloon shouldBe true
       }
     }
+    "the tower can see the balloon, it" should {
+      "shot the balloon with the specified shot ratio" in {
+        (tower shotRatio) shouldBe shotRatio
+        tower canAttackAfter lastShotTime shouldBe true
+        lastShotTime = System.currentTimeMillis()
+        tower canAttackAfter lastShotTime shouldBe false
+        tower canAttackAfter lastShotTime shouldBe false
+        waitSomeTime()
+        tower canAttackAfter lastShotTime shouldBe true
+      }
+      "can change the shot frequency according to the shot ratio" in {
+        lastShotTime = 0.0
+        val newTower: Tower = tower withShotRatioOf 1.0
+        (newTower shotRatio) shouldBe 1.0
+        newTower canAttackAfter lastShotTime shouldBe true
+        lastShotTime = System.currentTimeMillis()
+        newTower canAttackAfter lastShotTime shouldBe false
+        waitSomeTime()
+        newTower canAttackAfter lastShotTime shouldBe false
+        waitSomeTime()
+        newTower canAttackAfter lastShotTime shouldBe true
+      }
+    }
   }
 
-  "During actor running" when {
+  "During a simple running with actors" when {
     "actors has just spawned, the tower" should {
       "not see the balloon" in {
         model ! Tick(balloonActor)

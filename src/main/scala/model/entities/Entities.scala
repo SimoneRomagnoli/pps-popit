@@ -53,7 +53,7 @@ object Entities {
     def withSightRangeOf(radius: Double): SightAbility
 
     def canSee(balloon: Balloon): Boolean =
-      distance(position)(balloon position) < ((balloon boundary) + sightRange)
+      distance(position)(balloon position) < (balloon.boundary._2 + sightRange)
   }
 
 }

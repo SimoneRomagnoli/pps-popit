@@ -71,12 +71,12 @@ object View {
             val rect: Rectangle = Rectangle(
               balloon.position.x,
               balloon.position.y,
-              balloon.boundary * 30,
-              balloon.boundary * 40
+              balloon.boundary._1,
+              balloon.boundary._2
             )
             rect.setFill(new ImagePattern(new Image(img.toURI.toString)))
             children.add(rect)
-          case _ => println("vaffa")
+          case _ =>
         }
       }
   }

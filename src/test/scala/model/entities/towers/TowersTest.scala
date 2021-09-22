@@ -22,8 +22,8 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 object TowersTest {
 
-  val balloonPosition: Vector2D = (6.0, 8.0)
-  val towerPosition: Vector2D = (2.0, 1.0)
+  val balloonPosition: Vector2D = (60.0, 80.0)
+  val towerPosition: Vector2D = (20.0, 10.0)
   var balloonDetected: Boolean = false
 
   val tower: Tower = Tower(towerPosition)
@@ -32,7 +32,7 @@ object TowersTest {
   val dummyBalloonActor: Balloon => Behavior[Update] = b =>
     Behaviors.receiveMessage {
       case UpdatePosition(replyTo) =>
-        val newBalloon: Balloon = b in ((b.position.x - 1, b.position.y - 2))
+        val newBalloon: Balloon = b in ((b.position.x - 20, b.position.y - 30))
         replyTo ! BalloonMoved(newBalloon)
         dummyBalloonActor(newBalloon)
       case _ => Behaviors.same

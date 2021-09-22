@@ -4,7 +4,6 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.Time._
 import controller.Messages._
-import model.maps.Grids.Grid
 
 import scala.concurrent.duration.DurationDouble
 

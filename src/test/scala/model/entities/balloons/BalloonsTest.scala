@@ -3,6 +3,7 @@ package model.entities.balloons
 import model.Positions.{ toVector, Vector2D }
 import model.entities.balloons.BalloonType.{ Green, Red }
 import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
+import model.entities.balloons.Constants.{ defaultBoundary, defaultPosition, defaultSpeed }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -23,16 +24,16 @@ class BalloonsTest extends AnyWordSpec with Matchers {
         (Green balloon) shouldBe complex(complex(simple()))
       }
       "have default position" in {
-        ((Red balloon) position) shouldBe zeroVector
-        ((Green balloon) position) shouldBe zeroVector
+        ((Red balloon) position) shouldBe defaultPosition
+        ((Green balloon) position) shouldBe defaultPosition
       }
       "have default speed" in {
-        ((Red balloon) speed) shouldBe zeroVector
-        ((Green balloon) speed) shouldBe zeroVector
+        ((Red balloon) speed) shouldBe defaultSpeed
+        ((Green balloon) speed) shouldBe defaultSpeed
       }
       "have default boundary" in {
-        ((Red balloon) boundary) shouldBe 1.0
-        ((Green balloon) boundary) shouldBe 1.0
+        ((Red balloon) boundary) shouldBe defaultBoundary
+        ((Green balloon) boundary) shouldBe defaultBoundary
       }
     }
     "changing his speed" should {

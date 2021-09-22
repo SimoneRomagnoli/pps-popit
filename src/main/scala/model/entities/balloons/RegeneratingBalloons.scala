@@ -3,6 +3,7 @@ package model.entities.balloons
 import model.Positions.Vector2D
 import model.entities.balloons.BalloonType.Green
 import model.entities.balloons.Balloons.{ Balloon, Complex, Simple }
+import model.entities.balloons.Constants.{ defaultBoundary, defaultPosition, defaultSpeed }
 
 object RegeneratingBalloons {
   val regenerationTime: Double = 50
@@ -25,9 +26,9 @@ object RegeneratingBalloons {
   }
 
   class RegeneratingSimple(
-      override val position: Vector2D = (0.0, 0.0),
-      override val speed: Vector2D = (0.0, 0.0),
-      override val boundary: Double = 1.0)
+      override val position: Vector2D = defaultPosition,
+      override val speed: Vector2D = defaultSpeed,
+      override val boundary: (Double, Double) = defaultBoundary)
       extends Simple(position, speed, boundary)
       with Regenerating
 

@@ -1,5 +1,6 @@
 package model.maps
 
+import model.Positions.Vector2D
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Plots.{ Plotter, PrologPlotter }
@@ -51,6 +52,12 @@ object Tracks {
 
     def start: Cell = cells.head
     def finish: Cell = cells.last
+
+    def exactPosition(linearPosition: Double): Vector2D =
+      cells(linearPosition.toInt).exactPosition(linearPosition.toInt match {
+        case 0 => RIGHT
+        case _ => cells(linearPosition.toInt).direction
+      })(linearPosition - linearPosition.toInt)
   }
 
   case class TrackMap(override val cells: Seq[Cell]) extends Track

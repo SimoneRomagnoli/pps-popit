@@ -126,7 +126,7 @@ object MapsRenderingTest {
     }
 }
 
-//@Ignore
+@Ignore
 class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   "The Rendering" when {

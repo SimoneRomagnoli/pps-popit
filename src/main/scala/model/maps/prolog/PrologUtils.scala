@@ -31,6 +31,10 @@ object PrologUtils {
         grid.height
       ) + "]).\n"
 
+    def gridLimits(grid: Grid): String =
+      s"maxX(X):- X<${grid.width}.\n" +
+        s"maxY(Y):- Y<${grid.height}.\n"
+
     implicit def fileToTheory[T](s: String): Theory =
       Theory.parseWithStandardOperators(s)
 
@@ -46,7 +50,7 @@ object PrologUtils {
       val source = Source.fromFile(theoryResourceName)
       val baseTheory: String = source.mkString
       source.close()
-      theoryNodesIn(grid) + baseTheory
+      gridLimits(grid) + theoryNodesIn(grid) + baseTheory
     }
   }
 
@@ -120,7 +124,7 @@ object PrologUtils {
       cell.toString.replace("GridCell", "c").replace(",NONE", "")
 
     def baseQuery(from: Cell, to: Cell): String =
-      "allPath(" + prologCell(from) + ", " + prologCell(to) + ", P)."
+      "path(" + prologCell(from) + ", " + prologCell(to) + ", P)."
 
     object PrologQuery {
 

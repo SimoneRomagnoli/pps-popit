@@ -126,7 +126,7 @@ object MapsRenderingTest {
     }
 }
 
-@Ignore
+//@Ignore
 class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   "The Rendering" when {
@@ -195,7 +195,7 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
             val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
             val track: Track = Track(grid)
             view ! RenderMap(grid, track)
-            val entities: List[Entity] = List((Red balloon) in track.start.topLeftPosition)
+            val entities: List[Entity] = List(Red balloon)
             val model: ActorRef[Update] = ctx.spawn(dummyModel(entities, track), "model")
             val gameLoop: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")
             gameLoop ! Start()

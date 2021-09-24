@@ -16,11 +16,9 @@ import scalafx.scene.Node
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Pane
 import scalafx.scene.shape.Rectangle
-import scalafx.scene.text.Font
 import utils.Constants
 
-import java.io.{ File, FileInputStream }
-import scala.io.Source
+import java.io.File
 import scala.util.Random
 
 object View {
@@ -54,8 +52,10 @@ object View {
     val grass: File = new File("src/main/resources/images/backgrounds/GRASS.png")
 
     grid.cells foreach { cell =>
-      val rect: Rectangle = Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
+      val rect: Rectangle =
+        Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
       rect.setFill(new ImagePattern(new Image(grass.toURI.toString)))
+
       children.add(rect)
     }
 
@@ -76,12 +76,6 @@ object View {
     def draw(track: Track): Unit = Platform.runLater {
       children.remove(children.size - 1)
       mapNodes = grid.width * grid.height + track.cells.size
-      val img: File = new File("src/main/resources/images/backgrounds/GRASS.png")
-      grid.cells foreach { cell =>
-        val rect: Rectangle = Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
-        rect.setFill(new ImagePattern(new Image(img.toURI.toString)))
-        children.add(rect)
-      }
       track.cells.prepended(GridCell(-1, 0, RIGHT)).sliding(2).foreach { couple =>
         val name: String =
           couple.head.direction.toString + "-" + couple.last.direction.toString + ".png"

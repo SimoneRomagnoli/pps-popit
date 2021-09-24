@@ -111,11 +111,12 @@ object MapsRenderingTest {
         val newBalloon: Balloon = currentCell match {
           case start if start == track.start =>
             balloon.in(
-              currentCell.exactPosition(RIGHT)(linearPosition - linearPosition.toInt) - (15.0, 20.0)
+              currentCell
+                .vectorialPosition(RIGHT)(linearPosition - linearPosition.toInt) - (15.0, 20.0)
             )
           case _ =>
             balloon.in(
-              currentCell.exactPosition(track.cells(linearPosition.toInt - 1).direction)(
+              currentCell.vectorialPosition(track.cells(linearPosition.toInt - 1).direction)(
                 linearPosition - linearPosition.toInt
               ) - (15.0, 20.0)
             )

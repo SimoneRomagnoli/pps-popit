@@ -1,10 +1,10 @@
 package model.maps
 
 import model.Positions.Vector2D
-import model.maps.Cells.Cell
+import model.maps.Cells.{ cellSize, Cell }
 import model.maps.Grids.Grid
 import model.maps.Plots.{ Plotter, PrologPlotter }
-import model.maps.Tracks.Directions.{ LEFT, RIGHT }
+import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
 
 import scala.language.postfixOps
 
@@ -52,19 +52,27 @@ object Tracks {
 
     def start: Cell = cells.head
     def finish: Cell = cells.last
-
-    def exactPosition(linearPosition: Double): Vector2D =
-      cells(linearPosition.toInt).exactPosition(linearPosition.toInt match {
-        case 0 => RIGHT
-        case _ => cells(linearPosition.toInt).direction
-      })(linearPosition - linearPosition.toInt)
   }
 
   case class TrackMap(override val cells: Seq[Cell]) extends Track
 
   object Track {
 
+    def apply(): Track =
+      TrackMap(Seq())
+
     def apply(grid: Grid, plotter: Plotter = PrologPlotter()): Track =
       TrackMap(plotter in grid startingFrom LEFT endingAt RIGHT plot)
+  }
+
+  implicit class RichTrack(track: Track) {
+
+    def exactPositionFrom(linearPosition: Double): Vector2D =
+      track
+        .cells(linearPosition.toInt)
+        .vectorialPosition(linearPosition.toInt match {
+          case 0 => RIGHT
+          case _ => track.cells(linearPosition.toInt - 1).direction
+        })(linearPosition - linearPosition.toInt)
   }
 }

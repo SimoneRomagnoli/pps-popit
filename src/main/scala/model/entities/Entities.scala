@@ -4,6 +4,7 @@ import model.Positions.Vector2D
 import model.Positions._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.BasicBullet
+import model.maps.Tracks.Track
 
 import scala.language.postfixOps
 
@@ -17,7 +18,11 @@ object Entities {
    *   - can update itself
    */
   trait Entity {
-    type Boundary
+
+    type Boundary <: {
+      def _1: Double
+      def _2: Double
+    }
     def boundary: Boundary
     def position: Vector2D
     def in(position: Vector2D): Entity
@@ -32,10 +37,17 @@ object Entities {
   trait MovementAbility extends Entity {
     def speed: Vector2D
     def at(speed: Vector2D): Entity
-    private def move(dt: Double): Entity = this in (position + (speed * dt))
+    protected def move(dt: Double): Entity = this in (position + (speed * dt))
 
     abstract override def update(dt: Double): Entity =
       super.update(dt).asInstanceOf[MovementAbility] move dt
+  }
+
+  trait TrackFollowing extends MovementAbility {
+    def track: Track
+
+    override protected def move(linearPosition: Double): Entity =
+      this.in(track exactPositionFrom linearPosition)
   }
 
   /**

@@ -37,8 +37,8 @@ object RegeneratingBalloons {
       with Regenerating
 
   def regenerating(b: Balloon): Regenerating = b match {
-    case Complex(balloon) => new RegeneratingComplex(regenerating(balloon))
-    case Simple(p, s, b)  => new RegeneratingSimple(p, s, b)
-    case _                => new RegeneratingSimple()
+    case Complex(balloon)   => new RegeneratingComplex(regenerating(balloon))
+    case Simple(p, s, b, _) => new RegeneratingSimple(p, s, b)
+    case _                  => new RegeneratingSimple()
   }
 }

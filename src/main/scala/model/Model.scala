@@ -12,8 +12,11 @@ import controller.Messages.{
   Update,
   UpdateEntity
 }
+import model.actors.{ BalloonActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonType.Red
+import model.entities.balloons.Balloons.{ simple, Balloon, Simple }
+import model.entities.towers.Towers.Tower
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import utils.Constants
@@ -29,8 +32,12 @@ object Model {
         val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
         val track: Track = Track(grid)
         replyTo ! MapCreated(track)
-        val entities: List[Entity] = List((Red balloon) in track.start.topLeftPosition)
-        running(ctx, entities, Seq(), track)
+        val entities: List[Entity] = List(Simple(track = track))
+        val actors: Seq[ActorRef[Update]] = entities map {
+          case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+          case tower: Tower     => ctx.spawnAnonymous(TowerActor(tower))
+        }
+        running(ctx, entities, actors, track)
     }
 
     def running(

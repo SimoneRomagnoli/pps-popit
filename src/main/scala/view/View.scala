@@ -15,7 +15,7 @@ import scalafx.application.Platform
 import scalafx.scene.Node
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Pane
-import scalafx.scene.shape.Rectangle
+import scalafx.scene.shape.{ Rectangle, Shape }
 import utils.Constants
 
 import java.io.File
@@ -92,17 +92,20 @@ object View {
       entities foreach {
         case balloon: Balloon =>
           val img: File = new File("src/main/resources/images/balloons/RED.png")
-          val rect: Rectangle = Rectangle(
-            balloon.position.x,
-            balloon.position.y,
-            balloon.boundary._1,
-            balloon.boundary._2
-          )
-          rect.setFill(new ImagePattern(new Image(img.toURI.toString)))
-          children.add(rect)
+          val viewEntity: Shape = toShape(balloon)
+          viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          children.add(viewEntity)
         case _ =>
       }
     }
+
+    def toShape(entity: Entity): Shape =
+      Rectangle(
+        entity.position.x - entity.boundary._1 / 2,
+        entity.position.y - entity.boundary._2 / 2,
+        entity.boundary._1,
+        entity.boundary._2
+      )
   }
 
 }

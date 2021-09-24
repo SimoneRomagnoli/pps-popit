@@ -20,9 +20,7 @@ case class BalloonActor private (
   def default(): Behavior[Update] = Behaviors.receiveMessage {
     case UpdateEntity(elapsedTime, _, replyTo, track) =>
       linearPosition = linearPosition + balloon.speed.x * elapsedTime
-      balloon = balloon in (track.exactPosition(
-        linearPosition
-      ) - (balloon.boundary._1 / 2, balloon.boundary._2 / 2))
+      balloon = balloon.update(linearPosition).asInstanceOf[Balloon]
       replyTo ! EntityUpdated(balloon)
       Behaviors.same
   }

@@ -1,9 +1,10 @@
 package model.entities.balloons
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ Entity, MovementAbility, Poppable }
+import model.entities.Entities.{ Entity, MovementAbility, Poppable, TrackFollowing }
 import model.entities.balloons.Balloons._
 import model.entities.balloons.Constants.{ defaultBoundary, defaultPosition, defaultSpeed }
+import model.maps.Tracks.Track
 
 import scala.annotation.tailrec
 import scala.language.postfixOps
@@ -13,7 +14,7 @@ object Balloons {
   /**
    * A [[Balloon]] is an [[Entity]] with the ability to move thanks to [[MovementAbility]].
    */
-  trait Balloon extends Entity with MovementAbility with Poppable {
+  trait Balloon extends Entity with TrackFollowing with Poppable {
     type Boundary = (Double, Double)
 
     @tailrec
@@ -24,13 +25,14 @@ object Balloons {
     override def position: Vector2D = retrieve(_.position).asInstanceOf[Vector2D]
     override def speed: Vector2D = retrieve(_.speed).asInstanceOf[Vector2D]
     override def boundary: (Double, Double) = retrieve(_.boundary).asInstanceOf[(Double, Double)]
+    override def track: Track = retrieve(_.track).asInstanceOf[Track]
 
     private def change(f: => Balloon): Balloon = this match {
       case Complex(balloon) => complex(balloon change f)
       case _                => f
     }
-    override def at(s: Vector2D): Balloon = change(Simple(position, s))
-    override def in(p: Vector2D): Balloon = change(Simple(p, speed))
+    override def at(s: Vector2D): Balloon = change(Simple(position, s, track = track))
+    override def in(p: Vector2D): Balloon = change(Simple(p, speed, track = track))
 
     override def pop(bullet: Entity): Option[Balloon] = this match {
       case Complex(balloon) => Some(balloon)
@@ -50,7 +52,8 @@ object Balloons {
   case class Simple(
       override val position: Vector2D = defaultPosition,
       override val speed: Vector2D = defaultSpeed,
-      override val boundary: (Double, Double) = defaultBoundary)
+      override val boundary: (Double, Double) = defaultBoundary,
+      override val track: Track = Track())
       extends Balloon
   case class Complex(balloon: Balloon) extends Balloon
 
@@ -88,6 +91,6 @@ object BalloonType {
 
 object Constants {
   val defaultPosition: Vector2D = (0.0, 0.0)
-  val defaultSpeed: Vector2D = (0.0, 0.0)
+  val defaultSpeed: Vector2D = (1.0, 1.0)
   val defaultBoundary: (Double, Double) = (30.0, 40.0)
 }

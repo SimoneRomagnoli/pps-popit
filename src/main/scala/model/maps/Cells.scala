@@ -89,12 +89,12 @@ object Cells {
 
     def centralPosition: Vector2D = this.topLeftPosition + (cellSize / 2, cellSize / 2)
 
-    def exactPosition(previous: Direction)(percentage: Double): Vector2D = percentage match {
-      case x if x < 0.5 => centralPosition(previous)(percentage)
-      case _            => centralPosition(cell direction)(percentage)
+    def vectorialPosition(previous: Direction)(percentage: Double): Vector2D = percentage match {
+      case x if x < 0.5 => cellOnTrackPosition(previous)(percentage)
+      case _            => cellOnTrackPosition(cell direction)(percentage)
     }
 
-    def centralPosition(direction: Direction)(percentage: Double): Vector2D = direction match {
+    def cellOnTrackPosition(direction: Direction)(percentage: Double): Vector2D = direction match {
       case UP    => cell.topLeftPosition + (cellSize / 2, cellSize * (1 - percentage))
       case DOWN  => cell.topLeftPosition + (cellSize / 2, cellSize * percentage)
       case LEFT  => cell.topLeftPosition + (cellSize * (1 - percentage), cellSize / 2)

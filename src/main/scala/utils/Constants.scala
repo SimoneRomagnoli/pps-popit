@@ -21,4 +21,13 @@ object Constants {
   val freezingTime: Double = 1.0
   val bulletBoundary: (Double, Double) = (2.0, 1.0)
   val balloonBoundary: Double = 1.0
+
+  val loadingLabels: List[String] = List(
+    "The monkeys are teaming up...",
+    "We are building the towers...",
+    "We are blowing the balloons...",
+    "We are cleaning the roads...",
+    "We are recharging the bullets...",
+    "Your wallet is being prepared..."
+  )
 }

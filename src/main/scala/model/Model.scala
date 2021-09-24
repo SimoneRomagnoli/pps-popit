@@ -20,7 +20,7 @@ object Model {
       case NewMap(replyTo) =>
         val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
         val track: Track = Track(grid)
-        replyTo ! MapCreated(grid, track)
+        replyTo ! MapCreated(track)
         val entities: List[Entity] = List((Red balloon) in track.start.topLeftPosition)
         running(ctx, entities, Seq(), track)
     }

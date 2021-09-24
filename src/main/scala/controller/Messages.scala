@@ -15,7 +15,8 @@ object Messages {
 
   //VIEW
   case class RenderEntities(entities: List[Entity]) extends Render
-  case class RenderMap(grid: Grid, track: Track) extends Render
+  case class RenderMap(track: Track) extends Render
+  case class RenderLoading() extends Render
 
   //CONTROLLER
   case class NewGame() extends Input
@@ -26,7 +27,7 @@ object Messages {
   //GAME LOOP
   case object Tick extends Input
   case class Start() extends Input
-  case class MapCreated(grid: Grid, track: Track) extends Input
+  case class MapCreated(track: Track) extends Input
   case class ModelUpdated(entities: List[Entity]) extends Input
 
   //MODEL

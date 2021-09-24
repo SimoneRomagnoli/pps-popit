@@ -41,8 +41,8 @@ object GameLoop {
       case Tick =>
         model ! TickUpdate(elapsedTime(frameRate)(timeRatio), ctx.self)
         Behaviors.same
-      case MapCreated(grid, track) =>
-        view ! RenderMap(grid, track)
+      case MapCreated(track) =>
+        view ! RenderMap(track)
         Behaviors.same
       case ModelUpdated(entities) =>
         view ! RenderEntities(entities)

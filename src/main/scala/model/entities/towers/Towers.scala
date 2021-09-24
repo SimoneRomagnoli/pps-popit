@@ -3,7 +3,6 @@ package model.entities.towers
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ BasicBullet, CannonBall, Dart, IceBall }
-import utils.Constants
 import utils.Constants.{
   bulletBoundary,
   damage,
@@ -12,7 +11,8 @@ import utils.Constants.{
   radius,
   shotRatio,
   sightRange,
-  speed
+  speed,
+  towerDefaultBoundary
 }
 
 import scala.language.{ implicitConversions, postfixOps }
@@ -23,7 +23,7 @@ object Towers {
    * A [[Tower]] is an [[Entity]] with the ability of see [[Balloon]] object in its sight range
    */
   trait Tower extends Entity with SightAbility with ShotAbility {
-    type Boundary = Double
+    type Boundary = (Double, Double) // Base & Height
 
     override def withSightRangeOf(radius: Double): Tower
 
@@ -41,7 +41,7 @@ object Towers {
       override val sightRange: Double,
       override val shotRatio: Double)
       extends Tower {
-    override def boundary: Double = sightRange
+    override def boundary: (Double, Double) = towerDefaultBoundary
 
     override def in(pos: Vector2D): Tower = this match {
       case BaseTower(bullet, _, range, ratio)   => BaseTower(bullet, pos, range, ratio)
@@ -118,6 +118,5 @@ object Towers {
         case Ammo(b) => BaseTower(b.asInstanceOf[Dart], position, sightRange, shotRatio)
       }
     }
-
   }
 }

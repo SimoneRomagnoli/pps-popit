@@ -15,6 +15,7 @@ object Constants {
   val position: Vector2D = (0.0, 0.0)
   val sightRange: Double = 1.0
   val shotRatio: Double = 0.5
+  val towerDefaultBoundary: (Double, Double) = (1.0, 1.0)
   val speed: Vector2D = (1.0, 1.0)
   val damage: Double = 1.0
   val radius: Double = 2.0

@@ -1,6 +1,6 @@
 package model.entities.bullets
 
-import model.Positions.{ toVector, Vector2D }
+import model.Positions.{ fromTuple, Vector2D }
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -40,6 +40,6 @@ class BulletsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "be able to move" in {
-    (dart at (2.0, 2.0)).update(5.0).position shouldBe toVector((10.0, 10.0))
+    (dart at (2.0, 2.0)).update(5.0).position shouldBe fromTuple((10.0, 10.0))
   }
 }

@@ -3,17 +3,13 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.TowerType.{ Base, Cannon, Ice }
-import model.entities.towers.Towers.{ BaseTower, BasicTower, CannonTower, IceTower, Tower }
+import model.entities.towers.Towers.{ BaseTower, CannonTower, IceTower, Tower }
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants.{ position, shotRatio, sightRange }
 
 import scala.language.postfixOps
 
-object TowerTypesTest {
-
-  val basicTower: BasicTower = new BasicTower(position, sightRange, shotRatio)
-
-}
+object TowerTypesTest {}
 
 class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 

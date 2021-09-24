@@ -1,6 +1,6 @@
 package model.entities.balloons
 
-import model.Positions.{ toVector, Vector2D }
+import model.Positions.{ fromTuple, Vector2D }
 import model.entities.balloons.BalloonType.{ Blue, Green, Red }
 import model.entities.balloons.RegeneratingBalloons.{ regenerating, regenerationTime, Regenerating }
 import org.scalatest.flatspec.AnyFlatSpec
@@ -25,8 +25,10 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "be able to move" in {
-    (regenerating(Red balloon) at (2.0, 2.0)).update(5.0).position shouldBe toVector((10.0, 10.0))
-    (regenerating(Green balloon) at (2.0, 2.0)).update(5.0).position shouldBe toVector((10.0, 10.0))
+    (regenerating(Red balloon) at (2.0, 2.0)).update(5.0).position shouldBe fromTuple((10.0, 10.0))
+    (regenerating(Green balloon) at (2.0, 2.0)).update(5.0).position shouldBe fromTuple(
+      (10.0, 10.0)
+    )
   }
 
   it should "regenerate its life" in {

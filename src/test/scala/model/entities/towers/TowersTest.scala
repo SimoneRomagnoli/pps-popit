@@ -3,7 +3,8 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
-import model.entities.towers.Towers.{ BasicTower, Tower }
+import model.entities.towers.Towers.TowerType.Base
+import model.entities.towers.Towers.Tower
 import model.entities.towers.TowersTest.{
   balloon,
   balloonPosition,
@@ -23,7 +24,8 @@ object TowersTest {
   val towerPosition: Vector2D = (20.0, 10.0)
   var lastShotTime: Double = 0.0
 
-  val tower: Tower = new BasicTower(towerPosition, sightRange, shotRatio)
+  val tower: Tower =
+    (Base tower) in towerPosition withSightRangeOf sightRange withShotRatioOf shotRatio
   var balloon: Balloon = Simple(balloonPosition)
 
   def waitSomeTime(): Unit = Thread.sleep(500)

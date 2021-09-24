@@ -3,7 +3,7 @@ package model.entities
 import model.Positions.Vector2D
 import model.Positions._
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.BasicBullet
+import model.entities.bullets.Bullets.{ BasicBullet, Bullet }
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -64,6 +64,9 @@ object Entities {
    */
   trait SightAbility extends Entity {
     def sightRange: Double
+    def direction: Vector2D
+
+    def rotateTo(dir: Vector2D): SightAbility
     def withSightRangeOf(radius: Double): SightAbility
 
     def canSee(balloon: Balloon): Boolean =
@@ -71,6 +74,7 @@ object Entities {
   }
 
   trait ShotAbility extends Entity {
+    def bullet: Bullet
     def shotRatio: Double
     def withShotRatioOf(ratio: Double): ShotAbility
 

@@ -16,7 +16,8 @@ import scalafx.application.Platform
 import scalafx.scene.Node
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Pane
-import scalafx.scene.shape.{ Rectangle, Shape }
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import utils.Constants
 
 import java.io.File
@@ -100,7 +101,11 @@ object View {
           val img: File = new File("src/main/resources/images/towers/MONKEY.png")
           val viewEntity: Shape = toShape(tower)
           viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
           children.add(viewEntity)
+          val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)
+          circle.setFill(Color.Gray.opacity(0.45))
+          children.add(circle)
         case _ =>
       }
     }

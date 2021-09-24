@@ -21,9 +21,11 @@ import model.actors.TowerActorTest.{
   waitSomeTime
 }
 import model.entities.balloons.Balloons.{ Balloon, Simple }
-import model.entities.towers.Towers.BasicTower
+import model.entities.towers.Towers.TowerType.Base
+import model.entities.towers.Towers.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants.{ shotRatio, sightRange }
+import scala.language.postfixOps
 
 object TowerActorTest {
 
@@ -62,8 +64,11 @@ object TowerActorTest {
 
 class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
+  val tower: Tower =
+    (Base tower) in towerPosition withSightRangeOf sightRange withShotRatioOf shotRatio
+
   val towerActor: ActorRef[Update] =
-    testKit.spawn(TowerActor(new BasicTower(towerPosition, sightRange, shotRatio)))
+    testKit.spawn(TowerActor(tower))
   val model: ActorRef[Update] = testKit.spawn(dummyModel(towerActor))
 
   val balloonActor: ActorRef[Update] =

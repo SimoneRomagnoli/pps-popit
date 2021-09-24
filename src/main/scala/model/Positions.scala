@@ -34,7 +34,7 @@ object Positions {
    * @return
    *   the [[Vector2D]] corresponding to the given [[Tuple2]].
    */
-  implicit def toVector(t: (Double, Double)): Vector2DImpl = Vector2DImpl(t._1, t._2)
+  implicit def fromTuple(t: (Double, Double)): Vector2DImpl = Vector2DImpl(t._1, t._2)
 
   /**
    * Calculates the distance between two points.
@@ -44,5 +44,14 @@ object Positions {
    */
   def distance(from: Vector2D)(to: Vector2D): Double =
     Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2))
+
+  def vector(from: Vector2D, to: Vector2D): Vector2D = (to.x - from.x, to.y - from.y)
+
+  def normalized(vector: Vector2D): Vector2D = {
+    val magnitude = magnitudeOf(vector)
+    (vector.x / magnitude, vector.y / magnitude)
+  }
+
+  def magnitudeOf(vector: Vector2D): Double = Math.sqrt(vector.x * vector.x + vector.y * vector.y)
 
 }

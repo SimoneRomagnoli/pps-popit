@@ -1,6 +1,6 @@
 package model.entities.balloons
 
-import model.Positions.{ toVector, Vector2D }
+import model.Positions.{ fromTuple, Vector2D }
 import model.entities.balloons.BalloonType.{ Green, Red }
 import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
 import model.entities.balloons.Constants.{ defaultBoundary, defaultPosition, defaultSpeed }
@@ -66,7 +66,9 @@ class BalloonsTest extends AnyWordSpec with Matchers {
     }
     "updating" should {
       "change his position" in {
-        ((Red balloon) at toVector((2.0, 2.0))).update(5.0).position shouldBe toVector((10.0, 10.0))
+        ((Red balloon) at fromTuple((2.0, 2.0))).update(5.0).position shouldBe fromTuple(
+          (10.0, 10.0)
+        )
       }
     }
     "popped" should {

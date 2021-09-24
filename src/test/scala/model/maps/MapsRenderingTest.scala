@@ -181,7 +181,7 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           Behaviors.setup[Message] { ctx =>
             val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
             val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
-            view ! RenderMap(grid, Track(grid))
+            view ! RenderMap(Track(grid))
             Behaviors.empty
           },
           "system"
@@ -194,7 +194,7 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
             val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
             val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
             val track: Track = Track(grid)
-            view ! RenderMap(grid, track)
+            view ! RenderMap(track)
             val entities: List[Entity] = List(Red balloon)
             val model: ActorRef[Update] = ctx.spawn(dummyModel(entities, track), "model")
             val gameLoop: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")

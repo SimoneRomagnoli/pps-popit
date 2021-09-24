@@ -3,6 +3,7 @@ package model.maps
 import model.Positions._
 import model.Positions.Vector2D
 import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, NONE, RIGHT, UP }
+import model.maps.Tracks.Track
 import utils.Constants
 
 import scala.language.postfixOps
@@ -82,7 +83,11 @@ object Cells {
       case _                                    => cell
     }
 
+    def in(track: Track): Boolean = track.cells.map(c => (c.x, c.y)).contains((cell.x, cell.y))
+
     def topLeftPosition: Vector2D = (cell.x * cellSize, cell.y * cellSize)
+
+    def centralPosition: Vector2D = this.topLeftPosition + (cellSize / 2, cellSize / 2)
 
     def exactPosition(previous: Direction)(percentage: Double): Vector2D = percentage match {
       case x if x < 0.5 => centralPosition(previous)(percentage)

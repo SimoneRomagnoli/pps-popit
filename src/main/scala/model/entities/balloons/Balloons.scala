@@ -34,6 +34,8 @@ object Balloons {
     override def at(s: Vector2D): Balloon = change(Simple(position, s, track = track))
     override def in(p: Vector2D): Balloon = change(Simple(p, speed, track = track))
 
+    override def on(t: Track): TrackFollowing = change(Simple(position, speed, track = t))
+
     override def pop(bullet: Entity): Option[Balloon] = this match {
       case Complex(balloon) => Some(balloon)
       case _                => None

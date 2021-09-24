@@ -7,6 +7,7 @@ import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ cellSize, Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
@@ -93,6 +94,11 @@ object View {
         case balloon: Balloon =>
           val img: File = new File("src/main/resources/images/balloons/RED.png")
           val viewEntity: Shape = toShape(balloon)
+          viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          children.add(viewEntity)
+        case tower: Tower =>
+          val img: File = new File("src/main/resources/images/towers/MONKEY.png")
+          val viewEntity: Shape = toShape(tower)
           viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
           children.add(viewEntity)
         case _ =>

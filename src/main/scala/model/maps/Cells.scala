@@ -52,6 +52,8 @@ object Cells {
     override def direct(dir: Direction): Cell = GridCell(x, y, dir)
   }
 
+  implicit def toPosition(cell: Cell): Vector2D = cell.centralPosition
+
   /**
    * Enriched cell, with pimped operators.
    *

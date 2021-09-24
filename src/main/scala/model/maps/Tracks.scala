@@ -1,10 +1,11 @@
 package model.maps
 
 import model.Positions.Vector2D
-import model.maps.Cells.{ cellSize, Cell }
+import utils.Constants
+import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Plots.{ Plotter, PrologPlotter }
-import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
+import model.maps.Tracks.Directions.{ LEFT, RIGHT }
 
 import scala.language.postfixOps
 
@@ -59,7 +60,7 @@ object Tracks {
   object Track {
 
     def apply(): Track =
-      TrackMap(Seq())
+      TrackMap(Constants.basicTrack)
 
     def apply(grid: Grid, plotter: Plotter = PrologPlotter()): Track =
       TrackMap(plotter in grid startingFrom LEFT endingAt RIGHT plot)

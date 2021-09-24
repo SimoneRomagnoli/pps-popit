@@ -45,6 +45,7 @@ object Entities {
 
   trait TrackFollowing extends MovementAbility {
     def track: Track
+    def on(track: Track): TrackFollowing
 
     override protected def move(linearPosition: Double): Entity =
       this.in(track exactPositionFrom linearPosition)

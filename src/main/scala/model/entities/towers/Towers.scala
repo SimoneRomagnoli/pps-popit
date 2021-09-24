@@ -66,10 +66,10 @@ object Towers {
   }
 
   case class BaseTower(
-      bullet: Dart,
-      override val position: Vector2D,
-      override val sightRange: Double,
-      override val shotRatio: Double)
+      bullet: Dart = null,
+      override val position: Vector2D = (100.0, 200.0),
+      override val sightRange: Double = 20.0,
+      override val shotRatio: Double = 1.0)
       extends BasicTower(position, sightRange, shotRatio)
 
   case class IceTower(

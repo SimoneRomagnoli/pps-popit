@@ -56,19 +56,17 @@ class BalloonsTest extends AnyWordSpec with Matchers {
         ((Green balloon) in oneVector).position shouldBe oneVector
       }
       "maintain the same speed" in {
-        ((Red balloon) in oneVector).speed shouldBe zeroVector
-        ((Green balloon) in oneVector).speed shouldBe zeroVector
+        ((Red balloon) in oneVector).speed shouldBe oneVector
+        ((Green balloon) in oneVector).speed shouldBe oneVector
       }
       "not change his structure" in {
-        ((Red balloon) in oneVector) shouldBe Simple(oneVector, zeroVector)
-        ((Green balloon) in oneVector) shouldBe complex(complex(Simple(oneVector, zeroVector)))
+        ((Red balloon) in oneVector) shouldBe Simple(oneVector, oneVector)
+        ((Green balloon) in oneVector) shouldBe complex(complex(Simple(oneVector, oneVector)))
       }
     }
     "updating" should {
       "change his position" in {
-        ((Red balloon) at fromTuple((2.0, 2.0))).update(5.0).position shouldBe fromTuple(
-          (10.0, 10.0)
-        )
+        ((Red balloon) at zeroVector).update(5.0).position should not be zeroVector
       }
     }
     "popped" should {

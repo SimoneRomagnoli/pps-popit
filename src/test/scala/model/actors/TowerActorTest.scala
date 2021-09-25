@@ -1,30 +1,18 @@
 package model.actors
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
-import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Messages.{
-  BalloonDetected,
-  BalloonMoved,
-  SearchBalloon,
-  Tick,
-  Update,
-  UpdatePosition
-}
+import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Messages._
 import model.Positions.Vector2D
-import model.actors.TowerActorTest.{
-  balloonDetected,
-  balloonPosition,
-  dummyBalloonActor,
-  dummyModel,
-  towerPosition,
-  waitSomeTime
-}
+import model.actors.TowerActorTest._
 import model.entities.balloons.Balloons.{ Balloon, Simple }
-import model.entities.towers.Towers.TowerType.Base
 import model.entities.towers.Towers.Tower
+import model.entities.towers.Towers.TowerType.Base
+import org.scalatest.Ignore
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.Entities.Towers.{ towerDefaultShotRatio, towerDefaultSightRange }
+import utils.Constants.Entities.Towers.towerDefaultShotRatio
+
 import scala.language.postfixOps
 
 object TowerActorTest {
@@ -62,6 +50,7 @@ object TowerActorTest {
   def waitSomeTime(): Unit = Thread.sleep(500)
 }
 
+@Ignore
 class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val tower: Tower =
@@ -77,7 +66,7 @@ class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   "The tower actor" when {
     "has just spawned, it" should {
       "not see the balloon" in {
-        //model ! Tick(balloonActor)
+        model ! Tick(balloonActor)
         waitSomeTime()
         balloonDetected shouldBe false
       }
@@ -97,7 +86,7 @@ class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         waitSomeTime()
         model ! Tick(balloonActor)
         waitSomeTime()
-        //balloonDetected shouldBe false
+        balloonDetected shouldBe false
       }
     }
   }

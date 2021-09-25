@@ -3,9 +3,9 @@ package model.entities.balloons
 import model.Positions.{ fromTuple, Vector2D }
 import model.entities.balloons.BalloonType.{ Green, Red }
 import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
-import model.entities.balloons.Constants.{ defaultBoundary, defaultPosition, defaultSpeed }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import utils.Constants.{ balloonDefaultBoundary, defaultPosition, defaultSpeed }
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -32,8 +32,8 @@ class BalloonsTest extends AnyWordSpec with Matchers {
         ((Green balloon) speed) shouldBe defaultSpeed
       }
       "have default boundary" in {
-        ((Red balloon) boundary) shouldBe defaultBoundary
-        ((Green balloon) boundary) shouldBe defaultBoundary
+        ((Red balloon) boundary) shouldBe balloonDefaultBoundary
+        ((Green balloon) boundary) shouldBe balloonDefaultBoundary
       }
     }
     "changing his speed" should {

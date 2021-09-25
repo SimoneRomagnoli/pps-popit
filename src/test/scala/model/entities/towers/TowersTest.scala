@@ -14,7 +14,7 @@ import model.entities.towers.TowersTest.{
   waitSomeTime
 }
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.{ shotRatio, sightRange }
+import utils.Constants.{ defaultShotRatio, defaultSightRange }
 
 import scala.language.postfixOps
 
@@ -25,7 +25,7 @@ object TowersTest {
   var lastShotTime: Double = 0.0
 
   val tower: Tower =
-    (Base tower) in towerPosition withSightRangeOf sightRange withShotRatioOf shotRatio
+    (Base tower) in towerPosition withSightRangeOf defaultSightRange withShotRatioOf defaultShotRatio
   var balloon: Balloon = Simple(balloonPosition)
 
   def waitSomeTime(): Unit = Thread.sleep(500)
@@ -52,7 +52,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     }
     "the tower can see the balloon, it" should {
       "shot the balloon with the specified shot ratio" in {
-        (tower shotRatio) shouldBe shotRatio
+        (tower shotRatio) shouldBe defaultShotRatio
         tower canAttackAfter lastShotTime shouldBe true
         lastShotTime = System.currentTimeMillis()
         tower canAttackAfter lastShotTime shouldBe false

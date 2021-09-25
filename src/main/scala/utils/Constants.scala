@@ -14,17 +14,17 @@ object Constants {
   val width: Double = screenWidth * 3 / 4
   val height: Double = width * heightRatio / widthRatio
 
-  val position: Vector2D = (0.0, 0.0)
-  val sightRange: Double = 1.0
-  val shotRatio: Double = 0.5
+  val defaultPosition: Vector2D = (0.0, 0.0)
+  val defaultSightRange: Double = 1.0
+  val defaultShotRatio: Double = 0.5
   val towerDefaultBoundary: (Double, Double) = (40.0, 40.0)
+  val balloonDefaultBoundary: (Double, Double) = (30.0, 40.0)
+  val bulletDefaultBoundary: (Double, Double) = (2.0, 1.0)
   val towerDefaultDirection: Vector2D = (0.0, 0.0)
-  val speed: Vector2D = (1.0, 1.0)
-  val damage: Double = 1.0
-  val radius: Double = 2.0
+  val defaultSpeed: Vector2D = (1.0, 1.0)
+  val defaultDamage: Double = 1.0
+  val defaultRadius: Double = 2.0
   val freezingTime: Double = 1.0
-  val bulletBoundary: (Double, Double) = (2.0, 1.0)
-  val balloonBoundary: Double = 1.0
 
   val basicTrack: Seq[Cell] = for (x <- 0 until widthRatio) yield GridCell(x, 0, RIGHT)
 

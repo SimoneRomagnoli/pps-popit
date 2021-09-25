@@ -4,14 +4,14 @@ import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ BasicBullet, CannonBall, Dart, IceBall }
 import utils.Constants.{
-  bulletBoundary,
-  damage,
+  bulletDefaultBoundary,
+  defaultDamage,
+  defaultPosition,
+  defaultRadius,
+  defaultShotRatio,
+  defaultSightRange,
+  defaultSpeed,
   freezingTime,
-  position,
-  radius,
-  shotRatio,
-  sightRange,
-  speed,
   towerDefaultBoundary,
   towerDefaultDirection
 }
@@ -103,13 +103,32 @@ object Towers {
     }
 
     sealed class TowerAmmo(override val bullet: BasicBullet) extends Ammo
-    case object Base extends TowerAmmo(Dart(damage, position, speed, bulletBoundary))
+
+    case object Base
+        extends TowerAmmo(Dart(defaultDamage, defaultPosition, defaultSpeed, bulletDefaultBoundary))
 
     case object Ice
-        extends TowerAmmo(IceBall(damage, position, speed, radius, freezingTime, bulletBoundary))
+        extends TowerAmmo(
+          IceBall(
+            defaultDamage,
+            defaultPosition,
+            defaultSpeed,
+            defaultRadius,
+            freezingTime,
+            bulletDefaultBoundary
+          )
+        )
 
     case object Cannon
-        extends TowerAmmo(CannonBall(damage, position, speed, radius, bulletBoundary))
+        extends TowerAmmo(
+          CannonBall(
+            defaultDamage,
+            defaultPosition,
+            defaultSpeed,
+            defaultRadius,
+            bulletDefaultBoundary
+          )
+        )
 
     object Ammo {
       // def apply(bullet: BasicBullet): TowerAmmo = new TowerAmmo(bullet)
@@ -120,19 +139,37 @@ object Towers {
 
       def tower: BasicTower = ammo match {
         case Ammo(b) if b.isInstanceOf[Dart] =>
-          BaseTower(b.asInstanceOf[Dart], position, sightRange, shotRatio, towerDefaultDirection)
+          BaseTower(
+            b.asInstanceOf[Dart],
+            defaultPosition,
+            defaultSightRange,
+            defaultShotRatio,
+            towerDefaultDirection
+          )
         case Ammo(b) if b.isInstanceOf[IceBall] =>
-          IceTower(b.asInstanceOf[IceBall], position, sightRange, shotRatio, towerDefaultDirection)
+          IceTower(
+            b.asInstanceOf[IceBall],
+            defaultPosition,
+            defaultSightRange,
+            defaultShotRatio,
+            towerDefaultDirection
+          )
         case Ammo(b) if b.isInstanceOf[CannonBall] =>
           CannonTower(
             b.asInstanceOf[CannonBall],
-            position,
-            sightRange,
-            shotRatio,
+            defaultPosition,
+            defaultSightRange,
+            defaultShotRatio,
             towerDefaultDirection
           )
         case Ammo(b) =>
-          BaseTower(b.asInstanceOf[Dart], position, sightRange, shotRatio, towerDefaultDirection)
+          BaseTower(
+            b.asInstanceOf[Dart],
+            defaultPosition,
+            defaultSightRange,
+            defaultShotRatio,
+            towerDefaultDirection
+          )
       }
     }
   }

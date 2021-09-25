@@ -18,12 +18,12 @@ import controller.Messages.{
 import model.actors.BalloonActorTest.{ balloon, dummyModel }
 import model.entities.balloons.BalloonType.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.balloons.Constants.defaultPosition
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants
+import utils.Constants.Entities.defaultPosition
 
 import scala.language.postfixOps
 
@@ -52,7 +52,10 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
 
   val model: ActorRef[Update] =
     testKit.spawn(
-      dummyModel(balloonActor, Track(Grid(Constants.widthRatio, Constants.heightRatio)))
+      dummyModel(
+        balloonActor,
+        Track(Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio))
+      )
     )
   val view: TestProbe[Render] = testKit.createTestProbe[Render]()
   val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref))

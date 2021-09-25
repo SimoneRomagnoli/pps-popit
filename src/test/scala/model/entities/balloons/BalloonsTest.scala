@@ -5,7 +5,8 @@ import model.entities.balloons.BalloonType.{ Green, Red }
 import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import utils.Constants.{ balloonDefaultBoundary, defaultPosition, defaultSpeed }
+import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
+import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -28,8 +29,8 @@ class BalloonsTest extends AnyWordSpec with Matchers {
         ((Green balloon) position) shouldBe defaultPosition
       }
       "have default speed" in {
-        ((Red balloon) speed) shouldBe defaultSpeed
-        ((Green balloon) speed) shouldBe defaultSpeed
+        ((Red balloon) speed) shouldBe balloonDefaultSpeed
+        ((Green balloon) speed) shouldBe balloonDefaultSpeed
       }
       "have default boundary" in {
         ((Red balloon) boundary) shouldBe balloonDefaultBoundary

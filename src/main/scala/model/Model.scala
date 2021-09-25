@@ -23,6 +23,8 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import utils.Constants
 
+import scala.language.postfixOps
+
 object Model {
 
   object ModelActor {
@@ -31,12 +33,12 @@ object Model {
 
     def init(ctx: ActorContext[Update]): Behavior[Update] = Behaviors.receiveMessage {
       case NewMap(replyTo) =>
-        val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
+        val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)
         val track: Track = Track(grid)
         replyTo ! MapCreated(track)
         val towerCell: Cell = GridCell(track.start.x, track.start.y - 1)
         val entities: List[Entity] =
-          List((Base tower) in towerCell withSightRangeOf 100.0, (Red balloon) on track)
+          List((Base tower) in towerCell, (Red balloon) on track)
         val actors: Seq[ActorRef[Update]] = entities map {
           case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
           case tower: Tower     => ctx.spawnAnonymous(TowerActor(tower))

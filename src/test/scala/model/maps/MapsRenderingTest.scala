@@ -68,7 +68,7 @@ object MapsRenderingTest {
         title = "Test"
         resizable = false
 
-        scene = new Scene(Constants.width, Constants.height) {
+        scene = new Scene(Constants.Screen.width, Constants.Screen.height) {
           root = board
         }
       }
@@ -181,7 +181,7 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         ActorSystem[Message](
           Behaviors.setup[Message] { ctx =>
             val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
-            val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
+            val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)
             view ! RenderMap(Track(grid))
             Behaviors.empty
           },
@@ -193,7 +193,7 @@ class MapsRenderingTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         ActorSystem[Message](
           Behaviors.setup[Message] { ctx =>
             val view: ActorRef[Render] = ctx.spawn(ViewActor(), "view")
-            val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
+            val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)
             val track: Track = Track(grid)
             view ! RenderMap(track)
             val entities: List[Entity] = List(Red balloon)

@@ -29,13 +29,10 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
     (regenerating(Green balloon) at zeroVector).update(5.0).position should not be zeroVector
   }
 
-  /*
   it should "regenerate its life" in {
     val popped: Regenerating = regenerating(Green balloon).pop(null).get.asInstanceOf[Regenerating]
     popped shouldBe regenerating(Blue balloon)
-    popped.update(1) shouldBe regenerating(Blue balloon)
-    popped.update(regenerationTime) shouldBe regenerating(Green balloon)
+    (popped.update(1) in (0.0, 0.0)) shouldBe regenerating(Blue balloon)
+    (popped.update(regenerationTime) in (0.0, 0.0)) shouldBe regenerating(Green balloon)
   }
-   */
-
 }

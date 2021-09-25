@@ -8,7 +8,7 @@ import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.towers.Towers.Tower
-import model.maps.Cells.{ cellSize, Cell, GridCell }
+import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
@@ -19,8 +19,10 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import utils.Constants
+import utils.Constants.Screen.cellSize
 
 import java.io.File
+import scala.language.reflectiveCalls
 import scala.util.Random
 
 object View {
@@ -50,7 +52,7 @@ object View {
   case class Board(var elements: Seq[Node]) extends Pane {
     children = elements
     var mapNodes: Int = 0
-    val grid: Grid = Grid(Constants.widthRatio, Constants.heightRatio)
+    val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)
     val grass: File = new File("src/main/resources/images/backgrounds/GRASS.png")
 
     grid.cells foreach { cell =>
@@ -63,7 +65,7 @@ object View {
 
     def loading(): Unit = Platform.runLater {
       val loadingLabel: Label =
-        Label(Constants.loadingLabels(Random.between(0, Constants.loadingLabels.size)))
+        Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))
       loadingLabel.setStyle("-fx-font-weight:bold; -fx-font-size:25px;")
       loadingLabel
         .layoutXProperty()

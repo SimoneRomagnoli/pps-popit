@@ -3,18 +3,11 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
-import model.entities.towers.Towers.TowerType.Base
 import model.entities.towers.Towers.Tower
-import model.entities.towers.TowersTest.{
-  balloon,
-  balloonPosition,
-  lastShotTime,
-  tower,
-  towerPosition,
-  waitSomeTime
-}
+import model.entities.towers.Towers.TowerType.Base
+import model.entities.towers.TowersTest._
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.{ defaultShotRatio, defaultSightRange }
+import utils.Constants.Entities.Towers.towerDefaultShotRatio
 
 import scala.language.postfixOps
 
@@ -25,7 +18,7 @@ object TowersTest {
   var lastShotTime: Double = 0.0
 
   val tower: Tower =
-    (Base tower) in towerPosition withSightRangeOf defaultSightRange withShotRatioOf defaultShotRatio
+    (Base tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
   var balloon: Balloon = Simple(balloonPosition)
 
   def waitSomeTime(): Unit = Thread.sleep(500)
@@ -52,7 +45,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     }
     "the tower can see the balloon, it" should {
       "shot the balloon with the specified shot ratio" in {
-        (tower shotRatio) shouldBe defaultShotRatio
+        (tower shotRatio) shouldBe towerDefaultShotRatio
         tower canAttackAfter lastShotTime shouldBe true
         lastShotTime = System.currentTimeMillis()
         tower canAttackAfter lastShotTime shouldBe false

@@ -5,7 +5,8 @@ import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.TowerType.{ Base, Cannon, Ice }
 import model.entities.towers.Towers.{ BaseTower, CannonTower, IceTower, Tower }
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.{ defaultPosition, defaultShotRatio, defaultSightRange }
+import utils.Constants.Entities.Towers.{ towerDefaultShotRatio, towerDefaultSightRange }
+import utils.Constants.Entities.defaultPosition
 
 import scala.language.postfixOps
 
@@ -17,10 +18,10 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "a base tower is spawned, it" should {
       "have the default attributes" in {
         val baseTower: Tower =
-          (Base tower) in defaultPosition withSightRangeOf defaultSightRange withShotRatioOf defaultShotRatio
+          (Base tower) in defaultPosition withSightRangeOf towerDefaultSightRange withShotRatioOf towerDefaultShotRatio
         (baseTower position) shouldBe defaultPosition
-        (baseTower sightRange) shouldBe defaultSightRange
-        (baseTower shotRatio) shouldBe defaultShotRatio
+        (baseTower sightRange) shouldBe towerDefaultSightRange
+        (baseTower shotRatio) shouldBe towerDefaultShotRatio
         baseTower.isInstanceOf[BaseTower] shouldBe true
         baseTower.bullet.isInstanceOf[Dart] shouldBe true
       }
@@ -28,10 +29,10 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "a cannon tower is spawned, it" should {
       "have the default attributes" in {
         val cannonTower: Tower =
-          (Cannon tower) in defaultPosition withSightRangeOf defaultSightRange withShotRatioOf defaultShotRatio
+          (Cannon tower) in defaultPosition withSightRangeOf towerDefaultSightRange withShotRatioOf towerDefaultShotRatio
         (cannonTower position) shouldBe defaultPosition
-        (cannonTower sightRange) shouldBe defaultSightRange
-        (cannonTower shotRatio) shouldBe defaultShotRatio
+        (cannonTower sightRange) shouldBe towerDefaultSightRange
+        (cannonTower shotRatio) shouldBe towerDefaultShotRatio
         cannonTower.isInstanceOf[CannonTower] shouldBe true
         cannonTower.bullet.isInstanceOf[CannonBall] shouldBe true
       }
@@ -39,10 +40,10 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "an ice tower is spawned, it" should {
       "have the default attributes" in {
         val iceTower: Tower =
-          (Ice tower) in defaultPosition withSightRangeOf defaultSightRange withShotRatioOf defaultShotRatio
+          (Ice tower) in defaultPosition withSightRangeOf towerDefaultSightRange withShotRatioOf towerDefaultShotRatio
         (iceTower position) shouldBe defaultPosition
-        (iceTower sightRange) shouldBe defaultSightRange
-        (iceTower shotRatio) shouldBe defaultShotRatio
+        (iceTower sightRange) shouldBe towerDefaultSightRange
+        (iceTower shotRatio) shouldBe towerDefaultShotRatio
         iceTower.isInstanceOf[IceTower] shouldBe true
         iceTower.bullet.isInstanceOf[IceBall] shouldBe true
       }

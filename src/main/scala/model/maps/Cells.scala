@@ -4,13 +4,11 @@ import model.Positions._
 import model.Positions.Vector2D
 import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, NONE, RIGHT, UP }
 import model.maps.Tracks.Track
-import utils.Constants
+import utils.Constants.Screen.cellSize
 
-import scala.language.postfixOps
+import scala.language.{ implicitConversions, postfixOps }
 
 object Cells {
-
-  val cellSize: Double = Constants.width / Constants.widthRatio
 
   /**
    * Represents a cell with two integer coordinates.

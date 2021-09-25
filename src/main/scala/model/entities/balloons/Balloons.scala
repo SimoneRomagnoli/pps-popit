@@ -4,7 +4,8 @@ import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility, Poppable, TrackFollowing }
 import model.entities.balloons.Balloons._
 import model.maps.Tracks.Track
-import utils.Constants.{ balloonDefaultBoundary, defaultPosition, defaultSpeed }
+import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
+import utils.Constants.Entities.defaultPosition
 
 import scala.annotation.tailrec
 import scala.language.postfixOps
@@ -53,7 +54,7 @@ object Balloons {
    */
   case class Simple(
       override val position: Vector2D = defaultPosition,
-      override val speed: Vector2D = defaultSpeed,
+      override val speed: Vector2D = balloonDefaultSpeed,
       override val boundary: (Double, Double) = balloonDefaultBoundary,
       override val track: Track = Track())
       extends Balloon

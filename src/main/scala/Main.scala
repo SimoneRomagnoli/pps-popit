@@ -22,9 +22,10 @@ object Main extends JFXApp {
 
   stage = new PrimaryStage {
     title = "Pop-It!"
-    resizable = false
 
-    scene = new Scene(Constants.width, Constants.height) {
+    //resizable = false
+
+    scene = new Scene(Constants.Screen.width, Constants.Screen.height) {
       root = ViewActor.board
     }
   }

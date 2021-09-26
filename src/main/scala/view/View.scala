@@ -54,12 +54,11 @@ object View {
     children = elements
     var mapNodes: Int = 0
     val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)
-    val grass: File = new File("src/main/resources/images/backgrounds/GRASS.png")
 
     grid.cells foreach { cell =>
       val rect: Rectangle =
         Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
-      rect.setFill(new ImagePattern(new Image(grass.toURI.toString)))
+      rect.setFill(new ImagePattern(new Image("images/backgrounds/GRASS.png")))
 
       children.add(rect)
     }
@@ -84,10 +83,9 @@ object View {
       track.cells.prepended(GridCell(-1, 0, RIGHT)).sliding(2).foreach { couple =>
         val name: String =
           couple.head.direction.toString + "-" + couple.last.direction.toString + ".png"
-        val img: File = new File("src/main/resources/images/roads/" + name)
         val cell: Cell = couple.last
         val rect: Rectangle = Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
-        rect.setFill(new ImagePattern(new Image(img.toURI.toString)))
+        rect.setFill(new ImagePattern(new Image("images/roads/" + name)))
         children.add(rect)
       }
     }
@@ -96,14 +94,12 @@ object View {
       children.removeRange(mapNodes, children.size)
       entities foreach {
         case balloon: Balloon =>
-          val img: File = new File("src/main/resources/images/balloons/RED.png")
           val viewEntity: Shape = toShape(balloon)
-          viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          viewEntity.setFill(new ImagePattern(new Image("images/balloons/RED.png")))
           children.add(viewEntity)
         case tower: Tower =>
-          val img: File = new File("src/main/resources/images/towers/MONKEY.png")
           val viewEntity: Shape = toShape(tower)
-          viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          viewEntity.setFill(new ImagePattern(new Image("images/towers/MONKEY.png")))
           viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
           children.add(viewEntity)
           val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)

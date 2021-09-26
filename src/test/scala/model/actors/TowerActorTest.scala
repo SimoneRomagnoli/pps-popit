@@ -17,14 +17,16 @@ import scala.language.postfixOps
 
 object TowerActorTest {
 
-  val balloonPosition: Vector2D = (60.0, 80.0)
+  val balloonPosition: Vector2D = (6.0, 6.0)
+  val balloonBoundary: (Double, Double) = (1.0, 1.0)
   val towerPosition: Vector2D = (0.0, 0.0)
   var balloonDetected: Boolean = false
 
   val dummyBalloonActor: Balloon => Behavior[Update] = b =>
     Behaviors.receiveMessage {
       case UpdatePosition(replyTo) =>
-        val newBalloon: Balloon = b in ((b.position.x - 10, b.position.y - 20))
+        val newBalloon: Balloon =
+          Simple(position = (b.position.x - 2.0, b.position.y - 2.0), boundary = balloonBoundary)
         replyTo ! BalloonMoved(newBalloon)
         dummyBalloonActor(newBalloon)
       case _ => Behaviors.same
@@ -50,7 +52,6 @@ object TowerActorTest {
   def waitSomeTime(): Unit = Thread.sleep(500)
 }
 
-@Ignore
 class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val tower: Tower =
@@ -61,10 +62,10 @@ class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val model: ActorRef[Update] = testKit.spawn(dummyModel(towerActor))
 
   val balloonActor: ActorRef[Update] =
-    testKit.spawn(dummyBalloonActor(Simple(balloonPosition)))
+    testKit.spawn(dummyBalloonActor(Simple(position = balloonPosition, boundary = balloonBoundary)))
 
   "The tower actor" when {
-    "has just spawned, it" should {
+    "has just been spawned, it" should {
       "not see the balloon" in {
         model ! Tick(balloonActor)
         waitSomeTime()

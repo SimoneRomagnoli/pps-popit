@@ -13,13 +13,14 @@ import scala.language.postfixOps
 
 object TowersTest {
 
-  val balloonPosition: Vector2D = (60.0, 80.0)
-  val towerPosition: Vector2D = (20.0, 10.0)
+  val balloonPosition: Vector2D = (6.0, 8.0)
+  val balloonBoundary: (Double, Double) = (1.0, 1.0)
+  val towerPosition: Vector2D = (2.0, 1.0)
   var lastShotTime: Double = 0.0
 
   val tower: Tower =
     (Base tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
-  var balloon: Balloon = Simple(balloonPosition)
+  var balloon: Balloon = Simple(position = balloonPosition, boundary = balloonBoundary)
 
   def waitSomeTime(): Unit = Thread.sleep(500)
 }

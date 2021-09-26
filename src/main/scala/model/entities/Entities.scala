@@ -3,7 +3,7 @@ package model.entities
 import model.Positions.Vector2D
 import model.Positions._
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ BasicBullet, Bullet }
+import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -69,8 +69,27 @@ object Entities {
     def rotateTo(dir: Vector2D): SightAbility
     def withSightRangeOf(radius: Double): SightAbility
 
-    def canSee(balloon: Balloon): Boolean =
-      distance(position)(balloon position) < (balloon.boundary._2 + sightRange)
+    def canSee(balloon: Balloon): Boolean = {
+      val distance: Vector2D =
+        (Math.abs(position.x - balloon.position.x), Math.abs(position.y - balloon.position.y))
+      /*distance x match {
+        case n if n > (balloon.boundary._1 / 2 + sightRange) => return false
+        case n if n <= (balloon.boundary._1 / 2)             => return true
+      }
+      distance y match {
+        case n if n > (balloon.boundary._2 / 2 + sightRange) => return false
+        case n if n <= (balloon.boundary._2 / 2)             => return true
+      }*/
+      if (distance.x > ((balloon.boundary._1 / 2) + sightRange)) return false
+      if (distance.y > ((balloon.boundary._2 / 2) + sightRange)) return false
+      if (distance.x <= (balloon.boundary._1 / 2)) return true
+      if (distance.y <= (balloon.boundary._2 / 2)) return true
+
+      val cornerDistance = Math.pow(distance.x - balloon.boundary._1 / 2, 2) +
+        Math.pow(distance.y - balloon.boundary._2 / 2, 2)
+      cornerDistance <= Math.pow(sightRange, 2)
+      //distance(position)(balloon position) < (balloon.boundary._2 + sightRange)
+    }
   }
 
   trait ShotAbility extends Entity {

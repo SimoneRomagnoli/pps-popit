@@ -3,6 +3,12 @@ package model.entities.bullets
 import model.Positions
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility }
+import utils.Constants.Entities.Bullets.{
+  bulletDefaultBoundary,
+  bulletDefaultDamage,
+  bulletDefaultSpeed
+}
+import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -14,10 +20,10 @@ object Bullets {
   }
 
   abstract class BasicBullet(
-      override val damage: Double = 1.0,
-      override val position: Vector2D = (0.0, 0.0),
-      override val speed: Vector2D = (0.0, 0.0),
-      override val boundary: (Double, Double) = (2.0, 1.0))
+      override val damage: Double = bulletDefaultDamage,
+      override val position: Vector2D = defaultPosition,
+      override val speed: Vector2D = bulletDefaultSpeed,
+      override val boundary: (Double, Double) = bulletDefaultBoundary)
       extends Bullet {
 
     override def in(position: Positions.Vector2D): Entity = this match {
@@ -56,10 +62,10 @@ object Bullets {
   }
 
   case class Dart(
-      override val damage: Double,
-      override val position: Vector2D,
-      override val speed: Vector2D,
-      override val boundary: (Double, Double))
+      override val damage: Double = bulletDefaultDamage,
+      override val position: Vector2D = defaultPosition,
+      override val speed: Vector2D = bulletDefaultSpeed,
+      override val boundary: (Double, Double) = bulletDefaultBoundary)
       extends BasicBullet(damage, position, speed, boundary)
 
   case class CannonBall(

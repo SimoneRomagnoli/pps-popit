@@ -4,6 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages
 import controller.Messages.{
+  EntitySpawned,
   EntityUpdated,
   MapCreated,
   ModelUpdated,
@@ -12,10 +13,11 @@ import controller.Messages.{
   Update,
   UpdateEntity
 }
-import model.actors.{ BalloonActor, TowerActor }
+import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonType.Red
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.Bullets.Dart
 import model.entities.towers.Towers.TowerType.Base
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
@@ -42,6 +44,7 @@ object Model {
         val actors: Seq[ActorRef[Update]] = entities map {
           case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
           case tower: Tower     => ctx.spawnAnonymous(TowerActor(tower))
+          case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
         }
         running(ctx, entities, actors, track)
     }
@@ -63,20 +66,27 @@ object Model {
         entities: List[Entity],
         actors: Seq[ActorRef[Update]],
         replyTo: ActorRef[Messages.Input],
-        track: Track): Behavior[Update] = {
-      var updatedEntities: List[Entity] = List()
+        track: Track,
+        updatedEntities: List[Entity] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
         case EntityUpdated(entity) =>
-          updatedEntities = updatedEntities appended entity
-          updatedEntities match {
+          entity :: updatedEntities match {
             case full if full.size == entities.size =>
-              replyTo ! ModelUpdated(updatedEntities)
-              running(ctx, updatedEntities, actors, track)
-            case _ => Behaviors.same
+              replyTo ! ModelUpdated(full)
+              running(ctx, full, actors, track)
+            case notFull => updating(ctx, entities, actors, replyTo, track, notFull)
           }
+        case EntitySpawned(entity, actor) =>
+          updating(
+            ctx,
+            entity :: entities,
+            actors :+ actor,
+            replyTo,
+            track,
+            entity :: updatedEntities
+          )
         case _ => Behaviors.same
       }
-    }
   }
 
 }

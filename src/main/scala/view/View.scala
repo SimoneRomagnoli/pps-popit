@@ -7,6 +7,7 @@ import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
@@ -108,6 +109,12 @@ object View {
           val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)
           circle.setFill(Color.Gray.opacity(0.45))
           children.add(circle)
+        case bullet: Bullet =>
+          val img: File = new File("src/main/resources/images/bullets/DART.png")
+          val viewEntity: Shape = toShape(bullet)
+          viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+          viewEntity.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
+          children.add(viewEntity)
         case _ =>
       }
     }

@@ -80,6 +80,10 @@ object Entities {
 
     def canAttackAfter: Double => Boolean =
       lastShotTime => (System.currentTimeMillis() - lastShotTime) / 1000.0 >= shotRatio
+
+    def canShootAfter: Double => Boolean =
+      _ >= shotRatio
+
   }
 
 }

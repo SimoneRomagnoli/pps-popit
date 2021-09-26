@@ -41,6 +41,7 @@ object Messages {
       track: Track)
       extends Update
   case class EntityUpdated(entity: Entity) extends Update
+  case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
 
   //TOWER
   case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update

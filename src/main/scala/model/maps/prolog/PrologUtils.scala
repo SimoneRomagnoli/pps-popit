@@ -16,7 +16,7 @@ object PrologUtils {
    */
   object Theories {
 
-    val theoryResourceName: String = "src/main/resources/theories/tracks.pl"
+    val theoryResourceName: String = "theories/tracks.pl"
 
     def nodesToString(length: Int): String =
       LazyList
@@ -47,7 +47,7 @@ object PrologUtils {
      *   a [[Theory]] containing all the nodes in the grid.
      */
     def from(grid: Grid): Theory = {
-      val source = Source.fromFile(theoryResourceName)
+      val source = Source.fromResource(theoryResourceName)
       val baseTheory: String = source.mkString
       source.close()
       gridLimits(grid) + theoryNodesIn(grid) + baseTheory

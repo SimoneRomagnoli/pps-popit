@@ -1,12 +1,22 @@
+import sbtassembly.AssemblyPlugin.assemblySettings
+
+assemblySettings
+
 name := "pps-popit"
 
 version := "0.1"
 
 scalaVersion := "2.13.6"
 
-val akkaVersion = "2.6.14"
+val akkaVersion = "2.6.16"
 
 resolvers in ThisBuild += Resolver.jcenterRepo
+
+assemblyMergeStrategy in assembly := {
+  case "reference.conf"            => MergeStrategy.concat
+  case PathList("META-INF", _ @_*) => MergeStrategy.discard
+  case _                           => MergeStrategy.first
+}
 
 lazy val javaFXModules = {
   // Determine OS version of JavaFX binaries
@@ -14,12 +24,12 @@ lazy val javaFXModules = {
     case n if n.startsWith("Linux")   => "linux"
     case n if n.startsWith("Mac")     => "mac"
     case n if n.startsWith("Windows") => "win"
-    case _                            =>
+    case _ =>
       throw new Exception("Unknown platform!")
   }
   // Create dependencies for JavaFX modules
   Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-    .map( m=> "org.openjfx" % s"javafx-$m" % "15.0.1" classifier osName)
+    .map(m => "org.openjfx" % s"javafx-$m" % "15.0.1" classifier osName)
 }
 
 libraryDependencies ++= javaFXModules

@@ -18,6 +18,15 @@ assemblyMergeStrategy in assembly := {
   case _                           => MergeStrategy.first
 }
 
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-encoding",
+  "utf8",
+  "-feature",
+  "-Ymacro-annotations"
+)
+
 lazy val javaFXModules = {
   // Determine OS version of JavaFX binaries
   lazy val osName = System.getProperty("os.name") match {
@@ -40,6 +49,7 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
   "org.scalafx" %% "scalafx" % "15.0.1-R21",
+  "org.scalafx" %% "scalafxml-core-sfx8" % "0.5",
   "com.novocode" % "junit-interface" % "0.11" % Test, // sbt's test interface for JUnit 4
   "org.junit.jupiter" % "junit-jupiter" % "5.7.1" % Test, // aggregator of junit-jupiter-api and junit-jupiter-engine (runtime)
   "org.junit.jupiter" % "junit-jupiter-engine" % "5.7.1" % Test, // for org.junit.platform

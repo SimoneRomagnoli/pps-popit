@@ -8,6 +8,7 @@ import model.maps.Tracks.Directions.RIGHT
 import java.util.Scanner
 import scala.collection.SeqView
 import scala.io.Source
+import scala.language.implicitConversions
 
 object PrologUtils {
 

@@ -21,6 +21,7 @@ import utils.Constants.Screen.cellSize
 
 import java.io.File
 import scala.util.Random
+import scala.language.reflectiveCalls
 
 /**
  * Controller of the game. This controller loads the game fxml file and is able to draw every

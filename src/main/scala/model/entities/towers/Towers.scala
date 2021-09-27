@@ -3,6 +3,7 @@ package model.entities.towers
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ BasicBullet, CannonBall, Dart, IceBall }
+import model.entities.towers.Towers.{ BaseTower, BasicTower, CannonTower, IceTower }
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.defaultPosition
@@ -15,7 +16,7 @@ object Towers {
    * A [[Tower]] is an [[Entity]] with the ability of see balloon object in its sight range
    */
   trait Tower extends Entity with SightAbility with ShotAbility {
-    type Boundary = (Double, Double) // Base & Height
+    type Boundary = (Double, Double)
 
     override def rotateTo(dir: Vector2D): Tower
 
@@ -87,83 +88,84 @@ object Towers {
       CannonTower(bullet, pos, range, ratio, dir)
   }
 
-  object TowerType {
+}
 
-    sealed trait Ammo {
-      def bullet: BasicBullet
-    }
+object TowerTypes {
 
-    sealed class TowerAmmo(override val bullet: BasicBullet) extends Ammo
+  sealed trait Ammo {
+    def bullet: BasicBullet
+  }
 
-    case object Base
-        extends TowerAmmo(
-          Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary)
+  sealed class TowerAmmo(override val bullet: BasicBullet) extends Ammo
+
+  case object Base
+      extends TowerAmmo(
+        Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary)
+      )
+
+  case object Ice
+      extends TowerAmmo(
+        IceBall(
+          bulletDefaultDamage,
+          defaultPosition,
+          bulletDefaultSpeed,
+          bulletDefaultRadius,
+          bulletFreezingTime,
+          bulletDefaultBoundary
         )
+      )
 
-    case object Ice
-        extends TowerAmmo(
-          IceBall(
-            bulletDefaultDamage,
-            defaultPosition,
-            bulletDefaultSpeed,
-            bulletDefaultRadius,
-            bulletFreezingTime,
-            bulletDefaultBoundary
-          )
+  case object Cannon
+      extends TowerAmmo(
+        CannonBall(
+          bulletDefaultDamage,
+          defaultPosition,
+          bulletDefaultSpeed,
+          bulletDefaultRadius,
+          bulletDefaultBoundary
         )
+      )
 
-    case object Cannon
-        extends TowerAmmo(
-          CannonBall(
-            bulletDefaultDamage,
-            defaultPosition,
-            bulletDefaultSpeed,
-            bulletDefaultRadius,
-            bulletDefaultBoundary
-          )
+  object Ammo {
+    // def apply(bullet: BasicBullet): TowerAmmo = new TowerAmmo(bullet)
+    def unapply(ammo: TowerAmmo): Option[BasicBullet] = Some(ammo.bullet)
+  }
+
+  implicit class TowerType(ammo: TowerAmmo) {
+
+    def tower: BasicTower = ammo match {
+      case Ammo(b) if b.isInstanceOf[Dart] =>
+        BaseTower(
+          b.asInstanceOf[Dart],
+          defaultPosition,
+          towerDefaultSightRange,
+          towerDefaultShotRatio,
+          towerDefaultDirection
         )
-
-    object Ammo {
-      // def apply(bullet: BasicBullet): TowerAmmo = new TowerAmmo(bullet)
-      def unapply(ammo: TowerAmmo): Option[BasicBullet] = Some(ammo.bullet)
-    }
-
-    implicit class TowerType(ammo: TowerAmmo) {
-
-      def tower: BasicTower = ammo match {
-        case Ammo(b) if b.isInstanceOf[Dart] =>
-          BaseTower(
-            b.asInstanceOf[Dart],
-            defaultPosition,
-            towerDefaultSightRange,
-            towerDefaultShotRatio,
-            towerDefaultDirection
-          )
-        case Ammo(b) if b.isInstanceOf[IceBall] =>
-          IceTower(
-            b.asInstanceOf[IceBall],
-            defaultPosition,
-            towerDefaultSightRange,
-            towerDefaultShotRatio,
-            towerDefaultDirection
-          )
-        case Ammo(b) if b.isInstanceOf[CannonBall] =>
-          CannonTower(
-            b.asInstanceOf[CannonBall],
-            defaultPosition,
-            towerDefaultSightRange,
-            towerDefaultShotRatio,
-            towerDefaultDirection
-          )
-        case Ammo(b) =>
-          BaseTower(
-            b.asInstanceOf[Dart],
-            defaultPosition,
-            towerDefaultSightRange,
-            towerDefaultShotRatio,
-            towerDefaultDirection
-          )
-      }
+      case Ammo(b) if b.isInstanceOf[IceBall] =>
+        IceTower(
+          b.asInstanceOf[IceBall],
+          defaultPosition,
+          towerDefaultSightRange,
+          towerDefaultShotRatio,
+          towerDefaultDirection
+        )
+      case Ammo(b) if b.isInstanceOf[CannonBall] =>
+        CannonTower(
+          b.asInstanceOf[CannonBall],
+          defaultPosition,
+          towerDefaultSightRange,
+          towerDefaultShotRatio,
+          towerDefaultDirection
+        )
+      case _ =>
+        BaseTower(
+          Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary),
+          defaultPosition,
+          towerDefaultSightRange,
+          towerDefaultShotRatio,
+          towerDefaultDirection
+        )
     }
   }
 }

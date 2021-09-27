@@ -3,8 +3,8 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
+import model.entities.towers.TowerTypes.Base
 import model.entities.towers.Towers.Tower
-import model.entities.towers.Towers.TowerType.Base
 import model.entities.towers.TowersTest._
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants.Entities.Towers.towerDefaultShotRatio

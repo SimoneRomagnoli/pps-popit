@@ -18,7 +18,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.BalloonType.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Dart
-import model.entities.towers.Towers.TowerType.Base
+import model.entities.towers.TowerTypes.Base
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid

@@ -7,9 +7,8 @@ import controller.Messages._
 import model.Positions.Vector2D
 import model.actors.TowerActorTest._
 import model.entities.balloons.Balloons.{ Balloon, Simple }
+import model.entities.towers.TowerTypes.Base
 import model.entities.towers.Towers.Tower
-import model.entities.towers.Towers.TowerType.Base
-import org.scalatest.Ignore
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants.Entities.Towers.towerDefaultShotRatio
 

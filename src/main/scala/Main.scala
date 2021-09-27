@@ -17,11 +17,17 @@ object Main extends JFXApp3 {
 
     val loader: FXMLLoader =
       new FXMLLoader(getClass.getResource("/fxml/root.fxml"), NoDependencyResolver)
+
     loader.load()
     val root: BorderPane = loader.getRoot[BorderPane]
     val mainController: ViewController = loader.getController[ViewController]()
 
-    val system: ActorSystem[Message] = ActorSystem[Message](
+    stage = new PrimaryStage() {
+      title = "Pop-It!"
+      scene = new Scene(root)
+    }
+
+    ActorSystem[Message](
       Behaviors.setup[Message] { ctx =>
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
@@ -30,11 +36,6 @@ object Main extends JFXApp3 {
       },
       "system"
     )
-
-    stage = new PrimaryStage() {
-      title = "Pop-It!"
-      scene = new Scene(root)
-    }
   }
 
 }

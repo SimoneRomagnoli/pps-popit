@@ -22,6 +22,10 @@ import utils.Constants.Screen.cellSize
 import java.io.File
 import scala.util.Random
 
+/**
+ * Controller of the game. This controller loads the game fxml file and is able to draw every
+ * element of a game.
+ */
 trait ViewGameController {
   def drawGrid(): Unit
   def loading(): Unit
@@ -30,8 +34,17 @@ trait ViewGameController {
   def draw(entities: List[Entity]): Unit
 }
 
+/**
+ * Controller class bound to the game fxml.
+ *
+ * @param gameBoard,
+ *   the pane containing the game.
+ * @param mapNodes,
+ *   the number of nodes of the map.
+ */
 @sfxml
 class GameController(val gameBoard: Pane, var mapNodes: Int = 0) extends ViewGameController {
+  drawGrid()
 
   override def drawGrid(): Unit = Platform.runLater {
     val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)

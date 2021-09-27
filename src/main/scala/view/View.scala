@@ -4,9 +4,7 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ Render, RenderEntities, RenderLoading, RenderMap }
 import model.entities.Entities.Entity
-import scalafx.scene.layout.Pane
-import view.GameBoard.Board
-import view.controllers.ViewController
+import view.controllers.{ ViewController, ViewGameController }
 
 import scala.language.reflectiveCalls
 
@@ -14,35 +12,31 @@ object View {
 
   object ViewActor {
 
-    //val board: Board = Board()
-
     def apply(mainController: ViewController): Behavior[Render] = Behaviors.setup { _ =>
+      new ViewActor(mainController).inGame(mainController.gameController)
+    }
+  }
+
+  class ViewActor private (mainController: ViewController) {
+
+    private def inGame(gameController: ViewGameController): Behavior[Render] =
       Behaviors.receiveMessage {
         case RenderLoading() =>
-          //board.loading()
-          mainController.loading()
+          gameController.loading()
           Behaviors.same
 
         case RenderEntities(entities: List[Entity]) =>
-          //board draw entities
-          mainController draw entities
+          gameController draw entities
           Behaviors.same
 
         case RenderMap(track) =>
-          //board.reset()
-          //board.drawGrid()
-          //board draw track
-          mainController.reset()
-          mainController.drawGrid()
-          mainController draw track
+          gameController.reset()
+          gameController.drawGrid()
+          gameController draw track
           Behaviors.same
 
         case _ => Behaviors.same
       }
-    }
-
-    //def delegate: Pane = this.board
-
   }
 
 }

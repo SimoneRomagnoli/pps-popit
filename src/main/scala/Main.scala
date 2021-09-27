@@ -16,11 +16,10 @@ object Main extends JFXApp3 {
   override def start(): Unit = {
 
     val loader: FXMLLoader =
-      new FXMLLoader(getClass.getResource("/fxml/lateral-bar.fxml"), NoDependencyResolver)
+      new FXMLLoader(getClass.getResource("/fxml/root.fxml"), NoDependencyResolver)
     loader.load()
     val root: BorderPane = loader.getRoot[BorderPane]
     val mainController: ViewController = loader.getController[ViewController]()
-    mainController.init()
 
     val system: ActorSystem[Message] = ActorSystem[Message](
       Behaviors.setup[Message] { ctx =>

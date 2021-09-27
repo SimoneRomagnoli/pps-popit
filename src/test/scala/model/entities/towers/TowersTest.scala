@@ -48,7 +48,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       "shot the balloon with the specified shot ratio" in {
         (tower shotRatio) shouldBe towerDefaultShotRatio
         tower canAttackAfter lastShotTime shouldBe true
-        lastShotTime = System.currentTimeMillis()
+        lastShotTime = System.currentTimeMillis().toDouble
         tower canAttackAfter lastShotTime shouldBe false
         tower canAttackAfter lastShotTime shouldBe false
         waitSomeTime()
@@ -59,7 +59,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         val newTower: Tower = tower withShotRatioOf 1.0
         (newTower shotRatio) shouldBe 1.0
         newTower canAttackAfter lastShotTime shouldBe true
-        lastShotTime = System.currentTimeMillis()
+        lastShotTime = System.currentTimeMillis().toDouble
         newTower canAttackAfter lastShotTime shouldBe false
         waitSomeTime()
         newTower canAttackAfter lastShotTime shouldBe false

@@ -19,14 +19,14 @@ object Balloons {
     type Boundary = (Double, Double)
 
     @tailrec
-    private def retrieve(f: Balloon => Any): Any = this match {
+    private def retrieve[T](f: Balloon => T): T = this match {
       case Complex(balloon) => balloon retrieve f
       case s                => f(s)
     }
-    override def position: Vector2D = retrieve(_.position).asInstanceOf[Vector2D]
-    override def speed: Vector2D = retrieve(_.speed).asInstanceOf[Vector2D]
-    override def boundary: (Double, Double) = retrieve(_.boundary).asInstanceOf[(Double, Double)]
-    override def track: Track = retrieve(_.track).asInstanceOf[Track]
+    override def position: Vector2D = retrieve(_.position)
+    override def speed: Vector2D = retrieve(_.speed)
+    override def boundary: (Double, Double) = retrieve(_.boundary)
+    override def track: Track = retrieve(_.track)
 
     private def change(f: => Balloon): Balloon = this match {
       case Complex(balloon) => complex(balloon change f)
@@ -34,7 +34,6 @@ object Balloons {
     }
     override def at(s: Vector2D): Balloon = change(Simple(position, s, track = track))
     override def in(p: Vector2D): Balloon = change(Simple(p, speed, track = track))
-
     override def on(t: Track): TrackFollowing = change(Simple(position, speed, track = t))
 
     override def pop(bullet: Entity): Option[Balloon] = this match {

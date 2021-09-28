@@ -2,8 +2,9 @@ package model.entities.towers
 
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
-import model.entities.bullets.Bullets.{ BasicBullet, CannonBall, Dart, IceBall }
-import model.entities.towers.Towers.{ BaseTower, BasicTower, CannonTower, IceTower }
+import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
+import model.entities.towers.Towers.TowerBuilders._
+import model.entities.towers.Towers.Tower
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.defaultPosition
@@ -18,87 +19,63 @@ object Towers {
   trait Tower extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
 
+    def bullet: Bullet
+
+    override def in(pos: Vector2D): Tower
     override def rotateTo(dir: Vector2D): Tower
-
     override def withSightRangeOf(radius: Double): Tower
-
     override def withShotRatioOf(ratio: Double): Tower
   }
 
-  /**
-   * A [[BasicTower]] is an instance of a [[Tower]] with a defined:
-   *   - position in the map
-   *   - sight range to detect near balloon
-   *   - shot ratio to shot bullets at a certain frequency
-   */
-  abstract class BasicTower(
-      override val position: Vector2D,
-      override val sightRange: Double,
-      override val shotRatio: Double,
-      override val direction: Vector2D,
-      override val boundary: (Double, Double) = towerDefaultBoundary)
+  trait TowerBuilder[B <: Bullet] {
+    def build(bullet: B): Tower
+  }
+
+  object TowerBuilders {
+    implicit val monkeyTowerBuilder: TowerBuilder[Dart] = MonkeyTower(_)
+    implicit val iceTowerBuilder: TowerBuilder[IceBall] = IceTower(_)
+    implicit val cannonTowerBuilder: TowerBuilder[CannonBall] = CannonTower(_)
+  }
+
+  def instance[B <: Bullet](bullet: B)(implicit towerBuilder: TowerBuilder[B]): Tower =
+    towerBuilder.build(bullet)
+
+  class BaseTower(
+      override val bullet: Bullet,
+      override val boundary: (Double, Double) = towerDefaultBoundary,
+      override val position: Vector2D = defaultPosition,
+      override val sightRange: Double = towerDefaultSightRange,
+      override val shotRatio: Double = towerDefaultShotRatio,
+      override val direction: Vector2D = towerDefaultDirection)
       extends Tower {
 
-    override def rotateTo(dir: Vector2D): Tower = instance(position, sightRange, shotRatio, dir)
+    override def in(pos: Vector2D): Tower =
+      new BaseTower(bullet, boundary, pos, sightRange, shotRatio, direction)
 
-    override def in(pos: Vector2D): Tower = instance(pos, sightRange, shotRatio, direction)
+    override def rotateTo(dir: Vector2D): Tower =
+      new BaseTower(bullet, boundary, position, sightRange, shotRatio, dir)
 
     override def withSightRangeOf(radius: Double): Tower =
-      instance(position, radius, shotRatio, direction)
+      new BaseTower(bullet, boundary, position, radius, shotRatio, direction)
 
     override def withShotRatioOf(ratio: Double): Tower =
-      instance(position, sightRange, ratio, direction)
-
-    def instance(pos: Vector2D, range: Double, ratio: Double, dir: Vector2D): Tower
+      new BaseTower(bullet, boundary, position, sightRange, ratio, direction)
   }
 
-  case class BaseTower(
-      override val bullet: Dart,
-      override val position: Vector2D,
-      override val sightRange: Double,
-      override val shotRatio: Double,
-      override val direction: Vector2D)
-      extends BasicTower(position, sightRange, shotRatio, direction) {
-
-    override def instance(pos: Vector2D, range: Double, ratio: Double, dir: Vector2D): BaseTower =
-      BaseTower(bullet, pos, range, ratio, dir)
-  }
-
-  case class IceTower(
-      override val bullet: IceBall,
-      override val position: Vector2D,
-      override val sightRange: Double,
-      override val shotRatio: Double,
-      override val direction: Vector2D)
-      extends BasicTower(position, sightRange, shotRatio, direction) {
-
-    override def instance(pos: Vector2D, range: Double, ratio: Double, dir: Vector2D): IceTower =
-      IceTower(bullet, pos, range, ratio, dir)
-  }
-
-  case class CannonTower(
-      override val bullet: CannonBall,
-      override val position: Vector2D,
-      override val sightRange: Double,
-      override val shotRatio: Double,
-      override val direction: Vector2D)
-      extends BasicTower(position, sightRange, shotRatio, direction) {
-
-    override def instance(pos: Vector2D, range: Double, ratio: Double, dir: Vector2D): CannonTower =
-      CannonTower(bullet, pos, range, ratio, dir)
-  }
-
+  case class MonkeyTower(override val bullet: Dart) extends BaseTower(bullet)
+  case class IceTower(override val bullet: IceBall) extends BaseTower(bullet)
+  case class CannonTower(override val bullet: CannonBall) extends BaseTower(bullet)
 }
 
 object TowerTypes {
 
   sealed trait Ammo {
-    def bullet: BasicBullet
+    def bullet: Bullet
   }
 
-  sealed class TowerAmmo(override val bullet: BasicBullet) extends Ammo
+  sealed class TowerAmmo(override val bullet: Bullet) extends Ammo
 
-  case object Base
+  case object Monkey
       extends TowerAmmo(
         Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary)
       )
@@ -126,46 +103,15 @@ object TowerTypes {
         )
       )
 
-  object Ammo {
-    // def apply(bullet: BasicBullet): TowerAmmo = new TowerAmmo(bullet)
-    def unapply(ammo: TowerAmmo): Option[BasicBullet] = Some(ammo.bullet)
-  }
-
   implicit class TowerType(ammo: TowerAmmo) {
 
-    def tower: BasicTower = ammo match {
-      case Ammo(b) if b.isInstanceOf[Dart] =>
-        BaseTower(
-          b.asInstanceOf[Dart],
-          defaultPosition,
-          towerDefaultSightRange,
-          towerDefaultShotRatio,
-          towerDefaultDirection
-        )
-      case Ammo(b) if b.isInstanceOf[IceBall] =>
-        IceTower(
-          b.asInstanceOf[IceBall],
-          defaultPosition,
-          towerDefaultSightRange,
-          towerDefaultShotRatio,
-          towerDefaultDirection
-        )
-      case Ammo(b) if b.isInstanceOf[CannonBall] =>
-        CannonTower(
-          b.asInstanceOf[CannonBall],
-          defaultPosition,
-          towerDefaultSightRange,
-          towerDefaultShotRatio,
-          towerDefaultDirection
-        )
-      case _ =>
-        BaseTower(
-          Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary),
-          defaultPosition,
-          towerDefaultSightRange,
-          towerDefaultShotRatio,
-          towerDefaultDirection
-        )
+    import Towers.instance
+
+    def tower: Tower = ammo bullet match {
+      case dart: Dart             => instance(dart)
+      case iceBall: IceBall       => instance(iceBall)
+      case cannonBall: CannonBall => instance(cannonBall)
+      case _                      => null
     }
   }
 }

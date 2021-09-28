@@ -1,11 +1,15 @@
 package utils
 
 import model.Positions.Vector2D
+import model.entities.towers.TowerTypes.{ Cannon, Ice, Monkey }
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
+import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
-import utils.Constants.Screen.cellSize
+import utils.Constants.Screen.{ cellSize, heightRatio, widthRatio }
 
 import java.awt.{ GraphicsEnvironment, Toolkit }
+import scala.language.postfixOps
 
 object Constants {
 
@@ -34,6 +38,12 @@ object Constants {
       val towerDefaultShotRatio: Double = 0.2
       val towerDefaultBoundary: (Double, Double) = (cellSize / 2, cellSize / 2)
       val towerDefaultDirection: Vector2D = (0.0, 0.0)
+
+      object TowerTypes {
+        val monkey: Tower = Monkey tower
+        val cannon: Tower = Cannon tower
+        val ice: Tower = Ice tower
+      }
     }
 
     object Bullets {
@@ -48,6 +58,8 @@ object Constants {
 
   object Maps {
     val basicTrack: Seq[Cell] = for (x <- 0 until Screen.widthRatio) yield GridCell(x, 0, RIGHT)
+    val lateralMenuWidth: Int = 3
+    val gameGrid: Grid = Grid(widthRatio - lateralMenuWidth, heightRatio)
   }
 
   object View {

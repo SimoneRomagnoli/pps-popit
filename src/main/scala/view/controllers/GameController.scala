@@ -12,11 +12,12 @@ import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
 import scalafx.scene.control.Label
-import scalafx.scene.layout.Pane
+import scalafx.scene.layout.{ Pane, VBox }
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import scalafxml.core.macros.sfxml
 import utils.Constants
+import utils.Constants.Maps.gameGrid
 import utils.Constants.Screen.cellSize
 
 import java.io.File
@@ -28,9 +29,10 @@ import scala.language.reflectiveCalls
  * element of a game.
  */
 trait ViewGameController {
-  def drawGrid(): Unit
   def loading(): Unit
   def reset(): Unit
+  //def setupMenu(): Unit
+  def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
 }
@@ -44,11 +46,11 @@ trait ViewGameController {
  *   the number of nodes of the map.
  */
 @sfxml
-class GameController(val gameBoard: Pane, var mapNodes: Int = 0) extends ViewGameController {
-  drawGrid()
+class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int = 0)
+    extends ViewGameController {
+  this draw gameGrid
 
-  override def drawGrid(): Unit = Platform.runLater {
-    val grid: Grid = Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio)
+  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform.runLater {
     mapNodes += grid.width * grid.height
     grid.cells foreach { cell =>
       val rect: Rectangle =

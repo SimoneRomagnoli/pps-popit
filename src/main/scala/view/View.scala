@@ -4,6 +4,7 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ Render, RenderEntities, RenderLoading, RenderMap }
 import model.entities.Entities.Entity
+import utils.Constants.Maps.gameGrid
 import view.controllers.{ ViewController, ViewGameController }
 
 import scala.language.reflectiveCalls
@@ -31,7 +32,7 @@ object View {
 
         case RenderMap(track) =>
           gameController.reset()
-          gameController.drawGrid()
+          gameController draw gameGrid
           gameController draw track
           Behaviors.same
 

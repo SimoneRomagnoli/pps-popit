@@ -2,7 +2,7 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Messages.{ Render, RenderEntities, RenderLoading, RenderMap }
+import controller.Messages.{ Render, RenderEntities, RenderMap }
 import model.entities.Entities.Entity
 import utils.Constants.Maps.gameGrid
 import view.controllers.{ ViewController, ViewGameController }
@@ -22,10 +22,6 @@ object View {
 
     private def inGame(gameController: ViewGameController): Behavior[Render] =
       Behaviors.receiveMessage {
-        case RenderLoading() =>
-          gameController.loading()
-          Behaviors.same
-
         case RenderEntities(entities: List[Entity]) =>
           gameController draw entities
           Behaviors.same

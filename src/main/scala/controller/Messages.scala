@@ -3,7 +3,6 @@ package controller
 import akka.actor.typed.ActorRef
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
-import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 
 object Messages {
@@ -16,7 +15,6 @@ object Messages {
   //VIEW
   case class RenderEntities(entities: List[Entity]) extends Render
   case class RenderMap(track: Track) extends Render
-  case class RenderLoading() extends Render
 
   //CONTROLLER
   case class NewGame() extends Input

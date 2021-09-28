@@ -5,10 +5,10 @@
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="view.controllers.GameController"
             prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER">
     <center>
-        <Pane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+        <Pane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" styleClass="gameBoard"/>
     </center>
     <right>
-        <VBox fx:id="gameMenu" alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="gameMenu" alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" styleClass="gameMenu">
         </VBox>
     </right>
 </BorderPane>

@@ -17,7 +17,13 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import scalafxml.core.macros.sfxml
 import utils.Constants
-import utils.Constants.Maps.gameGrid
+import utils.Constants.Maps.{
+  gameBoardHeight,
+  gameBoardWidth,
+  gameGrid,
+  gameMenuHeight,
+  gameMenuWidth
+}
 import utils.Constants.Screen.cellSize
 
 import java.io.File
@@ -31,7 +37,7 @@ import scala.language.reflectiveCalls
 trait ViewGameController {
   def loading(): Unit
   def reset(): Unit
-  //def setupMenu(): Unit
+  def setup(): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
@@ -48,9 +54,16 @@ trait ViewGameController {
 @sfxml
 class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int = 0)
     extends ViewGameController {
+  setup()
   this draw gameGrid
+  loading()
 
-  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform.runLater {
+  override def setup(): Unit = Platform runLater {
+    setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+    setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+  }
+
+  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
     mapNodes += grid.width * grid.height
     grid.cells foreach { cell =>
       val rect: Rectangle =
@@ -60,10 +73,9 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
     }
   }
 
-  override def loading(): Unit = Platform.runLater {
+  override def loading(): Unit = Platform runLater {
     val loadingLabel: Label =
       Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))
-    loadingLabel.setStyle("-fx-font-weight:bold; -fx-font-size:25px;")
     loadingLabel
       .layoutXProperty()
       .bind(gameBoard.widthProperty().subtract(loadingLabel.widthProperty()).divide(2))
@@ -74,12 +86,12 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
     gameBoard.children.add(loadingLabel)
   }
 
-  override def reset(): Unit = Platform.runLater {
+  override def reset(): Unit = Platform runLater {
     gameBoard.children.clear()
     mapNodes = 0
   }
 
-  override def draw(track: Track): Unit = Platform.runLater {
+  override def draw(track: Track): Unit = Platform runLater {
     mapNodes += track.cells.size
     track.cells.prepended(GridCell(-1, 0, RIGHT)).sliding(2).foreach { couple =>
       val name: String =
@@ -91,7 +103,7 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
     }
   }
 
-  override def draw(entities: List[Entity]): Unit = Platform.runLater {
+  override def draw(entities: List[Entity]): Unit = Platform runLater {
     gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
     entities foreach {
       case balloon: Balloon =>
@@ -116,11 +128,18 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
     }
   }
 
-  def toShape(entity: Entity): Shape =
+  private def toShape(entity: Entity): Shape =
     Rectangle(
       entity.position.x - entity.boundary._1 / 2,
       entity.position.y - entity.boundary._2 / 2,
       entity.boundary._1,
       entity.boundary._2
     )
+
+  private def setLayout(pane: Pane, width: Double, height: Double): Unit = {
+    pane.maxWidth = width
+    pane.minWidth = width
+    pane.maxHeight = height
+    pane.minHeight = height
+  }
 }

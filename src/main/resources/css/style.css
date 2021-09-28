@@ -1,0 +1,10 @@
+.gameBoard {
+-fx-font-weight: bold;
+-fx-font-size: 25px;
+}
+
+.gameMenu {
+-fx-font-weight: bold;
+-fx-font-size: 15px;
+-fx-background-color: #9C6644;
+}

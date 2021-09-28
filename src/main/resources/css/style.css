@@ -6,5 +6,17 @@
 .gameMenu {
 -fx-font-weight: bold;
 -fx-font-size: 15px;
--fx-background-color: #9C6644;
+-fx-background-color: #582F0E;
+-fx-padding: 10;
+}
+
+.inputBox {
+-fx-background-color: #7F4F24;
+-fx-padding: 10 10 10 10;
+}
+
+.inputButton {
+-fx-background-color: #582F0E;
+-fx-margin: 10 10 10 10;
+-fx-padding: 10 10 0 10;
 }

@@ -11,22 +11,17 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
-import scalafx.scene.control.Label
-import scalafx.scene.layout.{ Pane, VBox }
+import scalafx.scene.Parent
+import scalafx.scene.control.{ Label, ToggleButton }
+import scalafx.scene.layout.{ HBox, Pane, VBox }
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import scalafxml.core.macros.sfxml
 import utils.Constants
-import utils.Constants.Maps.{
-  gameBoardHeight,
-  gameBoardWidth,
-  gameGrid,
-  gameMenuHeight,
-  gameMenuWidth
-}
+import utils.Constants.Maps.gameGrid
 import utils.Constants.Screen.cellSize
+import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 
-import java.io.File
 import scala.util.Random
 import scala.language.reflectiveCalls
 
@@ -52,7 +47,15 @@ trait ViewGameController {
  *   the number of nodes of the map.
  */
 @sfxml
-class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int = 0)
+class GameController(
+    val gameBoard: Pane,
+    val gameMenu: VBox,
+    val inputButtons: HBox,
+    val playButton: ToggleButton,
+    val exitButton: ToggleButton,
+    val gameStatus: HBox,
+    val towerDepot: VBox,
+    var mapNodes: Int = 0)
     extends ViewGameController {
   setup()
   this draw gameGrid
@@ -61,6 +64,12 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
     setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+    playButton.setGraphic(
+      toInput(playButton.width.value, playButton.width.value, "/images/inputs/PAUSE.png")
+    )
+    exitButton.setGraphic(
+      toInput(exitButton.width.value, exitButton.width.value, "/images/inputs/EXIT.png")
+    )
   }
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
@@ -107,39 +116,44 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
     gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
     entities foreach {
       case balloon: Balloon =>
-        val viewEntity: Shape = toShape(balloon)
-        viewEntity.setFill(new ImagePattern(new Image("images/balloons/RED.png")))
+        val viewEntity: Shape = toShape(balloon, "images/balloons/RED.png")
         gameBoard.children.add(viewEntity)
       case tower: Tower[_] =>
-        val viewEntity: Shape = toShape(tower)
-        viewEntity.setFill(new ImagePattern(new Image("images/towers/MONKEY.png")))
+        val viewEntity: Shape = toShape(tower, "images/towers/MONKEY.png")
         viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         gameBoard.children.add(viewEntity)
         val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)
         circle.setFill(Color.Gray.opacity(0.45))
         gameBoard.children.add(circle)
       case bullet: Bullet =>
-        val img: File = new File("src/main/resources/images/bullets/DART.png")
-        val viewEntity: Shape = toShape(bullet)
-        viewEntity.setFill(new ImagePattern(new Image(img.toURI.toString)))
+        val viewEntity: Shape = toShape(bullet, "/images/bullets/DART.png")
         viewEntity.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
         gameBoard.children.add(viewEntity)
       case _ =>
     }
   }
 
-  private def toShape(entity: Entity): Shape =
-    Rectangle(
+  private def toShape(entity: Entity, path: String): Shape = {
+    val rectangle: Rectangle = Rectangle(
       entity.position.x - entity.boundary._1 / 2,
       entity.position.y - entity.boundary._2 / 2,
       entity.boundary._1,
       entity.boundary._2
     )
+    rectangle.setFill(new ImagePattern(new Image(path)))
+    rectangle
+  }
 
-  private def setLayout(pane: Pane, width: Double, height: Double): Unit = {
-    pane.maxWidth = width
-    pane.minWidth = width
-    pane.maxHeight = height
-    pane.minHeight = height
+  private def toInput(width: Double, height: Double, path: String): Shape = {
+    val rectangle: Rectangle = Rectangle(width, height)
+    rectangle.setFill(new ImagePattern(new Image(path)))
+    rectangle
+  }
+
+  private def setLayout(parent: Parent, width: Double, height: Double): Unit = {
+    parent.maxWidth(width)
+    parent.minWidth(width)
+    parent.maxHeight(height)
+    parent.minHeight(height)
   }
 }

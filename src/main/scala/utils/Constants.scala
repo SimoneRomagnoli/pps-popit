@@ -7,7 +7,8 @@ import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
-import utils.Constants.Screen.{ cellSize, height, heightRatio, widthRatio }
+import utils.Constants.Screen.{ cellSize, height, heightRatio, width, widthRatio }
+import utils.Constants.View.gameMenuWidthRatio
 
 import java.awt.{ GraphicsEnvironment, Toolkit }
 import scala.language.postfixOps
@@ -59,15 +60,15 @@ object Constants {
 
   object Maps {
     val basicTrack: Seq[Cell] = for (x <- 0 until Screen.widthRatio) yield GridCell(x, 0, RIGHT)
-    val gameMenuWidthRatio: Int = 3
-    val gameMenuWidth: Double = cellSize * gameMenuWidthRatio
-    val gameMenuHeight: Double = height
     val gameGrid: Grid = Grid(widthRatio - gameMenuWidthRatio, heightRatio)
-    val gameBoardWidth: Double = gameGrid.width * cellSize
-    val gameBoardHeight: Double = height
   }
 
   object View {
+    val gameMenuWidthRatio: Int = 3
+    val gameMenuWidth: Double = cellSize * gameMenuWidthRatio
+    val gameMenuHeight: Double = height
+    val gameBoardWidth: Double = width - gameMenuWidth
+    val gameBoardHeight: Double = height
 
     val loadingLabels: List[String] = List(
       "The monkeys are teaming up...",

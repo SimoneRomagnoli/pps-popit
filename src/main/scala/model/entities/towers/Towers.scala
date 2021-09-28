@@ -14,7 +14,11 @@ import scala.language.{ implicitConversions, postfixOps }
 object Towers {
 
   /**
-   * A [[Tower]] is an [[Entity]] with the ability of see balloon object in its sight range
+   * A [[Tower]] is an [[Entity]] with the ability of detect a balloon within its sight range and
+   * shoot it with a specific [[Bullet]]
+   *
+   * @tparam B
+   *   is the type of the [[Bullet]] it can shoot
    */
   trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
@@ -33,7 +37,7 @@ object Towers {
 
   object TowerBuilders {
     implicit def genericTowerBuilder[B <: Bullet]: TowerBuilder[B] = BaseTower[B](_)
-    implicit val monkeyTowerBuilder: TowerBuilder[Dart] = BaseTower[Dart](_)
+    implicit val dartTowerBuilder: TowerBuilder[Dart] = BaseTower[Dart](_)
     implicit val iceTowerBuilder: TowerBuilder[IceBall] = BaseTower[IceBall](_)
     implicit val cannonTowerBuilder: TowerBuilder[CannonBall] = BaseTower[CannonBall](_)
   }
@@ -41,6 +45,23 @@ object Towers {
   def of[B <: Bullet](bullet: B)(implicit towerBuilder: TowerBuilder[B]): Tower[B] =
     towerBuilder.build(bullet)
 
+  /**
+   * A [[BaseTower]] is a default tower instance
+   * @param bullet
+   *   is the type of the [[Bullet]] it can shoot when it detects a balloon
+   * @param boundary
+   *   is the boundary of the rendered object in the grid
+   * @param position
+   *   is the [[Vector2D]] where the tower is instanced
+   * @param sightRange
+   *   is the range of sight of the tower to detect the balloons
+   * @param shotRatio
+   *   is the frequency of shooting bullets
+   * @param direction
+   *   is the aim of the tower
+   * @tparam B
+   *   is a generic to specify the type of the [[Bullet]]
+   */
   case class BaseTower[B <: Bullet](
       override val bullet: B,
       override val boundary: (Double, Double) = towerDefaultBoundary,
@@ -64,6 +85,9 @@ object Towers {
   }
 }
 
+/**
+ * Provides a DSL to build the towers
+ */
 object TowerTypes {
 
   sealed trait Ammo[B <: Bullet] {
@@ -73,7 +97,7 @@ object TowerTypes {
 
   sealed class TowerAmmo[B <: Bullet](override val bullet: B) extends Ammo[B]
 
-  case object Monkey
+  case object Arrow
       extends TowerAmmo(
         Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary)
       )

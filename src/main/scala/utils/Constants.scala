@@ -2,7 +2,7 @@ package utils
 
 import model.Positions.Vector2D
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
-import model.entities.towers.TowerTypes.{ Cannon, Ice, Monkey }
+import model.entities.towers.TowerTypes.{ Arrow, Cannon, Ice }
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
@@ -41,7 +41,7 @@ object Constants {
       val towerDefaultDirection: Vector2D = (0.0, 0.0)
 
       object TowerTypes {
-        val monkey: Tower[Dart] = Monkey tower
+        val arrow: Tower[Dart] = Arrow tower
         val cannon: Tower[CannonBall] = Cannon tower
         val ice: Tower[IceBall] = Ice tower
       }

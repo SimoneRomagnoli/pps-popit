@@ -20,12 +20,15 @@ import scala.language.postfixOps
 
 object TowerActor {
 
-  def apply(tower: Tower): Behavior[Update] = Behaviors.setup { ctx =>
+  def apply[B <: Bullet](tower: Tower[B]): Behavior[Update] = Behaviors.setup { ctx =>
     TowerActor(ctx, tower) searching
   }
 }
 
-case class TowerActor(ctx: ActorContext[Update], var tower: Tower, var shootingTime: Double = 0.0) {
+case class TowerActor[B <: Bullet](
+    ctx: ActorContext[Update],
+    var tower: Tower[B],
+    var shootingTime: Double = 0.0) {
 
   private def searching: Behavior[Update] = Behaviors.receiveMessage {
     case SearchBalloon(replyTo, balloon) =>
@@ -34,7 +37,7 @@ case class TowerActor(ctx: ActorContext[Update], var tower: Tower, var shootingT
       }
       Behaviors.same
 
-    case UpdateEntity(elapsedTime, entities, replyTo, track) =>
+    case UpdateEntity(elapsedTime, entities, replyTo, _) =>
       entities foreach {
         case balloon: Balloon =>
           if (tower canSee balloon) {

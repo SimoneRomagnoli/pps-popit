@@ -3,6 +3,7 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
+import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Monkey
 import model.entities.towers.Towers.Tower
 import model.entities.towers.TowersTest._
@@ -18,7 +19,7 @@ object TowersTest {
   val towerPosition: Vector2D = (2.0, 1.0)
   var lastShotTime: Double = 0.0
 
-  val tower: Tower =
+  val tower: Tower[Dart] =
     (Monkey tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
   var balloon: Balloon = Simple(position = balloonPosition, boundary = balloonBoundary)
 
@@ -56,7 +57,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       }
       "can change the shot frequency according to the shot ratio" in {
         lastShotTime = 0.0
-        val newTower: Tower = tower withShotRatioOf 1.0
+        val newTower: Tower[Dart] = tower withShotRatioOf 1.0
         (newTower shotRatio) shouldBe 1.0
         newTower canAttackAfter lastShotTime shouldBe true
         lastShotTime = System.currentTimeMillis().toDouble

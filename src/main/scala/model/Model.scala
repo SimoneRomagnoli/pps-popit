@@ -41,7 +41,7 @@ object Model {
           List((Monkey tower) in towerCell, (Red balloon) on track)
         val actors: Seq[ActorRef[Update]] = entities map {
           case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-          case tower: Tower     => ctx.spawnAnonymous(TowerActor(tower))
+          case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
           case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
         }
         running(ctx, entities, actors, track)

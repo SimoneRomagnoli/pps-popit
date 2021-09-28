@@ -98,7 +98,7 @@ class GameController(val gameBoard: Pane, val gameMenu: VBox, var mapNodes: Int 
         val viewEntity: Shape = toShape(balloon)
         viewEntity.setFill(new ImagePattern(new Image("images/balloons/RED.png")))
         gameBoard.children.add(viewEntity)
-      case tower: Tower =>
+      case tower: Tower[_] =>
         val viewEntity: Shape = toShape(tower)
         viewEntity.setFill(new ImagePattern(new Image("images/towers/MONKEY.png")))
         viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI

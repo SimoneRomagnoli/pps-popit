@@ -12,18 +12,18 @@ import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
 import scalafx.scene.Parent
-import scalafx.scene.control.{ Label, ToggleButton }
-import scalafx.scene.layout.{ HBox, Pane, VBox }
+import scalafx.scene.control.Label
+import scalafx.scene.layout.{ Pane, VBox }
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
-import scalafxml.core.macros.sfxml
+import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.Screen.cellSize
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 
-import scala.util.Random
 import scala.language.reflectiveCalls
+import scala.util.Random
 
 /**
  * Controller of the game. This controller loads the game fxml file and is able to draw every
@@ -50,11 +50,7 @@ trait ViewGameController {
 class GameController(
     val gameBoard: Pane,
     val gameMenu: VBox,
-    val inputButtons: HBox,
-    val playButton: ToggleButton,
-    val exitButton: ToggleButton,
-    val gameStatus: HBox,
-    val towerDepot: VBox,
+    @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0)
     extends ViewGameController {
   setup()
@@ -63,13 +59,7 @@ class GameController(
 
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
-    setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
-    playButton.setGraphic(
-      toInput(playButton.width.value, playButton.width.value, "/images/inputs/PAUSE.png")
-    )
-    exitButton.setGraphic(
-      toInput(exitButton.width.value, exitButton.width.value, "/images/inputs/EXIT.png")
-    )
+    gameMenuController.setup()
   }
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
@@ -140,12 +130,6 @@ class GameController(
       entity.boundary._1,
       entity.boundary._2
     )
-    rectangle.setFill(new ImagePattern(new Image(path)))
-    rectangle
-  }
-
-  private def toInput(width: Double, height: Double, path: String): Shape = {
-    val rectangle: Rectangle = Rectangle(width, height)
     rectangle.setFill(new ImagePattern(new Image(path)))
     rectangle
   }

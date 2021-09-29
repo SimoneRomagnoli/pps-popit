@@ -12,7 +12,13 @@
 
 .inputBox {
 -fx-background-color: #7F4F24;
--fx-padding: 10 10 10 10;
+-fx-padding: 10;
+-fx-margin: 30 30 30 30;
+-fx-border-color:#000000;
+-fx-border-width: 1;
+-fx-border-style: solid;
+-fx-border-radius: 10;
+-fx-background-radius: 10;
 }
 
 .inputButton {

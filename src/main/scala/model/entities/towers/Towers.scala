@@ -4,7 +4,7 @@ import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ BasicBullet, CannonBall, Dart, IceBall }
 import utils.Constants.Entities.Towers._
-import utils.Constants.Entities.Bullets._
+import utils.Constants.Entities.Bullets.{ bulletDefaultBoundary, _ }
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
@@ -106,9 +106,9 @@ object Towers {
             bulletDefaultDamage,
             defaultPosition,
             bulletDefaultSpeed,
+            bulletDefaultBoundary,
             bulletDefaultRadius,
-            bulletFreezingTime,
-            bulletDefaultBoundary
+            bulletFreezingTime
           )
         )
 
@@ -118,8 +118,8 @@ object Towers {
             bulletDefaultDamage,
             defaultPosition,
             bulletDefaultSpeed,
-            bulletDefaultRadius,
-            bulletDefaultBoundary
+            bulletDefaultBoundary,
+            bulletDefaultRadius
           )
         )
 

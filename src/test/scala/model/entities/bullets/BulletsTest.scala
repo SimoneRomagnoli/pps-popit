@@ -13,10 +13,10 @@ class BulletsTest extends AnyFlatSpec with Matchers {
   val freezingTime: Double = 1.0
   val boundary: (Double, Double) = (2.0, 1.0)
 
-  val iceBall: IceBall = IceBall(damage, position, speed, radius, freezingTime, boundary)
+  val iceBall: IceBall = IceBall(damage, position, speed, boundary, radius, freezingTime)
 
   val dart: Dart = Dart(damage, position, speed, boundary)
-  val cannonBall: CannonBall = CannonBall(damage, position, speed, radius, boundary)
+  val cannonBall: CannonBall = CannonBall(damage, position, speed, boundary, radius)
 
   "A Dart" should "have default position, speed and damage" in {
     dart.position shouldBe position

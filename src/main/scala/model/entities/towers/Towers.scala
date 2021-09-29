@@ -1,12 +1,21 @@
 package model.entities.towers
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
+import model.entities.Entities.{ BoostAbility, Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
+import model.entities.towers.TowerUpgrades.{ Ratio, Sight, TowerPowerUp }
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
 import model.entities.towers.Towers.Tower
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.Bullets._
+import utils.Constants.Entities.Towers.TowerPowerUps.{
+  boostedRatioCost,
+  boostedRatioFactor,
+  boostedRatioTime,
+  boostedSightCost,
+  boostedSightFactor,
+  boostedSightTime
+}
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
@@ -20,7 +29,7 @@ object Towers {
    * @tparam B
    *   is the type of the [[Bullet]] it can shoot
    */
-  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility {
+  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility with BoostAbility {
     type Boundary = (Double, Double)
 
     def bullet: B
@@ -29,6 +38,8 @@ object Towers {
     override def rotateTo(dir: Vector2D): Tower[B]
     override def withSightRangeOf(radius: Double): Tower[B]
     override def withShotRatioOf(ratio: Double): Tower[B]
+    override def boost(powerUp: TowerPowerUp): Tower[B]
+
   }
 
   trait TowerBuilder[B <: Bullet] {
@@ -82,6 +93,15 @@ object Towers {
 
     override def withShotRatioOf(ratio: Double): Tower[B] =
       BaseTower(bullet, boundary, position, sightRange, ratio, direction)
+
+    override def boost(powerUp: TowerPowerUp): Tower[B] = powerUp match {
+      case Ratio =>
+        BaseTower(bullet, boundary, position, sightRange, shotRatio * powerUp.factor, direction)
+      case Sight =>
+        BaseTower(bullet, boundary, position, sightRange * powerUp.factor, shotRatio, direction)
+      case _ => BaseTower(bullet, boundary, position, sightRange, shotRatio, direction)
+    }
+
   }
 }
 
@@ -124,4 +144,23 @@ object TowerTypes {
           bulletDefaultBoundary
         )
       )
+}
+
+object TowerUpgrades {
+
+  sealed trait PowerUp {
+    def time: Double
+    def cost: Int
+    def factor: Double
+  }
+
+  sealed class TowerPowerUp(
+      override val time: Double,
+      override val cost: Int,
+      override val factor: Double)
+      extends PowerUp
+
+  case object Ratio extends TowerPowerUp(boostedRatioTime, boostedRatioCost, boostedRatioFactor)
+  case object Sight extends TowerPowerUp(boostedSightTime, boostedSightCost, boostedSightFactor)
+
 }

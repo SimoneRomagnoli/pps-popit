@@ -21,7 +21,7 @@ import scala.language.postfixOps
 object TowerActor {
 
   def apply[B <: Bullet](tower: Tower[B]): Behavior[Update] = Behaviors.setup { ctx =>
-    TowerActor(ctx, tower) searching
+    TowerActor(ctx, tower) detecting
   }
 }
 
@@ -30,7 +30,7 @@ case class TowerActor[B <: Bullet](
     var tower: Tower[B],
     var shootingTime: Double = 0.0) {
 
-  private def searching: Behavior[Update] = Behaviors.receiveMessage {
+  private def detecting: Behavior[Update] = Behaviors.receiveMessage {
     case SearchBalloon(replyTo, balloon) =>
       if (tower canSee balloon) {
         replyTo ! BalloonDetected()

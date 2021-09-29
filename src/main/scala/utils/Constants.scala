@@ -45,6 +45,15 @@ object Constants {
         val cannon: Tower[CannonBall] = Cannon tower
         val ice: Tower[IceBall] = Ice tower
       }
+
+      object TowerPowerUps {
+        val boostedRatioTime: Double = 3.0
+        val boostedRatioCost: Int = 200
+        val boostedRatioFactor: Double = 2.0
+        val boostedSightTime: Double = 5.0
+        val boostedSightCost: Int = 200
+        val boostedSightFactor: Double = 2.0
+      }
     }
 
     object Bullets {

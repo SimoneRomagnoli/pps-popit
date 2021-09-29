@@ -34,6 +34,7 @@ class GameMenuController(
 
     TowerTypes.values foreach { tower =>
       val box: HBox = new HBox()
+      box.styleClass += "towerBox"
       box.children = Seq(toShape(tower.asInstanceOf[TowerType[_]].tower))
       towerDepot.children.add(box)
     }

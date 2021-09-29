@@ -11,9 +11,8 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
-import scalafx.scene.Parent
 import scalafx.scene.control.Label
-import scalafx.scene.layout.{ Pane, VBox }
+import scalafx.scene.layout.{ Pane, Region, VBox }
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import scalafxml.core.macros.{ nested, sfxml }
@@ -135,10 +134,10 @@ class GameController(
     rectangle
   }
 
-  private def setLayout(parent: Parent, width: Double, height: Double): Unit = {
-    parent.maxWidth(width)
-    parent.minWidth(width)
-    parent.maxHeight(height)
-    parent.minHeight(height)
+  private def setLayout(region: Region, width: Double, height: Double): Unit = {
+    region.maxWidth = width
+    region.minWidth = width
+    region.maxHeight = height
+    region.minHeight = height
   }
 }

@@ -6,6 +6,6 @@
         <Pane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
     </center>
     <right>
-        <fx:include fx:id="gameMenu" source="game-menu.fxml" styleClass="gameMenu" BorderPane.alignment="CENTER_RIGHT"/>
+        <fx:include fx:id="gameMenu" source="game-menu.fxml" styleClass="gameMenu" BorderPane.alignment="CENTER_RIGHT" />
     </right>
 </BorderPane>

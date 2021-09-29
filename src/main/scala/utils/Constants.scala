@@ -64,7 +64,7 @@ object Constants {
   }
 
   object View {
-    val gameMenuWidthRatio: Int = 3
+    val gameMenuWidthRatio: Int = 2
     val gameMenuWidth: Double = cellSize * gameMenuWidthRatio
     val gameMenuHeight: Double = height
     val gameBoardWidth: Double = width - gameMenuWidth

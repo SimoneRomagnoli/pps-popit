@@ -68,6 +68,10 @@ object Balloons {
  */
 object BalloonType {
 
+  sealed trait BalloonType
+  case object Plain extends BalloonType
+  case object Regenerating extends BalloonType
+
   sealed trait BalloonLife {
     def life: Int
   }

@@ -35,7 +35,8 @@
 .towerBox {
 -fx-background-color: #FFE5D9;
 -fx-padding: 10;
--fx-margin: 30 30 30 30;
+-fx-spacing: 10;
+-fx-margin: 10;
 -fx-border-color:#000000;
 -fx-border-width: 1;
 -fx-border-style: solid;

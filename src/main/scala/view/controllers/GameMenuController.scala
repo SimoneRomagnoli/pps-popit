@@ -1,14 +1,12 @@
 package view.controllers
 
-import javafx.scene.image.Image
-import javafx.scene.paint.ImagePattern
-import model.entities.Entities.Entity
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
-import scalafx.scene.control.ToggleButton
+import model.entities.towers.Towers.Tower
+import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
-import scalafx.scene.shape.{ Rectangle, Shape }
 import scalafxml.core.macros.sfxml
+import view.Rendering
 
 trait ViewGameMenuController {
   def setup(): Unit
@@ -25,36 +23,39 @@ class GameMenuController(
     extends ViewGameMenuController {
 
   override def setup(): Unit = {
+    setSpacing()
+    setupButtons()
+    setupTowerDepot()
+  }
+
+  private def setSpacing(): Unit = {
+    val space: Double = 10.0
+    gameMenu.setSpacing(space)
+    towerDepot.setSpacing(space)
+  }
+
+  private def setupButtons(): Unit = {
     playButton.setGraphic(
-      toInput(playButton.width.value, playButton.width.value, "/images/inputs/PAUSE.png")
+      Rendering.forInput(playButton.width.value, playButton.width.value, "/images/inputs/PAUSE.png")
     )
     exitButton.setGraphic(
-      toInput(exitButton.width.value, exitButton.width.value, "/images/inputs/EXIT.png")
+      Rendering.forInput(exitButton.width.value, exitButton.width.value, "/images/inputs/EXIT.png")
     )
+  }
 
-    TowerTypes.values foreach { tower =>
+  private def setupTowerDepot(): Unit =
+    TowerTypes.values.foreach { towerValue =>
       val box: HBox = new HBox()
-      box.styleClass += "towerBox"
-      box.children = Seq(toShape(tower.asInstanceOf[TowerType[_]].tower))
+      val tower: Tower[_] = towerValue.asInstanceOf[TowerType[_]].tower
+
+      val towerBox: HBox = new HBox(Rendering a tower)
+      towerBox.styleClass += "towerBox"
+      box.children += towerBox
+
+      val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
+      towerLabel.styleClass += "towerLabel"
+      box.children += towerLabel
+
       towerDepot.children.add(box)
     }
-
-  }
-
-  private def toShape(entity: Entity): Shape = {
-    val rectangle: Rectangle = Rectangle(
-      entity.position.x - entity.boundary._1 / 2,
-      entity.position.y - entity.boundary._2 / 2,
-      entity.boundary._1,
-      entity.boundary._2
-    )
-    rectangle.setFill(new ImagePattern(new Image("images/" + entity.toString + ".png")))
-    rectangle
-  }
-
-  private def toInput(width: Double, height: Double, path: String): Shape = {
-    val rectangle: Rectangle = Rectangle(width, height)
-    rectangle.setFill(new ImagePattern(new Image(path)))
-    rectangle
-  }
 }

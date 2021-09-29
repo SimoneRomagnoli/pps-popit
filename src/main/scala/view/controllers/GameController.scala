@@ -59,6 +59,7 @@ class GameController(
 
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+    setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
     gameMenuController.setup()
   }
 
@@ -109,7 +110,7 @@ class GameController(
         val viewEntity: Shape = toShape(balloon, "images/balloons/RED.png")
         gameBoard.children.add(viewEntity)
       case tower: Tower[_] =>
-        val viewEntity: Shape = toShape(tower, "images/towers/MONKEY.png")
+        val viewEntity: Shape = toShape(tower, "images/" + tower.toString + ".png")
         viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         gameBoard.children.add(viewEntity)
         val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)

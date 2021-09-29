@@ -17,6 +17,8 @@ object Bullets {
   trait Bullet extends Entity with MovementAbility {
     type Boundary = (Double, Double)
     def damage: Double
+
+    def toString: String
   }
 
   abstract class BasicBullet(
@@ -66,7 +68,9 @@ object Bullets {
       override val position: Vector2D = defaultPosition,
       override val speed: Vector2D = bulletDefaultSpeed,
       override val boundary: (Double, Double) = bulletDefaultBoundary)
-      extends BasicBullet(damage, position, speed, boundary)
+      extends BasicBullet(damage, position, speed, boundary) {
+    override def toString: String = "DART"
+  }
 
   case class CannonBall(
       override val damage: Double,
@@ -75,7 +79,9 @@ object Bullets {
       override val radius: Double,
       override val boundary: (Double, Double))
       extends BasicBullet(damage, position, speed)
-      with Fire
+      with Fire {
+    override def toString: String = "CANNON-BALL"
+  }
 
   case class IceBall(
       override val damage: Double,
@@ -86,6 +92,8 @@ object Bullets {
       override val boundary: (Double, Double))
       extends BasicBullet(damage, position, speed)
       with Ice {
+
+    override def toString: String = "ICE-BALL"
 
     override def freeze(time: Double): Explosion =
       IceBall(damage, position, speed, radius, time, boundary)

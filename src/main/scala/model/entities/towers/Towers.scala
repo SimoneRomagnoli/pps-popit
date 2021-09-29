@@ -25,6 +25,8 @@ object Towers {
     override def rotateTo(dir: Vector2D): Tower[B]
     override def withSightRangeOf(radius: Double): Tower[B]
     override def withShotRatioOf(ratio: Double): Tower[B]
+
+    override def toString: String = "towers/" + bullet.toString + "-TOWER"
   }
 
   trait TowerBuilder[B <: Bullet] {
@@ -64,7 +66,7 @@ object Towers {
   }
 }
 
-object TowerTypes {
+object TowerTypes extends Enumeration {
 
   sealed trait Ammo[B <: Bullet] {
     def bullet: B
@@ -100,4 +102,9 @@ object TowerTypes {
           bulletDefaultBoundary
         )
       )
+
+  case class TowerType[B <: Bullet](tower: Tower[B]) extends Val
+  val monkey: TowerType[Dart] = TowerType(Monkey tower)
+  val cannon: TowerType[CannonBall] = TowerType(Cannon tower)
+  val ice: TowerType[IceBall] = TowerType(Ice tower)
 }

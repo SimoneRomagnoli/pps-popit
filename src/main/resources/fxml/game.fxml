@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-<BorderPane prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameController">
+<BorderPane fx:id="mainPane" prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameController">
     <center>
         <Pane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
     </center>

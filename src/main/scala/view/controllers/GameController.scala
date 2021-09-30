@@ -11,8 +11,9 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
+import scalafx.scene.Parent
 import scalafx.scene.control.Label
-import scalafx.scene.layout.{ Pane, Region, VBox }
+import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import scalafxml.core.macros.{ nested, sfxml }
@@ -47,6 +48,7 @@ trait ViewGameController {
  */
 @sfxml
 class GameController(
+    val mainPane: BorderPane,
     val gameBoard: Pane,
     val gameMenu: VBox,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
@@ -59,6 +61,7 @@ class GameController(
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
     setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+    //mainPane.onDragDetected = _ => mainPane.startFullDrag()
     gameMenuController.setup()
   }
 

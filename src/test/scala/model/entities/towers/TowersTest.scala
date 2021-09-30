@@ -4,7 +4,7 @@ import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.bullets.Bullets.Dart
-import model.entities.towers.TowerTypes.Monkey
+import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
 import model.entities.towers.TowersTest._
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -20,7 +20,7 @@ object TowersTest {
   var lastShotTime: Double = 0.0
 
   val tower: Tower[Dart] =
-    (Monkey tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
+    (Arrow tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
   var balloon: Balloon = Simple(position = balloonPosition, boundary = balloonBoundary)
 
   def waitSomeTime(): Unit = Thread.sleep(500)

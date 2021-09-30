@@ -4,6 +4,7 @@ import model.Positions.Vector2D
 import model.Positions._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.TowerUpgrades.TowerPowerUp
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -94,6 +95,10 @@ object Entities {
     def canShootAfter: Double => Boolean =
       _ >= shotRatio
 
+  }
+
+  trait BoostAbility extends Entity {
+    def boost(powerUp: TowerPowerUp): BoostAbility
   }
 
 }

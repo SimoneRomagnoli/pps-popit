@@ -1,10 +1,13 @@
 package view.controllers
 
+import javafx.scene.Node
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
+import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import view.Rendering
 
@@ -45,19 +48,22 @@ class GameMenuController(
 
   private def setupTowerDepot(): Unit =
     TowerTypes.values.foreach { towerValue =>
-      val box: HBox = new HBox()
       val tower: Tower[_] = towerValue.asInstanceOf[TowerType[_]].tower
-
-      val towerBox: HBox = new HBox(Rendering a tower)
+      val renderedTower: Shape = Rendering a tower
+      val towerBox: HBox = new HBox(renderedTower)
       towerBox.styleClass += "towerBox"
-      towerBox.onDragDetected = e => println(e)
-      towerBox.onDragOver = e => println(e)
-      box.children += towerBox
+      towerBox.setCursor(Cursor.Hand)
+      towerBox.onMousePressed = _ => {
+        towerDepot.children.foreach(_.getStyleClass.remove("draggedOver"))
+        towerBox.styleClass += "draggedOver"
+        towerBox.setCursor(Cursor.ClosedHand)
+      }
+      towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
       val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
       towerLabel.styleClass += "towerLabel"
-      box.children += towerLabel
+      towerBox.children += towerLabel
 
-      towerDepot.children.add(box)
+      towerDepot.children.add(towerBox)
     }
 }

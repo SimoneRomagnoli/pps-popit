@@ -18,7 +18,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.BalloonType.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Dart
-import model.entities.towers.TowerTypes.Monkey
+import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Tracks.Track
@@ -38,7 +38,7 @@ object Model {
         replyTo ! MapCreated(track)
         val towerCell: Cell = GridCell(track.start.x, track.start.y - 1)
         val entities: List[Entity] =
-          List((Monkey tower) in towerCell, (Red balloon) on track)
+          List((Arrow tower) in towerCell, (Red balloon) on track)
         val actors: Seq[ActorRef[Update]] = entities map {
           case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
           case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))

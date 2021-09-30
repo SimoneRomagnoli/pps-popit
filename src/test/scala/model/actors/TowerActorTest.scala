@@ -8,7 +8,7 @@ import model.Positions.Vector2D
 import model.actors.TowerActorTest._
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.bullets.Bullets.Dart
-import model.entities.towers.TowerTypes.Monkey
+import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants.Entities.Towers.towerDefaultShotRatio
@@ -55,7 +55,7 @@ object TowerActorTest {
 class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val tower: Tower[Dart] =
-    (Monkey tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
+    (Arrow tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
 
   val towerActor: ActorRef[Update] =
     testKit.spawn(TowerActor(tower))

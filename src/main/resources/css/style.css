@@ -44,7 +44,7 @@
 -fx-background-radius: 10;
 }
 
-.draggedOver {
+.selected {
 -fx-border-color:#2BD011;
 -fx-border-width: 2;
 -fx-border-style: solid;

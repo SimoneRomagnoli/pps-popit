@@ -4,6 +4,8 @@ import javafx.scene.Node
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import scalafx.collections.ObservableBuffer
+import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
@@ -54,8 +56,12 @@ class GameMenuController(
       towerBox.styleClass += "towerBox"
       towerBox.setCursor(Cursor.Hand)
       towerBox.onMousePressed = _ => {
-        towerDepot.children.foreach(_.getStyleClass.remove("draggedOver"))
-        towerBox.styleClass += "draggedOver"
+        if (!towerBox.styleClass.contains("selected")) {
+          towerDepot.children.foreach(_.getStyleClass.remove("selected"))
+          towerBox.styleClass += "selected"
+        } else {
+          towerDepot.children.foreach(_.getStyleClass.remove("selected"))
+        }
         towerBox.setCursor(Cursor.ClosedHand)
       }
       towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
@@ -63,7 +69,10 @@ class GameMenuController(
       val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
       towerLabel.styleClass += "towerLabel"
       towerBox.children += towerLabel
-
+      towerBox.setAlignment(Pos.CenterLeft)
       towerDepot.children.add(towerBox)
     }
+
+  private def anySelected(nodes: ObservableBuffer[Node]): Boolean =
+    nodes.map(_.getStyleClass.contains("selected")).reduce(_ || _)
 }

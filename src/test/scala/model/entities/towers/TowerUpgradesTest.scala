@@ -4,22 +4,12 @@ import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.TowerUpgrades.{ Ratio, Sight }
-import model.entities.towers.TowerUpgradesTest.{ boostedTime, isStillBoosted, waitSomeTime }
 import model.entities.towers.Towers.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import scala.language.postfixOps
 
-object TowerUpgradesTest {
-
-  var boostedTime: Double = 0.0
-
-  def isStillBoosted: (Double, Double) => Boolean = (time, powerUp) =>
-    (System.currentTimeMillis() - time) / 1000.0 <= powerUp
-
-  def waitSomeTime(): Unit = Thread.sleep(1000)
-
-}
+object TowerUpgradesTest {}
 
 class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
@@ -54,23 +44,46 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         (boostedTower shotRatio) shouldBe boostedRatio
       }
     }
-    "the tower get the ratio power up" should {
-      "return at the beginning state after 3 seconds" in {
+    /*"the tower get the ratio power up" should {
+      "not be boosted no more after 3 seconds" in {
         val arrowTower: Tower[Dart] =
           (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
 
-        (arrowTower boost Ratio).shotRatio shouldBe boostedRatio
-        boostedTime = System.currentTimeMillis().toDouble
+        val boostedTower: Tower[Dart] = arrowTower boost Ratio
 
-        isStillBoosted(boostedTime, Ratio.time) shouldBe true
+        (boostedTower shotRatio) shouldBe boostedRatio
+        (boostedTower sightRange) shouldBe sightRange
+
+        (boostedTower isBoosted Ratio.time) shouldBe true
         waitSomeTime()
-        isStillBoosted(boostedTime, Ratio.time) shouldBe true
+        (boostedTower isBoosted Ratio.time) shouldBe true
         waitSomeTime()
-        isStillBoosted(boostedTime, Ratio.time) shouldBe true
+        (boostedTower isBoosted Ratio.time) shouldBe true
         waitSomeTime()
-        isStillBoosted(boostedTime, Ratio.time) shouldBe false
+        (boostedTower isBoosted Ratio.time) shouldBe false
       }
-    }
+      "return to the previous state after 3 seconds" in {
+        val arrowTower: Tower[Dart] =
+          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+
+        val boostedTower: Tower[Dart] = arrowTower boost Ratio
+
+        (boostedTower shotRatio) shouldBe boostedRatio
+        (boostedTower sightRange) shouldBe sightRange
+
+        (boostedTower isBoosted Ratio.time) shouldBe true
+
+        waitSomeTime()
+        waitSomeTime()
+        waitSomeTime()
+
+        (boostedTower isBoosted Ratio.time) shouldBe false
+        val previousTower: Tower[Dart] = arrowTower.reset()
+
+        (previousTower sightRange) shouldBe sightRange
+        (previousTower shotRatio) shouldBe shotRatio
+      }
+    }*/
   }
 
 }

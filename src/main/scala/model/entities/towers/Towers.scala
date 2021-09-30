@@ -11,10 +11,8 @@ import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.Towers.TowerPowerUps.{
   boostedRatioCost,
   boostedRatioFactor,
-  boostedRatioTime,
   boostedSightCost,
-  boostedSightFactor,
-  boostedSightTime
+  boostedSightFactor
 }
 import utils.Constants.Entities.defaultPosition
 
@@ -94,14 +92,14 @@ object Towers {
     override def withShotRatioOf(ratio: Double): Tower[B] =
       BaseTower(bullet, boundary, position, sightRange, ratio, direction)
 
-    override def boost(powerUp: TowerPowerUp): Tower[B] = powerUp match {
-      case Ratio =>
-        BaseTower(bullet, boundary, position, sightRange, shotRatio * powerUp.factor, direction)
-      case Sight =>
-        BaseTower(bullet, boundary, position, sightRange * powerUp.factor, shotRatio, direction)
-      case _ => BaseTower(bullet, boundary, position, sightRange, shotRatio, direction)
-    }
-
+    override def boost(powerUp: TowerPowerUp): Tower[B] =
+      powerUp match {
+        case Ratio =>
+          BaseTower(bullet, boundary, position, sightRange, shotRatio * powerUp.factor, direction)
+        case Sight =>
+          BaseTower(bullet, boundary, position, sightRange * powerUp.factor, shotRatio, direction)
+        case _ => BaseTower(bullet, boundary, position, sightRange, shotRatio, direction)
+      }
   }
 }
 
@@ -149,18 +147,13 @@ object TowerTypes {
 object TowerUpgrades {
 
   sealed trait PowerUp {
-    def time: Double
     def cost: Int
     def factor: Double
   }
 
-  sealed class TowerPowerUp(
-      override val time: Double,
-      override val cost: Int,
-      override val factor: Double)
-      extends PowerUp
+  sealed class TowerPowerUp(override val cost: Int, override val factor: Double) extends PowerUp
 
-  case object Ratio extends TowerPowerUp(boostedRatioTime, boostedRatioCost, boostedRatioFactor)
-  case object Sight extends TowerPowerUp(boostedSightTime, boostedSightCost, boostedSightFactor)
+  case object Ratio extends TowerPowerUp(boostedRatioCost, boostedRatioFactor)
+  case object Sight extends TowerPowerUp(boostedSightCost, boostedSightFactor)
 
 }

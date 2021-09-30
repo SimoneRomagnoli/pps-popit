@@ -7,9 +7,8 @@ import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.maps.Cells.{ Cell, GridCell }
+import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
 import scalafx.scene.Cursor
@@ -21,7 +20,6 @@ import scalafx.scene.shape.{ Circle, Rectangle, Shape }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
-import utils.Constants.Screen.cellSize
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 import view.Rendering
 
@@ -71,8 +69,7 @@ class GameController(
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
     mapNodes += grid.width * grid.height
-    val gridCells: Seq[Shape] = Rendering a grid
-    gameBoard.children += gridCells
+    Rendering a grid into gameBoard.children
   }
 
   override def loading(): Unit = Platform runLater {
@@ -96,8 +93,7 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     mapNodes += track.cells.size
     currentTrack = track.cells
-    val viewTrack: Seq[Shape] = Rendering a track
-    gameBoard.children += viewTrack
+    Rendering a track into gameBoard.children
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {

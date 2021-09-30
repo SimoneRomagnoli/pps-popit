@@ -10,6 +10,8 @@ import scalafx.scene.layout.{ HBox, VBox }
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import view.Rendering
+import view.Rendering.single
+import view.Rendering.toSingle
 
 trait ViewGameMenuController {
   def setup(): Unit
@@ -53,7 +55,7 @@ class GameMenuController(
   private def setupTowerDepot(): Unit =
     TowerTypes.values.foreach { towerValue =>
       val tower: Tower[_] = towerValue.asInstanceOf[TowerType[_]].tower
-      val renderedTower: Shape = Rendering a tower
+      val renderedTower: Shape = Rendering a tower as single
       val towerBox: HBox = new HBox(renderedTower)
       towerBox.styleClass += "towerBox"
       towerBox.setCursor(Cursor.Hand)

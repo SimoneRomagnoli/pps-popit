@@ -50,6 +50,8 @@ class GameMenuController(
 
       val towerBox: HBox = new HBox(Rendering a tower)
       towerBox.styleClass += "towerBox"
+      towerBox.onDragDetected = e => println(e)
+      towerBox.onDragOver = e => println(e)
       box.children += towerBox
 
       val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)

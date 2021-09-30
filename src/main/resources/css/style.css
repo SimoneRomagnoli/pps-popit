@@ -49,3 +49,15 @@
 -fx-border-width: 2;
 -fx-border-style: solid;
 }
+
+.selectable {
+-fx-border-color:#2BD011;
+-fx-border-width: 3;
+-fx-border-style: solid;
+}
+
+.unselectable {
+-fx-border-color:#FF0000;
+-fx-border-width: 3;
+-fx-border-style: solid;
+}

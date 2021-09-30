@@ -1,10 +1,8 @@
 package view.controllers
 
-import javafx.scene.Node
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
@@ -15,6 +13,7 @@ import view.Rendering
 
 trait ViewGameMenuController {
   def setup(): Unit
+  def anyTowerSelected(): Boolean
 }
 
 @sfxml
@@ -73,6 +72,6 @@ class GameMenuController(
       towerDepot.children.add(towerBox)
     }
 
-  private def anySelected(nodes: ObservableBuffer[Node]): Boolean =
-    nodes.map(_.getStyleClass.contains("selected")).reduce(_ || _)
+  def anyTowerSelected(): Boolean =
+    towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
 }

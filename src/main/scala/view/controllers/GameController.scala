@@ -1,5 +1,6 @@
 package view.controllers
 
+import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
@@ -11,8 +12,9 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.application.Platform
-import scalafx.scene.Parent
+import scalafx.scene.Cursor
 import scalafx.scene.control.Label
+import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Circle, Rectangle, Shape }
@@ -52,7 +54,8 @@ class GameController(
     val gameBoard: Pane,
     val gameMenu: VBox,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
-    var mapNodes: Int = 0)
+    var mapNodes: Int = 0,
+    var currentTrack: Seq[Cell] = Constants.Maps.basicTrack)
     extends ViewGameController {
   setup()
   this draw gameGrid
@@ -61,7 +64,7 @@ class GameController(
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
     setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
-    //mainPane.onDragDetected = _ => mainPane.startFullDrag()
+    setTowersSelection()
     gameMenuController.setup()
   }
 
@@ -95,6 +98,7 @@ class GameController(
 
   override def draw(track: Track): Unit = Platform runLater {
     mapNodes += track.cells.size
+    currentTrack = track.cells
     track.cells.prepended(GridCell(-1, 0, RIGHT)).sliding(2).foreach { couple =>
       val name: String =
         couple.head.direction.toString + "-" + couple.last.direction.toString + ".png"
@@ -143,4 +147,34 @@ class GameController(
     region.maxHeight = height
     region.minHeight = height
   }
+
+  private def setTowersSelection(): Unit = {
+    gameBoard.onMouseExited = _ => removeEffects()
+    gameBoard.onMouseMoved = e => {
+      removeEffects()
+      if (gameMenuController.anyTowerSelected()) {
+        val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
+        val effect: ColorAdjust = new ColorAdjust()
+        val place: Node = e.getTarget.asInstanceOf[Node]
+        if (selectable(cell)) {
+          effect.hue = 0.12
+          //effect.saturation = 80.0
+          effect.brightness = 0.2
+          place.setCursor(Cursor.Hand)
+        } else {
+          place.setCursor(Cursor.Default)
+        }
+        place.setEffect(effect)
+      } else {
+        e.getTarget.asInstanceOf[Node].setCursor(Cursor.Default)
+      }
+    }
+  }
+
+  private def selectable(cell: Cell): Boolean =
+    !currentTrack.exists(c => c.x == cell.x && c.y == cell.y)
+
+  private def removeEffects(): Unit =
+    gameBoard.children.foreach(_.setEffect(null))
+
 }

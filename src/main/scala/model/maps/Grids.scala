@@ -1,7 +1,9 @@
 package model.maps
 
-import model.maps.Cells.Cell
+import model.Positions.Vector2D
+import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
+import utils.Constants.Screen.cellSize
 
 import scala.language.postfixOps
 import scala.util.Random
@@ -62,6 +64,11 @@ object Grids {
 
       def randomInBorder(direction: Direction): Cell =
         (Random shuffle grid.border(direction)) head
+
+      def specificCell(position: Vector2D): Cell =
+        GridCell(position.x / cellSize, position.y / cellSize)
+
+      implicit private def toInt: Double => Int = _.toInt
     }
   }
 

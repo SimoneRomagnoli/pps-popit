@@ -52,11 +52,15 @@ object Model {
         entities: List[Entity],
         actors: Seq[ActorRef[Update]],
         track: Track): Behavior[Update] =
-      Behaviors.receiveMessage { case TickUpdate(elapsedTime, replyTo) =>
-        actors foreach {
-          _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
-        }
-        updating(ctx, entities, actors, replyTo, track)
+      Behaviors.receiveMessage {
+        case EntitySpawned(entity, actor) =>
+          running(ctx, entity :: entities, actors :+ actor, track)
+
+        case TickUpdate(elapsedTime, replyTo) =>
+          actors foreach {
+            _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
+          }
+          updating(ctx, entities, actors, replyTo, track)
       }
 
     def updating(

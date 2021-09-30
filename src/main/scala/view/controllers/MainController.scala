@@ -1,5 +1,6 @@
 package view.controllers
 
+import controller.Messages.Input
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
@@ -10,6 +11,7 @@ import utils.Constants
  */
 trait ViewController {
   def gameController: ViewGameController
+  def setSend(send: Input => Unit): Unit
 }
 
 /**
@@ -32,4 +34,6 @@ class MainController(
   mainPane.minWidth = Constants.Screen.width
   mainPane.maxHeight = Constants.Screen.height
   mainPane.minHeight = Constants.Screen.height
+
+  override def setSend(reference: Input => Unit): Unit = gameController.setSend(reference)
 }

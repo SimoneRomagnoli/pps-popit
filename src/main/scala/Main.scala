@@ -31,6 +31,7 @@ object Main extends JFXApp3 {
       Behaviors.setup[Message] { ctx =>
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
+        mainController.setSend(controller ! _)
         controller ! NewGame()
         Behaviors.empty
       },

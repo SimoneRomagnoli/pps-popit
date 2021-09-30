@@ -1,5 +1,6 @@
 package view.controllers
 
+import controller.Messages.{ Input, PlaceTower }
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
@@ -34,6 +35,7 @@ trait ViewGameController {
   def loading(): Unit
   def reset(): Unit
   def setup(): Unit
+  def setSend(send: Input => Unit): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
@@ -54,6 +56,7 @@ class GameController(
     val gameMenu: VBox,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0,
+    var send: Input => Unit,
     var currentTrack: Seq[Cell] = Constants.Maps.basicTrack)
     extends ViewGameController {
   setup()
@@ -66,6 +69,8 @@ class GameController(
     setTowersSelection()
     gameMenuController.setup()
   }
+
+  override def setSend(reference: Input => Unit): Unit = send = reference
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
     mapNodes += grid.width * grid.height
@@ -106,9 +111,9 @@ class GameController(
         val viewEntity: Shape = toShape(tower, "images/" + tower.toString + ".png")
         viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         gameBoard.children.add(viewEntity)
-        val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)
-        circle.setFill(Color.Gray.opacity(0.45))
-        gameBoard.children.add(circle)
+      //val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)
+      //circle.setFill(Color.Gray.opacity(0.45))
+      //gameBoard.children.add(circle)
       case bullet: Bullet =>
         val viewEntity: Shape = toShape(bullet, "/images/bullets/DART.png")
         viewEntity.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
@@ -155,6 +160,14 @@ class GameController(
         e.getTarget.asInstanceOf[Node].setCursor(Cursor.Default)
       }
     }
+    gameBoard.onMouseClicked = e => {
+      val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
+      if (gameMenuController.anyTowerSelected() && selectable(cell)) {
+        removeEffects()
+        gameMenuController.unselectDepot()
+        send(PlaceTower(cell))
+      }
+    }
   }
 
   private def selectable(cell: Cell): Boolean =
@@ -162,5 +175,4 @@ class GameController(
 
   private def removeEffects(): Unit =
     gameBoard.children.foreach(_.setEffect(null))
-
 }

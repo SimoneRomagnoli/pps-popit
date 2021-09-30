@@ -16,6 +16,7 @@ import view.Rendering.toSingle
 trait ViewGameMenuController {
   def setup(): Unit
   def anyTowerSelected(): Boolean
+  def unselectDepot(): Unit
 }
 
 @sfxml
@@ -36,6 +37,9 @@ class GameMenuController(
 
   override def anyTowerSelected(): Boolean =
     towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
+
+  override def unselectDepot(): Unit =
+    towerDepot.children.foreach(_.getStyleClass.remove("selected"))
 
   private def setSpacing(): Unit = {
     val space: Double = 10.0
@@ -61,10 +65,10 @@ class GameMenuController(
       towerBox.setCursor(Cursor.Hand)
       towerBox.onMousePressed = _ => {
         if (!towerBox.styleClass.contains("selected")) {
-          towerDepot.children.foreach(_.getStyleClass.remove("selected"))
+          unselectDepot()
           towerBox.styleClass += "selected"
         } else {
-          towerDepot.children.foreach(_.getStyleClass.remove("selected"))
+          unselectDepot()
         }
         towerBox.setCursor(Cursor.ClosedHand)
       }

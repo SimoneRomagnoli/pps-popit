@@ -23,6 +23,7 @@ import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.Screen.cellSize
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import view.Rendering
 
 import scala.language.reflectiveCalls
 import scala.util.Random
@@ -70,12 +71,8 @@ class GameController(
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
     mapNodes += grid.width * grid.height
-    grid.cells foreach { cell =>
-      val rect: Rectangle =
-        Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
-      rect.setFill(new ImagePattern(new Image("images/backgrounds/GRASS.png")))
-      gameBoard.children.add(rect)
-    }
+    val gridCells: Seq[Shape] = Rendering a grid
+    gameBoard.children += gridCells
   }
 
   override def loading(): Unit = Platform runLater {
@@ -99,14 +96,8 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     mapNodes += track.cells.size
     currentTrack = track.cells
-    track.cells.prepended(GridCell(-1, 0, RIGHT)).sliding(2).foreach { couple =>
-      val name: String =
-        couple.head.direction.toString + "-" + couple.last.direction.toString + ".png"
-      val cell: Cell = couple.last
-      val rect: Rectangle = Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
-      rect.setFill(new ImagePattern(new Image("images/roads/" + name)))
-      gameBoard.children.add(rect)
-    }
+    val viewTrack: Seq[Shape] = Rendering a track
+    gameBoard.children += viewTrack
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
@@ -158,7 +149,6 @@ class GameController(
         val place: Node = e.getTarget.asInstanceOf[Node]
         if (selectable(cell)) {
           effect.hue = 0.12
-          //effect.saturation = 80.0
           effect.brightness = 0.2
           place.setCursor(Cursor.Hand)
         } else {

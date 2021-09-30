@@ -32,6 +32,9 @@ class GameMenuController(
     setupTowerDepot()
   }
 
+  override def anyTowerSelected(): Boolean =
+    towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
+
   private def setSpacing(): Unit = {
     val space: Double = 10.0
     gameMenu.setSpacing(space)
@@ -71,7 +74,4 @@ class GameMenuController(
       towerBox.setAlignment(Pos.CenterLeft)
       towerDepot.children.add(towerBox)
     }
-
-  def anyTowerSelected(): Boolean =
-    towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
 }

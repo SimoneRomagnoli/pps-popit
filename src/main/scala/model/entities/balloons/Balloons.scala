@@ -27,7 +27,7 @@ object Balloons {
     override def boundary: (Double, Double) = retrieve(_.boundary)
     override def track: Track = retrieve(_.track)
 
-    private def change(f: => Balloon): Balloon = this match {
+    protected def change(f: => Balloon): Balloon = this match {
       case Complex(balloon) => complex(balloon change f)
       case _                => f
     }

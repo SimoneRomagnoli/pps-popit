@@ -2,6 +2,7 @@ package model.entities.balloons
 
 import model.Positions.{ fromTuple, Vector2D }
 import model.entities.balloons.BalloonLives._
+import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.RegeneratingBalloons.{ regenerating, regenerationTime, Regenerating }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -30,9 +31,10 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "regenerate its life" in {
-    val popped: Regenerating = regenerating(Green balloon).pop(null).get.asInstanceOf[Regenerating]
-    popped shouldBe regenerating(Blue balloon)
-    (popped.update(1) in zeroVector) shouldBe regenerating(Blue balloon)
-    (popped.update(regenerationTime) in zeroVector) shouldBe regenerating(Green balloon)
+    val popped: Balloon =
+      regenerating(Green balloon).in((0.0, 0.0)).pop(null).get
+    popped shouldBe (Blue balloon)
+    (popped.update(1) in zeroVector) shouldBe (Blue balloon)
+    (popped.update(regenerationTime) in zeroVector) shouldBe (Green balloon)
   }
 }

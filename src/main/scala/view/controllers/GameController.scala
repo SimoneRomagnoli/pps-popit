@@ -6,7 +6,7 @@ import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.Bullet
+import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
@@ -21,7 +21,8 @@ import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
-import view.Rendering
+import view.render.Drawing.Item
+import view.render.{ Drawing, Rendering }
 
 import scala.language.reflectiveCalls
 import scala.util.Random
@@ -61,6 +62,7 @@ class GameController(
   setup()
   this draw gameGrid
   loading()
+  val bulletPic: ImagePattern = new ImagePattern(new Image("images/bullets/DART.png"))
 
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
@@ -114,9 +116,16 @@ class GameController(
       //circle.setFill(Color.Gray.opacity(0.45))
       //gameBoard.children.add(circle)
       case bullet: Bullet =>
-        val viewEntity: Shape = toShape(bullet, "/images/bullets/DART.png")
-        viewEntity.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
-        gameBoard.children.add(viewEntity)
+        val rectangle: Rectangle = Rectangle(
+          bullet.position.x - bullet.boundary._1 / 2,
+          bullet.position.y - bullet.boundary._2 / 2,
+          bullet.boundary._1,
+          bullet.boundary._2
+        )
+        rectangle.setFill(Drawing the Item(bullet))
+
+        rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
+        gameBoard.children.add(rectangle)
       case _ =>
     }
   }

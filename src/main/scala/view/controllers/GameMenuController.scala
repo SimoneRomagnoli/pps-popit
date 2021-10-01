@@ -9,9 +9,9 @@ import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import view.Rendering
-import view.Rendering.single
-import view.Rendering.toSingle
+import view.render.Renders.single
+import view.render.Renders.toSingle
+import view.render.Rendering
 
 trait ViewGameMenuController {
   def setup(): Unit

@@ -16,8 +16,7 @@ import scalafx.scene.Cursor
 import scalafx.scene.control.Label
 import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
-import scalafx.scene.paint.Color
-import scalafx.scene.shape.{ Circle, Rectangle, Shape }
+import scalafx.scene.shape.{ Rectangle, Shape }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid

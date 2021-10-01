@@ -12,6 +12,8 @@ import javafx.scene.Node
 import scalafx.scene.shape.{ Rectangle, Shape }
 import utils.Constants.Screen.cellSize
 
+import scala.language.reflectiveCalls
+
 object Rendering {
 
   sealed trait RenderMode

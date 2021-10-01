@@ -45,8 +45,7 @@ case class TowerActor[B <: Bullet](
             shootingTime += elapsedTime
             if (tower canShootAfter shootingTime) {
               shootingTime = 0.0
-              val bullet: Bullet =
-                Dart(position = tower.position, speed = tower.direction * bulletSpeedFactor)
+              val bullet: Bullet = Dart() in tower.position at tower.direction * bulletSpeedFactor
               val bulletActor: ActorRef[Update] = ctx.spawnAnonymous(BulletActor(bullet))
               replyTo ! EntitySpawned(bullet, bulletActor)
             }

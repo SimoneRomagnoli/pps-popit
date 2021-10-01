@@ -4,16 +4,15 @@ import model.Positions.Vector2D
 import model.entities.Entities.{ BoostAbility, Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
 import model.entities.towers.TowerUpgrades.{ Ratio, Sight, TowerPowerUp }
-import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
 import model.entities.towers.Towers.Tower
-import utils.Constants.Entities.Towers._
-import utils.Constants.Entities.Bullets._
+import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
 import utils.Constants.Entities.Towers.TowerPowerUps.{
   boostedRatioCost,
   boostedRatioFactor,
   boostedSightCost,
   boostedSightFactor
 }
+import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
@@ -117,33 +116,9 @@ object TowerTypes extends Enumeration {
 
   sealed class TowerAmmo[B <: Bullet](override val bullet: B) extends Ammo[B]
 
-  case object Arrow
-      extends TowerAmmo(
-        Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary)
-      )
-
-  case object Ice
-      extends TowerAmmo(
-        IceBall(
-          bulletDefaultDamage,
-          defaultPosition,
-          bulletDefaultSpeed,
-          bulletDefaultRadius,
-          bulletFreezingTime,
-          bulletDefaultBoundary
-        )
-      )
-
-  case object Cannon
-      extends TowerAmmo(
-        CannonBall(
-          bulletDefaultDamage,
-          defaultPosition,
-          bulletDefaultSpeed,
-          bulletDefaultRadius,
-          bulletDefaultBoundary
-        )
-      )
+  case object Arrow extends TowerAmmo(Dart())
+  case object Ice extends TowerAmmo(IceBall())
+  case object Cannon extends TowerAmmo(CannonBall())
 
   case class TowerType[B <: Bullet](tower: Tower[B]) extends Val
   val arrow: TowerType[Dart] = TowerType(Arrow tower)
@@ -162,5 +137,4 @@ object TowerUpgrades {
 
   case object Ratio extends TowerPowerUp(boostedRatioCost, boostedRatioFactor)
   case object Sight extends TowerPowerUp(boostedSightCost, boostedSightFactor)
-
 }

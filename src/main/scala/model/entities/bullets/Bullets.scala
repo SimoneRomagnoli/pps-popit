@@ -1,13 +1,10 @@
 package model.entities.bullets
 
-import model.Positions
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility }
-import utils.Constants.Entities.Bullets.{
-  bulletDefaultBoundary,
-  bulletDefaultDamage,
-  bulletDefaultSpeed
-}
+import model.entities.balloons.Balloons.Balloon
+import utils.Constants
+import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
@@ -19,40 +16,37 @@ object Bullets {
     def damage: Double
 
     def toString: String
+
+    override def in(position: Vector2D): Bullet
+    override def at(speed: Vector2D): Bullet
   }
 
   abstract class BasicBullet(
-      override val damage: Double = bulletDefaultDamage,
-      override val position: Vector2D = defaultPosition,
-      override val speed: Vector2D = bulletDefaultSpeed,
-      override val boundary: (Double, Double) = bulletDefaultBoundary)
+      var damage: Double = bulletDefaultDamage,
+      var position: Vector2D = defaultPosition,
+      var speed: Vector2D = bulletDefaultSpeed,
+      var boundary: (Double, Double) = bulletDefaultBoundary)
       extends Bullet {
 
-    override def in(position: Positions.Vector2D): Entity = this match {
-      case Dart(damage, _, speed, boundary) => Dart(damage, position, speed, boundary)
-      case CannonBall(damage, _, speed, radius, boundary) =>
-        CannonBall(damage, position, speed, radius, boundary)
-      case IceBall(damage, _, speed, time, radius, boundary) =>
-        IceBall(damage, position, speed, time, radius, boundary)
+    override def in(pos: Vector2D): Bullet = {
+      position = pos
+      this
     }
 
-    override def at(speed: Positions.Vector2D): Entity = this match {
-      case Dart(damage, position, _, boundary) => Dart(damage, position, speed, boundary)
-      case CannonBall(damage, position, _, radius, boundary) =>
-        CannonBall(damage, position, speed, radius, boundary)
-      case IceBall(damage, position, _, time, radius, boundary) =>
-        IceBall(damage, position, speed, time, radius, boundary)
+    override def at(velocity: Vector2D): Bullet = {
+      this.speed = velocity
+      this
     }
+
+    def toString: String
   }
 
   trait Explosion {
     def radius: Double
 
     def expand(rad: Double): Explosion = this match {
-      case CannonBall(damage, position, speed, _, boundary) =>
-        CannonBall(damage, position, speed, rad, boundary)
-      case IceBall(damage, position, speed, _, time, boundary) =>
-        IceBall(damage, position, speed, time, rad, boundary)
+      case CannonBall(_)    => CannonBall(rad)
+      case IceBall(_, time) => IceBall(rad, time)
     }
   }
 
@@ -63,39 +57,42 @@ object Bullets {
     def freeze(time: Double): Explosion
   }
 
-  case class Dart(
-      override val damage: Double = bulletDefaultDamage,
-      override val position: Vector2D = defaultPosition,
-      override val speed: Vector2D = bulletDefaultSpeed,
-      override val boundary: (Double, Double) = bulletDefaultBoundary)
-      extends BasicBullet(damage, position, speed, boundary) {
+  case class Dart() extends BasicBullet {
     override def toString: String = "DART"
   }
 
-  case class CannonBall(
-      override val damage: Double,
-      override val position: Vector2D,
-      override val speed: Vector2D,
-      override val radius: Double,
-      override val boundary: (Double, Double))
-      extends BasicBullet(damage, position, speed)
-      with Fire {
+  case class CannonBall(var radius: Double = bulletDefaultRadius) extends BasicBullet with Fire {
+
     override def toString: String = "CANNON-BALL"
+
+    override def expand(rad: Double): Explosion = {
+      radius = rad
+      this
+    }
   }
 
   case class IceBall(
-      override val damage: Double,
-      override val position: Vector2D,
-      override val speed: Vector2D,
-      override val radius: Double,
-      override val freezingTime: Double,
-      override val boundary: (Double, Double))
-      extends BasicBullet(damage, position, speed)
+      var radius: Double = bulletDefaultRadius,
+      var freezingTime: Double = bulletFreezingTime)
+      extends BasicBullet
       with Ice {
 
     override def toString: String = "ICE-BALL"
 
-    override def freeze(time: Double): Explosion =
-      IceBall(damage, position, speed, radius, time, boundary)
+    override def freeze(time: Double): Explosion = {
+      freezingTime = time
+      this
+    }
+
   }
+
+  implicit class RichBullet(bullet: Bullet) {
+
+    def hit(balloon: Balloon): Boolean =
+      balloon.position.x < bullet.position.x + bullet.boundary._1 && balloon.position.x + balloon.boundary._1 > bullet.position.x && balloon.position.y < bullet.position.y + bullet.boundary._2 && balloon.position.y + balloon.boundary._2 > bullet.position.y
+
+    def exitedFromScreen(): Boolean =
+      bullet.position.x > Constants.Screen.width || bullet.position.x < 0 || bullet.position.y > Constants.Screen.height || bullet.position.y < 0
+  }
+
 }

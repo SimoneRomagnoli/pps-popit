@@ -4,6 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages
 import controller.Messages.{
+  EntityKilled,
   EntitySpawned,
   EntityUpdated,
   MapCreated,
@@ -87,6 +88,22 @@ object Model {
             track,
             entity :: updatedEntities
           )
+        case EntityKilled(entity, actorRef) =>
+          updatedEntities match {
+            case full if full.size == entities.size - 1 =>
+              replyTo ! ModelUpdated(full)
+              running(ctx, full, actors.filter(_ != actorRef), track)
+            case notFull =>
+              updating(
+                ctx,
+                entities.filter(_ not entity),
+                actors.filter(_ != actorRef),
+                replyTo,
+                track,
+                notFull
+              )
+          }
+
         case _ => Behaviors.same
       }
   }

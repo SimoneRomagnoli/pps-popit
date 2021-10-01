@@ -13,6 +13,7 @@ import scalafx.scene.shape.{ Rectangle, Shape }
 import utils.Constants.Screen.cellSize
 
 import scala.language.reflectiveCalls
+import scala.language.implicitConversions
 
 object Rendering {
 
@@ -21,7 +22,7 @@ object Rendering {
   case object sequence extends RenderMode
 
   sealed trait ToBeRendered {
-    def into(buffer: ObservableBuffer[Node])
+    def into(buffer: ObservableBuffer[Node]): Unit
     def as(renderMode: RenderMode): Seq[Shape]
   }
 

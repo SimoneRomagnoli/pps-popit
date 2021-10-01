@@ -1,6 +1,7 @@
 package model.spawn
 
-import model.entities.balloons.BalloonType.{ BalloonLife, BalloonType }
+import model.entities.balloons.BalloonLives.BalloonLife
+import model.entities.balloons.BalloonTypes.BalloonType
 
 import scala.concurrent.duration.FiniteDuration
 

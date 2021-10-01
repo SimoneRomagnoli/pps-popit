@@ -4,8 +4,8 @@ import akka.actor.typed.scaladsl.ActorContext
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ EntitySpawned, Update }
-import model.entities.balloons.BalloonType.Red
 import model.entities.balloons.Balloons.Balloon
+import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.spawn.SpawnManager.{ Round, Streak }
 
 import scala.language.postfixOps
@@ -33,7 +33,10 @@ case class Spawner private (ctx: ActorContext[Update], model: ActorRef[Update]) 
       Behaviors.withTimers { timers =>
         timers.startTimerWithFixedDelay(SpawnTick, h.interval)
         // TODO: Spawn the correct balloon specified in the streak.
-        spawningStreak(LazyList.iterate(Red balloon)(b => b).take(h.quantity), t)
+        spawningStreak(
+          LazyList.iterate((h.balloonLife balloon) and h.balloonType)(b => b).take(h.quantity),
+          t
+        )
       }
     case _ => waiting()
   }

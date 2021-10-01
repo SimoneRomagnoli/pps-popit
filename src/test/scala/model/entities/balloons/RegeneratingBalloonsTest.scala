@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.Positions.{ fromTuple, Vector2D }
-import model.entities.balloons.BalloonType.{ Blue, Green, Red }
+import model.entities.balloons.BalloonLives._
 import model.entities.balloons.RegeneratingBalloons.{ regenerating, regenerationTime, Regenerating }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

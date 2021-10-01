@@ -15,7 +15,7 @@ import controller.Messages.{
 }
 import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
-import model.entities.balloons.BalloonType.Red
+import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Base

@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.Positions.Vector2D
-import model.entities.balloons.BalloonType.Green
+import model.entities.balloons.BalloonLives.Green
 import model.entities.balloons.Balloons.{ Balloon, Complex, Simple }
 import model.maps.Tracks.Track
 import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }

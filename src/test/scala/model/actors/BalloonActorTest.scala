@@ -15,8 +15,8 @@ import controller.Messages.{
   Update,
   UpdateEntity
 }
-import model.actors.BalloonActorTest.{ balloon, dummyModel }
-import model.entities.balloons.BalloonType.Red
+import model.actors.BalloonActorTest.{ dummyModel, testBalloon }
+import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
@@ -29,7 +29,7 @@ import scala.language.postfixOps
 
 object BalloonActorTest {
   var gameLoop: Option[ActorRef[Input]] = None
-  var balloon: Balloon = Red balloon
+  var testBalloon: Balloon = Red balloon
 
   val dummyModel: (ActorRef[Update], Track) => Behavior[Update] = (b, track) =>
     Behaviors.setup { ctx =>
@@ -39,7 +39,7 @@ object BalloonActorTest {
           b ! UpdateEntity(elapsedTime, List(), ctx.self, track)
           Behaviors.same
         case EntityUpdated(entity) =>
-          balloon = entity.asInstanceOf[Balloon]
+          testBalloon = entity.asInstanceOf[Balloon]
           gameLoop.get ! ModelUpdated(List())
           Behaviors.same
         case _ => Behaviors.same
@@ -48,7 +48,7 @@ object BalloonActorTest {
 }
 
 class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike with Matchers {
-  val balloonActor: ActorRef[Update] = testKit.spawn(BalloonActor(balloon))
+  val balloonActor: ActorRef[Update] = testKit.spawn(BalloonActor(testBalloon))
 
   val model: ActorRef[Update] =
     testKit.spawn(
@@ -67,7 +67,7 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
         view expectMessage RenderEntities(List())
       }
       "update the position of its balloon" in {
-        (balloon position) should be !== defaultPosition
+        (testBalloon position) should be !== defaultPosition
       }
     }
   }

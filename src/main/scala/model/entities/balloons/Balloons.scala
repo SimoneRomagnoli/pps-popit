@@ -2,13 +2,12 @@ package model.entities.balloons
 
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility, Poppable, TrackFollowing }
-import model.entities.balloons.Balloons._
 import model.maps.Tracks.Track
 import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
 import utils.Constants.Entities.defaultPosition
 
 import scala.annotation.tailrec
-import scala.language.postfixOps
+import scala.language.{ implicitConversions, postfixOps }
 
 object Balloons {
 
@@ -61,36 +60,4 @@ object Balloons {
 
   def simple(): Balloon = Simple()
   def complex(balloon: Balloon): Balloon = Complex(balloon)
-}
-
-/**
- * Provides a DSL to define new balloons.
- */
-object BalloonType {
-
-  sealed trait BalloonType
-  case object Plain extends BalloonType
-  case object Regenerating extends BalloonType
-
-  sealed trait BalloonLife {
-    def life: Int
-  }
-
-  sealed class BalloonLifeImpl(override val life: Int) extends BalloonLife
-  case object Red extends BalloonLifeImpl(1)
-  case object Blue extends BalloonLifeImpl(2)
-  case object Green extends BalloonLifeImpl(3)
-
-  object BalloonLife {
-    def apply(life: Int): BalloonLifeImpl = new BalloonLifeImpl(life)
-    def unapply(b: BalloonLife): Option[Int] = Some(b.life)
-  }
-
-  implicit class RichBalloonType(b: BalloonLifeImpl) {
-
-    def balloon: Balloon = b match {
-      case BalloonLife(n) if n > 1 => complex(BalloonLife(n - 1) balloon)
-      case _                       => simple()
-    }
-  }
 }

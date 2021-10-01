@@ -4,6 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages
 import controller.Messages.{
+  EntityKilled,
   EntitySpawned,
   EntityUpdated,
   MapCreated,
@@ -55,6 +56,7 @@ object Model {
         actors: Seq[ActorRef[Update]],
         track: Track): Behavior[Update] =
       Behaviors.receiveMessage { case TickUpdate(elapsedTime, replyTo) =>
+        println(actors.length)
         actors foreach {
           _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
         }
@@ -70,6 +72,7 @@ object Model {
         updatedEntities: List[Entity] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
         case EntityUpdated(entity) =>
+          println("inside entity updated")
           entity :: updatedEntities match {
             case full if full.size == entities.size =>
               replyTo ! ModelUpdated(full)
@@ -85,6 +88,27 @@ object Model {
             track,
             entity :: updatedEntities
           )
+        case EntityKilled(entity, actorRef) =>
+          println("inside entity killed" + actors.length)
+          println("entities " + entities.size)
+          println("updated entities " + updatedEntities.size)
+          updatedEntities match {
+//            case full if full.size == entities.size - 1 =>
+//              replyTo ! ModelUpdated(full)
+//              running(ctx, full, actors.filter(_ != actorRef), track)
+            case notFull =>
+              println("actors: " + actors.count(_ != actorRef))
+              println("updated entities " + notFull.size)
+              updating(
+                ctx,
+                entities.filter(_ != entity),
+                actors.filter(_ != actorRef),
+                replyTo,
+                track,
+                notFull
+              )
+          }
+
         case _ => Behaviors.same
       }
   }

@@ -95,33 +95,11 @@ object Towers {
 
     sealed class TowerAmmo(override val bullet: BasicBullet) extends Ammo
 
-    case object Base
-        extends TowerAmmo(
-          Dart(bulletDefaultDamage, defaultPosition, bulletDefaultSpeed, bulletDefaultBoundary)
-        )
+    case object Base extends TowerAmmo(Dart())
 
-    case object Ice
-        extends TowerAmmo(
-          IceBall(
-            bulletDefaultDamage,
-            defaultPosition,
-            bulletDefaultSpeed,
-            bulletDefaultBoundary,
-            bulletDefaultRadius,
-            bulletFreezingTime
-          )
-        )
+    case object Ice extends TowerAmmo(IceBall())
 
-    case object Cannon
-        extends TowerAmmo(
-          CannonBall(
-            bulletDefaultDamage,
-            defaultPosition,
-            bulletDefaultSpeed,
-            bulletDefaultBoundary,
-            bulletDefaultRadius
-          )
-        )
+    case object Cannon extends TowerAmmo(CannonBall())
 
     object Ammo {
       // def apply(bullet: BasicBullet): TowerAmmo = new TowerAmmo(bullet)

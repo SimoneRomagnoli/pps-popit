@@ -1,22 +1,36 @@
 package model.entities.bullets
 
 import model.Positions.{ fromTuple, Vector2D }
+import model.entities.balloons.BalloonType.Red
+import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import utils.Constants
+import utils.Constants.Entities.Bullets.{
+  bulletDefaultBoundary,
+  bulletDefaultDamage,
+  bulletDefaultRadius,
+  bulletDefaultSpeed,
+  bulletFreezingTime
+}
+import utils.Constants.Entities.defaultPosition
+
+import scala.language.postfixOps
 
 class BulletsTest extends AnyFlatSpec with Matchers {
-  val position: Vector2D = (0.0, 0.0)
-  val speed: Vector2D = (1.0, 1.0)
-  val damage: Double = 1.0
-  val radius: Double = 2.0
-  val freezingTime: Double = 1.0
-  val boundary: (Double, Double) = (2.0, 1.0)
+  val position: Vector2D = defaultPosition
+  val speed: Vector2D = bulletDefaultSpeed
+  val damage: Double = bulletDefaultDamage
+  val radius: Double = bulletDefaultRadius
+  val freezingTime: Double = bulletFreezingTime
+  val boundary: (Double, Double) = bulletDefaultBoundary
 
-  val iceBall: IceBall = IceBall(damage, position, speed, boundary, radius, freezingTime)
+  val iceBall: IceBall = IceBall(radius, freezingTime)
 
-  val dart: Dart = Dart(damage, position, speed, boundary)
-  val cannonBall: CannonBall = CannonBall(damage, position, speed, boundary, radius)
+  val dart: Dart = Dart()
+  val cannonBall: CannonBall = CannonBall(radius)
+  val balloon: Balloon = (Red balloon) in (100.0, 100.0)
 
   "A Dart" should "have default position, speed and damage" in {
     dart.position shouldBe position
@@ -39,7 +53,28 @@ class BulletsTest extends AnyFlatSpec with Matchers {
     iceBall.freezingTime shouldBe freezingTime
   }
 
-  it should "be able to move" in {
+  "A Dart" should "be able to move" in {
     (dart at (2.0, 2.0)).update(5.0).position shouldBe fromTuple((10.0, 10.0))
+  }
+
+  "A Dart" should "collide with a ballon" in {
+    dart in (0.0, 0.0)
+    dart at (100.0, 100.0)
+    dart hit (balloon) shouldBe false
+    dart.update(1.0)
+    dart hit (balloon) shouldBe true
+  }
+
+  "A Dart" should "recognize when it exit from the screen" in {
+    dart in (0.0, 0.0)
+    dart.exitedFromScreen() shouldBe false
+    dart in (Constants.Screen.width + 1, 0.0)
+    dart.exitedFromScreen() shouldBe true
+    dart in (0.0, Constants.Screen.height + 1)
+    dart.exitedFromScreen() shouldBe true
+    dart in (-1.0, 0.0)
+    dart.exitedFromScreen() shouldBe true
+    dart in (0.0, -1.0)
+    dart.exitedFromScreen() shouldBe true
   }
 }

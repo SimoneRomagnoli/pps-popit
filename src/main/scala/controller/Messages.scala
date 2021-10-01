@@ -2,7 +2,7 @@ package controller
 
 import akka.actor.typed.ActorRef
 import model.entities.Entities.Entity
-import model.entities.balloons.Balloons.Balloon
+import model.entities.balloons.Balloons.{ complex, Balloon }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 
@@ -42,6 +42,7 @@ object Messages {
       extends Update
   case class EntityUpdated(entity: Entity) extends Update
   case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
+  case class EntityKilled(entity: Entity, actorRef: ActorRef[Update]) extends Update
 
   //TOWER
   case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update

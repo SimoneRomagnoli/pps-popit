@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.Positions.{ fromTuple, Vector2D }
-import model.entities.balloons.BalloonType.{ Blue, Green, Red }
+import model.entities.balloons.BalloonLives._
 import model.entities.balloons.RegeneratingBalloons.{ regenerating, regenerationTime, Regenerating }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -15,6 +15,7 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
   "A Regenerating balloon" should "have default position and speed" in {
     regenerating(Green balloon).position shouldBe zeroVector
     regenerating(Green balloon).speed shouldBe oneVector
+    regenerating((Green balloon) in oneVector).position shouldBe oneVector
   }
 
   it should "be able to change speed and position" in {
@@ -30,7 +31,7 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "regenerate its life" in {
-    val popped: Regenerating = regenerating(Green balloon).pop(null).get.asInstanceOf[Regenerating]
+    val popped: Regenerating = regenerating(Green balloon).pop(null).get
     popped shouldBe regenerating(Blue balloon)
     (popped.update(1) in zeroVector) shouldBe regenerating(Blue balloon)
     (popped.update(regenerationTime) in zeroVector) shouldBe regenerating(Green balloon)

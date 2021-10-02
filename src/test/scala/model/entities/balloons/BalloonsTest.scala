@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.Positions.{ fromTuple, Vector2D }
-import model.entities.balloons.BalloonType.{ Green, Red }
+import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

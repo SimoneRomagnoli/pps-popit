@@ -1,7 +1,7 @@
 package model.entities.bullets
 
 import model.Positions.{ fromTuple, Vector2D }
-import model.entities.balloons.BalloonType.Red
+import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import org.scalatest.flatspec.AnyFlatSpec

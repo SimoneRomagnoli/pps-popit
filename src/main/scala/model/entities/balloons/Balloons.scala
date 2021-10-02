@@ -31,9 +31,9 @@ object Balloons {
       case Complex(balloon) => complex(balloon change f)
       case _                => f
     }
-    override def at(s: Vector2D): Balloon = change(Simple(position, s, track = track))
-    override def in(p: Vector2D): Balloon = change(Simple(p, speed, track = track))
-    override def on(t: Track): TrackFollowing = change(Simple(position, speed, track = t))
+    override def at(s: Vector2D): Balloon = change(Simple(position, s, track))
+    override def in(p: Vector2D): Balloon = change(Simple(p, speed, track))
+    override def on(t: Track): TrackFollowing = change(Simple(position, speed, t))
 
     override def pop(bullet: Entity): Option[Balloon] = this match {
       case Complex(balloon) => Some(balloon)
@@ -53,8 +53,8 @@ object Balloons {
   case class Simple(
       override val position: Vector2D = defaultPosition,
       override val speed: Vector2D = balloonDefaultSpeed,
-      override val boundary: (Double, Double) = balloonDefaultBoundary,
-      override val track: Track = Track())
+      override val track: Track = Track(),
+      override val boundary: (Double, Double) = balloonDefaultBoundary)
       extends Balloon
   case class Complex(balloon: Balloon) extends Balloon
 

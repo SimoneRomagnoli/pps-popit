@@ -1,58 +1,37 @@
 package model.entities.balloons
 
-import model.entities.balloons.BalloonTypes.{ BalloonType, Plain, Regenerating }
-import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
-import model.entities.balloons.RegeneratingBalloons.regenerating
+import model.entities.balloons.BalloonDecorations.BalloonType
+import model.entities.balloons.Balloons.{ complex, simple, Balloon }
+import model.entities.balloons.RegeneratingBalloons.{ regenerating, Regenerating }
+import model.spawn.SpawnManager.BalloonInfo
 
-import scala.language.postfixOps
+import scala.language.{ implicitConversions, postfixOps }
 
 object BalloonsFactory {
 
-  /*object Balloon {
-
-    def apply(balloonLife: BalloonLife)(implicit balloonType: BalloonType = Plain): Balloon =
-      balloonLife match {
-        case BalloonLife(n) if n > 1 => complex(Balloon(BalloonLife(n - 1)))
-        case _                       => simple()
-      }
-  }*/
-
   implicit class RichBalloon(b: Balloon) {
 
-    def and(balloonType: BalloonType): Balloon = balloonType match {
-      case Regenerating => regenerating(b)
-      case _            => b
+    def adding(balloonTypes: List[BalloonType]): Balloon = balloonTypes match {
+      case h :: t => h.decorate(b) adding t
+      case _      => b
     }
   }
 
 }
 
-/*object BalloonDecorations {
+object BalloonDecorations {
 
-  sealed trait BalloonDecorator
-  case object Base extends BalloonDecorator
+  sealed trait BalloonDecorator[T <: Balloon] extends Balloon {
+    def decorate(balloon: Balloon): T
+  }
+  sealed trait BalloonType extends BalloonDecorator[Balloon]
 
-  case class Decorator[T](balloonDecoration: BalloonDecoration[T], decorator: BalloonDecorator)
-      extends BalloonDecorator
-
-  sealed trait BalloonDecoration[T]
-
-  implicit class RichBalloonDecorator(l: BalloonDecorator) {
-
-    def and[T](decoration: BalloonDecoration[T]): BalloonDecorator = Decorator(decoration, l)
-
-    def balloon: Balloon = l match {
-      case Decorator(decoration, decorator) => complex(BalloonLife(n - 1) balloon)
-      case _                                => simple()
-    }
+  case object Regenerating extends BalloonType {
+    override def decorate(balloon: Balloon): Regenerating = regenerating(balloon)
   }
 
-}*/
+  implicit def elementToList(element: BalloonType): List[BalloonType] = List(element)
 
-object BalloonTypes {
-  sealed trait BalloonType
-  case object Plain extends BalloonType
-  case object Regenerating extends BalloonType
 }
 
 object BalloonLives {
@@ -60,7 +39,7 @@ object BalloonLives {
   trait Life {
     def life: Int
   }
-  class BalloonLife(override val life: Int) extends Life // extends BalloonDecoration[BalloonLife]
+  class BalloonLife(override val life: Int) extends Life
   case object Red extends BalloonLife(1)
   case object Blue extends BalloonLife(2)
   case object Green extends BalloonLife(3)
@@ -76,6 +55,8 @@ object BalloonLives {
       case BalloonLife(n) if n > 1 => complex(BalloonLife(n - 1) balloon)
       case _                       => simple()
     }
+
+    def &(t: List[BalloonType]): BalloonInfo = BalloonInfo(t, l)
   }
 
 }

@@ -32,9 +32,10 @@ case class Spawner private (ctx: ActorContext[Update], model: ActorRef[Update]) 
     case h :: t =>
       Behaviors.withTimers { timers =>
         timers.startTimerWithFixedDelay(SpawnTick, h.interval)
-        // TODO: Spawn the correct balloon specified in the streak.
         spawningStreak(
-          LazyList.iterate((h.balloonLife balloon) and h.balloonType)(b => b).take(h.quantity),
+          LazyList
+            .iterate((h.balloonInfo.balloonLife balloon) adding h.balloonInfo.balloonTypes)(b => b)
+            .take(h.quantity),
           t
         )
       }

@@ -9,7 +9,7 @@ import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
 import scalafx.scene.shape.{ Rectangle, Shape }
 import utils.Constants.Screen.cellSize
-import view.render.Drawing.{ Grass, Item, Road }
+import view.render.Drawings.{ Drawing, Grass, Item, Road }
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
 
 import scala.language.implicitConversions
@@ -19,11 +19,13 @@ import scala.language.implicitConversions
  */
 object Rendering {
 
+  val drawing: Drawing = Drawing()
+
   /** Renders a [[Grid]] with grass drawings. */
   def a(grid: Grid): ToBeRendered = Rendered {
     grid.cells map { cell =>
       val rect: Shape = Rendering a cell
-      rect.setFill(Drawing the Grass)
+      rect.setFill(drawing the Grass)
       rect
     }
   }
@@ -36,7 +38,7 @@ object Rendering {
       entity.boundary._1,
       entity.boundary._2
     )
-    rectangle.setFill(Drawing the Item(entity))
+    rectangle.setFill(drawing the Item(entity))
     rectangle
   }
 
@@ -53,7 +55,7 @@ object Rendering {
         val dir: String = couple.head.direction.toString + "-" + couple.last.direction.toString
         val cell: Cell = couple.last
         val rect: Shape = Rendering a cell
-        rect.setFill(Drawing the Road(dir))
+        rect.setFill(drawing the Road(dir))
         rect
       }
       .toSeq

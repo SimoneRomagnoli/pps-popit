@@ -6,7 +6,7 @@ import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ Bullet, Dart }
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
@@ -21,8 +21,8 @@ import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
-import view.render.Drawing.Item
-import view.render.{ Drawing, Rendering }
+import view.render.Drawings.{ Drawing, Item }
+import view.render.Rendering
 
 import scala.language.reflectiveCalls
 import scala.util.Random
@@ -57,11 +57,12 @@ class GameController(
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0,
     var send: Input => Unit,
-    var currentTrack: Seq[Cell] = Constants.Maps.basicTrack)
+    var occupiedCells: Seq[Cell] = Constants.Maps.basicTrack)
     extends ViewGameController {
   setup()
   this draw gameGrid
   loading()
+  val drawing: Drawing = Drawing()
   val bulletPic: ImagePattern = new ImagePattern(new Image("images/bullets/DART.png"))
 
   override def setup(): Unit = Platform runLater {
@@ -98,7 +99,7 @@ class GameController(
 
   override def draw(track: Track): Unit = Platform runLater {
     mapNodes += track.cells.size
-    currentTrack = track.cells
+    occupiedCells = track.cells
     Rendering a track into gameBoard.children
   }
 
@@ -122,7 +123,7 @@ class GameController(
           bullet.boundary._1,
           bullet.boundary._2
         )
-        rectangle.setFill(Drawing the Item(bullet))
+        rectangle.setFill(drawing the Item(bullet))
 
         rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
         gameBoard.children.add(rectangle)
@@ -173,13 +174,14 @@ class GameController(
       if (gameMenuController.anyTowerSelected() && selectable(cell)) {
         removeEffects()
         gameMenuController.unselectDepot()
+        occupiedCells = occupiedCells :+ cell
         send(PlaceTower(cell))
       }
     }
   }
 
   private def selectable(cell: Cell): Boolean =
-    !currentTrack.exists(c => c.x == cell.x && c.y == cell.y)
+    !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
 
   private def removeEffects(): Unit =
     gameBoard.children.foreach(_.setEffect(null))

@@ -19,6 +19,7 @@ trait ViewGameMenuController extends ViewController {
   def setup(): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
+  def isPaused: Boolean
 }
 
 @sfxml
@@ -29,7 +30,8 @@ class GameMenuController(
     val exitButton: ToggleButton,
     val gameStatus: VBox,
     val towerDepot: VBox,
-    var send: Input => Unit)
+    var send: Input => Unit,
+    var paused: Boolean = false)
     extends ViewGameMenuController {
 
   override def setup(): Unit = {
@@ -39,6 +41,8 @@ class GameMenuController(
   }
 
   override def setSend(reference: Messages.Input => Unit): Unit = send = reference
+
+  override def isPaused: Boolean = paused
 
   override def anyTowerSelected(): Boolean =
     towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
@@ -54,9 +58,14 @@ class GameMenuController(
 
   private def setupButtons(): Unit = {
     playButton.onMouseClicked = _ =>
-      playButton.text.value match {
-        case "Pause"  => send(PauseGame()); playButton.text = "Resume"
-        case "Resume" => send(ResumeGame()); playButton.text = "Pause"
+      if (paused) {
+        send(ResumeGame())
+        paused = false
+        playButton.text = "Pause"
+      } else {
+        send(PauseGame())
+        paused = true
+        playButton.text = "Resume"
       }
     exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
   }
@@ -68,15 +77,16 @@ class GameMenuController(
       val towerBox: HBox = new HBox(renderedTower)
       towerBox.styleClass += "towerBox"
       towerBox.setCursor(Cursor.Hand)
-      towerBox.onMousePressed = _ => {
-        if (!towerBox.styleClass.contains("selected")) {
-          unselectDepot()
-          towerBox.styleClass += "selected"
-        } else {
-          unselectDepot()
+      towerBox.onMousePressed = _ =>
+        if (!paused) {
+          if (!towerBox.styleClass.contains("selected")) {
+            unselectDepot()
+            towerBox.styleClass += "selected"
+          } else {
+            unselectDepot()
+          }
+          towerBox.setCursor(Cursor.ClosedHand)
         }
-        towerBox.setCursor(Cursor.ClosedHand)
-      }
       towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
       val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)

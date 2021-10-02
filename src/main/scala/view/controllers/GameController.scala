@@ -117,7 +117,7 @@ class GameController(
     gameBoard.onMouseExited = _ => removeEffects()
     gameBoard.onMouseMoved = e => {
       removeEffects()
-      if (gameMenuController.anyTowerSelected()) {
+      if (gameMenuController.anyTowerSelected() && !gameMenuController.isPaused) {
         val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
         val effect: ColorAdjust = new ColorAdjust()
         val place: Node = e.getTarget.asInstanceOf[Node]
@@ -135,7 +135,8 @@ class GameController(
     }
     gameBoard.onMouseClicked = e => {
       val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-      if (gameMenuController.anyTowerSelected() && selectable(cell)) {
+      if (gameMenuController
+          .anyTowerSelected() && selectable(cell) && !gameMenuController.isPaused) {
         removeEffects()
         gameMenuController.unselectDepot()
         occupiedCells = occupiedCells :+ cell

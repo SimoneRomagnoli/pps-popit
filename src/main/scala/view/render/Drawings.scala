@@ -3,6 +3,7 @@ package view.render
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.balloons.Balloons.Simple
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.BaseTower
 
@@ -20,9 +21,10 @@ object Drawings {
       case Road(s) => images.road(s)
       case Item(entity) =>
         entity match {
-          case Dart()        => images.dart
-          case CannonBall(_) => images.cannonBall
-          case IceBall(_, _) => images.iceBall
+          case Simple(_, _, _, _) => images.redBalloon
+          case Dart()             => images.dart
+          case CannonBall(_)      => images.cannonBall
+          case IceBall(_, _)      => images.iceBall
           case BaseTower(b, _, _, _, _, _) =>
             b match {
               case Dart()        => images.arrowTower
@@ -44,5 +46,6 @@ object Drawings {
       cannonTower: ImagePattern = new ImagePattern(
         new Image("images/towers/CANNON-BALL-TOWER.png")
       ),
-      iceTower: ImagePattern = new ImagePattern(new Image("images/towers/ICE-BALL-TOWER.png")))
+      iceTower: ImagePattern = new ImagePattern(new Image("images/towers/ICE-BALL-TOWER.png")),
+      redBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/RED.png")))
 }

@@ -5,9 +5,6 @@ import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
-import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
@@ -16,12 +13,11 @@ import scalafx.scene.Cursor
 import scalafx.scene.control.Label
 import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
-import scalafx.scene.shape.{ Rectangle, Shape }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
-import view.render.Drawings.{ Drawing, Item }
+import view.render.Drawings.Drawing
 import view.render.Rendering
 
 import scala.language.reflectiveCalls
@@ -57,7 +53,7 @@ class GameController(
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0,
     var send: Input => Unit,
-    var occupiedCells: Seq[Cell] = Constants.Maps.basicTrack)
+    var occupiedCells: Seq[Cell] = Seq())
     extends ViewGameController {
   setup()
   this draw gameGrid
@@ -105,41 +101,7 @@ class GameController(
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
     gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
-    entities foreach {
-      case balloon: Balloon =>
-        val viewEntity: Shape = toShape(balloon, "images/balloons/RED.png")
-        gameBoard.children.add(viewEntity)
-      case tower: Tower[_] =>
-        val viewEntity: Shape = toShape(tower, "images/" + tower.toString + ".png")
-        viewEntity.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
-        gameBoard.children.add(viewEntity)
-      //val circle: Shape = Circle(tower.position.x, tower.position.y, tower.sightRange)
-      //circle.setFill(Color.Gray.opacity(0.45))
-      //gameBoard.children.add(circle)
-      case bullet: Bullet =>
-        val rectangle: Rectangle = Rectangle(
-          bullet.position.x - bullet.boundary._1 / 2,
-          bullet.position.y - bullet.boundary._2 / 2,
-          bullet.boundary._1,
-          bullet.boundary._2
-        )
-        rectangle.setFill(drawing the Item(bullet))
-
-        rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
-        gameBoard.children.add(rectangle)
-      case _ =>
-    }
-  }
-
-  private def toShape(entity: Entity, path: String): Shape = {
-    val rectangle: Rectangle = Rectangle(
-      entity.position.x - entity.boundary._1 / 2,
-      entity.position.y - entity.boundary._2 / 2,
-      entity.boundary._1,
-      entity.boundary._2
-    )
-    rectangle.setFill(new ImagePattern(new Image(path)))
-    rectangle
+    entities foreach (entity => Rendering an entity into gameBoard.children)
   }
 
   private def setLayout(region: Region, width: Double, height: Double): Unit = {

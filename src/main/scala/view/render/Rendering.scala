@@ -3,6 +3,8 @@ package view.render
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
@@ -30,8 +32,10 @@ object Rendering {
     }
   }
 
+  def a(entity: Entity): ToBeRendered = an(entity)
+
   /** Renders an [[Entity]] with its corresponding drawing. */
-  def a(entity: Entity): ToBeRendered = Rendered {
+  def an(entity: Entity): ToBeRendered = Rendered {
     val rectangle: Rectangle = Rectangle(
       entity.position.x - entity.boundary._1 / 2,
       entity.position.y - entity.boundary._2 / 2,
@@ -39,6 +43,13 @@ object Rendering {
       entity.boundary._2
     )
     rectangle.setFill(drawing the Item(entity))
+    entity match {
+      case bullet: Bullet =>
+        rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
+      case tower: Tower[_] =>
+        rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
+      case _ =>
+    }
     rectangle
   }
 

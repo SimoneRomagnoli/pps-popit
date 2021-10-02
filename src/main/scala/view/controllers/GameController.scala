@@ -27,11 +27,10 @@ import scala.util.Random
  * Controller of the game. This controller loads the game fxml file and is able to draw every
  * element of a game.
  */
-trait ViewGameController {
+trait ViewGameController extends ViewController {
   def loading(): Unit
   def reset(): Unit
   def setup(): Unit
-  def setSend(send: Input => Unit): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
@@ -68,7 +67,10 @@ class GameController(
     gameMenuController.setup()
   }
 
-  override def setSend(reference: Input => Unit): Unit = send = reference
+  override def setSend(reference: Input => Unit): Unit = {
+    send = reference
+    gameMenuController.setSend(reference)
+  }
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
     mapNodes += grid.width * grid.height

@@ -1,5 +1,7 @@
 package view.controllers
 
+import controller.Messages
+import controller.Messages.{ Input, PauseGame, ResumeGame }
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
@@ -13,7 +15,7 @@ import view.render.Renders.single
 import view.render.Renders.toSingle
 import view.render.Rendering
 
-trait ViewGameMenuController {
+trait ViewGameMenuController extends ViewController {
   def setup(): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
@@ -26,7 +28,8 @@ class GameMenuController(
     val playButton: ToggleButton,
     val exitButton: ToggleButton,
     val gameStatus: VBox,
-    val towerDepot: VBox)
+    val towerDepot: VBox,
+    var send: Input => Unit)
     extends ViewGameMenuController {
 
   override def setup(): Unit = {
@@ -34,6 +37,8 @@ class GameMenuController(
     setupButtons()
     setupTowerDepot()
   }
+
+  override def setSend(reference: Messages.Input => Unit): Unit = send = reference
 
   override def anyTowerSelected(): Boolean =
     towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
@@ -48,12 +53,12 @@ class GameMenuController(
   }
 
   private def setupButtons(): Unit = {
-    playButton.setGraphic(
-      Rendering.forInput(playButton.width.value, playButton.width.value, "/images/inputs/PAUSE.png")
-    )
-    exitButton.setGraphic(
-      Rendering.forInput(exitButton.width.value, exitButton.width.value, "/images/inputs/EXIT.png")
-    )
+    playButton.onMouseClicked = _ =>
+      playButton.text.value match {
+        case "Pause"  => send(PauseGame()); playButton.text = "Resume"
+        case "Resume" => send(ResumeGame()); playButton.text = "Pause"
+      }
+    exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
   }
 
   private def setupTowerDepot(): Unit =

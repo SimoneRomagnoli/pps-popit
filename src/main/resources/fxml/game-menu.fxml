@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="gameMenu" styleClass="gameMenu" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameMenuController">
-    <HBox fx:id="inputButtons" styleClass="inputBox">
-        <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton" />
-        <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />
+    <HBox fx:id="inputButtons">
+        <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton" text="Pause" />
+        <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" text="Exit" />
     </HBox>
     <VBox fx:id="gameStatus" styleClass="inputBox" />
 

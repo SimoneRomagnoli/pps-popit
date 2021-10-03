@@ -45,7 +45,7 @@ class SpawnerActorTest
   val complexRound: Round = Round(
     Seq(
       Streak(nBalloons) :- Red,
-      Streak(nBalloons) :- (Blue & Regenerating),
+      Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating),
       Streak(nBalloons) :- Green
     )
   )

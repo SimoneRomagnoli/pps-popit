@@ -1,6 +1,6 @@
 package model.actors
 
-import akka.actor.typed.{ Behavior, PostStop }
+import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.{ EntityKilled, EntityUpdated, Update, UpdateEntity }
 import model.entities.balloons.Balloons.Balloon

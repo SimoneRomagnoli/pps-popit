@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ Render, RenderEntities, RenderMap }
 import model.entities.Entities.Entity
 import utils.Constants.Maps.gameGrid
-import view.controllers.{ ViewController, ViewGameController }
+import view.controllers.{ ViewGameController, ViewMainController }
 
 import scala.language.reflectiveCalls
 
@@ -13,12 +13,12 @@ object View {
 
   object ViewActor {
 
-    def apply(mainController: ViewController): Behavior[Render] = Behaviors.setup { _ =>
+    def apply(mainController: ViewMainController): Behavior[Render] = Behaviors.setup { _ =>
       new ViewActor(mainController).inGame(mainController.gameController)
     }
   }
 
-  class ViewActor private (mainController: ViewController) {
+  class ViewActor private (mainController: ViewMainController) {
 
     private def inGame(gameController: ViewGameController): Behavior[Render] =
       Behaviors.receiveMessage {

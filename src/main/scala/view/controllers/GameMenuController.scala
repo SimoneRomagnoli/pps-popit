@@ -1,5 +1,7 @@
 package view.controllers
 
+import controller.Messages
+import controller.Messages.{ Input, PauseGame, ResumeGame }
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
@@ -9,14 +11,14 @@ import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import view.Rendering
-import view.Rendering.single
-import view.Rendering.toSingle
+import view.render.Rendering
+import view.render.Renders.{ single, toSingle }
 
-trait ViewGameMenuController {
+trait ViewGameMenuController extends ViewController {
   def setup(): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
+  def isPaused: Boolean
 }
 
 @sfxml
@@ -26,7 +28,9 @@ class GameMenuController(
     val playButton: ToggleButton,
     val exitButton: ToggleButton,
     val gameStatus: VBox,
-    val towerDepot: VBox)
+    val towerDepot: VBox,
+    var send: Input => Unit,
+    var paused: Boolean = false)
     extends ViewGameMenuController {
 
   override def setup(): Unit = {
@@ -34,6 +38,10 @@ class GameMenuController(
     setupButtons()
     setupTowerDepot()
   }
+
+  override def setSend(reference: Messages.Input => Unit): Unit = send = reference
+
+  override def isPaused: Boolean = paused
 
   override def anyTowerSelected(): Boolean =
     towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
@@ -48,12 +56,17 @@ class GameMenuController(
   }
 
   private def setupButtons(): Unit = {
-    playButton.setGraphic(
-      Rendering.forInput(playButton.width.value, playButton.width.value, "/images/inputs/PAUSE.png")
-    )
-    exitButton.setGraphic(
-      Rendering.forInput(exitButton.width.value, exitButton.width.value, "/images/inputs/EXIT.png")
-    )
+    playButton.onMouseClicked = _ =>
+      if (paused) {
+        send(ResumeGame())
+        paused = false
+        playButton.text = "Pause"
+      } else {
+        send(PauseGame())
+        paused = true
+        playButton.text = "Resume"
+      }
+    exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
   }
 
   private def setupTowerDepot(): Unit =
@@ -63,15 +76,16 @@ class GameMenuController(
       val towerBox: HBox = new HBox(renderedTower)
       towerBox.styleClass += "towerBox"
       towerBox.setCursor(Cursor.Hand)
-      towerBox.onMousePressed = _ => {
-        if (!towerBox.styleClass.contains("selected")) {
-          unselectDepot()
-          towerBox.styleClass += "selected"
-        } else {
-          unselectDepot()
+      towerBox.onMousePressed = e =>
+        if (!paused) {
+          if (!towerBox.styleClass.contains("selected")) {
+            unselectDepot()
+            towerBox.styleClass += "selected"
+          } else {
+            unselectDepot()
+          }
+          towerBox.setCursor(Cursor.ClosedHand)
         }
-        towerBox.setCursor(Cursor.ClosedHand)
-      }
       towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
       val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)

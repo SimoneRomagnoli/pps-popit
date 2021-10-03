@@ -9,7 +9,7 @@ import scalafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import scalafxml.core.{ FXMLLoader, NoDependencyResolver }
 import view.View.ViewActor
-import view.controllers.ViewController
+import view.controllers.{ ViewController, ViewMainController }
 
 object Main extends JFXApp3 {
 
@@ -20,7 +20,7 @@ object Main extends JFXApp3 {
 
     loader.load()
     val root: BorderPane = loader.getRoot[BorderPane]
-    val mainController: ViewController = loader.getController[ViewController]()
+    val mainController: ViewMainController = loader.getController[ViewMainController]()
 
     stage = new PrimaryStage() {
       title = "Pop-It!"

@@ -10,8 +10,11 @@ import utils.Constants
  * controllers.
  */
 trait ViewController {
-  def gameController: ViewGameController
   def setSend(send: Input => Unit): Unit
+}
+
+trait ViewMainController extends ViewController {
+  def gameController: ViewGameController
 }
 
 /**
@@ -29,7 +32,7 @@ class MainController(
     val mainPane: BorderPane,
     val game: BorderPane,
     @nested[GameController] val gameController: ViewGameController)
-    extends ViewController {
+    extends ViewMainController {
   mainPane.maxWidth = Constants.Screen.width
   mainPane.minWidth = Constants.Screen.width
   mainPane.maxHeight = Constants.Screen.height

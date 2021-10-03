@@ -37,9 +37,7 @@ object Model {
       case NewMap(replyTo) =>
         val track: Track = Track(gameGrid)
         replyTo ! MapCreated(track)
-        val towerCell: Cell = GridCell(track.start.x, track.start.y - 1)
-        val entities: List[Entity] =
-          List((Arrow tower) in towerCell, (Red balloon) on track)
+        val entities: List[Entity] = List((Red balloon) on track)
         val actors: Seq[ActorRef[Update]] = entities map {
           case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
           case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))

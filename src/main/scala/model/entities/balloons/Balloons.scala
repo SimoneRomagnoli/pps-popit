@@ -16,7 +16,7 @@ object Balloons {
   trait Balloon extends Entity with TrackFollowing with Poppable {
     type Boundary = (Double, Double)
 
-    def retrieve[T](f: Balloon => T): T = this match {
+    protected[balloons] def retrieve[T](f: Balloon => T): T = this match {
       case Complex(balloon) => balloon retrieve f
       case s                => f(s)
     }
@@ -30,7 +30,7 @@ object Balloons {
       case _                => 1
     }
 
-    def change(f: => Balloon): Balloon = this match {
+    protected[balloons] def change(f: => Balloon): Balloon = this match {
       case Complex(balloon) => complex(balloon change f)
       case _                => f
     }

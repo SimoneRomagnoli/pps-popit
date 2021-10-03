@@ -33,7 +33,6 @@ object Drawings {
             }
         }
     }
-
   }
 
   case class Drawings(

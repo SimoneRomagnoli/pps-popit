@@ -11,9 +11,8 @@ import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import view.render.Renders.single
-import view.render.Renders.toSingle
 import view.render.Rendering
+import view.render.Renders.{ single, toSingle }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
@@ -77,7 +76,7 @@ class GameMenuController(
       val towerBox: HBox = new HBox(renderedTower)
       towerBox.styleClass += "towerBox"
       towerBox.setCursor(Cursor.Hand)
-      towerBox.onMousePressed = _ =>
+      towerBox.onMousePressed = e =>
         if (!paused) {
           if (!towerBox.styleClass.contains("selected")) {
             unselectDepot()

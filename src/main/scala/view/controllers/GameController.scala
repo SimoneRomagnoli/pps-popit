@@ -140,7 +140,7 @@ class GameController(
         removeEffects()
         gameMenuController.unselectDepot()
         occupiedCells = occupiedCells :+ cell
-        send(PlaceTower(cell))
+        send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
       }
     }
   }

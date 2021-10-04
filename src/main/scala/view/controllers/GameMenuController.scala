@@ -2,6 +2,7 @@ package view.controllers
 
 import controller.Messages
 import controller.Messages.{ Input, PauseGame, ResumeGame }
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
@@ -19,6 +20,7 @@ trait ViewGameMenuController extends ViewController {
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
   def isPaused: Boolean
+  def getSelectedTowerType[B <: Bullet]: TowerType[B]
 }
 
 @sfxml
@@ -30,7 +32,8 @@ class GameMenuController(
     val gameStatus: VBox,
     val towerDepot: VBox,
     var send: Input => Unit,
-    var paused: Boolean = false)
+    var paused: Boolean = false,
+    var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
 
   override def setup(): Unit = {
@@ -69,18 +72,19 @@ class GameMenuController(
     exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
   }
 
-  private def setupTowerDepot(): Unit =
+  private def setupTowerDepot[B <: Bullet](): Unit =
     TowerTypes.values.foreach { towerValue =>
-      val tower: Tower[_] = towerValue.asInstanceOf[TowerType[_]].tower
+      val tower: Tower[B] = towerValue.asInstanceOf[TowerType[B]].tower
       val renderedTower: Shape = Rendering a tower as single
       val towerBox: HBox = new HBox(renderedTower)
       towerBox.styleClass += "towerBox"
       towerBox.setCursor(Cursor.Hand)
-      towerBox.onMousePressed = e =>
+      towerBox.onMousePressed = _ =>
         if (!paused) {
           if (!towerBox.styleClass.contains("selected")) {
             unselectDepot()
             towerBox.styleClass += "selected"
+            selectedTowerType = towerValue.asInstanceOf[TowerType[B]]
           } else {
             unselectDepot()
           }
@@ -94,4 +98,7 @@ class GameMenuController(
       towerBox.setAlignment(Pos.CenterLeft)
       towerDepot.children.add(towerBox)
     }
+
+  override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
+    selectedTowerType.asInstanceOf[TowerType[B]]
 }

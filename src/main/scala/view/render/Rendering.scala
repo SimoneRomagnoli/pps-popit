@@ -14,7 +14,7 @@ import utils.Constants.Screen.cellSize
 import view.render.Drawings.{ Drawing, Grass, Item, Road }
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
 
-import scala.language.implicitConversions
+import scala.language.{ implicitConversions, reflectiveCalls }
 
 /**
  * Object that simulates a DSL for rendering logic entities as shapes for a scalafx pane.

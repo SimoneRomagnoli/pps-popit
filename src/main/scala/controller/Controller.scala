@@ -16,8 +16,7 @@ import controller.Messages.{
 }
 import model.Model.ModelActor
 import model.actors.TowerActor
-import model.entities.bullets.Bullets.Dart
-import model.entities.towers.TowerTypes.Arrow
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 
 import scala.language.postfixOps
@@ -37,8 +36,8 @@ object Controller {
           gameLoop() ! Start()
           Behaviors.same
 
-        case PlaceTower(cell) =>
-          val tower: Tower[Dart] = (Arrow tower) in cell
+        case PlaceTower(cell, towerType) =>
+          val tower: Tower[Bullet] = towerType.tower in cell
           model ! EntitySpawned(tower, ctx.spawnAnonymous(TowerActor(tower)))
           Behaviors.same
 

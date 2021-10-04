@@ -3,6 +3,8 @@ package controller
 import akka.actor.typed.ActorRef
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.TowerTypes.TowerType
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 
@@ -22,7 +24,7 @@ object Messages {
   case class PauseGame() extends Input
   case class ResumeGame() extends Input
   case class NewTimeRatio(value: Double) extends Input
-  case class PlaceTower(cell: Cell) extends Input
+  case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
 
   //GAME LOOP
   case object Tick extends Input

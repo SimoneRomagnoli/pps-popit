@@ -120,10 +120,10 @@ object TowerTypes extends Enumeration {
   case object Ice extends TowerAmmo(IceBall())
   case object Cannon extends TowerAmmo(CannonBall())
 
-  case class TowerType[B <: Bullet](tower: Tower[B]) extends Val
-  val arrow: TowerType[Dart] = TowerType(Arrow tower)
-  val cannon: TowerType[CannonBall] = TowerType(Cannon tower)
-  val ice: TowerType[IceBall] = TowerType(Ice tower)
+  case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val
+  val arrow: TowerType[Dart] = TowerType(Arrow tower, 200)
+  val cannon: TowerType[CannonBall] = TowerType(Cannon tower, 200)
+  val ice: TowerType[IceBall] = TowerType(Ice tower, 200)
 }
 
 object TowerUpgrades {

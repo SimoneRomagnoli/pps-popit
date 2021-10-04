@@ -1,6 +1,7 @@
 package model.entities.towers
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
+import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.TowerUpgrades.{ Ratio, Sight }
@@ -8,8 +9,6 @@ import model.entities.towers.Towers.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import scala.language.postfixOps
-
-object TowerUpgradesTest {}
 
 class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
@@ -42,6 +41,17 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         val boostedTower: Tower[Dart] = arrowTower boost Sight boost Ratio
         (boostedTower sightRange) shouldBe boostedSight
         (boostedTower shotRatio) shouldBe boostedRatio
+      }
+    }
+    "the tower get the ratio boost" should {
+      "detect a balloon that can't see before" in {
+        val arrowTower: Tower[Dart] =
+          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+
+        val balloon: Balloon = Simple(position = (1.5, 1.5), boundary = (1.0, 1.0))
+        (arrowTower canSee balloon) shouldBe false
+        val boostedTower: Tower[Dart] = arrowTower boost Sight
+        (boostedTower canSee balloon) shouldBe true
       }
     }
     /*"the tower get the ratio power up" should {

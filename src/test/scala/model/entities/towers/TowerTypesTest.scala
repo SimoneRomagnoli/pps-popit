@@ -10,8 +10,6 @@ import utils.Constants.Entities.defaultPosition
 
 import scala.language.postfixOps
 
-object TowerTypesTest {}
-
 class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   "According to the specified type of the tower" when {

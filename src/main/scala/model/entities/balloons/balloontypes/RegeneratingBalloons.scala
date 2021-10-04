@@ -1,11 +1,9 @@
 package model.entities.balloons.balloontypes
 
-import model.Positions
 import model.entities.Entities
 import model.entities.balloons.BalloonLives.Green
 import model.entities.balloons.Balloons.{ complex, Balloon }
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
-import model.maps.Tracks
 
 object RegeneratingBalloons {
   val regenerationTime: Double = 3
@@ -36,9 +34,7 @@ object RegeneratingBalloons {
   case class RegeneratingBalloon(override val balloon: Balloon)
       extends BalloonDecoration(balloon)
       with Regenerating {
-    override def in(p: Positions.Vector2D): Regenerating = regenerating(balloon.in(p))
-    override def at(s: Positions.Vector2D): Regenerating = regenerating(balloon.at(s))
-    override def on(t: Tracks.Track): Regenerating = regenerating(balloon.on(t))
+    override def instance(balloon: Balloon): BalloonDecoration = regenerating(balloon)
 
     override def pop(bullet: Entities.Entity): Option[Regenerating] =
       balloon.pop(bullet).map(regenerating)

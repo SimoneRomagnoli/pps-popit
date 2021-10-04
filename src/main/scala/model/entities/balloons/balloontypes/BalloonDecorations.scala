@@ -1,7 +1,9 @@
 package model.entities.balloons.balloontypes
 
+import model.Positions
 import model.entities.Entities
 import model.entities.balloons.Balloons.Balloon
+import model.maps.Tracks
 
 object BalloonDecorations {
 
@@ -14,6 +16,10 @@ object BalloonDecorations {
     override protected[balloons] def change(f: => Balloon): Balloon = balloon.change(f)
     override def life: Int = balloon.life
     override def pop(bullet: Entities.Entity): Option[Balloon] = balloon.pop(bullet)
+    override def in(p: Positions.Vector2D): BalloonDecoration = instance(balloon.in(p))
+    override def at(s: Positions.Vector2D): BalloonDecoration = instance(balloon.at(s))
+    override def on(t: Tracks.Track): BalloonDecoration = instance(balloon.on(t))
+    def instance(balloon: Balloon): BalloonDecoration
   }
 
   object BalloonDecoration {

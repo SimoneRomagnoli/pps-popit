@@ -10,7 +10,7 @@ import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.spawn.SpawnManager.{ Round, Streak }
-import model.spawn.SpawnerMonad.{ add, build, RichIO, RoundBuilder }
+import model.spawn.SpawnerMonad.{ add, RichIO }
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -43,14 +43,11 @@ class SpawnerActorTest
   val simpleRoundBalloons: List[Balloon] =
     LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
 
-  (for {
-    _ <- build()
+  val complexRound: Round = (for {
     _ <- add(Streak(nBalloons) :- Red)
     _ <- add(Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating))
     _ <- add(Streak(nBalloons) :- Green)
   } yield ()).get
-
-  val complexRound: Round = RoundBuilder.get
 
   val complexRoundBalloons: List[Balloon] =
     (LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList appendedAll

@@ -10,10 +10,12 @@ object SpawnerMonad {
   object RoundBuilder {
     var round: Seq[Streak] = Seq()
 
+    def empty(): Unit = round = Seq()
+
     def get: Round = Round(round)
   }
 
-  def build(): IO[Unit] = RoundBuilder.round = Seq()
+  //def build(): IO[Unit] = RoundBuilder.round = Seq()
 
   def add(streak: Streak): IO[Unit] =
     RoundBuilder.round = streak +: RoundBuilder.round
@@ -24,7 +26,9 @@ object SpawnerMonad {
 
     def get: Round = {
       io.unsafeRunSync()
-      RoundBuilder.get
+      val r: Round = RoundBuilder.get
+      RoundBuilder.empty()
+      r
     }
   }
 

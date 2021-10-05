@@ -74,11 +74,6 @@ class GameController(
     gameMenuController.setSend(reference)
   }
 
-  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
-    mapNodes += grid.width * grid.height
-    Rendering a grid into gameBoard.children
-  }
-
   override def loading(): Unit = Platform runLater {
     val loadingLabel: Label =
       Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))
@@ -95,6 +90,15 @@ class GameController(
   override def reset(): Unit = Platform runLater {
     gameBoard.children.clear()
     mapNodes = 0
+  }
+
+  override def update(stats: GameStats): Unit = Platform runLater {
+    gameMenuController update stats
+  }
+
+  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
+    mapNodes += grid.width * grid.height
+    Rendering a grid into gameBoard.children
   }
 
   override def draw(track: Track): Unit = Platform runLater {
@@ -152,7 +156,4 @@ class GameController(
 
   private def removeEffects(): Unit =
     gameBoard.children.foreach(_.setEffect(null))
-
-  override def update(stats: GameStats): Unit =
-    gameMenuController update stats
 }

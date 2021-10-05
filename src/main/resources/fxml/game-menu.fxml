@@ -8,8 +8,16 @@
         <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton" text="Pause" />
         <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" text="Exit" />
     </HBox>
-    <VBox fx:id="gameStatus" styleClass="inputBox" />
-
+    <VBox fx:id="gameStatus" styleClass="inputBox">
+        <HBox fx:id="statusUpperBox">
+            <Label text="Life: "/>
+            <Label fx:id="lifeLabel"/>
+        </HBox>
+        <HBox fx:id="statusLowerBox">
+            <Label text="Money: "/>
+            <Label fx:id="moneyLabel"/>
+        </HBox>
+    </VBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">
         <HBox styleClass="towerDepotTitle">
             <Label text="Towers" />

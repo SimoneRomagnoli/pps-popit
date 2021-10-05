@@ -32,6 +32,10 @@ class GameMenuController(
     val playButton: ToggleButton,
     val exitButton: ToggleButton,
     val gameStatus: VBox,
+    val statusUpperBox: HBox,
+    val lifeLabel: Label,
+    val statusLowerBox: HBox,
+    val moneyLabel: Label,
     val towerDepot: VBox,
     var send: Input => Unit,
     var paused: Boolean = false,
@@ -104,6 +108,8 @@ class GameMenuController(
   override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
     selectedTowerType.asInstanceOf[TowerType[B]]
 
-  override def update(stats: GameStats): Unit =
-    println(stats)
+  override def update(stats: GameStats): Unit = {
+    lifeLabel.text = stats.life.toString
+    moneyLabel.text = stats.wallet.toString
+  }
 }

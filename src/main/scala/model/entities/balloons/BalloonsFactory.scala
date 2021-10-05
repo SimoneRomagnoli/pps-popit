@@ -2,7 +2,7 @@ package model.entities.balloons
 
 import model.entities.balloons.BalloonDecorations.BalloonType
 import model.entities.balloons.Balloons.{ complex, simple, Balloon }
-import model.entities.balloons.RegeneratingBalloons.{ regenerating, Regenerating }
+import model.entities.balloons.balloontypes.RegeneratingBalloons.{ regenerating, Regenerating }
 import model.spawn.SpawnManager.BalloonInfo
 
 import scala.language.{ implicitConversions, postfixOps }

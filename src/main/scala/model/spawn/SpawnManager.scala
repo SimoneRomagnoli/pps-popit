@@ -9,6 +9,12 @@ object SpawnManager {
 
   case class BalloonInfo(balloonTypes: List[BalloonType] = List(), balloonLife: BalloonLife = Red)
 
+  implicit class RichBalloonInfo(info: BalloonInfo) {
+
+    def &(balloonType: BalloonType): BalloonInfo =
+      BalloonInfo(balloonType :: info.balloonTypes, info.balloonLife)
+  }
+
   case class Streak(
       quantity: Int = 1,
       balloonInfo: BalloonInfo = BalloonInfo(),

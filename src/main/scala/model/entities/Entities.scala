@@ -84,6 +84,10 @@ object Entities {
     }
   }
 
+  trait EnhancedSightAbility extends SightAbility {
+    override def canSee(balloon: Balloon): Boolean = super.canSee(balloon)
+  }
+
   trait ShotAbility extends Entity {
     def bullet: Bullet
     def shotRatio: Double

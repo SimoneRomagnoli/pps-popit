@@ -18,11 +18,11 @@ object Stats {
       GameStatistics(life, wallet)
   }
 
-  case class GameStatistics(override val life: Int, override val wallet: Int) extends GameStats {
-    override def win(money: Int): Unit = GameStats(life, wallet + money)
+  case class GameStatistics(var life: Int, var wallet: Int) extends GameStats {
+    override def win(money: Int): Unit = wallet += money
 
-    override def spend(money: Int): Unit = GameStats(life, wallet - money)
+    override def spend(money: Int): Unit = wallet -= money
 
-    override def lose(lifePoints: Int): Unit = GameStats(life - lifePoints, wallet)
+    override def lose(lifePoints: Int): Unit = life -= lifePoints
   }
 }

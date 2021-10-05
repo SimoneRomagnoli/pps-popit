@@ -22,7 +22,7 @@ case class BalloonActor private (
   def default(): Behavior[Update] = Behaviors.receiveMessage {
     case UpdateEntity(elapsedTime, _, replyTo, track) =>
       balloon.position.x match {
-        case outOfBounds if outOfBounds >= Constants.Screen.width =>
+        case outOfBounds if outOfBounds >= Constants.View.gameBoardWidth =>
           replyTo ! ExitedBalloon(balloon, ctx.self)
           Behaviors.stopped
         case _ =>

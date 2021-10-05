@@ -9,7 +9,7 @@ import model.entities.towers.Towers.Tower
 import model.stats.Stats.GameStats
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.{ Label, ToggleButton }
+import scalafx.scene.control.{ Button, Label, ToggleButton }
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
@@ -29,8 +29,8 @@ trait ViewGameMenuController extends ViewController {
 class GameMenuController(
     val gameMenu: VBox,
     val inputButtons: HBox,
-    val playButton: ToggleButton,
-    val exitButton: ToggleButton,
+    val playButton: Button,
+    val exitButton: Button,
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
@@ -65,6 +65,8 @@ class GameMenuController(
   }
 
   private def setupButtons(): Unit = {
+    playButton.setAlignment(Pos.CenterRight)
+    exitButton.setAlignment(Pos.CenterRight)
     playButton.onMouseClicked = _ =>
       if (paused) {
         send(ResumeGame())

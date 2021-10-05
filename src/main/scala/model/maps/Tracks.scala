@@ -5,7 +5,7 @@ import utils.Constants
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Plots.{ Plotter, PrologPlotter }
-import model.maps.Tracks.Directions.{ LEFT, RIGHT }
+import model.maps.Tracks.Directions.{ Direction, LEFT, RIGHT }
 
 import scala.language.postfixOps
 
@@ -68,12 +68,20 @@ object Tracks {
 
   implicit class RichTrack(track: Track) {
 
-    def exactPositionFrom(linearPosition: Double): Vector2D =
-      track
-        .cells(linearPosition.toInt)
-        .vectorialPosition(linearPosition.toInt match {
-          case 0 => RIGHT
-          case _ => track.cells(linearPosition.toInt - 1).direction
-        })(linearPosition - linearPosition.toInt)
+    def directionIn(linearPosition: Double): Direction =
+      track.cells(linearPosition.toInt).direction
+
+    def exactPositionFrom(linearPosition: Double): Vector2D = linearPosition.toInt match {
+      case outOfBounds if outOfBounds >= track.cells.size =>
+        track.cells.last.nextOnTrack.centralPosition
+      case intPosition =>
+        track
+          .cells(intPosition)
+          .vectorialPosition(intPosition match {
+            case 0                                              => RIGHT
+            case outOfBounds if outOfBounds >= track.cells.size => RIGHT
+            case _ => track.cells(intPosition - 1).direction
+          })(linearPosition - intPosition)
+    }
   }
 }

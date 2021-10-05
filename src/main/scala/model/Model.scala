@@ -1,27 +1,15 @@
 package model
 
-import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages
-import controller.Messages.{
-  EntityKilled,
-  EntitySpawned,
-  EntityUpdated,
-  MapCreated,
-  ModelUpdated,
-  NewMap,
-  TickUpdate,
-  Update,
-  UpdateEntity
-}
+import controller.Messages._
 import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Dart
-import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
-import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Tracks.Track
 import utils.Constants.Maps.gameGrid
 
@@ -31,75 +19,75 @@ object Model {
 
   object ModelActor {
 
-    def apply(): Behavior[Update] = Behaviors setup init
+    def apply(): Behavior[Update] = Behaviors setup { ctx =>
+      ModelActor(ctx).init()
+    }
+  }
 
-    def init(ctx: ActorContext[Update]): Behavior[Update] = Behaviors.receiveMessage {
-      case NewMap(replyTo) =>
-        val track: Track = Track(gameGrid)
-        replyTo ! MapCreated(track)
-        val entities: List[Entity] = List((Red balloon) on track)
-        val actors: Seq[ActorRef[Update]] = entities map {
-          case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-          case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-          case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
-        }
-        running(ctx, entities, actors, track)
+  case class ModelActor private (
+      ctx: ActorContext[Update],
+      var entities: List[Entity] = List(),
+      var actors: Seq[ActorRef[Update]] = Seq(),
+      var track: Track = Track()) {
+
+    def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
+      track = Track(gameGrid)
+      replyTo ! MapCreated(track)
+      entities = List((Red balloon) on track at (10.0, 5.0))
+      actors = entities map {
+        case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+        case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
+        case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
+      }
+      running()
     }
 
-    def running(
-        ctx: ActorContext[Update],
-        entities: List[Entity],
-        actors: Seq[ActorRef[Update]],
-        track: Track): Behavior[Update] =
+    def running(): Behavior[Update] =
       Behaviors.receiveMessage {
         case EntitySpawned(entity, actor) =>
-          running(ctx, entity :: entities, actors :+ actor, track)
+          entities = entity :: entities
+          actors = actors :+ actor
+          running()
 
         case TickUpdate(elapsedTime, replyTo) =>
           actors foreach {
             _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
           }
-          updating(ctx, entities, actors, replyTo, track)
+          updating(replyTo)
       }
 
     def updating(
-        ctx: ActorContext[Update],
-        entities: List[Entity],
-        actors: Seq[ActorRef[Update]],
         replyTo: ActorRef[Messages.Input],
-        track: Track,
         updatedEntities: List[Entity] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
         case EntityUpdated(entity) =>
           entity :: updatedEntities match {
             case full if full.size == entities.size =>
               replyTo ! ModelUpdated(full)
-              running(ctx, full, actors, track)
-            case notFull => updating(ctx, entities, actors, replyTo, track, notFull)
+              entities = full
+              running()
+            case notFull => updating(replyTo, notFull)
           }
         case EntitySpawned(entity, actor) =>
-          updating(
-            ctx,
-            entity :: entities,
-            actors :+ actor,
-            replyTo,
-            track,
-            entity :: updatedEntities
-          )
+          entities = entity :: entities
+          actors = actors :+ actor
+          updating(replyTo, entity :: updatedEntities)
+
+        case ExitedBalloon(balloon, actorRef) =>
+          ctx.self ! EntityKilled(balloon, actorRef)
+          Behaviors.same
+
         case EntityKilled(entity, actorRef) =>
           updatedEntities match {
             case full if full.size == entities.size - 1 =>
               replyTo ! ModelUpdated(full)
-              running(ctx, full, actors.filter(_ != actorRef), track)
+              entities = full
+              actors = actors.filter(_ != actorRef)
+              running()
             case notFull =>
-              updating(
-                ctx,
-                entities.filter(_ not entity),
-                actors.filter(_ != actorRef),
-                replyTo,
-                track,
-                notFull
-              )
+              entities = entities.filter(_ not entity)
+              actors = actors.filter(_ != actorRef)
+              updating(replyTo, notFull)
           }
 
         case _ => Behaviors.same

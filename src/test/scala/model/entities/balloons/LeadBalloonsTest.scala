@@ -38,6 +38,7 @@ class LeadBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "be able to be double wrap a balloon" in {
+    lead(lead(Blue balloon)).pop(Dart()).get shouldBe lead(lead(Blue balloon))
     lead(lead(Blue balloon)).pop(CannonBall()).get shouldBe lead(lead(Red balloon))
     lead(lead(Blue balloon)).pop(CannonBall()).get.pop(CannonBall()) shouldBe None
   }

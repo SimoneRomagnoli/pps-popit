@@ -12,7 +12,8 @@ import controller.Messages.{
 }
 import model.Positions.{ normalized, vector }
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
+import model.entities.bullets.Bullets
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
@@ -45,14 +46,8 @@ case class TowerActor[B <: Bullet](
             shootingTime += elapsedTime
             if (tower canShootAfter shootingTime) {
               shootingTime = 0.0
-              // TODO fix bullet killed bug ---> it is necessary to create a new bullet object every time of tower shoots
-              val ammo: Bullet = tower.bullet match {
-                case Dart()        => Dart()
-                case CannonBall(_) => CannonBall()
-                case IceBall(_, _) => IceBall()
-              }
               val bullet: Bullet =
-                ammo in tower.position at tower.direction * bulletSpeedFactor
+                (Bullets shoot tower.bullet) in tower.position at tower.direction * bulletSpeedFactor
               val bulletActor: ActorRef[Update] = ctx.spawnAnonymous(BulletActor(bullet))
               replyTo ! EntitySpawned(bullet, bulletActor)
             }

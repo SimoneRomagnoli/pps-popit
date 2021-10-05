@@ -8,6 +8,7 @@ import model.entities.Entities.Entity
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.control.Label
@@ -31,6 +32,7 @@ trait ViewGameController extends ViewController {
   def loading(): Unit
   def reset(): Unit
   def setup(): Unit
+  def update(stats: GameStats): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
@@ -150,4 +152,7 @@ class GameController(
 
   private def removeEffects(): Unit =
     gameBoard.children.foreach(_.setEffect(null))
+
+  override def update(stats: GameStats): Unit =
+    gameMenuController update stats
 }

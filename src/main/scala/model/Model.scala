@@ -11,6 +11,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
@@ -26,6 +27,7 @@ object Model {
 
   case class ModelActor private (
       ctx: ActorContext[Update],
+      stats: GameStats = GameStats(),
       var entities: List[Entity] = List(),
       var actors: Seq[ActorRef[Update]] = Seq(),
       var track: Track = Track()) {
@@ -63,7 +65,7 @@ object Model {
         case EntityUpdated(entity) =>
           entity :: updatedEntities match {
             case full if full.size == entities.size =>
-              replyTo ! ModelUpdated(full)
+              replyTo ! ModelUpdated(full, stats)
               entities = full
               running()
             case notFull => updating(replyTo, notFull)
@@ -74,13 +76,14 @@ object Model {
           updating(replyTo, entity :: updatedEntities)
 
         case ExitedBalloon(balloon, actorRef) =>
+          stats lose balloon.life
           ctx.self ! EntityKilled(balloon, actorRef)
           Behaviors.same
 
         case EntityKilled(entity, actorRef) =>
           updatedEntities match {
             case full if full.size == entities.size - 1 =>
-              replyTo ! ModelUpdated(full)
+              replyTo ! ModelUpdated(full, stats)
               entities = full
               actors = actors.filter(_ != actorRef)
               running()

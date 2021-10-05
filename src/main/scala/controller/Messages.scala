@@ -7,6 +7,7 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 
 object Messages {
   //TRAITS
@@ -16,6 +17,7 @@ object Messages {
   trait Update extends Message
 
   //VIEW
+  case class RenderStats(stats: GameStats) extends Render
   case class RenderEntities(entities: List[Entity]) extends Render
   case class RenderMap(track: Track) extends Render
 
@@ -30,7 +32,7 @@ object Messages {
   case object Tick extends Input
   case class Start() extends Input
   case class MapCreated(track: Track) extends Input
-  case class ModelUpdated(entities: List[Entity]) extends Input
+  case class ModelUpdated(entities: List[Entity], stats: GameStats) extends Input
 
   //MODEL
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
@@ -45,7 +47,7 @@ object Messages {
   case class EntityUpdated(entity: Entity) extends Update
   case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
   case class EntityKilled(entity: Entity, actorRef: ActorRef[Update]) extends Update
-  case class ExitedBalloon(entity: Entity, actorRef: ActorRef[Update]) extends Update
+  case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
 
   //TOWER
   case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update

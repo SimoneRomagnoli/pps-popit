@@ -6,6 +6,7 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.stats.Stats.GameStats
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
@@ -17,6 +18,7 @@ import view.render.Renders.{ single, toSingle }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
+  def update(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
   def isPaused: Boolean
@@ -101,4 +103,7 @@ class GameMenuController(
 
   override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
     selectedTowerType.asInstanceOf[TowerType[B]]
+
+  override def update(stats: GameStats): Unit =
+    println(stats)
 }

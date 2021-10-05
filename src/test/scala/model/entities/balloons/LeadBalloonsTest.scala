@@ -1,8 +1,9 @@
 package model.entities.balloons
 
 import model.Positions.Vector2D
-import model.entities.balloons.BalloonLives.{ Green, Red }
+import model.entities.balloons.BalloonLives.{ Blue, Green, Red }
 import model.entities.balloons.balloontypes.LeadBalloons.lead
+import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -28,6 +29,17 @@ class LeadBalloonsTest extends AnyFlatSpec with Matchers {
   it should "be able to move" in {
     (lead(Red balloon) at zeroVector).update(5.0).position should not be zeroVector
     (lead(Green balloon) at zeroVector).update(5.0).position should not be zeroVector
+  }
+
+  it should "be popped only by cannon balls" in {
+    lead(Green balloon).pop(Dart()).get shouldBe lead(Green balloon)
+    lead(Green balloon).pop(IceBall()).get shouldBe lead(Green balloon)
+    lead(Green balloon).pop(CannonBall()).get shouldBe lead(Blue balloon)
+  }
+
+  it should "be able to be double wrap a balloon" in {
+    lead(lead(Blue balloon)).pop(CannonBall()).get shouldBe lead(lead(Red balloon))
+    lead(lead(Blue balloon)).pop(CannonBall()).get.pop(CannonBall()) shouldBe None
   }
 
 }

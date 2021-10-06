@@ -1,8 +1,9 @@
 package view.controllers
 
+import cats.effect.IO
 import controller.Messages.{ Input, PlaceTower }
-import javafx.scene.Node
 import javafx.scene.image.Image
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.maps.Cells.Cell
@@ -12,16 +13,16 @@ import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.control.Label
-import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import view.controllers.InputEventHandlers.{ hoverTower, _ }
 import view.render.Drawings.Drawing
 import view.render.Rendering
 
-import scala.language.reflectiveCalls
+import scala.language.{ implicitConversions, reflectiveCalls }
 import scala.util.Random
 
 /**
@@ -65,7 +66,7 @@ class GameController(
   override def setup(): Unit = Platform runLater {
     setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
     setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
-    setTowersSelection()
+    setMouseHandlers()
     gameMenuController.setup()
   }
 
@@ -119,41 +120,61 @@ class GameController(
     region.minHeight = height
   }
 
-  private def setTowersSelection(): Unit = {
+  private def setMouseHandlers(): Unit = {
     gameBoard.onMouseExited = _ => removeEffects()
-    gameBoard.onMouseMoved = e => {
-      removeEffects()
-      if (gameMenuController.anyTowerSelected() && !gameMenuController.isPaused) {
-        val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-        val effect: ColorAdjust = new ColorAdjust()
-        val place: Node = e.getTarget.asInstanceOf[Node]
-        if (selectable(cell)) {
-          effect.hue = 0.12
-          effect.brightness = 0.2
-          place.setCursor(Cursor.Hand)
-        } else {
-          place.setCursor(Cursor.Default)
-        }
-        place.setEffect(effect)
-      } else {
-        e.getTarget.asInstanceOf[Node].setCursor(Cursor.Default)
-      }
-    }
-    gameBoard.onMouseClicked = e => {
-      val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-      if (gameMenuController
-          .anyTowerSelected() && selectable(cell) && !gameMenuController.isPaused) {
-        removeEffects()
-        gameMenuController.unselectDepot()
-        occupiedCells = occupiedCells :+ cell
-        send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-      }
-    }
+    gameBoard.onMouseEntered = MouseEvents.enter(_).unsafeRunSync()
+    gameBoard.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
+    gameBoard.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
+
   }
+
+  private def placeTower(e: MouseEvent): IO[Unit] = {
+    val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
+    if (selectable(cell)) {
+      for {
+        _ <- removeEffects()
+        _ <- gameMenuController.unselectDepot()
+        _ <- occupy(cell)
+        _ <- send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+      } yield ()
+    } else IO.unit
+  }
+
+  private def occupy(cell: Cell): Unit =
+    occupiedCells = occupiedCells :+ cell
 
   private def selectable(cell: Cell): Boolean =
     !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
 
   private def removeEffects(): Unit =
     gameBoard.children.foreach(_.setEffect(null))
+
+  private object MouseEvents {
+    import InputEventHandlers._
+
+    def click(e: MouseEvent): IO[Unit] = for {
+      _ <-
+        if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+          placeTower(e)
+        else IO.unit
+
+    } yield ()
+
+    def move(e: MouseEvent): IO[Unit] = for {
+      _ <- removeEffects()
+      _ <-
+        if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+          hoverCell(e, occupiedCells)
+        else {
+          e.getTarget.setCursor(Cursor.Default)
+          IO.unit
+        }
+    } yield ()
+
+    def enter(e: MouseEvent): IO[Unit] = for {
+      _ <-
+        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected()) hoverTower(e)
+        else IO.unit
+    } yield ()
+  }
 }

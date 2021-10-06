@@ -17,6 +17,8 @@ import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
 
+object values
+
 object Towers {
 
   /**
@@ -33,8 +35,12 @@ object Towers {
 
     override def in(pos: Vector2D): Tower[B]
     override def rotateTo(dir: Vector2D): Tower[B]
-    override def withSightRangeOf(radius: Double): Tower[B]
-    override def withShotRatioOf(ratio: Double): Tower[B]
+
+    def has(v: values.type): Tower[B] = this
+
+    override def ratio(radius: Double): Tower[B]
+
+    override def sight(ratio: Double): Tower[B]
 
     override def toString: String = "towers/" + bullet.toString + "-TOWER"
     override def boost(powerUp: TowerPowerUp): Tower[B]
@@ -81,17 +87,13 @@ object Towers {
       override val direction: Vector2D = towerDefaultDirection)
       extends Tower[B] {
 
-    override def in(pos: Vector2D): Tower[B] =
-      BaseTower(bullet, boundary, pos, sightRange, shotRatio, direction)
+    override def in(pos: Vector2D): Tower[B] = copy(position = pos)
 
-    override def rotateTo(dir: Vector2D): Tower[B] =
-      BaseTower(bullet, boundary, position, sightRange, shotRatio, dir)
+    override def sight(radius: Double): Tower[B] = copy(sightRange = radius)
 
-    override def withSightRangeOf(radius: Double): Tower[B] =
-      BaseTower(bullet, boundary, position, radius, shotRatio, direction)
+    override def ratio(ratio: Double): Tower[B] = copy(shotRatio = ratio)
 
-    override def withShotRatioOf(ratio: Double): Tower[B] =
-      BaseTower(bullet, boundary, position, sightRange, ratio, direction)
+    override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
 
     override def boost(powerUp: TowerPowerUp): Tower[B] =
       powerUp match {

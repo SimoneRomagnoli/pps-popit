@@ -10,6 +10,7 @@ import controller.Messages.{
   ModelUpdated,
   Render,
   RenderEntities,
+  RenderStats,
   Start,
   TickUpdate,
   Update,
@@ -20,6 +21,7 @@ import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants
@@ -40,7 +42,7 @@ object BalloonActorTest {
           Behaviors.same
         case EntityUpdated(entity) =>
           testBalloon = entity.asInstanceOf[Balloon]
-          gameLoop.get ! ModelUpdated(List())
+          gameLoop.get ! ModelUpdated(List(), GameStats())
           Behaviors.same
         case _ => Behaviors.same
       }
@@ -64,6 +66,7 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
     "asked to update" should {
       "reply to the model which should contact the view" in {
         gameLoop ! Start()
+        view expectMessage RenderStats(GameStats())
         view expectMessage RenderEntities(List())
       }
       "update the position of its balloon" in {

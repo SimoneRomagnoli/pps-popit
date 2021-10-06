@@ -7,6 +7,7 @@ import controller.GameLoop.GameLoopActor
 import controller.GameLoopTest._
 import controller.Messages._
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import org.scalatest.wordspec.AnyWordSpecLike
 
 object GameLoopTest {
@@ -22,7 +23,7 @@ object GameLoopTest {
     Behaviors.receiveMessage {
       case TickUpdate(elapsedTime, replyTo) =>
         counter.inc(elapsedTime)
-        replyTo ! ModelUpdated(List())
+        replyTo ! ModelUpdated(List(), GameStats())
         Behaviors.same
       case _ => Behaviors.same
     }
@@ -55,6 +56,7 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         counter.value should be > 0.0
       }
       "order the view to render" in {
+        view expectMessage RenderStats(GameStats())
         view expectMessage RenderEntities(List())
       }
     }

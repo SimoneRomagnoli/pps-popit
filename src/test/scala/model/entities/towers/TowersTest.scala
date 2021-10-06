@@ -20,7 +20,7 @@ object TowersTest {
   var lastShotTime: Double = 0.0
 
   val tower: Tower[Dart] =
-    (Arrow tower) in towerPosition withSightRangeOf 1.0 withShotRatioOf towerDefaultShotRatio
+    (Arrow tower) in towerPosition has values sight 1.0 ratio towerDefaultShotRatio
   var balloon: Balloon = Simple(position = balloonPosition, boundary = balloonBoundary)
 
   def waitSomeTime(): Unit = Thread.sleep(500)
@@ -57,7 +57,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       }
       "can change the shot frequency according to the shot ratio" in {
         lastShotTime = 0.0
-        val newTower: Tower[Dart] = tower withShotRatioOf 1.0
+        val newTower: Tower[Dart] = tower has values ratio 1.0
         (newTower shotRatio) shouldBe 1.0
         newTower canAttackAfter lastShotTime shouldBe true
         lastShotTime = System.currentTimeMillis().toDouble

@@ -46,6 +46,11 @@
 -fx-background-size: cover;
 }
 
+.exitButton {
+-fx-background-image: url('/images/inputs/EXIT.png');
+-fx-background-size: cover;
+}
+
 .towerDepotTitle {
 -fx-padding: 5 5 0 5;
 }

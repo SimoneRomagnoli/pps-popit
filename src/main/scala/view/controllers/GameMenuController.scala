@@ -9,12 +9,10 @@ import model.entities.towers.Towers.Tower
 import model.stats.Stats.GameStats
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.{ Button, Label, ToggleButton }
-import scalafx.scene.image.Image
+import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import view.controllers.InputButtons.{ InputButton, Pause }
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
@@ -59,6 +57,14 @@ class GameMenuController(
 
   override def unselectDepot(): Unit =
     towerDepot.children.foreach(_.getStyleClass.remove("selected"))
+
+  override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
+    selectedTowerType.asInstanceOf[TowerType[B]]
+
+  override def update(stats: GameStats): Unit = {
+    lifeLabel.text = stats.life.toString
+    moneyLabel.text = stats.wallet.toString
+  }
 
   private def setSpacing(): Unit = {
     val space: Double = 10.0
@@ -105,31 +111,4 @@ class GameMenuController(
       towerBox.setAlignment(Pos.CenterLeft)
       towerDepot.children.add(towerBox)
     }
-
-  private def inputButtonBackground(inputButton: InputButton): BackgroundImage =
-    new BackgroundImage(
-      new Image("images/inputs/" + inputButton.toString + ".png"),
-      BackgroundRepeat.NoRepeat,
-      BackgroundRepeat.NoRepeat,
-      BackgroundPosition.Default,
-      BackgroundSize.Default
-    )
-
-  override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
-    selectedTowerType.asInstanceOf[TowerType[B]]
-
-  override def update(stats: GameStats): Unit = {
-    lifeLabel.text = stats.life.toString
-    moneyLabel.text = stats.wallet.toString
-  }
-}
-
-object InputButtons {
-
-  trait InputButton {
-    override def toString: String = this.getClass.getSimpleName.toUpperCase.replace("$", "")
-  }
-  case object Play extends InputButton
-  case object Pause extends InputButton
-  case object Exit extends InputButton
 }

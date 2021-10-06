@@ -45,8 +45,9 @@ object InputEventHandlers {
       val effect: ColorAdjust = new ColorAdjust()
       effect.hue = 0.12
       effect.brightness = 0.2
+      e.getTarget.setEffect(effect)
       e.getTarget.setCursor(Cursor.Hand)
-    } else IO.unit
+    }
 
   private def selectable(occupiedCells: Seq[Cell], cell: Cell): Boolean =
     !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)

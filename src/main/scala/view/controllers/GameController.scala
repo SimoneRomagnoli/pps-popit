@@ -18,7 +18,6 @@ import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
-import view.controllers.InputEventHandlers.{ hoverTower, _ }
 import view.render.Drawings.Drawing
 import view.render.Rendering
 
@@ -41,11 +40,6 @@ trait ViewGameController extends ViewController {
 
 /**
  * Controller class bound to the game fxml.
- *
- * @param gameBoard,
- *   the pane containing the game.
- * @param mapNodes,
- *   the number of nodes of the map.
  */
 @sfxml
 class GameController(
@@ -122,29 +116,9 @@ class GameController(
 
   private def setMouseHandlers(): Unit = {
     gameBoard.onMouseExited = _ => removeEffects()
-    gameBoard.onMouseEntered = MouseEvents.enter(_).unsafeRunSync()
     gameBoard.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
     gameBoard.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
-
   }
-
-  private def placeTower(e: MouseEvent): IO[Unit] = {
-    val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-    if (selectable(cell)) {
-      for {
-        _ <- removeEffects()
-        _ <- gameMenuController.unselectDepot()
-        _ <- occupy(cell)
-        _ <- send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-      } yield ()
-    } else IO.unit
-  }
-
-  private def occupy(cell: Cell): Unit =
-    occupiedCells = occupiedCells :+ cell
-
-  private def selectable(cell: Cell): Boolean =
-    !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
 
   private def removeEffects(): Unit =
     gameBoard.children.foreach(_.setEffect(null))
@@ -169,12 +143,30 @@ class GameController(
           e.getTarget.setCursor(Cursor.Default)
           IO.unit
         }
+      _ <-
+        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
+          hoverTower(e)
+        else
+          IO.unit
+
     } yield ()
 
-    def enter(e: MouseEvent): IO[Unit] = for {
-      _ <-
-        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected()) hoverTower(e)
-        else IO.unit
-    } yield ()
+    private def placeTower(e: MouseEvent): IO[Unit] = {
+      val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
+      if (selectable(cell)) {
+        for {
+          _ <- removeEffects()
+          _ <- gameMenuController.unselectDepot()
+          _ <- occupy(cell)
+          _ <- send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+        } yield ()
+      } else IO.unit
+    }
+
+    private def selectable(cell: Cell): Boolean =
+      !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
+
+    private def occupy(cell: Cell): Unit =
+      occupiedCells = occupiedCells :+ cell
   }
 }

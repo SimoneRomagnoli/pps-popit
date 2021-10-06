@@ -26,14 +26,7 @@ case class BalloonActor private (
           replyTo ! ExitedBalloon(balloon, ctx.self)
           Behaviors.stopped
         case _ =>
-          val direction: Direction = track directionIn linearPosition
-          val speed: Double = direction match {
-            case UP | DOWN    => balloon.speed.y
-            case LEFT | RIGHT => balloon.speed.x
-            case _            => 0.0
-          }
-          linearPosition = linearPosition + speed * elapsedTime
-          balloon = balloon.update(linearPosition).asInstanceOf[Balloon]
+          balloon = balloon.update(elapsedTime).asInstanceOf[Balloon]
           replyTo ! EntityUpdated(balloon)
           Behaviors.same
       }

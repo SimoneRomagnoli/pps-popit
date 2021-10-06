@@ -20,13 +20,14 @@ object Model {
 
   object ModelActor {
 
-    def apply(): Behavior[Update] = Behaviors setup { ctx =>
-      ModelActor(ctx).init()
+    def apply(controller: ActorRef[Input]): Behavior[Update] = Behaviors setup { ctx =>
+      ModelActor(ctx, controller).init()
     }
   }
 
   case class ModelActor private (
       ctx: ActorContext[Update],
+      controller: ActorRef[Input],
       stats: GameStats = GameStats(),
       var entities: List[Entity] = List(),
       var actors: Seq[ActorRef[Update]] = Seq(),
@@ -50,6 +51,13 @@ object Model {
           entities = entity :: entities
           actors = actors :+ actor
           running()
+
+        case TowerIn(cell) =>
+          val tower: Option[Tower[_]] = entities
+            .find(e => e.isInstanceOf[Tower[_]] && e.position == cell.centralPosition)
+            .map(_.asInstanceOf[Tower[_]])
+          controller ! TowerOption(tower)
+          Behaviors.same
 
         case TickUpdate(elapsedTime, replyTo) =>
           actors foreach {

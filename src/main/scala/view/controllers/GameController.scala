@@ -8,6 +8,7 @@ import model.entities.Entities.Entity
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.control.Label
@@ -31,6 +32,7 @@ trait ViewGameController extends ViewController {
   def loading(): Unit
   def reset(): Unit
   def setup(): Unit
+  def update(stats: GameStats): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
@@ -72,11 +74,6 @@ class GameController(
     gameMenuController.setSend(reference)
   }
 
-  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
-    mapNodes += grid.width * grid.height
-    Rendering a grid into gameBoard.children
-  }
-
   override def loading(): Unit = Platform runLater {
     val loadingLabel: Label =
       Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))
@@ -93,6 +90,15 @@ class GameController(
   override def reset(): Unit = Platform runLater {
     gameBoard.children.clear()
     mapNodes = 0
+  }
+
+  override def update(stats: GameStats): Unit = Platform runLater {
+    gameMenuController update stats
+  }
+
+  override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
+    mapNodes += grid.width * grid.height
+    Rendering a grid into gameBoard.children
   }
 
   override def draw(track: Track): Unit = Platform runLater {

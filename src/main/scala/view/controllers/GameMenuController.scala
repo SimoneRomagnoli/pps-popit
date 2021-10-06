@@ -6,10 +6,11 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.stats.Stats.GameStats
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
-import scalafx.scene.layout.{ HBox, VBox }
+import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import view.render.Rendering
@@ -17,6 +18,7 @@ import view.render.Renders.{ single, toSingle }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
+  def update(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
   def isPaused: Boolean
@@ -30,6 +32,10 @@ class GameMenuController(
     val playButton: ToggleButton,
     val exitButton: ToggleButton,
     val gameStatus: VBox,
+    val statusUpperBox: HBox,
+    val lifeLabel: Label,
+    val statusLowerBox: HBox,
+    val moneyLabel: Label,
     val towerDepot: VBox,
     var send: Input => Unit,
     var paused: Boolean = false,
@@ -52,25 +58,31 @@ class GameMenuController(
   override def unselectDepot(): Unit =
     towerDepot.children.foreach(_.getStyleClass.remove("selected"))
 
+  override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
+    selectedTowerType.asInstanceOf[TowerType[B]]
+
+  override def update(stats: GameStats): Unit = {
+    lifeLabel.text = stats.life.toString
+    moneyLabel.text = stats.wallet.toString
+  }
+
   private def setSpacing(): Unit = {
     val space: Double = 10.0
     gameMenu.setSpacing(space)
     towerDepot.setSpacing(space)
   }
 
-  private def setupButtons(): Unit = {
+  private def setupButtons(): Unit =
     playButton.onMouseClicked = _ =>
       if (paused) {
         send(ResumeGame())
         paused = false
-        playButton.text = "Pause"
       } else {
         send(PauseGame())
         paused = true
-        playButton.text = "Resume"
       }
-    exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
-  }
+
+  //exitButton.onMouseClicked = _ =>
 
   private def setupTowerDepot[B <: Bullet](): Unit =
     TowerTypes.values.foreach { towerValue =>
@@ -98,7 +110,4 @@ class GameMenuController(
       towerBox.setAlignment(Pos.CenterLeft)
       towerDepot.children.add(towerBox)
     }
-
-  override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
-    selectedTowerType.asInstanceOf[TowerType[B]]
 }

@@ -44,7 +44,8 @@ object GameLoop {
       case MapCreated(track) =>
         view ! RenderMap(track)
         Behaviors.same
-      case ModelUpdated(entities) =>
+      case ModelUpdated(entities, stats) =>
+        view ! RenderStats(stats)
         view ! RenderEntities(entities)
         Behaviors.same
       case PauseGame() =>

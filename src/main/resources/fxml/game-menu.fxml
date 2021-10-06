@@ -4,12 +4,21 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="gameMenu" styleClass="gameMenu" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameMenuController">
-    <HBox fx:id="inputButtons">
-        <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton" text="Pause" />
-        <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" text="Exit" />
-    </HBox>
-    <VBox fx:id="gameStatus" styleClass="inputBox" />
-
+    <HBox fx:id="inputButtons"/>
+    <VBox fx:id="gameStatus" styleClass="inputBox">
+        <HBox fx:id="statusUpperBox">
+            <Label text="Life: "/>
+            <Label fx:id="lifeLabel"/>
+            <Pane HBox.hgrow="ALWAYS" />
+            <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>
+        </HBox>
+        <HBox fx:id="statusLowerBox">
+            <Label text="Money: "/>
+            <Label fx:id="moneyLabel"/>
+            <Pane HBox.hgrow="ALWAYS" />
+            <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />
+        </HBox>
+    </VBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">
         <HBox styleClass="towerDepotTitle">
             <Label text="Towers" />

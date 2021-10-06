@@ -10,7 +10,7 @@ scalaVersion := "2.13.6"
 
 val akkaVersion = "2.6.16"
 
-resolvers in ThisBuild += Resolver.jcenterRepo
+resolvers += Resolver.jcenterRepo
 
 assemblyMergeStrategy in assembly := {
   case "reference.conf"            => MergeStrategy.concat

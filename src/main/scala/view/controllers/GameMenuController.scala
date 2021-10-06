@@ -1,7 +1,7 @@
 package view.controllers
 
 import controller.Messages
-import controller.Messages.{ Input, PauseGame, ResumeGame }
+import controller.Messages.{ Input, Message, PauseGame, ResumeGame }
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
@@ -15,6 +15,8 @@ import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
+
+import scala.concurrent.Future
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
@@ -38,6 +40,7 @@ class GameMenuController(
     val moneyLabel: Label,
     val towerDepot: VBox,
     var send: Input => Unit,
+    var ask: Message => Future[Message],
     var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
@@ -49,6 +52,7 @@ class GameMenuController(
   }
 
   override def setSend(reference: Messages.Input => Unit): Unit = send = reference
+  override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
 
   override def isPaused: Boolean = paused
 

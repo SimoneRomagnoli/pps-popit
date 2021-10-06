@@ -1,9 +1,12 @@
 package view.controllers
 
-import controller.Messages.Input
+import akka.actor.typed.ActorRef
+import controller.Messages.{ Input, Message }
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
+
+import scala.concurrent.Future
 
 /**
  * Main controller. This controller loads the main fxml file and contains all the other nested
@@ -11,6 +14,7 @@ import utils.Constants
  */
 trait ViewController {
   def setSend(send: Input => Unit): Unit
+  def setAsk(reference: Message => Future[Message]): Unit
 }
 
 trait ViewMainController extends ViewController {
@@ -39,4 +43,7 @@ class MainController(
   mainPane.minHeight = Constants.Screen.height
 
   override def setSend(reference: Input => Unit): Unit = gameController.setSend(reference)
+
+  override def setAsk(reference: Message => Future[Message]): Unit =
+    gameController.setAsk(reference)
 }

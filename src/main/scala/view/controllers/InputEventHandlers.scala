@@ -1,6 +1,8 @@
 package view.controllers
 
 import cats.effect.IO
+import controller.Messages
+import controller.Messages.{ Input, Message, TowerIn }
 import javafx.event.EventTarget
 import javafx.scene.Node
 import model.maps.Cells.Cell
@@ -10,7 +12,10 @@ import javafx.scene.input.MouseEvent
 import scalafx.scene.layout.Pane
 import utils.Constants
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.language.implicitConversions
+import scala.util.{ Failure, Success }
 
 /**
  * Contains utility methods that exploit [[IO]] in order to make a more readable sequence of actions
@@ -40,7 +45,12 @@ object InputEventHandlers {
     e.getTarget.setEffect(effect)
   }
 
-  def hoverTower(e: MouseEvent): IO[Unit] =
+  def hoverTower(e: MouseEvent, ask: Message => Future[Message]): IO[Unit] = {
+    val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
+    ask(TowerIn(cell)).onComplete {
+      case Success(value)     => println(value)
+      case Failure(exception) => println(exception)
+    }
     if (e.getTarget.getStyleClass.contains("tower")) {
       val effect: ColorAdjust = new ColorAdjust()
       effect.hue = 0.12
@@ -48,6 +58,7 @@ object InputEventHandlers {
       e.getTarget.setEffect(effect)
       e.getTarget.setCursor(Cursor.Hand)
     }
+  }
 
   private def selectable(occupiedCells: Seq[Cell], cell: Cell): Boolean =
     !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)

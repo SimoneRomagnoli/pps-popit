@@ -1,15 +1,19 @@
-import akka.actor.typed.{ ActorRef, ActorSystem }
+import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ ActorRef, ActorSystem, Scheduler }
+import akka.util.Timeout
 import controller.Controller.ControllerActor
-import controller.Messages.{ Input, Message, NewGame, Render }
+import controller.Messages._
+import javafx.scene.layout.BorderPane
 import scalafx.Includes._
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
-import javafx.scene.layout.BorderPane
 import scalafxml.core.{ FXMLLoader, NoDependencyResolver }
 import view.View.ViewActor
-import view.controllers.{ ViewController, ViewMainController }
+import view.controllers.{ MainController, ViewMainController }
+
+import scala.concurrent.duration.DurationInt
 
 object Main extends JFXApp3 {
 
@@ -27,11 +31,15 @@ object Main extends JFXApp3 {
       scene = new Scene(root)
     }
 
-    ActorSystem[Message](
+    implicit val timeout: Timeout = 3.seconds
+    val system: ActorSystem[Message] = ActorSystem[Message](
       Behaviors.setup[Message] { ctx =>
+        implicit val scheduler: Scheduler = ctx.system.scheduler
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
         mainController.setSend(controller ! _)
+        mainController
+          .setAsk(asked => controller.ask(ctx => MvcInteraction(ctx, asked)))
         controller ! NewGame()
         Behaviors.empty
       },

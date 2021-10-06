@@ -1,7 +1,7 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Messages.{ Input, PlaceTower }
+import controller.Messages.{ Input, Message, PlaceTower }
 import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.ImagePattern
@@ -21,6 +21,7 @@ import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, g
 import view.render.Drawings.Drawing
 import view.render.Rendering
 
+import scala.concurrent.Future
 import scala.language.{ implicitConversions, reflectiveCalls }
 import scala.util.Random
 
@@ -49,6 +50,7 @@ class GameController(
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0,
     var send: Input => Unit,
+    var ask: Message => Future[Message],
     var occupiedCells: Seq[Cell] = Seq())
     extends ViewGameController {
   setup()
@@ -67,6 +69,11 @@ class GameController(
   override def setSend(reference: Input => Unit): Unit = {
     send = reference
     gameMenuController.setSend(reference)
+  }
+
+  override def setAsk(reference: Message => Future[Message]): Unit = {
+    ask = reference
+    gameMenuController.setAsk(reference)
   }
 
   override def loading(): Unit = Platform runLater {
@@ -145,7 +152,7 @@ class GameController(
         }
       _ <-
         if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
-          hoverTower(e)
+          hoverTower(e, ask)
         else
           IO.unit
 

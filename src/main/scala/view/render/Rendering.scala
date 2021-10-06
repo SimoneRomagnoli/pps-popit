@@ -48,7 +48,6 @@ object Rendering {
         rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
       case tower: Tower[_] =>
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
-        rectangle.styleClass += "tower"
       case _ =>
     }
     rectangle

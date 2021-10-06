@@ -1,6 +1,7 @@
 package model
 
 import model.entities.Entities.Entity
+import model.entities.balloons.Balloons.Balloon
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -25,6 +26,19 @@ object Positions {
     def +(other: Vector2D): Vector2D = (v.x + other.x, v.y + other.y)
     def -(other: Vector2D): Vector2D = (v.x - other.x, v.y - other.y)
     def *(value: Double): Vector2D = (v.x * value, v.y * value)
+
+    def intersectsWith(balloon: Balloon)(sightRange: Double): Boolean =
+      distanceVector(v)(balloon position) match {
+        case Vector2DImpl(x, _) if x > ((balloon.boundary._1 / 2) + sightRange) => false
+        case Vector2DImpl(_, y) if y > ((balloon.boundary._2 / 2) + sightRange) => false
+        case Vector2DImpl(x, _) if x <= (balloon.boundary._1 / 2)               => true
+        case Vector2DImpl(_, y) if y <= (balloon.boundary._2 / 2)               => true
+        case distance =>
+          squareDistance(distance)((balloon.boundary._1 / 2, balloon.boundary._2 / 2)) <= Math.pow(
+            sightRange,
+            2
+          )
+      }
   }
 
   /**
@@ -43,9 +57,15 @@ object Positions {
    * @return
    */
   def distance(from: Vector2D)(to: Vector2D): Double =
-    Math.sqrt(Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2))
+    Math.sqrt(squareDistance(from)(to))
 
-  def vector(from: Vector2D, to: Vector2D): Vector2D = (to.x - from.x, to.y - from.y)
+  def squareDistance(from: Vector2D)(to: Vector2D): Double =
+    Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2)
+
+  def distanceVector(from: Vector2D)(to: Vector2D): Vector2D =
+    (Math.abs(from.x - to.x), Math.abs(from.y - to.y))
+
+  def vector(from: Vector2D)(to: Vector2D): Vector2D = (to.x - from.x, to.y - from.y)
 
   def normalized(vector: Vector2D): Vector2D = {
     val magnitude = magnitudeOf(vector)

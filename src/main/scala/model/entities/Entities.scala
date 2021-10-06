@@ -70,18 +70,7 @@ object Entities {
     def rotateTo(dir: Vector2D): SightAbility
     def withSightRangeOf(radius: Double): SightAbility
 
-    def canSee(balloon: Balloon): Boolean = {
-      val distance: Vector2D =
-        (Math.abs(position.x - balloon.position.x), Math.abs(position.y - balloon.position.y))
-      if (distance.x > ((balloon.boundary._1 / 2) + sightRange)) return false
-      if (distance.y > ((balloon.boundary._2 / 2) + sightRange)) return false
-      if (distance.x <= (balloon.boundary._1 / 2)) return true
-      if (distance.y <= (balloon.boundary._2 / 2)) return true
-
-      val cornerDistance = Math.pow(distance.x - balloon.boundary._1 / 2, 2) +
-        Math.pow(distance.y - balloon.boundary._2 / 2, 2)
-      cornerDistance <= Math.pow(sightRange, 2)
-    }
+    def canSee(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
   }
 
   trait EnhancedSightAbility extends SightAbility {

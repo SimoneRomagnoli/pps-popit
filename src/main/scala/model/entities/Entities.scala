@@ -3,6 +3,8 @@ package model.entities
 import model.Positions.Vector2D
 import model.Positions._
 import model.entities.balloons.Balloons.Balloon
+import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
+import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerUpgrades.TowerPowerUp
 import model.maps.Tracks.Track
@@ -69,12 +71,17 @@ object Entities {
 
     def rotateTo(dir: Vector2D): SightAbility
     def withSightRangeOf(radius: Double): SightAbility
+    def isInSightOfRangeOf(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
-    def canSee(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
+    def canSee(balloon: Balloon): Boolean = balloon match {
+      case CamoBalloon(_)       => false
+      case BalloonDecoration(b) => canSee(b)
+      case _                    => isInSightOfRangeOf(balloon)
+    }
   }
 
   trait EnhancedSightAbility extends SightAbility {
-    override def canSee(balloon: Balloon): Boolean = super.canSee(balloon)
+    override def canSee(balloon: Balloon): Boolean = isInSightOfRangeOf(balloon)
   }
 
   trait ShotAbility extends Entity {

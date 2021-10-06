@@ -41,7 +41,7 @@ case class TowerActor[B <: Bullet](
       entities foreach {
         case balloon: Balloon =>
           if (tower canSee balloon) {
-            tower = tower rotateTo normalized(vector(tower.position, balloon.position))
+            tower = tower rotateTo normalized(vector(tower.position)(balloon.position))
             shootingTime += elapsedTime
             if (tower canShootAfter shootingTime) {
               shootingTime = 0.0

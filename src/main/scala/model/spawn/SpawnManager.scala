@@ -1,8 +1,7 @@
 package model.spawn
 
-import model.entities.balloons.BalloonDecorations.{ BalloonType, Regenerating }
-import model.entities.balloons.BalloonLives.{ BalloonLife, Blue, Red }
-import model.spawn.SpawnerMonad.add
+import model.entities.balloons.BalloonDecorations.BalloonType
+import model.entities.balloons.BalloonLives.{ BalloonLife, Red }
 
 import scala.concurrent.duration.{ DurationInt, FiniteDuration }
 

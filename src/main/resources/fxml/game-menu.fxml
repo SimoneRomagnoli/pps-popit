@@ -10,13 +10,13 @@
             <Label text="Life: "/>
             <Label fx:id="lifeLabel"/>
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>
+            <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>
         </HBox>
         <HBox fx:id="statusLowerBox">
             <Label text="Money: "/>
             <Label fx:id="moneyLabel"/>
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />
+            <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />
         </HBox>
     </VBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">

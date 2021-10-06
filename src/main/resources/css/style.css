@@ -28,11 +28,22 @@
 -fx-margin: 10;
 -fx-padding: 0 10;
 -fx-border-color:#000000;
--fx-border-width: 3;
+-fx-border-width: 2;
 -fx-border-style: solid;
 -fx-border-radius: 10;
 -fx-background-radius: 10;
 -fx-font-size: 0px;
+-fx-background-size: cover;
+}
+
+.playButton {
+-fx-background-image: url('/images/inputs/PAUSE.png');
+-fx-background-size: cover;
+}
+
+.playButton:selected {
+-fx-background-image: url('/images/inputs/PLAY.png');
+-fx-background-size: cover;
 }
 
 .towerDepotTitle {

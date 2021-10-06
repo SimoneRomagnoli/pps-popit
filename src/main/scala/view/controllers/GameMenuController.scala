@@ -10,9 +10,11 @@ import model.stats.Stats.GameStats
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Button, Label, ToggleButton }
-import scalafx.scene.layout.{ HBox, VBox }
+import scalafx.scene.image.Image
+import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
+import view.controllers.InputButtons.{ InputButton, Pause }
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
@@ -29,8 +31,8 @@ trait ViewGameMenuController extends ViewController {
 class GameMenuController(
     val gameMenu: VBox,
     val inputButtons: HBox,
-    val playButton: Button,
-    val exitButton: Button,
+    val playButton: ToggleButton,
+    val exitButton: ToggleButton,
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
@@ -65,17 +67,14 @@ class GameMenuController(
   }
 
   private def setupButtons(): Unit = {
-    playButton.setAlignment(Pos.CenterRight)
-    exitButton.setAlignment(Pos.CenterRight)
+    //playButton.background = new Background(Array(inputButtonBackground(Pause)))
     playButton.onMouseClicked = _ =>
       if (paused) {
         send(ResumeGame())
         paused = false
-        playButton.text = "Pause"
       } else {
         send(PauseGame())
         paused = true
-        playButton.text = "Resume"
       }
     exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
   }
@@ -107,6 +106,15 @@ class GameMenuController(
       towerDepot.children.add(towerBox)
     }
 
+  private def inputButtonBackground(inputButton: InputButton): BackgroundImage =
+    new BackgroundImage(
+      new Image("images/inputs/" + inputButton.toString + ".png"),
+      BackgroundRepeat.NoRepeat,
+      BackgroundRepeat.NoRepeat,
+      BackgroundPosition.Default,
+      BackgroundSize.Default
+    )
+
   override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
     selectedTowerType.asInstanceOf[TowerType[B]]
 
@@ -114,4 +122,14 @@ class GameMenuController(
     lifeLabel.text = stats.life.toString
     moneyLabel.text = stats.wallet.toString
   }
+}
+
+object InputButtons {
+
+  trait InputButton {
+    override def toString: String = this.getClass.getSimpleName.toUpperCase.replace("$", "")
+  }
+  case object Play extends InputButton
+  case object Pause extends InputButton
+  case object Exit extends InputButton
 }

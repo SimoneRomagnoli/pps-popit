@@ -82,7 +82,7 @@ class GameMenuController(
         paused = true
       }
 
-    //exitButton.onMouseClicked = _ =>
+  //exitButton.onMouseClicked = _ =>
 
   private def setupTowerDepot[B <: Bullet](): Unit =
     TowerTypes.values.foreach { towerValue =>

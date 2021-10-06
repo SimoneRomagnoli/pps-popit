@@ -7,15 +7,14 @@
 -fx-font-weight: bold;
 -fx-font-size: 15px;
 -fx-background-color: #582F0E;
--fx-padding: 10;
--fx-margin: 0 0 0 0;
+-fx-padding: 0 10 10 10;
+-fx-margin: 0;
 }
 
 .inputBox {
 -fx-background-color: #FEC89A;
 -fx-padding: 10;
 -fx-margin: 10;
--fx-spacing: 5;
 -fx-border-color:#000000;
 -fx-border-width: 1;
 -fx-border-style: solid;

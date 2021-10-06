@@ -3,6 +3,8 @@ package model.entities.balloons
 import model.Positions.{ fromTuple, Vector2D }
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.{ complex, simple, Balloon, Simple }
+import model.maps.Cells.Cell
+import model.maps.Tracks.{ Track, TrackMap }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
@@ -13,6 +15,7 @@ import scala.language.{ implicitConversions, postfixOps }
 class BalloonsTest extends AnyWordSpec with Matchers {
   val zeroVector: Vector2D = (0.0, 0.0)
   val oneVector: Vector2D = (1.0, 1.0)
+  val track: Track = TrackMap(Seq(Cell(0, 0)))
 
   "A balloon" when {
     "being created" should {
@@ -35,6 +38,10 @@ class BalloonsTest extends AnyWordSpec with Matchers {
       "have default boundary" in {
         ((Red balloon) boundary) shouldBe balloonDefaultBoundary
         ((Green balloon) boundary) shouldBe balloonDefaultBoundary
+      }
+      "have default track" in {
+        ((Red balloon) track) shouldBe Track()
+        ((Green balloon) track) shouldBe Track()
       }
     }
     "changing his speed" should {
@@ -63,6 +70,20 @@ class BalloonsTest extends AnyWordSpec with Matchers {
       "not change his structure" in {
         ((Red balloon) in oneVector) shouldBe Simple(oneVector, oneVector)
         ((Green balloon) in oneVector) shouldBe complex(complex(Simple(oneVector, oneVector)))
+      }
+    }
+    "changing the track" should {
+      "be in the specified track" in {
+        ((Red balloon) on track).track shouldBe track
+        ((Green balloon) on track).track shouldBe track
+      }
+      "maintain the same speed" in {
+        ((Red balloon) on track).speed shouldBe oneVector
+        ((Green balloon) on track).speed shouldBe oneVector
+      }
+      "not change his structure" in {
+        ((Red balloon) on track) shouldBe Simple(zeroVector, oneVector, track)
+        ((Green balloon) on track) shouldBe complex(complex(Simple(zeroVector, oneVector, track)))
       }
     }
     "updating" should {

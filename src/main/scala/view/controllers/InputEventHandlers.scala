@@ -45,7 +45,7 @@ object InputEventHandlers {
     e.getTarget.setEffect(effect)
   }
 
-  def hoverTower(e: MouseEvent, ask: Message => Future[Message]): IO[Unit] = {
+  def clickedTower(e: MouseEvent, ask: Message => Future[Message]): IO[Unit] = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     ask(TowerIn(cell)).onComplete {
       case Success(value)     => println(value)

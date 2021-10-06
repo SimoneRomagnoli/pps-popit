@@ -135,6 +135,11 @@ class GameController(
 
     def click(e: MouseEvent): IO[Unit] = for {
       _ <-
+        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
+          clickedTower(e, ask)
+        else
+          IO.unit
+      _ <-
         if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
           placeTower(e)
         else IO.unit
@@ -150,12 +155,6 @@ class GameController(
           e.getTarget.setCursor(Cursor.Default)
           IO.unit
         }
-      _ <-
-        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
-          hoverTower(e, ask)
-        else
-          IO.unit
-
     } yield ()
 
     private def placeTower(e: MouseEvent): IO[Unit] = {

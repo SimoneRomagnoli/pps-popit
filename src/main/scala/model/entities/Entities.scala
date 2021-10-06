@@ -60,8 +60,8 @@ object Entities {
 
     override protected def move(dt: Double): Entity = {
       linearPosition += (track directionIn linearPosition match {
-        case UP | DOWN    => speed.y
-        case LEFT | RIGHT => speed.x
+        case UP | DOWN => speed.y
+        case _         => speed.x
       }) * dt
       this
         .in(track exactPositionFrom linearPosition)

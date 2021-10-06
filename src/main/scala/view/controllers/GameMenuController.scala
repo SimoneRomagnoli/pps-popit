@@ -72,8 +72,7 @@ class GameMenuController(
     towerDepot.setSpacing(space)
   }
 
-  private def setupButtons(): Unit = {
-    //playButton.background = new Background(Array(inputButtonBackground(Pause)))
+  private def setupButtons(): Unit =
     playButton.onMouseClicked = _ =>
       if (paused) {
         send(ResumeGame())
@@ -82,8 +81,8 @@ class GameMenuController(
         send(PauseGame())
         paused = true
       }
-    exitButton.onMouseClicked = _ => println("Stop") //(StopGame())
-  }
+
+    //exitButton.onMouseClicked = _ =>
 
   private def setupTowerDepot[B <: Bullet](): Unit =
     TowerTypes.values.foreach { towerValue =>

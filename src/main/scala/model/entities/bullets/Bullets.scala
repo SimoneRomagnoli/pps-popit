@@ -95,4 +95,10 @@ object Bullets {
       bullet.position.x > Constants.Screen.width || bullet.position.x < 0 || bullet.position.y > Constants.Screen.height || bullet.position.y < 0
   }
 
+  def shoot: Bullet => Bullet = {
+    case _: Dart       => Dart()
+    case _: IceBall    => IceBall()
+    case _: CannonBall => CannonBall()
+  }
+
 }

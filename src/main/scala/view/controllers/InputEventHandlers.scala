@@ -1,14 +1,13 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Messages
-import controller.Messages.{ Input, Message, TowerIn }
+import controller.Messages.{ Message, TowerIn }
 import javafx.event.EventTarget
 import javafx.scene.Node
+import javafx.scene.input.MouseEvent
 import model.maps.Cells.Cell
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust
-import javafx.scene.input.MouseEvent
 import scalafx.scene.layout.Pane
 import utils.Constants
 

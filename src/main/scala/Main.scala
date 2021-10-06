@@ -11,7 +11,7 @@ import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
 import scalafxml.core.{ FXMLLoader, NoDependencyResolver }
 import view.View.ViewActor
-import view.controllers.{ MainController, ViewMainController }
+import view.controllers.ViewMainController
 
 import scala.concurrent.duration.DurationInt
 
@@ -32,14 +32,13 @@ object Main extends JFXApp3 {
     }
 
     implicit val timeout: Timeout = 3.seconds
-    val system: ActorSystem[Message] = ActorSystem[Message](
+    ActorSystem[Message](
       Behaviors.setup[Message] { ctx =>
         implicit val scheduler: Scheduler = ctx.system.scheduler
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
         mainController.setSend(controller ! _)
-        mainController
-          .setAsk(asked => controller.ask(ctx => MvcInteraction(ctx, asked)))
+        mainController.setAsk(asked => controller.ask(ctx => MvcInteraction(ctx, asked)))
         controller ! NewGame()
         Behaviors.empty
       },

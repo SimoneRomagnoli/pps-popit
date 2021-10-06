@@ -70,7 +70,7 @@ object Entities {
     def direction: Vector2D
 
     def rotateTo(dir: Vector2D): SightAbility
-    def withSightRangeOf(radius: Double): SightAbility
+    def sight(radius: Double): SightAbility
     def isInSightOfRangeOf(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
@@ -87,7 +87,8 @@ object Entities {
   trait ShotAbility extends Entity {
     def bullet: Bullet
     def shotRatio: Double
-    def withShotRatioOf(ratio: Double): ShotAbility
+
+    def ratio(ratio: Double): ShotAbility
 
     def canAttackAfter: Double => Boolean =
       lastShotTime => (System.currentTimeMillis() - lastShotTime) / 1000.0 >= shotRatio

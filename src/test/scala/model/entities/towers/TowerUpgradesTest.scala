@@ -21,7 +21,7 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "the tower ratio is boosted" should {
       "change the shooting frequency" in {
         val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+          (Arrow tower) has values sight sightRange ratio shotRatio
         (arrowTower boost Ratio).shotRatio shouldBe boostedRatio
         (arrowTower sightRange) shouldBe sightRange
       }
@@ -29,7 +29,7 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "the tower sight is boosted" should {
       "change the sight range" in {
         val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+          (Arrow tower) has values sight sightRange ratio shotRatio
         (arrowTower boost Sight).sightRange shouldBe boostedSight
         (arrowTower shotRatio) shouldBe shotRatio
       }
@@ -37,7 +37,7 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "the tower is completely boosted" should {
       "have the boosted values of sight and ratio" in {
         val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+          (Arrow tower) has values sight sightRange ratio shotRatio
         val boostedTower: Tower[Dart] = arrowTower boost Sight boost Ratio
         (boostedTower sightRange) shouldBe boostedSight
         (boostedTower shotRatio) shouldBe boostedRatio
@@ -46,7 +46,7 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "the tower get the ratio boost" should {
       "detect a balloon that can't see before" in {
         val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+          (Arrow tower) has values sight sightRange ratio shotRatio
 
         val balloon: Balloon = Simple(position = (1.5, 1.5), boundary = (1.0, 1.0))
         (arrowTower canSee balloon) shouldBe false

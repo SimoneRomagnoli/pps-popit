@@ -1,5 +1,6 @@
 package model.entities.balloons
 
+import model.entities.Entities.EnhancedSightAbility
 import model.entities.balloons.BalloonLives.{ Blue, Red }
 import model.entities.balloons.BalloonTypeTest.{
   testChangeValues,
@@ -11,6 +12,7 @@ import model.entities.balloons.BalloonTypeTest.{
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.CamoBalloons.{ camo, CamoBalloon }
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
+import model.entities.towers.Towers.{ BaseTower, Tower }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -41,6 +43,13 @@ class CamoBalloonsTest extends AnyFlatSpec with Matchers {
     instance(instance(Blue balloon)).pop(Dart()).get shouldBe instance(instance(Red balloon))
     instance(instance(Blue balloon)).pop(IceBall()).get shouldBe instance(instance(Red balloon))
     instance(instance(Blue balloon)).pop(CannonBall()).get.pop(CannonBall()) shouldBe None
+  }
+
+  it should "be seen only by tower with enhanced sight ability" in {
+    val basicTower: Tower[Dart] = BaseTower(Dart())
+    (basicTower canSee balloon) shouldBe false
+    val enhancedTower: Tower[Dart] = new BaseTower(Dart()) with EnhancedSightAbility
+    (enhancedTower canSee balloon) shouldBe true
   }
 
 }

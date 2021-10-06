@@ -15,6 +15,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 
+import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
 object SpawnerActorTest {
@@ -46,7 +47,7 @@ class SpawnerActorTest
   val complexRound: Round = (for {
     _ <- add(Streak(nBalloons) :- Red)
     _ <- add(Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating))
-    _ <- add(Streak(nBalloons) :- Green)
+    _ <- add((Streak(nBalloons) :- Green) @@ 50.milliseconds)
   } yield ()).get
 
   val complexRoundBalloons: List[Balloon] =

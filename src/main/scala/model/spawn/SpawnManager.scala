@@ -25,11 +25,6 @@ object SpawnManager {
 
   implicit class RichStreak(s: Streak) {
 
-    def of(quantity: Int): Streak = s match {
-      case Streak(_, balloonInfo, interval) =>
-        Streak(quantity, balloonInfo, interval)
-    }
-
     def :-(balloonInfo: BalloonInfo): Streak = s match {
       case Streak(quantity, _, interval) =>
         Streak(quantity, balloonInfo, interval)

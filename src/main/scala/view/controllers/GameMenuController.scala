@@ -6,13 +6,16 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
+import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
+import utils.Constants
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
@@ -23,6 +26,8 @@ trait ViewGameMenuController extends ViewController {
   def update(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
+  def fillTowerStatus(tower: Tower[_]): Unit
+  def clearTowerStatus(): Unit
   def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
 }
@@ -30,7 +35,6 @@ trait ViewGameMenuController extends ViewController {
 @sfxml
 class GameMenuController(
     val gameMenu: VBox,
-    val inputButtons: HBox,
     val playButton: ToggleButton,
     val exitButton: ToggleButton,
     val gameStatus: VBox,
@@ -39,6 +43,8 @@ class GameMenuController(
     val statusLowerBox: HBox,
     val moneyLabel: Label,
     val towerDepot: VBox,
+    val towerStatus: VBox,
+    val towerImageContainer: HBox,
     var send: Input => Unit,
     var ask: Message => Future[Message],
     var paused: Boolean = false,
@@ -70,6 +76,16 @@ class GameMenuController(
     moneyLabel.text = stats.wallet.toString
   }
 
+  override def fillTowerStatus(tower: Tower[_]): Unit = Platform runLater {
+    Rendering a tower into towerStatus.children
+    setTowerStatusPosition(tower)
+    setTowerStatusRatio(tower)
+    setTowerStatusSight(tower)
+  }
+
+  override def clearTowerStatus(): Unit =
+    towerStatus.children.clear()
+
   private def setSpacing(): Unit = {
     val space: Double = 10.0
     gameMenu.setSpacing(space)
@@ -77,6 +93,7 @@ class GameMenuController(
   }
 
   private def setupButtons(): Unit =
+    //exitButton.onMouseClicked = _ =>
     playButton.onMouseClicked = _ =>
       if (paused) {
         send(ResumeGame())
@@ -85,8 +102,6 @@ class GameMenuController(
         send(PauseGame())
         paused = true
       }
-
-  //exitButton.onMouseClicked = _ =>
 
   private def setupTowerDepot[B <: Bullet](): Unit =
     TowerTypes.values.foreach { towerValue =>
@@ -114,4 +129,32 @@ class GameMenuController(
       towerBox.setAlignment(Pos.CenterLeft)
       towerDepot.children.add(towerBox)
     }
+
+  private def setTowerStatusPosition(tower: Tower[_]): Unit = {
+    val cell: Cell = Constants.Maps.gameGrid.specificCell(tower.position)
+    val box: HBox = new HBox()
+    val key: Label = Label("Position: ")
+    val value: Label = Label("(" + cell.x.toString + ", " + cell.y.toString + ")")
+    box.children += key
+    box.children += value
+    towerStatus.children += box
+  }
+
+  private def setTowerStatusRatio(tower: Tower[_]): Unit = {
+    val box: HBox = new HBox()
+    val key: Label = Label("Shot ratio: ")
+    val value: Label = Label(tower.shotRatio.toString)
+    box.children += key
+    box.children += value
+    towerStatus.children += box
+  }
+
+  private def setTowerStatusSight(tower: Tower[_]): Unit = {
+    val box: HBox = new HBox()
+    val key: Label = Label("Sight range: ")
+    val value: Label = Label(tower.sightRange.toString)
+    box.children += key
+    box.children += value
+    towerStatus.children += box
+  }
 }

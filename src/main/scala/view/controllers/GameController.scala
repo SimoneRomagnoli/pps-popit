@@ -136,7 +136,7 @@ class GameController(
     def click(e: MouseEvent): IO[Unit] = for {
       _ <-
         if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
-          clickedTower(e, ask)
+          clickedTower(e, ask, gameMenuController.fillTowerStatus)
         else
           IO.unit
       _ <-

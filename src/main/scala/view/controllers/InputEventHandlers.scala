@@ -1,10 +1,11 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Messages.{ Message, TowerIn }
+import controller.Messages.{ Message, TowerIn, TowerOption }
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust
@@ -44,10 +45,20 @@ object InputEventHandlers {
     e.getTarget.setEffect(effect)
   }
 
-  def clickedTower(e: MouseEvent, ask: Message => Future[Message]): IO[Unit] = {
+  def clickedTower(
+      e: MouseEvent,
+      ask: Message => Future[Message],
+      fillStatus: Tower[_] => Unit): IO[Unit] = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     ask(TowerIn(cell)).onComplete {
-      case Success(value)     => println(value)
+      case Success(value) =>
+        value.asInstanceOf[TowerOption] match {
+          case TowerOption(tower) =>
+            tower match {
+              case Some(tower) => fillStatus(tower)
+              case _           =>
+            }
+        }
       case Failure(exception) => println(exception)
     }
     if (e.getTarget.getStyleClass.contains("tower")) {

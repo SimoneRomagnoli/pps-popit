@@ -27,6 +27,7 @@ object Messages {
   case class ResumeGame() extends Input
   case class NewTimeRatio(value: Double) extends Input
   case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
+  case class CurrentWallet(amount: Int) extends Input
 
   //GAME LOOP
   case object Tick extends Input
@@ -37,6 +38,8 @@ object Messages {
   //MODEL
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
   case class NewMap(replyTo: ActorRef[Input]) extends Update
+  case class WalletQuantity(replyTo: ActorRef[Input]) extends Update
+  case class Pay(amount: Int) extends Update
 
   case class UpdateEntity(
       elapsedTime: Double,

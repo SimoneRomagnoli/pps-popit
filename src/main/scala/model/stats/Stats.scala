@@ -14,7 +14,7 @@ object Stats {
 
   object GameStats {
 
-    def apply(life: Int = maxLife, wallet: Int = 0): GameStats =
+    def apply(life: Int = maxLife, wallet: Int = 500): GameStats =
       GameStatistics(life, wallet)
   }
 

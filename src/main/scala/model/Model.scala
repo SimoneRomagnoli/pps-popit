@@ -2,6 +2,7 @@ package model
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor._
 import controller.Messages
 import controller.Messages._
 import model.actors.{ BalloonActor, BulletActor, TowerActor }
@@ -56,6 +57,14 @@ object Model {
             _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
           }
           updating(replyTo)
+
+        case WalletQuantity(replyTo) =>
+          replyTo ! CurrentWallet(stats.wallet)
+          Behaviors.same
+
+        case Pay(amount) =>
+          stats spend amount
+          Behaviors.same
       }
 
     def updating(
@@ -92,6 +101,14 @@ object Model {
               actors = actors.filter(_ != actorRef)
               updating(replyTo, notFull)
           }
+
+        case WalletQuantity(replyTo) =>
+          replyTo ! CurrentWallet(stats.wallet)
+          Behaviors.same
+
+        case Pay(amount) =>
+          stats spend amount
+          Behaviors.same
 
         case _ => Behaviors.same
       }

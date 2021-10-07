@@ -60,10 +60,10 @@ object Constants {
     object Bullets {
       val bulletDefaultBoundary: (Double, Double) = (20.0, 20.0)
       val bulletDefaultDamage: Double = 1.0
-      val bulletDefaultRadius: Double = 2.0
+      val bulletDefaultRadius: Double = 10.0
       val bulletFreezingTime: Double = 1.0
       val bulletDefaultSpeed: Vector2D = (100.0, -100.0)
-      val bulletSpeedFactor: Double = 400.0
+      val bulletSpeedFactor: Double = 1000.0
     }
   }
 

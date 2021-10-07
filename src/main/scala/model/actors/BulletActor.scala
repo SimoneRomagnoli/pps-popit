@@ -1,10 +1,11 @@
 package model.actors
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ scaladsl, ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages.{ EntityKilled, EntityUpdated, Update, UpdateEntity }
+import controller.Messages.{ EntityKilled, EntityUpdated, Explode, Update, UpdateEntity }
+import model.entities.Entities
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.Bullet
+import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Explosion, IceBall }
 
 import scala.language.postfixOps
 
@@ -28,8 +29,17 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
         entities foreach {
           case balloon: Balloon =>
             if (bullet hit balloon) {
-              balloon pop bullet
-              //println("collision detected")
+              bullet match {
+                case Dart() =>
+                  balloon pop bullet
+                  replyTo ! EntityKilled(bullet, ctx.self)
+                  Behaviors.stopped
+                case CannonBall(radius) =>
+                  println("it's a cannonball")
+                  exploding(entities, bullet.asInstanceOf[Explosion], replyTo)
+                case IceBall(radius: Double, freezingTime: Double) =>
+                  exploding(entities, bullet.asInstanceOf[Explosion], replyTo)
+              }
             }
             Behaviors.same
           case _ =>
@@ -38,5 +48,22 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
         Behaviors.same
       }
     case _ => Behaviors.same
+  }
+
+  private def exploding(
+      entities: List[Entities.Entity],
+      explosion: Explosion,
+      replyTo: ActorRef[Update]): Behavior[Update] = {
+    println("explosion happen")
+    entities foreach {
+      case balloon: Balloon =>
+        if (explosion include balloon) {
+          if (explosion.isInstanceOf[CannonBall]) balloon pop explosion
+          //else balloon freeze explosion
+        }
+      case _ =>
+    }
+    replyTo ! EntityKilled(bullet, ctx.self)
+    Behaviors.stopped
   }
 }

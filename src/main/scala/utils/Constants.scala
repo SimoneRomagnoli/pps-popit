@@ -54,6 +54,7 @@ object Constants {
         // val boostedSightTime: Double = 5.0
         val boostedSightCost: Int = 200
         val boostedSightFactor: Double = 2.0
+        val boostedCamoCost: Int = 200
       }
     }
 

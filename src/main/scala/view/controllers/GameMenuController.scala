@@ -24,6 +24,7 @@ import scala.concurrent.Future
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
+  def setHighlightingTower(reference: (Tower[_], Boolean) => Unit)
   def update(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
@@ -48,6 +49,7 @@ class GameMenuController(
     var currentCell: Cell = outerCell,
     var send: Input => Unit,
     var ask: Message => Future[Message],
+    var highlight: (Tower[_], Boolean) => Unit,
     var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
@@ -60,6 +62,9 @@ class GameMenuController(
 
   override def setSend(reference: Messages.Input => Unit): Unit = send = reference
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
+
+  override def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit = highlight =
+    reference
 
   override def isPaused: Boolean = paused
 
@@ -81,12 +86,14 @@ class GameMenuController(
     clearTowerStatus()
     if (currentCell == cell) {
       currentCell = outerCell
+      highlight(tower, false)
     } else {
       currentCell = cell
       Rendering a tower into towerStatus.children
       setTowerStatusPosition(tower)
       setTowerStatusRatio(tower)
       setTowerStatusSight(tower)
+      highlight(tower, true)
     }
   }
 

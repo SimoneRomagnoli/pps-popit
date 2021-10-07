@@ -9,7 +9,8 @@ import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
-import scalafx.scene.shape.{ Rectangle, Shape }
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
 import utils.Constants.Screen.cellSize
 import view.render.Drawings.{ Drawing, Grass, Item, Road }
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
@@ -51,6 +52,15 @@ object Rendering {
       case _ =>
     }
     rectangle
+  }
+
+  /** Renders the sight range of a [[Tower]]. */
+  def sightOf(tower: Tower[_]): ToBeRendered = Rendered {
+    val range: Ellipse =
+      Ellipse(tower.position.x, tower.position.y, tower.sightRange, tower.sightRange)
+    range.opacity = 0.3
+    range.setFill(Color.LightGray)
+    range
   }
 
   /** Renders a [[Cell]] just with a square [[Shape]]. */

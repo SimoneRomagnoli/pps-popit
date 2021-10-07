@@ -6,6 +6,7 @@ import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
@@ -49,6 +50,7 @@ class GameController(
     val gameMenu: VBox,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0,
+    var highlightNodes: Int = 0,
     var send: Input => Unit,
     var ask: Message => Future[Message],
     var occupiedCells: Seq[Cell] = Seq())
@@ -64,6 +66,7 @@ class GameController(
     setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
     setMouseHandlers()
     gameMenuController.setup()
+    gameMenuController.setHighlightingTower(highlight)
   }
 
   override def setSend(reference: Input => Unit): Unit = {
@@ -110,9 +113,18 @@ class GameController(
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
-    gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
+    gameBoard.children.removeRange(mapNodes + highlightNodes, gameBoard.children.size)
     entities foreach (entity => Rendering an entity into gameBoard.children)
   }
+
+  private def highlight(tower: Tower[_], insertion: Boolean): Unit =
+    if (insertion) {
+      highlightNodes += 1
+      gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
+      Rendering sightOf tower into gameBoard.children
+    } else {
+      highlightNodes -= 1
+    }
 
   private def setLayout(region: Region, width: Double, height: Double): Unit = {
     region.maxWidth = width

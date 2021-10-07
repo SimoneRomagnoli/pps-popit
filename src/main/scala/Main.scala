@@ -18,11 +18,7 @@ import scala.concurrent.duration.DurationInt
 object Main extends JFXApp3 {
 
   override def start(): Unit = {
-
-    val loader: FXMLLoader =
-      new FXMLLoader(getClass.getResource("/fxml/root.fxml"), NoDependencyResolver)
-
-    loader.load()
+    val loader: FXMLLoader = loadRootFXML()
     val root: BorderPane = loader.getRoot[BorderPane]
     val mainController: ViewMainController = loader.getController[ViewMainController]()
 
@@ -44,6 +40,13 @@ object Main extends JFXApp3 {
       },
       "system"
     )
+  }
+
+  private def loadRootFXML(): FXMLLoader = {
+    val loader: FXMLLoader =
+      new FXMLLoader(getClass.getResource("/fxml/root.fxml"), NoDependencyResolver)
+    loader.load()
+    loader
   }
 
 }

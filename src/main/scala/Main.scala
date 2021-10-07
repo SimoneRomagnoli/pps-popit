@@ -38,7 +38,7 @@ object Main extends JFXApp3 {
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
         mainController.setSend(controller ! _)
-        mainController.setAsk(asked => controller.ask(ctx => MvcInteraction(ctx, asked)))
+        mainController.setAsk(request => controller ? (ctx => MvcInteraction(ctx, request)))
         controller ! NewGame()
         Behaviors.empty
       },

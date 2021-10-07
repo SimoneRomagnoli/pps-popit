@@ -23,7 +23,5 @@
             <Label text="Towers" />
         </HBox>
     </VBox>
-    <VBox fx:id="towerStatus" styleClass="inputBox, towerStatus" VBox.vgrow="ALWAYS">
-
-    </VBox>
+    <VBox fx:id="towerStatus" styleClass="inputBox, towerStatus" VBox.vgrow="ALWAYS"/>
 </VBox>

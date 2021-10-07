@@ -48,14 +48,14 @@ object InputEventHandlers {
   def clickedTower(
       e: MouseEvent,
       ask: Message => Future[Message],
-      fillStatus: Tower[_] => Unit): IO[Unit] = {
+      fillStatus: (Tower[_], Cell) => Unit): IO[Unit] = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     ask(TowerIn(cell)).onComplete {
       case Success(value) =>
         value.asInstanceOf[TowerOption] match {
           case TowerOption(tower) =>
             tower match {
-              case Some(tower) => fillStatus(tower)
+              case Some(tower) => fillStatus(tower, cell)
               case _           =>
             }
         }

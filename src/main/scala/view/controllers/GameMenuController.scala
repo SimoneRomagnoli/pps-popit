@@ -16,6 +16,7 @@ import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import utils.Constants
+import utils.Constants.Maps.outerCell
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
@@ -26,7 +27,7 @@ trait ViewGameMenuController extends ViewController {
   def update(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
-  def fillTowerStatus(tower: Tower[_]): Unit
+  def fillTowerStatus(tower: Tower[_], cell: Cell): Unit
   def clearTowerStatus(): Unit
   def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
@@ -44,7 +45,7 @@ class GameMenuController(
     val moneyLabel: Label,
     val towerDepot: VBox,
     val towerStatus: VBox,
-    val towerImageContainer: HBox,
+    var currentCell: Cell = outerCell,
     var send: Input => Unit,
     var ask: Message => Future[Message],
     var paused: Boolean = false,
@@ -76,11 +77,17 @@ class GameMenuController(
     moneyLabel.text = stats.wallet.toString
   }
 
-  override def fillTowerStatus(tower: Tower[_]): Unit = Platform runLater {
-    Rendering a tower into towerStatus.children
-    setTowerStatusPosition(tower)
-    setTowerStatusRatio(tower)
-    setTowerStatusSight(tower)
+  override def fillTowerStatus(tower: Tower[_], cell: Cell): Unit = Platform runLater {
+    clearTowerStatus()
+    if (currentCell == cell) {
+      currentCell = outerCell
+    } else {
+      currentCell = cell
+      Rendering a tower into towerStatus.children
+      setTowerStatusPosition(tower)
+      setTowerStatusRatio(tower)
+      setTowerStatusSight(tower)
+    }
   }
 
   override def clearTowerStatus(): Unit =

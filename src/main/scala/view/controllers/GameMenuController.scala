@@ -34,6 +34,9 @@ trait ViewGameMenuController extends ViewController {
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
 }
 
+/**
+ * Controller class bound to the game menu fxml.
+ */
 @sfxml
 class GameMenuController(
     val gameMenu: VBox,
@@ -53,6 +56,7 @@ class GameMenuController(
     var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
+  import MenuSetters._
 
   override def setup(): Unit = {
     setSpacing()
@@ -100,75 +104,79 @@ class GameMenuController(
   override def clearTowerStatus(): Unit =
     towerStatus.children.clear()
 
-  private def setSpacing(): Unit = {
-    val space: Double = 10.0
-    gameMenu.setSpacing(space)
-    towerDepot.setSpacing(space)
-  }
+  /** Private methods for setting the controller. */
+  private object MenuSetters {
 
-  private def setupButtons(): Unit =
-    //exitButton.onMouseClicked = _ =>
-    playButton.onMouseClicked = _ =>
-      if (paused) {
-        send(ResumeGame())
-        paused = false
-      } else {
-        send(PauseGame())
-        paused = true
-      }
-
-  private def setupTowerDepot[B <: Bullet](): Unit =
-    TowerTypes.values.foreach { towerValue =>
-      val tower: Tower[B] = towerValue.asInstanceOf[TowerType[B]].tower
-      val renderedTower: Shape = Rendering a tower as single
-      val towerBox: HBox = new HBox(renderedTower)
-      towerBox.styleClass += "towerBox"
-      towerBox.setCursor(Cursor.Hand)
-      towerBox.onMousePressed = _ =>
-        if (!paused) {
-          if (!towerBox.styleClass.contains("selected")) {
-            unselectDepot()
-            towerBox.styleClass += "selected"
-            selectedTowerType = towerValue.asInstanceOf[TowerType[B]]
-          } else {
-            unselectDepot()
-          }
-          towerBox.setCursor(Cursor.ClosedHand)
-        }
-      towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
-
-      val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
-      towerLabel.styleClass += "towerLabel"
-      towerBox.children += towerLabel
-      towerBox.setAlignment(Pos.CenterLeft)
-      towerDepot.children.add(towerBox)
+    def setSpacing(): Unit = {
+      val space: Double = 10.0
+      gameMenu.setSpacing(space)
+      towerDepot.setSpacing(space)
     }
 
-  private def setTowerStatusPosition(tower: Tower[_]): Unit = {
-    val cell: Cell = Constants.Maps.gameGrid.specificCell(tower.position)
-    val box: HBox = new HBox()
-    val key: Label = Label("Position: ")
-    val value: Label = Label("(" + cell.x.toString + ", " + cell.y.toString + ")")
-    box.children += key
-    box.children += value
-    towerStatus.children += box
-  }
+    def setupButtons(): Unit =
+      //exitButton.onMouseClicked = _ =>
+      playButton.onMouseClicked = _ =>
+        if (paused) {
+          send(ResumeGame())
+          paused = false
+        } else {
+          send(PauseGame())
+          paused = true
+        }
 
-  private def setTowerStatusRatio(tower: Tower[_]): Unit = {
-    val box: HBox = new HBox()
-    val key: Label = Label("Shot ratio: ")
-    val value: Label = Label(tower.shotRatio.toString)
-    box.children += key
-    box.children += value
-    towerStatus.children += box
-  }
+    def setupTowerDepot[B <: Bullet](): Unit =
+      TowerTypes.values.foreach { towerValue =>
+        val tower: Tower[B] = towerValue.asInstanceOf[TowerType[B]].tower
+        val renderedTower: Shape = Rendering a tower as single
+        val towerBox: HBox = new HBox(renderedTower)
+        towerBox.styleClass += "towerBox"
+        towerBox.setCursor(Cursor.Hand)
+        towerBox.onMousePressed = _ =>
+          if (!paused) {
+            if (!towerBox.styleClass.contains("selected")) {
+              unselectDepot()
+              towerBox.styleClass += "selected"
+              selectedTowerType = towerValue.asInstanceOf[TowerType[B]]
+            } else {
+              unselectDepot()
+            }
+            towerBox.setCursor(Cursor.ClosedHand)
+          }
+        towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
-  private def setTowerStatusSight(tower: Tower[_]): Unit = {
-    val box: HBox = new HBox()
-    val key: Label = Label("Sight range: ")
-    val value: Label = Label(tower.sightRange.toString)
-    box.children += key
-    box.children += value
-    towerStatus.children += box
+        val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
+        towerLabel.styleClass += "towerLabel"
+        towerBox.children += towerLabel
+        towerBox.setAlignment(Pos.CenterLeft)
+        towerDepot.children.add(towerBox)
+      }
+
+    def setTowerStatusPosition(tower: Tower[_]): Unit = {
+      val cell: Cell = Constants.Maps.gameGrid.specificCell(tower.position)
+      val box: HBox = new HBox()
+      val key: Label = Label("Position: ")
+      val value: Label = Label("(" + cell.x.toString + ", " + cell.y.toString + ")")
+      box.children += key
+      box.children += value
+      towerStatus.children += box
+    }
+
+    def setTowerStatusRatio(tower: Tower[_]): Unit = {
+      val box: HBox = new HBox()
+      val key: Label = Label("Shot ratio: ")
+      val value: Label = Label(tower.shotRatio.toString)
+      box.children += key
+      box.children += value
+      towerStatus.children += box
+    }
+
+    def setTowerStatusSight(tower: Tower[_]): Unit = {
+      val box: HBox = new HBox()
+      val key: Label = Label("Sight range: ")
+      val value: Label = Label(tower.sightRange.toString)
+      box.children += key
+      box.children += value
+      towerStatus.children += box
+    }
   }
 }

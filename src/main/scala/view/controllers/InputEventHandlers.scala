@@ -29,9 +29,11 @@ object InputEventHandlers {
   /** Get target [[Node]] of a [[MouseEvent]]. */
   implicit def asNode(t: EventTarget): Node = t.asInstanceOf[Node]
 
+  /** Remove all additional effects in the scene. */
   def removeEffectsIn(pane: Pane): IO[Unit] =
     pane.children.foreach(_.setEffect(null))
 
+  /** Handler when hovering a cell to be selected. */
   def hoverCell(e: MouseEvent, occupiedCells: Seq[Cell]): IO[Unit] = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     val effect: ColorAdjust = new ColorAdjust()
@@ -45,6 +47,7 @@ object InputEventHandlers {
     e.getTarget.setEffect(effect)
   }
 
+  /** Handler when clicked a tower for more information. */
   def clickedTower(
       e: MouseEvent,
       ask: Message => Future[Message],
@@ -70,6 +73,7 @@ object InputEventHandlers {
     }
   }
 
+  /** Returns true if the specified [[Cell]] is not in the specified sequence. */
   private def selectable(occupiedCells: Seq[Cell], cell: Cell): Boolean =
     !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
 

@@ -1,16 +1,16 @@
 package view.controllers
 
-import akka.actor.typed.ActorRef
 import controller.Messages.{ Input, Message }
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
+import view.render.Rendering
 
 import scala.concurrent.Future
 
 /**
- * Main controller. This controller loads the main fxml file and contains all the other nested
- * controllers.
+ * Principal view controller interface. Every controller needs to have a send method and an ask
+ * method to interact with the controller.
  */
 trait ViewController {
   def setSend(send: Input => Unit): Unit
@@ -23,13 +23,6 @@ trait ViewMainController extends ViewController {
 
 /**
  * Controller class bound to the main fxml.
- *
- * @param mainPane,
- *   the principal container of the application.
- * @param game,
- *   the border pane containing a game.
- * @param gameController,
- *   the view controller of the game.
  */
 @sfxml
 class MainController(
@@ -37,12 +30,10 @@ class MainController(
     val game: BorderPane,
     @nested[GameController] val gameController: ViewGameController)
     extends ViewMainController {
-  mainPane.maxWidth = Constants.Screen.width
-  mainPane.minWidth = Constants.Screen.width
-  mainPane.maxHeight = Constants.Screen.height
-  mainPane.minHeight = Constants.Screen.height
+  Rendering.setLayout(mainPane, Constants.Screen.width, Constants.Screen.height)
 
-  override def setSend(reference: Input => Unit): Unit = gameController.setSend(reference)
+  override def setSend(reference: Input => Unit): Unit =
+    gameController.setSend(reference)
 
   override def setAsk(reference: Message => Future[Message]): Unit =
     gameController.setAsk(reference)

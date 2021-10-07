@@ -9,6 +9,7 @@ import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
+import scalafx.scene.layout.Region
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
 import utils.Constants.Screen.cellSize
@@ -49,6 +50,7 @@ object Rendering {
         rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
       case tower: Tower[_] =>
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
+        rectangle.styleClass += "tower"
       case _ =>
     }
     rectangle
@@ -87,6 +89,13 @@ object Rendering {
     val rectangle: Rectangle = Rectangle(width, height)
     rectangle.setFill(new ImagePattern(new Image(path)))
     rectangle
+  }
+
+  def setLayout(region: Region, width: Double, height: Double): Unit = {
+    region.maxWidth = width
+    region.minWidth = width
+    region.maxHeight = height
+    region.minHeight = height
   }
 
 }

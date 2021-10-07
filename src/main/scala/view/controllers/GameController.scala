@@ -14,7 +14,7 @@ import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.control.Label
-import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
+import scalafx.scene.layout.{ BorderPane, Pane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
@@ -55,15 +55,19 @@ class GameController(
     var ask: Message => Future[Message],
     var occupiedCells: Seq[Cell] = Seq())
     extends ViewGameController {
-  setup()
-  this draw gameGrid
-  loading()
+
+  import GameUtilities._
+  import MouseEvents._
+
   val drawing: Drawing = Drawing()
   val bulletPic: ImagePattern = new ImagePattern(new Image("images/bullets/DART.png"))
+  setup()
 
   override def setup(): Unit = Platform runLater {
-    setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
-    setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+    this draw gameGrid
+    loading()
+    Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+    Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
     setMouseHandlers()
     gameMenuController.setup()
     gameMenuController.setHighlightingTower(highlight)
@@ -117,33 +121,29 @@ class GameController(
     entities foreach (entity => Rendering an entity into gameBoard.children)
   }
 
-  private def highlight(tower: Tower[_], insertion: Boolean): Unit =
-    if (insertion) {
-      highlightNodes += 1
-      gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
-      Rendering sightOf tower into gameBoard.children
-    } else {
-      highlightNodes -= 1
-    }
+  private object GameUtilities {
 
-  private def setLayout(region: Region, width: Double, height: Double): Unit = {
-    region.maxWidth = width
-    region.minWidth = width
-    region.maxHeight = height
-    region.minHeight = height
+    def highlight(tower: Tower[_], insertion: Boolean): Unit =
+      if (insertion) {
+        highlightNodes = 1
+        gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
+        Rendering sightOf tower into gameBoard.children
+      } else {
+        highlightNodes = 0
+      }
+
+    def removeEffects(): Unit =
+      gameBoard.children.foreach(_.setEffect(null))
   }
-
-  private def setMouseHandlers(): Unit = {
-    gameBoard.onMouseExited = _ => removeEffects()
-    gameBoard.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
-    gameBoard.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
-  }
-
-  private def removeEffects(): Unit =
-    gameBoard.children.foreach(_.setEffect(null))
 
   private object MouseEvents {
     import InputEventHandlers._
+
+    def setMouseHandlers(): Unit = {
+      gameBoard.onMouseExited = _ => removeEffects()
+      gameBoard.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
+      gameBoard.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
+    }
 
     def click(e: MouseEvent): IO[Unit] = for {
       _ <-

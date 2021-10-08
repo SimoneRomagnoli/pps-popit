@@ -16,6 +16,10 @@ import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
 
+/**
+ * Model of the application, fundamental in the MVC pattern. It receives [[Update]] messages from
+ * the game loop and updates the actors governing game entities.
+ */
 object Model {
 
   object ModelActor {
@@ -25,6 +29,14 @@ object Model {
     }
   }
 
+  /**
+   * The model actor has three behaviors:
+   *   - init, in which it just starts a new game by creating a map and a spawner;
+   *   - running, in which it waits for a [[TickUpdate]] from the game loop to update the game
+   *     entities;
+   *   - updating, in which waits for entities to be updated and then notifies the game loop about
+   *     it.
+   */
   case class ModelActor private (
       ctx: ActorContext[Update],
       controller: ActorRef[Input],

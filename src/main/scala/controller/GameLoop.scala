@@ -7,8 +7,16 @@ import controller.Messages._
 
 import scala.concurrent.duration.DurationDouble
 
+/**
+ * Game Loop of the application; it represents the flow of a game. It sends [[Update]] messages to a
+ * model and [[Render]] messages to a view, performing a fundamental duty in the MVC pattern.
+ */
 object GameLoop {
 
+  /**
+   * The loop is obtained by exploiting the reactivity of an actor: the actor just sends a [[Tick]]
+   * message to itself with a determined frequency that depends on the specified frame rate.
+   */
   object GameLoopActor {
 
     def apply(model: ActorRef[Update], view: ActorRef[Render]): Behavior[Input] = Behaviors.setup {
@@ -31,6 +39,12 @@ object GameLoop {
       new GameLoopActor(ctx, model, view)
   }
 
+  /**
+   * The game loop actor has two behaviors:
+   *   - running, in which it simply waits for a [[Tick]] message to update the model and waits for
+   *     its response to render the view;
+   *   - paused, in which it waits for the game to be resumed.
+   */
   class GameLoopActor private (
       ctx: ActorContext[Input],
       model: ActorRef[Update],

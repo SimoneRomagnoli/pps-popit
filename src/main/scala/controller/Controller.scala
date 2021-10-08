@@ -11,6 +11,10 @@ import model.entities.towers.Towers.Tower
 
 import scala.language.postfixOps
 
+/**
+ * Controller of the application, fundamental in the MVC pattern. It deals with inputs coming from
+ * the view controllers.
+ */
 object Controller {
 
   object ControllerActor {
@@ -20,6 +24,12 @@ object Controller {
     }
   }
 
+  /**
+   * The controller actor has two behaviors:
+   *   - default, in which it simply receives input messages and satisfies them;
+   *   - interacting, in which it has to respond to another subscribed actor that needs a response
+   *     (mostly the view requiring information from the model).
+   */
   case class ControllerActor private (
       ctx: ActorContext[Input],
       view: ActorRef[Render],

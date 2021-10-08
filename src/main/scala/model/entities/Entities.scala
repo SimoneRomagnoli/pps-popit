@@ -7,7 +7,7 @@ import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerUpgrades.TowerPowerUp
-import model.maps.Tracks.Directions.{ DOWN, LEFT, RIGHT, UP }
+import model.maps.Tracks.Directions.{ DOWN, UP }
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -48,7 +48,7 @@ object Entities {
   }
 
   trait TrackFollowing extends MovementAbility {
-    protected var linearPosition: Double = 0.0
+    private[this] var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing

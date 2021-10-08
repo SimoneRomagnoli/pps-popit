@@ -7,6 +7,11 @@ import model.entities.balloons.Balloons.Simple
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.BaseTower
 
+/**
+ * Object that encapsulates all pre-loaded images of the game. It is useful as some view entities
+ * are loaded a lot of times during a game, so it allows to earn better performances avoiding
+ * repeated IO activity.
+ */
 object Drawings {
 
   sealed trait Drawable
@@ -14,6 +19,7 @@ object Drawings {
   case class Road(direction: String) extends Drawable
   case class Item(entity: Entity) extends Drawable
 
+  /** Class that allows to get an image corresponding to a view entity. */
   case class Drawing(images: Drawings = Drawings()) {
 
     def the(drawable: Drawable): ImagePattern = drawable match {
@@ -35,6 +41,7 @@ object Drawings {
     }
   }
 
+  /** Class preloading all images. */
   case class Drawings(
       grass: ImagePattern = new ImagePattern(new Image("images/backgrounds/GRASS.png")),
       road: String => ImagePattern = s => new ImagePattern(new Image("images/roads/" + s + ".png")),

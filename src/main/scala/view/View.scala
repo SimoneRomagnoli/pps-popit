@@ -9,6 +9,10 @@ import view.controllers.{ ViewGameController, ViewMainController }
 
 import scala.language.reflectiveCalls
 
+/**
+ * View of the application, fundamental in the MVC pattern. It receives [[Render]] messages from the
+ * game loop and renders their content via fxml controllers.
+ */
 object View {
 
   object ViewActor {
@@ -18,9 +22,14 @@ object View {
     }
   }
 
+  /**
+   * Thew view actor has two behaviors:
+   *   - inGame, in which updates a [[ViewGameController]];
+   *   - inMenu, in which updates another controller.
+   */
   class ViewActor private (mainController: ViewMainController) {
 
-    private def inGame(gameController: ViewGameController): Behavior[Render] =
+    def inGame(gameController: ViewGameController): Behavior[Render] =
       Behaviors.receiveMessage {
         case RenderStats(stats) =>
           gameController update stats

@@ -4,8 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="gameMenu" styleClass="gameMenu" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameMenuController">
-    <HBox fx:id="inputButtons"/>
-    <VBox fx:id="gameStatus" styleClass="inputBox">
+    <VBox fx:id="gameStatus" styleClass="inputBox, gameStatus">
         <HBox fx:id="statusUpperBox">
             <Label text="Life: "/>
             <Label fx:id="lifeLabel"/>
@@ -24,4 +23,5 @@
             <Label text="Towers" />
         </HBox>
     </VBox>
+    <VBox fx:id="towerStatus" styleClass="inputBox, towerStatus" VBox.vgrow="ALWAYS"/>
 </VBox>

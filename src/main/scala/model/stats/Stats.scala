@@ -1,5 +1,8 @@
 package model.stats
 
+/**
+ * Wrapper of game policies. It contains the life points and money won by popping balloons.
+ */
 object Stats {
 
   val maxLife: Int = 100

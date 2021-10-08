@@ -1,10 +1,12 @@
 package view.controllers
 
-import controller.Messages.{ Input, PlaceTower }
-import javafx.scene.Node
+import cats.effect.IO
+import controller.Messages.{ Input, Message, PlaceTower }
 import javafx.scene.image.Image
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
@@ -12,8 +14,7 @@ import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.control.Label
-import scalafx.scene.effect.ColorAdjust
-import scalafx.scene.layout.{ BorderPane, Pane, Region, VBox }
+import scalafx.scene.layout.{ BorderPane, Pane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
@@ -21,7 +22,8 @@ import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, g
 import view.render.Drawings.Drawing
 import view.render.Rendering
 
-import scala.language.reflectiveCalls
+import scala.concurrent.Future
+import scala.language.{ implicitConversions, reflectiveCalls }
 import scala.util.Random
 
 /**
@@ -40,11 +42,6 @@ trait ViewGameController extends ViewController {
 
 /**
  * Controller class bound to the game fxml.
- *
- * @param gameBoard,
- *   the pane containing the game.
- * @param mapNodes,
- *   the number of nodes of the map.
  */
 @sfxml
 class GameController(
@@ -53,25 +50,37 @@ class GameController(
     val gameMenu: VBox,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var mapNodes: Int = 0,
+    var highlightNodes: Int = 0,
     var send: Input => Unit,
+    var ask: Message => Future[Message],
     var occupiedCells: Seq[Cell] = Seq())
     extends ViewGameController {
-  setup()
-  this draw gameGrid
-  loading()
+
+  import GameUtilities._
+  import MouseEvents._
+
   val drawing: Drawing = Drawing()
   val bulletPic: ImagePattern = new ImagePattern(new Image("images/bullets/DART.png"))
+  setup()
 
   override def setup(): Unit = Platform runLater {
-    setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
-    setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
-    setTowersSelection()
+    this draw gameGrid
+    loading()
+    Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+    Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+    setMouseHandlers()
     gameMenuController.setup()
+    gameMenuController.setHighlightingTower(highlight)
   }
 
   override def setSend(reference: Input => Unit): Unit = {
     send = reference
     gameMenuController.setSend(reference)
+  }
+
+  override def setAsk(reference: Message => Future[Message]): Unit = {
+    ask = reference
+    gameMenuController.setAsk(reference)
   }
 
   override def loading(): Unit = Platform runLater {
@@ -108,52 +117,74 @@ class GameController(
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
-    gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
+    gameBoard.children.removeRange(mapNodes + highlightNodes, gameBoard.children.size)
     entities foreach (entity => Rendering an entity into gameBoard.children)
   }
 
-  private def setLayout(region: Region, width: Double, height: Double): Unit = {
-    region.maxWidth = width
-    region.minWidth = width
-    region.maxHeight = height
-    region.minHeight = height
-  }
+  private object GameUtilities {
 
-  private def setTowersSelection(): Unit = {
-    gameBoard.onMouseExited = _ => removeEffects()
-    gameBoard.onMouseMoved = e => {
-      removeEffects()
-      if (gameMenuController.anyTowerSelected() && !gameMenuController.isPaused) {
-        val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-        val effect: ColorAdjust = new ColorAdjust()
-        val place: Node = e.getTarget.asInstanceOf[Node]
-        if (selectable(cell)) {
-          effect.hue = 0.12
-          effect.brightness = 0.2
-          place.setCursor(Cursor.Hand)
-        } else {
-          place.setCursor(Cursor.Default)
-        }
-        place.setEffect(effect)
+    def highlight(tower: Tower[_], insertion: Boolean): Unit =
+      if (insertion) {
+        highlightNodes = 1
+        gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
+        Rendering sightOf tower into gameBoard.children
       } else {
-        e.getTarget.asInstanceOf[Node].setCursor(Cursor.Default)
+        highlightNodes = 0
       }
-    }
-    gameBoard.onMouseClicked = e => {
-      val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-      if (gameMenuController
-          .anyTowerSelected() && selectable(cell) && !gameMenuController.isPaused) {
-        removeEffects()
-        gameMenuController.unselectDepot()
-        occupiedCells = occupiedCells :+ cell
-        send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-      }
-    }
+
+    def removeEffects(): Unit =
+      gameBoard.children.foreach(_.setEffect(null))
   }
 
-  private def selectable(cell: Cell): Boolean =
-    !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
+  private object MouseEvents {
+    import InputEventHandlers._
 
-  private def removeEffects(): Unit =
-    gameBoard.children.foreach(_.setEffect(null))
+    def setMouseHandlers(): Unit = {
+      gameBoard.onMouseExited = _ => removeEffects()
+      gameBoard.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
+      gameBoard.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
+    }
+
+    def click(e: MouseEvent): IO[Unit] = for {
+      _ <-
+        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
+          clickedTower(e, ask, gameMenuController.fillTowerStatus)
+        else
+          IO.unit
+      _ <-
+        if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+          placeTower(e)
+        else IO.unit
+
+    } yield ()
+
+    def move(e: MouseEvent): IO[Unit] = for {
+      _ <- removeEffects()
+      _ <-
+        if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+          hoverCell(e, occupiedCells)
+        else {
+          e.getTarget.setCursor(Cursor.Default)
+          IO.unit
+        }
+    } yield ()
+
+    private def placeTower(e: MouseEvent): IO[Unit] = {
+      val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
+      if (selectable(cell)) {
+        for {
+          _ <- removeEffects()
+          _ <- gameMenuController.unselectDepot()
+          _ <- occupy(cell)
+          _ <- send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+        } yield ()
+      } else IO.unit
+    }
+
+    private def selectable(cell: Cell): Boolean =
+      !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
+
+    private def occupy(cell: Cell): Unit =
+      occupiedCells = occupiedCells :+ cell
+  }
 }

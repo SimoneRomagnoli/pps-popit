@@ -2,7 +2,6 @@ package model
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import akka.actor._
 import controller.Messages
 import controller.Messages._
 import model.actors.{ BalloonActor, BulletActor, TowerActor }
@@ -17,17 +16,30 @@ import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
 
+/**
+ * Model of the application, fundamental in the MVC pattern. It receives [[Update]] messages from
+ * the game loop and updates the actors governing game entities.
+ */
 object Model {
 
   object ModelActor {
 
-    def apply(): Behavior[Update] = Behaviors setup { ctx =>
-      ModelActor(ctx).init()
+    def apply(controller: ActorRef[Input]): Behavior[Update] = Behaviors setup { ctx =>
+      ModelActor(ctx, controller).init()
     }
   }
 
+  /**
+   * The model actor has three behaviors:
+   *   - init, in which it just starts a new game by creating a map and a spawner;
+   *   - running, in which it waits for a [[TickUpdate]] from the game loop to update the game
+   *     entities;
+   *   - updating, in which waits for entities to be updated and then notifies the game loop about
+   *     it.
+   */
   case class ModelActor private (
       ctx: ActorContext[Update],
+      controller: ActorRef[Input],
       stats: GameStats = GameStats(),
       var entities: List[Entity] = List(),
       var actors: Seq[ActorRef[Update]] = Seq(),
@@ -51,6 +63,13 @@ object Model {
           entities = entity :: entities
           actors = actors :+ actor
           running()
+
+        case TowerIn(cell) =>
+          val tower: Option[Tower[_]] = entities
+            .find(e => e.isInstanceOf[Tower[_]] && e.position == cell.centralPosition)
+            .map(_.asInstanceOf[Tower[_]])
+          controller ! TowerOption(tower)
+          Behaviors.same
 
         case TickUpdate(elapsedTime, replyTo) =>
           actors foreach {

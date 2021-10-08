@@ -69,6 +69,7 @@ object Constants {
   }
 
   object Maps {
+    val outerCell: Cell = GridCell(-1, -1)
     val basicTrack: Seq[Cell] = for (x <- 0 until Screen.widthRatio) yield GridCell(x, 0, RIGHT)
     val gameGrid: Grid = Grid(widthRatio - gameMenuWidthRatio, heightRatio)
   }

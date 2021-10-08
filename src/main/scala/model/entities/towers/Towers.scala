@@ -1,17 +1,11 @@
 package model.entities.towers
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ BoostAbility, Entity, ShotAbility, SightAbility }
+import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
-import model.entities.towers.TowerUpgrades.{ Ratio, Sight, TowerPowerUp }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-import utils.Constants.Entities.Towers.TowerPowerUps.{
-  boostedRatioCost,
-  boostedRatioFactor,
-  boostedSightCost,
-  boostedSightFactor
-}
+
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.defaultPosition
 
@@ -28,7 +22,7 @@ object Towers {
    * @tparam B
    *   is the type of the [[Bullet]] it can shoot
    */
-  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility with BoostAbility {
+  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
 
     def bullet: B
@@ -43,7 +37,6 @@ object Towers {
     override def sight(ratio: Double): Tower[B]
 
     override def toString: String = "towers/" + bullet.toString + "-TOWER"
-    override def boost(powerUp: TowerPowerUp): Tower[B]
 
   }
 
@@ -95,19 +88,11 @@ object Towers {
 
     override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
 
-    override def boost(powerUp: TowerPowerUp): Tower[B] =
-      powerUp match {
-        case Ratio =>
-          BaseTower(bullet, boundary, position, sightRange, shotRatio * powerUp.factor, direction)
-        case Sight =>
-          BaseTower(bullet, boundary, position, sightRange * powerUp.factor, shotRatio, direction)
-        case _ => BaseTower(bullet, boundary, position, sightRange, shotRatio, direction)
-      }
   }
 }
 
 /**
- * Provides a DSL to build the towers
+ * Provides a DSL to build a [[Tower]]
  */
 object TowerTypes extends Enumeration {
 
@@ -126,17 +111,4 @@ object TowerTypes extends Enumeration {
   val arrow: TowerType[Dart] = TowerType(Arrow tower, 200)
   val cannon: TowerType[CannonBall] = TowerType(Cannon tower, 200)
   val ice: TowerType[IceBall] = TowerType(Ice tower, 200)
-}
-
-object TowerUpgrades {
-
-  sealed trait PowerUp {
-    def cost: Int
-    def factor: Double
-  }
-
-  sealed class TowerPowerUp(override val cost: Int, override val factor: Double) extends PowerUp
-
-  case object Ratio extends TowerPowerUp(boostedRatioCost, boostedRatioFactor)
-  case object Sight extends TowerPowerUp(boostedSightCost, boostedSightFactor)
 }

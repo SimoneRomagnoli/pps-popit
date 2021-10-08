@@ -2,10 +2,11 @@ package model.entities.towers
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.entities.balloons.Balloons.{ Balloon, Simple }
+import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow
-import model.entities.towers.TowerUpgrades.{ Ratio, Sight }
 import model.entities.towers.Towers.Tower
+import model.entities.towers.towerpowerups.TowerUpgrades.{ BoostedTower, Camo, Ratio, Sight }
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import scala.language.postfixOps
@@ -52,6 +53,17 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         (arrowTower canSee balloon) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Sight
         (boostedTower canSee balloon) shouldBe true
+      }
+    }
+    "a normal tower see a camo balloon" should {
+      "not detect it, unless if is boosted" in {
+        val arrowTower: Tower[Dart] =
+          (Arrow tower) has values sight sightRange ratio shotRatio
+
+        val camo: Balloon = CamoBalloon(Simple(position = (1.0, 1.0), boundary = (1.0, 1.0)))
+        (arrowTower canSee camo) shouldBe false
+        val boostedTower: Tower[Dart] = arrowTower boost Camo
+        (boostedTower canSee camo) shouldBe true
       }
     }
     /*"the tower get the ratio power up" should {

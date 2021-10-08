@@ -5,6 +5,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
+import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
@@ -27,6 +28,16 @@ object Messages {
   case class ResumeGame() extends Input
   case class NewTimeRatio(value: Double) extends Input
   case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
+  case class CurrentWallet(amount: Int) extends Input
+  case class TowerOption(tower: Option[Tower[_]]) extends Input with Update
+
+  sealed trait Interaction extends Input {
+    def replyTo: ActorRef[Message]
+    def request: Message
+  }
+
+  case class MvcInteraction(override val replyTo: ActorRef[Message], override val request: Message)
+      extends Interaction
 
   //GAME LOOP
   case object Tick extends Input
@@ -37,6 +48,8 @@ object Messages {
   //MODEL
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
   case class NewMap(replyTo: ActorRef[Input]) extends Update
+  case class WalletQuantity(replyTo: ActorRef[Input]) extends Update
+  case class Pay(amount: Int) extends Update
 
   case class UpdateEntity(
       elapsedTime: Double,
@@ -45,9 +58,11 @@ object Messages {
       track: Track)
       extends Update
   case class EntityUpdated(entity: Entity) extends Update
+  case class SpawnEntity(entity: Entity) extends Update
   case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
   case class EntityKilled(entity: Entity, actorRef: ActorRef[Update]) extends Update
   case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
+  case class TowerIn(cell: Cell) extends Update
 
   //TOWER
   case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update

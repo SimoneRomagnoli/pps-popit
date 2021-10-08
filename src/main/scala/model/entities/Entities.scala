@@ -6,7 +6,6 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.TowerUpgrades.TowerPowerUp
 import model.maps.Tracks.Directions.{ DOWN, UP }
 import model.maps.Tracks.Track
 
@@ -112,10 +111,6 @@ object Entities {
     def canShootAfter: Double => Boolean =
       _ >= shotRatio
 
-  }
-
-  trait BoostAbility extends Entity {
-    def boost(powerUp: TowerPowerUp): BoostAbility
   }
 
   implicit class RichEntity(entity: Entity) {

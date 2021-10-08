@@ -9,7 +9,9 @@ import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
-import scalafx.scene.shape.{ Rectangle, Shape }
+import scalafx.scene.layout.Region
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
 import utils.Constants.Screen.cellSize
 import view.render.Drawings.{ Drawing, Grass, Item, Road }
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
@@ -48,9 +50,19 @@ object Rendering {
         rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
       case tower: Tower[_] =>
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
+        rectangle.styleClass += "tower"
       case _ =>
     }
     rectangle
+  }
+
+  /** Renders the sight range of a [[Tower]]. */
+  def sightOf(tower: Tower[_]): ToBeRendered = Rendered {
+    val range: Ellipse =
+      Ellipse(tower.position.x, tower.position.y, tower.sightRange, tower.sightRange)
+    range.opacity = 0.3
+    range.setFill(Color.LightGray)
+    range
   }
 
   /** Renders a [[Cell]] just with a square [[Shape]]. */
@@ -77,6 +89,13 @@ object Rendering {
     val rectangle: Rectangle = Rectangle(width, height)
     rectangle.setFill(new ImagePattern(new Image(path)))
     rectangle
+  }
+
+  def setLayout(region: Region, width: Double, height: Double): Unit = {
+    region.maxWidth = width
+    region.minWidth = width
+    region.maxHeight = height
+    region.minHeight = height
   }
 
 }

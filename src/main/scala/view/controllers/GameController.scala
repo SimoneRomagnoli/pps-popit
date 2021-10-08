@@ -1,7 +1,7 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Messages.{ Input, Message, PlaceTower }
+import controller.Messages.{ Input, Message, PlaceTower, TowerIn, TowerOption }
 import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.ImagePattern
@@ -23,8 +23,9 @@ import view.render.Drawings.Drawing
 import view.render.Rendering
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.{ implicitConversions, reflectiveCalls }
-import scala.util.Random
+import scala.util.{ Failure, Random, Success }
 
 /**
  * Controller of the game. This controller loads the game fxml file and is able to draw every
@@ -171,18 +172,22 @@ class GameController(
 
     private def placeTower(e: MouseEvent): IO[Unit] = {
       val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-      if (selectable(cell)) {
-        for {
-          _ <- removeEffects()
-          _ <- gameMenuController.unselectDepot()
-          _ <- occupy(cell)
-          _ <- send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-        } yield ()
-      } else IO.unit
+      ask(TowerIn(cell)).onComplete {
+        case Success(value) =>
+          value.asInstanceOf[TowerOption] match {
+            case TowerOption(option) =>
+              option match {
+                case Some(_) =>
+                case _ =>
+                  removeEffects()
+                  gameMenuController.unselectDepot()
+                  occupy(cell)
+                  send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+              }
+          }
+        case Failure(exception) => println(exception)
+      }
     }
-
-    private def selectable(cell: Cell): Boolean =
-      !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
 
     private def occupy(cell: Cell): Unit =
       occupiedCells = occupiedCells :+ cell

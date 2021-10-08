@@ -59,10 +59,19 @@ object Model {
 
     def running(): Behavior[Update] =
       Behaviors.receiveMessage {
+        case SpawnEntity(entity) =>
+          val actor: ActorRef[Update] = entity match {
+            case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+            case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
+            case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
+          }
+          ctx.self ! EntitySpawned(entity, actor)
+          Behaviors.same
+
         case EntitySpawned(entity, actor) =>
           entities = entity :: entities
           actors = actors :+ actor
-          running()
+          Behaviors.same
 
         case TowerIn(cell) =>
           val tower: Option[Tower[_]] = entities
@@ -98,6 +107,16 @@ object Model {
               running()
             case notFull => updating(replyTo, notFull)
           }
+
+        case SpawnEntity(entity) =>
+          val actor: ActorRef[Update] = entity match {
+            case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+            case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
+            case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
+          }
+          ctx.self ! EntitySpawned(entity, actor)
+          Behaviors.same
+
         case EntitySpawned(entity, actor) =>
           entities = entity :: entities
           actors = actors :+ actor

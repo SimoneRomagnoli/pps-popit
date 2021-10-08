@@ -5,7 +5,8 @@ package model.stats
  */
 object Stats {
 
-  val maxLife: Int = 100
+  val startingLife: Int = 100
+  val startingWallet: Int = 500
 
   trait GameStats {
     def life: Int
@@ -17,7 +18,7 @@ object Stats {
 
   object GameStats {
 
-    def apply(life: Int = maxLife, wallet: Int = 500): GameStats =
+    def apply(life: Int = startingLife, wallet: Int = startingWallet): GameStats =
       GameStatistics(life, wallet)
   }
 

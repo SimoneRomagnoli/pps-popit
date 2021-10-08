@@ -58,13 +58,15 @@ object Controller {
         interacting(replyTo)
 
       case PlaceTower(cell, towerType) =>
-        model ? WalletQuantity onComplete {
+        model ask WalletQuantity onComplete {
           case Success(value) =>
             value match {
-              case CurrentWallet(amount) if amount >= towerType.cost =>
-                val tower: Tower[Bullet] = towerType.tower in cell
-                model ! EntitySpawned(tower, ctx.spawnAnonymous(TowerActor(tower)))
-                model ! Pay(towerType.cost)
+              case CurrentWallet(amount) =>
+                if (amount >= towerType.cost) {
+                  val tower: Tower[Bullet] = towerType.tower in cell
+                  model ! SpawnEntity(tower)
+                  model ! Pay(towerType.cost)
+                }
             }
           case Failure(exception) => println(exception)
         }

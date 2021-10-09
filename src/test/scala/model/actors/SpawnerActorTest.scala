@@ -5,6 +5,7 @@ import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ EntitySpawned, Update }
 import model.actors.SpawnerActorTest.{ balloonsSpawned, dummyModel, waitSomeTime }
+import model.actors.SpawnerMessages.StartRound
 import model.entities.balloons.BalloonDecorations.Regenerating
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon

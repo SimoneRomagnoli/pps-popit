@@ -15,7 +15,7 @@ object GameLoop {
 
   /**
    * The loop is obtained by exploiting the reactivity of an actor: the actor just sends a [[Tick]]
-   * message to itself with a determined frequency that depends on the specified frame rate.
+   * message to itself with a determined delay that depends on the specified frame rate.
    */
   object GameLoopActor {
 

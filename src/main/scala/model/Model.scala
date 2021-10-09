@@ -4,7 +4,8 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages
 import controller.Messages._
-import model.actors.{ BalloonActor, BulletActor, SpawnerActor, StartRound, TowerActor }
+import model.actors.SpawnerMessages.StartRound
+import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon

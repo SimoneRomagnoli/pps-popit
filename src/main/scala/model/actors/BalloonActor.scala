@@ -6,6 +6,9 @@ import controller.Messages.{ EntityUpdated, ExitedBalloon, Update, UpdateEntity 
 import model.entities.balloons.Balloons.Balloon
 import utils.Constants
 
+/**
+ * The actor encapsulating a [[Balloon]].
+ */
 object BalloonActor {
 
   def apply(balloon: Balloon): Behavior[Update] = Behaviors.setup { ctx =>
@@ -13,10 +16,14 @@ object BalloonActor {
   }
 }
 
-case class BalloonActor private (
-    ctx: ActorContext[Update],
-    var balloon: Balloon,
-    var linearPosition: Double = 0.0) {
+/**
+ * The [[BalloonActor]] related class, conforming to a common Akka pattern.
+ * @param ctx
+ *   The actor's context.
+ * @param balloon
+ *   The encapsulated [[Balloon]].
+ */
+case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
     case UpdateEntity(elapsedTime, _, replyTo) =>

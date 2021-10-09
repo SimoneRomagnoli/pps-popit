@@ -46,8 +46,8 @@ object Entities {
       super.update(dt).asInstanceOf[MovementAbility] move dt
   }
 
-  trait TrackFollowing extends MovementAbility {
-    private[this] var linearPosition: Double = 0.0
+  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
+    private var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing
@@ -55,6 +55,12 @@ object Entities {
     private def following(lp: Double): TrackFollowing = {
       this.linearPosition = lp
       this
+    }
+
+    override def compareTo(o: TrackFollowing): Int = linearPosition - o.linearPosition match {
+      case d if d > 0 => 1
+      case d if d < 0 => -1
+      case _          => 0
     }
 
     override protected def move(dt: Double): Entity = {

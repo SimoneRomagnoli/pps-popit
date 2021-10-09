@@ -102,7 +102,12 @@ object Model {
         case EntityUpdated(entity) =>
           entity :: updatedEntities match {
             case full if full.size == entities.size =>
-              replyTo ! ModelUpdated(full, stats)
+              val (balloons, others): (List[Entity], List[Entity]) =
+                full partition (_.isInstanceOf[Balloon])
+              replyTo ! ModelUpdated(
+                others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
+                stats
+              )
               entities = full
               running()
             case notFull => updating(replyTo, notFull)

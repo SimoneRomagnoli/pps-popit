@@ -9,6 +9,7 @@ import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.BulletMessages.BalloonHit
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
@@ -146,6 +147,10 @@ object Model {
 
         case Pay(amount) =>
           stats spend amount
+          Behaviors.same
+
+        case BalloonHit(bullet, balloon) =>
+          balloon pop bullet
           Behaviors.same
 
         case _ => Behaviors.same

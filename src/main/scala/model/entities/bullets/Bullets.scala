@@ -1,16 +1,27 @@
 package model.entities.bullets
 
+import akka.actor.typed.ActorRef
+import controller.Messages.Update
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility }
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.Towers.{ BaseTower, Tower }
 import utils.Constants
 import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
 
+object BulletMessages {
+  case class BalloonHit(bullet: Bullet, balloon: Balloon) extends Update
+}
+
 object Bullets {
 
+  /**
+   * A [[Bullet]] is an [[Entity]] with [[MovementAbility]] that it's created by the [[Tower]]
+   */
   trait Bullet extends Entity with MovementAbility {
     type Boundary = (Double, Double)
     def damage: Double
@@ -21,6 +32,17 @@ object Bullets {
     override def at(speed: Vector2D): Bullet
   }
 
+  /**
+   * A [[BasicBullet]] is a default bullet instance
+   * @param damage
+   *   is the damage that inflicts to a [[Balloon]]
+   * @param position
+   *   is the [[Vector2D]] where the bullet is instanced
+   * @param speed
+   *   is the direction and speed of the bullet
+   * @param boundary
+   *   is the boundary of the rendered object in the grid
+   */
   abstract class BasicBullet(
       var damage: Double = bulletDefaultDamage,
       var position: Vector2D = defaultPosition,
@@ -41,7 +63,10 @@ object Bullets {
     def toString: String
   }
 
-  trait Explosion {
+  /** An [[Explosion]] is a decorator for the bullet */
+  trait Explosion extends Bullet {
+
+    /** Represents the area of the explosion */
     def radius: Double
 
     def expand(rad: Double): Explosion = this match {
@@ -84,6 +109,12 @@ object Bullets {
       this
     }
 
+  }
+
+  implicit class RichExplosion(explosion: Explosion) {
+
+    def include(balloon: Balloon): Boolean =
+      explosion.position.intersectsWith(balloon)(explosion.radius)
   }
 
   implicit class RichBullet(bullet: Bullet) {

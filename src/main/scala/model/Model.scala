@@ -57,8 +57,6 @@ object Model {
           _ <- add(Streak(10) :- Red)
         } yield ()).get
       }
-      entities = List((Red balloon) on track at (10.0, 5.0))
-      actors = entities map (entitySpawned(_, ctx))
       running()
     }
 
@@ -120,7 +118,8 @@ object Model {
         case EntitySpawned(entity, actor) =>
           entities = entity :: entities
           actors = actors :+ actor
-          updating(replyTo, entity :: updatedEntities)
+          ctx.self ! EntityUpdated(entity)
+          updating(replyTo, updatedEntities)
 
         case ExitedBalloon(balloon, actorRef) =>
           stats lose balloon.life

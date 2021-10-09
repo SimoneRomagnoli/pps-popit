@@ -6,6 +6,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ EntitySpawned, Update }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
+import model.maps.Tracks.Track
 import model.spawn.SpawnManager.{ Round, Streak }
 
 import scala.language.postfixOps
@@ -15,12 +16,12 @@ private case object SpawnTick extends Update
 
 object SpawnerActor {
 
-  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
-    Spawner(ctx, model).waiting()
+  def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
+    Spawner(ctx, model, track).waiting()
   }
 }
 
-case class Spawner private (ctx: ActorContext[Update], model: ActorRef[Update]) {
+case class Spawner private (ctx: ActorContext[Update], model: ActorRef[Update], track: Track) {
 
   def waiting(): Behavior[Update] = Behaviors.receiveMessage {
     case StartRound(round) =>
@@ -35,6 +36,7 @@ case class Spawner private (ctx: ActorContext[Update], model: ActorRef[Update]) 
         spawningStreak(
           LazyList
             .iterate((h.balloonInfo.balloonLife balloon) adding h.balloonInfo.balloonTypes)(b => b)
+            .map(_ on track)
             .take(h.quantity),
           t
         )

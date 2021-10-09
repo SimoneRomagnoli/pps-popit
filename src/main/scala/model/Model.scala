@@ -4,13 +4,15 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages
 import controller.Messages._
-import model.actors.{ BalloonActor, BulletActor, TowerActor }
+import model.actors.{ BalloonActor, BulletActor, SpawnerActor, StartRound, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
+import model.spawn.SpawnManager.Streak
+import model.spawn.SpawnerMonad.{ add, RichIO }
 import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 
@@ -43,29 +45,27 @@ object Model {
       stats: GameStats = GameStats(),
       var entities: List[Entity] = List(),
       var actors: Seq[ActorRef[Update]] = Seq(),
-      var track: Track = Track()) {
+      var track: Track = Track(),
+      var spawner: Option[ActorRef[Update]] = None) {
 
     def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
       track = Track(gameGrid)
+      spawner = Some(ctx.spawnAnonymous(SpawnerActor(ctx.self, track)))
       replyTo ! MapCreated(track)
-      entities = List((Red balloon) on track at (10.0, 5.0))
-      actors = entities map {
-        case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-        case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-        case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
+      spawner.get ! StartRound {
+        (for {
+          _ <- add(Streak(10) :- Red)
+        } yield ()).get
       }
+      entities = List((Red balloon) on track at (10.0, 5.0))
+      actors = entities map (entitySpawned(_, ctx))
       running()
     }
 
     def running(): Behavior[Update] =
       Behaviors.receiveMessage {
         case SpawnEntity(entity) =>
-          val actor: ActorRef[Update] = entity match {
-            case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-            case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-            case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
-          }
-          ctx.self ! EntitySpawned(entity, actor)
+          ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
           Behaviors.same
 
         case EntitySpawned(entity, actor) =>
@@ -109,12 +109,7 @@ object Model {
           }
 
         case SpawnEntity(entity) =>
-          val actor: ActorRef[Update] = entity match {
-            case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-            case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-            case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
-          }
-          ctx.self ! EntitySpawned(entity, actor)
+          ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
           Behaviors.same
 
         case EntitySpawned(entity, actor) =>
@@ -150,6 +145,12 @@ object Model {
 
         case _ => Behaviors.same
       }
+  }
+
+  def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {
+    case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+    case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
+    case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
   }
 
 }

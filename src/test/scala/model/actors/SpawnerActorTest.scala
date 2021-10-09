@@ -9,6 +9,7 @@ import model.entities.balloons.BalloonDecorations.Regenerating
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
+import model.maps.Tracks.Track
 import model.spawn.SpawnManager.{ Round, Streak }
 import model.spawn.SpawnerMonad.{ add, RichIO }
 import org.scalatest.BeforeAndAfterEach
@@ -37,7 +38,7 @@ class SpawnerActorTest
     with Matchers
     with BeforeAndAfterEach {
   val model: ActorRef[Update] = testKit.spawn(dummyModel)
-  val spawner: ActorRef[Update] = testKit.spawn(SpawnerActor(model))
+  val spawner: ActorRef[Update] = testKit.spawn(SpawnerActor(model, Track()))
   val nBalloons: Int = 5
   val simpleRound: Round = Round(Seq(Streak(nBalloons)))
 
@@ -45,8 +46,10 @@ class SpawnerActorTest
     LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
 
   val complexRound: Round = (for {
-    _ <- add(Streak(nBalloons) :- Red)
-    _ <- add(Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating))
+    _ <- add((Streak(nBalloons) :- Red) @@ 50.milliseconds)
+    _ <- add(
+      (Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating)) @@ 50.milliseconds
+    )
     _ <- add((Streak(nBalloons) :- Green) @@ 50.milliseconds)
   } yield ()).get
 

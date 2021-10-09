@@ -5,6 +5,7 @@ import controller.Messages.{ Message, TowerIn, TowerOption }
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import scalafx.scene.Cursor
@@ -51,7 +52,7 @@ object InputEventHandlers {
   def clickedTower(
       e: MouseEvent,
       ask: Message => Future[Message],
-      fillStatus: (Tower[_], Cell) => Unit): IO[Unit] = {
+      fillStatus: (Tower[Bullet], Cell) => Unit): IO[Unit] = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     ask(TowerIn(cell)).onComplete {
       case Success(value) =>

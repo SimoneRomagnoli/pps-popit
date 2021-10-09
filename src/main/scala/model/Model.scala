@@ -8,7 +8,7 @@ import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.Dart
+import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
@@ -74,9 +74,9 @@ object Model {
           Behaviors.same
 
         case TowerIn(cell) =>
-          val tower: Option[Tower[_]] = entities
-            .find(e => e.isInstanceOf[Tower[_]] && e.position == cell.centralPosition)
-            .map(_.asInstanceOf[Tower[_]])
+          val tower: Option[Tower[Bullet]] = entities
+            .find(e => e.isInstanceOf[Tower[Bullet]] && e.position == cell.centralPosition)
+            .map(_.asInstanceOf[Tower[Bullet]])
           controller ! TowerOption(tower)
           Behaviors.same
 

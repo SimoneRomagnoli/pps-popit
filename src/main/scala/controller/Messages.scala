@@ -29,7 +29,7 @@ object Messages {
   case class NewTimeRatio(value: Double) extends Input
   case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
   case class CurrentWallet(amount: Int) extends Input
-  case class TowerOption(tower: Option[Tower[_]]) extends Input with Update
+  case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
 
   sealed trait Interaction extends Input {
     def replyTo: ActorRef[Message]

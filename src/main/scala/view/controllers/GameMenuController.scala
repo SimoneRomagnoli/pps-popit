@@ -15,7 +15,6 @@ import scalafx.scene.control.{ Label, ToggleButton }
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import utils.Constants
 import utils.Constants.Maps.outerCell
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
@@ -28,7 +27,7 @@ trait ViewGameMenuController extends ViewController {
   def update(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
-  def fillTowerStatus(tower: Tower[_], cell: Cell): Unit
+  def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit
   def clearTowerStatus(): Unit
   def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
@@ -86,7 +85,7 @@ class GameMenuController(
     moneyLabel.text = stats.wallet.toString
   }
 
-  override def fillTowerStatus(tower: Tower[_], cell: Cell): Unit = Platform runLater {
+  override def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit = Platform runLater {
     clearTowerStatus()
     if (currentCell == cell) {
       currentCell = outerCell
@@ -94,9 +93,11 @@ class GameMenuController(
     } else {
       currentCell = cell
       Rendering a tower into towerStatus.children
-      setTowerStatusPosition(tower)
-      setTowerStatusRatio(tower)
-      setTowerStatusSight(tower)
+      //addToTowerStatus("Position", tower.position)
+      addToTowerStatus("Sight Range", tower.sightRange)
+      addToTowerStatus("Shot Ratio", tower.shotRatio)
+      addToTowerStatus("Damage", tower.bullet.damage)
+      addToTowerStatus("Bullet Speed", tower.bullet.speed)
       highlight(tower, true)
     }
   }
@@ -151,29 +152,10 @@ class GameMenuController(
         towerDepot.children.add(towerBox)
       }
 
-    def setTowerStatusPosition(tower: Tower[_]): Unit = {
-      val cell: Cell = Constants.Maps.gameGrid.specificCell(tower.position)
+    def addToTowerStatus[T](title: String, argument: T): Unit = {
       val box: HBox = new HBox()
-      val key: Label = Label("Position: ")
-      val value: Label = Label("(" + cell.x.toString + ", " + cell.y.toString + ")")
-      box.children += key
-      box.children += value
-      towerStatus.children += box
-    }
-
-    def setTowerStatusRatio(tower: Tower[_]): Unit = {
-      val box: HBox = new HBox()
-      val key: Label = Label("Shot ratio: ")
-      val value: Label = Label(tower.shotRatio.toString)
-      box.children += key
-      box.children += value
-      towerStatus.children += box
-    }
-
-    def setTowerStatusSight(tower: Tower[_]): Unit = {
-      val box: HBox = new HBox()
-      val key: Label = Label("Sight range: ")
-      val value: Label = Label(tower.sightRange.toString)
+      val key: Label = Label(title + ": ")
+      val value: Label = Label(argument.toString)
       box.children += key
       box.children += value
       towerStatus.children += box

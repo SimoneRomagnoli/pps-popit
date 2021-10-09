@@ -33,12 +33,12 @@ object BalloonActorTest {
   var gameLoop: Option[ActorRef[Input]] = None
   var testBalloon: Balloon = Red balloon
 
-  val dummyModel: (ActorRef[Update], Track) => Behavior[Update] = (b, track) =>
+  val dummyModel: ActorRef[Update] => Behavior[Update] = b =>
     Behaviors.setup { ctx =>
       Behaviors.receiveMessage {
         case TickUpdate(elapsedTime, replyTo) =>
           gameLoop = Some(replyTo)
-          b ! UpdateEntity(elapsedTime, List(), ctx.self, track)
+          b ! UpdateEntity(elapsedTime, List(), ctx.self)
           Behaviors.same
         case EntityUpdated(entity) =>
           testBalloon = entity.asInstanceOf[Balloon]
@@ -53,12 +53,7 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
   val balloonActor: ActorRef[Update] = testKit.spawn(BalloonActor(testBalloon))
 
   val model: ActorRef[Update] =
-    testKit.spawn(
-      dummyModel(
-        balloonActor,
-        Track(Grid(Constants.Screen.widthRatio, Constants.Screen.heightRatio))
-      )
-    )
+    testKit.spawn(dummyModel(balloonActor))
   val view: TestProbe[Render] = testKit.createTestProbe[Render]()
   val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref))
 

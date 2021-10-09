@@ -80,7 +80,7 @@ object Model {
 
         case TickUpdate(elapsedTime, replyTo) =>
           actors foreach {
-            _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
+            _ ! UpdateEntity(elapsedTime, entities, ctx.self)
           }
           updating(replyTo)
 

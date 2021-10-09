@@ -18,7 +18,7 @@ object BulletActor {
 case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
-    case UpdateEntity(elapsedTime, entities, replyTo, _) =>
+    case UpdateEntity(elapsedTime, entities, replyTo) =>
       bullet = bullet.update(elapsedTime).asInstanceOf[Bullet]
       if (bullet.exitedFromScreen()) {
         //println("bullet actor killed")

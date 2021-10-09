@@ -4,7 +4,6 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.{ EntityUpdated, ExitedBalloon, Update, UpdateEntity }
 import model.entities.balloons.Balloons.Balloon
-import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
 import utils.Constants
 
 object BalloonActor {
@@ -20,7 +19,7 @@ case class BalloonActor private (
     var linearPosition: Double = 0.0) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
-    case UpdateEntity(elapsedTime, _, replyTo, track) =>
+    case UpdateEntity(elapsedTime, _, replyTo) =>
       balloon.position.x match {
         case outOfBounds if outOfBounds >= Constants.View.gameBoardWidth =>
           replyTo ! ExitedBalloon(balloon, ctx.self)

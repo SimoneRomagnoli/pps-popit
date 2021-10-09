@@ -38,7 +38,7 @@ case class TowerActor[B <: Bullet](
       }
       Behaviors.same
 
-    case UpdateEntity(elapsedTime, entities, replyTo, _) =>
+    case UpdateEntity(elapsedTime, entities, replyTo) =>
       entities.collect { case balloon: Balloon =>
         balloon
       }.sorted.findLast(tower canSee _) match {

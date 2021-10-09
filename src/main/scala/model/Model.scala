@@ -8,6 +8,7 @@ import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.BulletMessages.BalloonHit
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
@@ -35,7 +36,7 @@ object Model {
     def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
       track = Track(gameGrid)
       replyTo ! MapCreated(track)
-      entities = List((Red balloon) on track at (10.0, 5.0))
+      entities = List((Red balloon) on track at (2.0, 1.0))
       actors = entities map {
         case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
         case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
@@ -92,6 +93,10 @@ object Model {
               actors = actors.filter(_ != actorRef)
               updating(replyTo, notFull)
           }
+
+        case BalloonHit(bullet, balloon) =>
+          balloon pop bullet
+          Behaviors.same
 
         case _ => Behaviors.same
       }

@@ -39,21 +39,21 @@ case class TowerActor[B <: Bullet](
       Behaviors.same
 
     case UpdateEntity(elapsedTime, entities, replyTo, _) =>
-      entities foreach {
-        case balloon: Balloon =>
-          if (tower canSee balloon) {
-            tower = tower rotateTo normalized(vector(tower.position)(balloon.position))
-            shootingTime += elapsedTime
-            if (tower canShootAfter shootingTime) {
-              shootingTime = 0.0
-              val bullet: Bullet =
-                (Bullets shoot tower.bullet) in tower.position at tower.direction * bulletSpeedFactor
-              val bulletActor: ActorRef[Update] = ctx.spawnAnonymous(BulletActor(bullet))
-              replyTo ! EntitySpawned(bullet, bulletActor)
-            }
+      entities.collect { case balloon: Balloon =>
+        balloon
+      }.sorted.findLast(tower canSee _) match {
+        case Some(b) =>
+          tower = tower rotateTo normalized(vector(tower.position)(b.position))
+          if (tower canShootAfter shootingTime) {
+            shootingTime = 0.0
+            val bullet: Bullet =
+              (Bullets shoot tower.bullet) in tower.position at tower.direction * bulletSpeedFactor
+            val bulletActor: ActorRef[Update] = ctx.spawnAnonymous(BulletActor(bullet))
+            replyTo ! EntitySpawned(bullet, bulletActor)
           }
         case _ =>
       }
+      shootingTime += elapsedTime
       replyTo ! EntityUpdated(tower)
       Behaviors.same
     case _ => Behaviors.same

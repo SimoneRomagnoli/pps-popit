@@ -17,7 +17,7 @@ object Entities {
    * Basic entity of the system which:
    *   - has a boundary
    *   - has a position
-   *   - can update its position
+   *   - can change its position
    *   - can update itself
    */
   trait Entity {
@@ -35,7 +35,7 @@ object Entities {
   /**
    * Adds to the [[Entity]] the ability to move:
    *   - has a speed
-   *   - can update its speed
+   *   - can change its speed
    */
   trait MovementAbility extends Entity {
     def speed: Vector2D
@@ -46,6 +46,11 @@ object Entities {
       super.update(dt).asInstanceOf[MovementAbility] move dt
   }
 
+  /**
+   * Adds to the [[Entity]] the ability to follow a [[Track]]:
+   *   - has a [[Track]]
+   *   - can change the [[Track]]
+   */
   trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
     private var linearPosition: Double = 0.0
 
@@ -84,7 +89,7 @@ object Entities {
   }
 
   /**
-   * Adds to the [[Entity]] the ability to see other entities within his sight range.
+   * Adds to the [[Entity]] the ability to see a [[Balloon]] within his sight range.
    */
   trait SightAbility extends Entity {
     def sightRange: Double
@@ -101,10 +106,16 @@ object Entities {
     }
   }
 
+  /**
+   * Adds to the [[Entity]] the ability to see even a [[CamoBalloon]] within its sight range.
+   */
   trait EnhancedSightAbility extends SightAbility {
     override def canSee(balloon: Balloon): Boolean = isInSightOfRangeOf(balloon)
   }
 
+  /**
+   * Adds to the [[Entity]] the ability to shoot a [[Bullet]].
+   */
   trait ShotAbility extends Entity {
     def bullet: Bullet
     def shotRatio: Double

@@ -47,21 +47,19 @@ class SpawnerActorTest
     LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
 
   val complexRound: Round = (for {
-    _ <- add((Streak(nBalloons) :- (Red & Camo)) @@ 50.milliseconds)
-    _ <- add(
-      (Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating)) @@ 50.milliseconds
-    )
+    _ <- add((Streak(nBalloons) :- Red) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Blue & Camo & Regenerating & Regenerating)) @@ 50.milliseconds)
     _ <- add((Streak(nBalloons) :- (Green & Lead & Regenerating)) @@ 50.milliseconds)
   } yield ()).get
 
   val complexRoundBalloons: List[Balloon] =
-    (LazyList.iterate((Red balloon) adding Camo)(b => b).take(nBalloons).toList appendedAll
+    (LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList appendedAll
       LazyList
-        .iterate((Blue balloon) adding Regenerating)(b => b)
+        .iterate((Blue balloon) adding List(Camo, Regenerating))(b => b)
         .take(nBalloons)
         .toList appendedAll
       LazyList
-        .iterate((Green balloon) adding List(Lead, Regenerating))(b => b)
+        .iterate((Green balloon) adding List(Lead, Camo))(b => b)
         .take(nBalloons)
         .toList).reverse
 

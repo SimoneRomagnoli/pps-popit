@@ -7,6 +7,9 @@ import model.entities.bullets.Bullets.CannonBall
 
 object LeadBalloons {
 
+  /**
+   * Adds to a [[Balloon]] the ability to being popped only by [[CannonBall]] s.
+   */
   trait Lead extends Balloon { balloon: Balloon =>
 
     override def pop(bullet: Entities.Entity): Option[Lead] = bullet match {

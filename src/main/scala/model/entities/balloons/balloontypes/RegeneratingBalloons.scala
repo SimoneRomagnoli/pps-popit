@@ -10,7 +10,7 @@ object RegeneratingBalloons {
   val maxLife: Double = Green.life
 
   /**
-   * Adds to [[Balloon]] the ability to regenerate its life.
+   * Adds to [[Balloon]] the ability to regenerate its life after a certain amount of time.
    */
   trait Regenerating extends Balloon {
     private[this] var timer: Double = regenerationTime

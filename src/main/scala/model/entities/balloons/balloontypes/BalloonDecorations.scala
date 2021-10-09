@@ -11,6 +11,10 @@ object BalloonDecorations {
     def balloon: Balloon
   }
 
+  /**
+   * There are different [[model.entities.balloons.BalloonDecorations.BalloonType]] s, each of which
+   * can be seen as a decoration of a normal balloon.
+   */
   abstract class BalloonDecoration(override val balloon: Balloon) extends Balloon with Decoration {
     override protected[balloons] def retrieve[T](f: Balloon => T): T = balloon.retrieve(f)
     override def life: Int = balloon.life

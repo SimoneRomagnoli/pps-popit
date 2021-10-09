@@ -6,7 +6,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ EntitySpawned, Update }
 import model.actors.SpawnerActorTest.{ balloonsSpawned, dummyModel, waitSomeTime }
 import model.actors.SpawnerMessages.StartRound
-import model.entities.balloons.BalloonDecorations.Regenerating
+import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
@@ -47,20 +47,23 @@ class SpawnerActorTest
     LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
 
   val complexRound: Round = (for {
-    _ <- add((Streak(nBalloons) :- Red) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Red & Camo)) @@ 50.milliseconds)
     _ <- add(
       (Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating)) @@ 50.milliseconds
     )
-    _ <- add((Streak(nBalloons) :- Green) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Green & Lead & Regenerating)) @@ 50.milliseconds)
   } yield ()).get
 
   val complexRoundBalloons: List[Balloon] =
-    (LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList appendedAll
+    (LazyList.iterate((Red balloon) adding Camo)(b => b).take(nBalloons).toList appendedAll
       LazyList
         .iterate((Blue balloon) adding Regenerating)(b => b)
         .take(nBalloons)
         .toList appendedAll
-      LazyList.iterate(Green balloon)(b => b).take(nBalloons).toList).reverse
+      LazyList
+        .iterate((Green balloon) adding List(Lead, Regenerating))(b => b)
+        .take(nBalloons)
+        .toList).reverse
 
   override def beforeEach(): Unit = balloonsSpawned = List()
 

@@ -2,6 +2,8 @@ package model.entities.balloons
 
 import model.entities.balloons.BalloonDecorations.BalloonType
 import model.entities.balloons.Balloons.{ complex, simple, Balloon }
+import model.entities.balloons.balloontypes.CamoBalloons.camo
+import model.entities.balloons.balloontypes.LeadBalloons.lead
 import model.entities.balloons.balloontypes.RegeneratingBalloons.{ regenerating, Regenerating }
 import model.spawn.SpawnManager.BalloonInfo
 
@@ -28,6 +30,14 @@ object BalloonDecorations {
 
   case object Regenerating extends BalloonType {
     override def decorate(balloon: Balloon): Regenerating = regenerating(balloon)
+  }
+
+  case object Camo extends BalloonType {
+    override def decorate(balloon: Balloon): Balloon = camo(balloon)
+  }
+
+  case object Lead extends BalloonType {
+    override def decorate(balloon: Balloon): Balloon = lead(balloon)
   }
 
   implicit def elementToList(element: BalloonType): List[BalloonType] = List(element)

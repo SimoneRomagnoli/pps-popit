@@ -4,13 +4,14 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages
 import controller.Messages._
+import model.actors.BalloonMessages.Hit
 import model.actors.SpawnerMessages.StartRound
 import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletMessages.BalloonHit
-import model.entities.bullets.Bullets.Dart
+import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
 import model.spawn.SpawnManager.Streak
@@ -150,7 +151,7 @@ object Model {
           Behaviors.same
 
         case BalloonHit(bullet, balloon) =>
-          balloon pop bullet
+          actors(entities.indexOf(balloon)) ! Hit(bullet, ctx.self)
           Behaviors.same
 
         case _ => Behaviors.same
@@ -160,7 +161,7 @@ object Model {
   def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {
     case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
     case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-    case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
+    case bullet: Bullet   => ctx.spawnAnonymous(BulletActor(bullet))
   }
 
 }

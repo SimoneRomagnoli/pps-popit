@@ -1,12 +1,12 @@
 package model.actors
 
-import akka.actor.typed.{ scaladsl, ActorRef, Behavior }
+import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.{ EntityKilled, EntityUpdated, Update, UpdateEntity }
 import model.entities.Entities
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletMessages.BalloonHit
-import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Explosion, IceBall }
+import model.entities.bullets.Bullets.{ Bullet, Explosion }
 
 import scala.language.postfixOps
 
@@ -26,12 +26,15 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
         replyTo ! EntityKilled(bullet, ctx.self)
         Behaviors.stopped
       } else {
-        if (entities
-            .filter(e => e.isInstanceOf[Balloon])
-            .exists(b => bullet hit b.asInstanceOf[Balloon])) exploding(entities, bullet, replyTo)
-        else {
-          replyTo ! EntityUpdated(bullet)
-          Behaviors.same
+        entities.collect { case balloon: Balloon =>
+          balloon
+        }.filter(b => bullet hit b).sorted.reverse match {
+          case h :: _ =>
+            replyTo ! BalloonHit(bullet, h)
+            exploding(entities, bullet, replyTo)
+          case _ =>
+            replyTo ! EntityUpdated(bullet, ctx.self)
+            Behaviors.same
         }
       }
     case _ => Behaviors.same

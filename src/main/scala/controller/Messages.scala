@@ -53,7 +53,7 @@ object Messages {
 
   case class UpdateEntity(elapsedTime: Double, entities: List[Entity], replyTo: ActorRef[Update])
       extends Update
-  case class EntityUpdated(entity: Entity) extends Update
+  case class EntityUpdated(entity: Entity, ref: ActorRef[Update]) extends Update
   case class SpawnEntity(entity: Entity) extends Update
   case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
   case class EntityKilled(entity: Entity, actorRef: ActorRef[Update]) extends Update

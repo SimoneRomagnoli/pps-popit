@@ -11,7 +11,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletMessages.BalloonHit
-import model.entities.bullets.Bullets.{ Bullet, Dart }
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
 import model.spawn.SpawnManager.Streak
@@ -20,6 +20,8 @@ import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
+
+case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
 
 /**
  * Model of the application, fundamental in the MVC pattern. It receives [[Update]] messages from
@@ -46,7 +48,7 @@ object Model {
       ctx: ActorContext[Update],
       controller: ActorRef[Input],
       stats: GameStats = GameStats(),
-      var entities: List[Entity] = List(),
+      var entities: List[EntityActor] = List(),
       var actors: Seq[ActorRef[Update]] = Seq(),
       var track: Track = Track(),
       var spawner: Option[ActorRef[Update]] = None) {
@@ -70,12 +72,13 @@ object Model {
           Behaviors.same
 
         case EntitySpawned(entity, actor) =>
-          entities = entity :: entities
+          entities = EntityActor(actor, entity) :: entities
           actors = actors :+ actor
           Behaviors.same
 
         case TowerIn(cell) =>
           val tower: Option[Tower[_]] = entities
+            .map(_.entity)
             .find(e => e.isInstanceOf[Tower[_]] && e.position == cell.centralPosition)
             .map(_.asInstanceOf[Tower[_]])
           controller ! TowerOption(tower)
@@ -83,7 +86,7 @@ object Model {
 
         case TickUpdate(elapsedTime, replyTo) =>
           actors foreach {
-            _ ! UpdateEntity(elapsedTime, entities, ctx.self)
+            _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
           }
           updating(replyTo)
 
@@ -94,17 +97,24 @@ object Model {
         case Pay(amount) =>
           stats spend amount
           Behaviors.same
+
+        case EntityKilled(_, actorRef) =>
+          entities = entities.filter(_.actorRef != actorRef)
+          actors = actors.filter(_ != actorRef)
+          Behaviors.same
+
+        case _ => Behaviors.same
       }
 
     def updating(
         replyTo: ActorRef[Messages.Input],
-        updatedEntities: List[Entity] = List()): Behavior[Update] =
+        updatedEntities: List[EntityActor] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
-        case EntityUpdated(entity) =>
-          entity :: updatedEntities match {
+        case EntityUpdated(entity, ref) =>
+          EntityActor(ref, entity) :: updatedEntities match {
             case full if full.size == entities.size =>
               val (balloons, others): (List[Entity], List[Entity]) =
-                full partition (_.isInstanceOf[Balloon])
+                full.map(_.entity).partition(_.isInstanceOf[Balloon])
               replyTo ! ModelUpdated(
                 others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
                 stats
@@ -119,9 +129,9 @@ object Model {
           Behaviors.same
 
         case EntitySpawned(entity, actor) =>
-          entities = entity :: entities
+          entities = EntityActor(actor, entity) :: entities
           actors = actors :+ actor
-          ctx.self ! EntityUpdated(entity)
+          ctx.self ! EntityUpdated(entity, actor)
           updating(replyTo, updatedEntities)
 
         case ExitedBalloon(balloon, actorRef) =>
@@ -132,12 +142,12 @@ object Model {
         case EntityKilled(entity, actorRef) =>
           updatedEntities match {
             case full if full.size == entities.size - 1 =>
-              replyTo ! ModelUpdated(full, stats)
+              replyTo ! ModelUpdated(full.map(_.entity), stats)
               entities = full
               actors = actors.filter(_ != actorRef)
               running()
             case notFull =>
-              entities = entities.filter(_ not entity)
+              entities = entities.filter(_.actorRef != actorRef)
               actors = actors.filter(_ != actorRef)
               updating(replyTo, notFull)
           }
@@ -151,7 +161,11 @@ object Model {
           Behaviors.same
 
         case BalloonHit(bullet, balloon) =>
-          actors(entities.indexOf(balloon)) ! Hit(bullet, ctx.self)
+          entities.find(_.entity == balloon) match {
+            case Some(entityActor) =>
+              entityActor.actorRef ! Hit(bullet, ctx.self)
+            case _ =>
+          }
           Behaviors.same
 
         case _ => Behaviors.same

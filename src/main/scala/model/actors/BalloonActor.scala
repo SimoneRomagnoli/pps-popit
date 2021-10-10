@@ -39,7 +39,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
           Behaviors.stopped
         case _ =>
           balloon = balloon.update(elapsedTime).asInstanceOf[Balloon]
-          replyTo ! EntityUpdated(balloon)
+          replyTo ! EntityUpdated(balloon, ctx.self)
           Behaviors.same
       }
     case Hit(bullet, replyTo) =>
@@ -49,7 +49,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
           Behaviors.stopped
         case Some(b) =>
           balloon = b
-          replyTo ! EntityUpdated(balloon)
+          replyTo ! EntityUpdated(balloon, ctx.self)
           Behaviors.same
       }
   }

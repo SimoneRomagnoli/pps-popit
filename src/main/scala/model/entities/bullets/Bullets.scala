@@ -1,12 +1,11 @@
 package model.entities.bullets
 
-import akka.actor.typed.ActorRef
 import controller.Messages.Update
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.Towers.{ BaseTower, Tower }
+import model.entities.towers.Towers.Tower
 import utils.Constants
 import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.defaultPosition
@@ -120,7 +119,10 @@ object Bullets {
   implicit class RichBullet(bullet: Bullet) {
 
     def hit(balloon: Balloon): Boolean =
-      balloon.position.x < bullet.position.x + bullet.boundary._1 && balloon.position.x + balloon.boundary._1 > bullet.position.x && balloon.position.y < bullet.position.y + bullet.boundary._2 && balloon.position.y + balloon.boundary._2 > bullet.position.y
+      balloon.position.x < bullet.position.x + bullet.boundary._1 &&
+        balloon.position.x + balloon.boundary._1 > bullet.position.x &&
+        balloon.position.y < bullet.position.y + bullet.boundary._2 &&
+        balloon.position.y + balloon.boundary._2 > bullet.position.y
 
     def exitedFromScreen(): Boolean =
       bullet.position.x > Constants.Screen.width || bullet.position.x < 0 || bullet.position.y > Constants.Screen.height || bullet.position.y < 0

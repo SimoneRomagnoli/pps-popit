@@ -58,7 +58,7 @@ object Controller {
         interacting(replyTo)
 
       case PlaceTower(cell, towerType) =>
-        model ask WalletQuantity onComplete {
+        model ? WalletQuantity onComplete {
           case Success(value) =>
             value match {
               case CurrentWallet(amount) =>

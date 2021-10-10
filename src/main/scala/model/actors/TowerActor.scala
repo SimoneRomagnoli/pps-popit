@@ -54,7 +54,7 @@ case class TowerActor[B <: Bullet](
         case _ =>
       }
       shootingTime += elapsedTime
-      replyTo ! EntityUpdated(tower)
+      replyTo ! EntityUpdated(tower, ctx.self)
       Behaviors.same
     case _ => Behaviors.same
   }

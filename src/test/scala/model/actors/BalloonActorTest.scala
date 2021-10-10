@@ -40,7 +40,7 @@ object BalloonActorTest {
           gameLoop = Some(replyTo)
           b ! UpdateEntity(elapsedTime, List(), ctx.self)
           Behaviors.same
-        case EntityUpdated(entity) =>
+        case EntityUpdated(entity, _) =>
           testBalloon = entity.asInstanceOf[Balloon]
           gameLoop.get ! ModelUpdated(List(), GameStats())
           Behaviors.same

@@ -14,7 +14,7 @@ import scala.language.postfixOps
 class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val boostedSight: Double = 2.0
-  val boostedRatio: Double = 4.0
+  val boostedRatio: Double = 1.0
   val sightRange: Double = 1.0
   val shotRatio: Double = 2.0
 

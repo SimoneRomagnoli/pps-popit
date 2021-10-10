@@ -63,8 +63,7 @@ object Controller {
             value match {
               case CurrentWallet(amount) =>
                 if (amount >= powerUp.cost) {
-                  println("boosted tower")
-                  //model ! BoostTowerIn(cell, powerUp)
+                  model ! BoostTowerIn(cell, powerUp)
                 }
             }
           case Failure(exception) => println(exception)

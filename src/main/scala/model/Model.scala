@@ -77,8 +77,9 @@ object Model {
         case TowerIn(cell) =>
           val tower: Option[Tower[Bullet]] = entities
             .map(_.entity)
-            .find(e => e.isInstanceOf[Tower[Bullet]] && e.position == cell.centralPosition)
-            .map(_.asInstanceOf[Tower[Bullet]])
+            .collectFirst {
+              case tower: Tower[Bullet] if tower.position == cell.centralPosition => tower
+            }
           controller ! TowerOption(tower)
           Behaviors.same
 
@@ -94,6 +95,13 @@ object Model {
 
         case Pay(amount) =>
           stats spend amount
+          Behaviors.same
+
+        case BoostTowerIn(cell, powerUp) =>
+          entities.collect {
+            case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
+              actorRef
+          }.head ! Boost(powerUp)
           Behaviors.same
 
         case BalloonKilled(actorRef) =>
@@ -133,6 +141,13 @@ object Model {
         case ExitedBalloon(balloon, actorRef) =>
           stats lose balloon.life
           ctx.self ! BalloonKilled(actorRef)
+          Behaviors.same
+
+        case BoostTowerIn(cell, powerUp) =>
+          entities.collect {
+            case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
+              actorRef
+          }.head ! Boost(powerUp)
           Behaviors.same
 
         case BulletKilled(actorRef) =>

@@ -83,6 +83,12 @@ object Cells {
       case _                                    => cell
     }
 
+    def contains(position: Vector2D): Boolean =
+      (cell.x + 1) * cellSize >= position.x &&
+        cell.x * cellSize < position.x &&
+        (cell.y + 1) * cellSize >= position.y &&
+        cell.y * cellSize < position.y
+
     def in(track: Track): Boolean = track.cells.map(c => (c.x, c.y)).contains((cell.x, cell.y))
 
     def topLeftPosition: Vector2D = (cell.x * cellSize, cell.y * cellSize)

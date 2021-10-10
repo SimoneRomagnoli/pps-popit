@@ -6,7 +6,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.PowerUp
+import model.entities.towers.towerpowerups.TowerUpgrades.{ PowerUp, TowerPowerUp }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
@@ -31,7 +31,8 @@ object Messages {
   case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
   case class CurrentWallet(amount: Int) extends Input
   case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
-  case class BoostTowerIn(cell: Cell, powerUp: PowerUp) extends Input with Update
+  case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
+  case class Boost(powerUp: TowerPowerUp) extends Update
 
   sealed trait Interaction extends Input {
     def replyTo: ActorRef[Message]

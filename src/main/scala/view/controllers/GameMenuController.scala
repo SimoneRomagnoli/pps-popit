@@ -1,21 +1,13 @@
 package view.controllers
 
 import controller.Messages
-import controller.Messages.{
-  BoostTowerIn,
-  Input,
-  Message,
-  PauseGame,
-  ResumeGame,
-  TowerIn,
-  TowerOption
-}
+import controller.Messages._
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.{ Camo, PowerUp, Ratio, Sight }
+import model.entities.towers.towerpowerups.TowerUpgrades.{ Camo, Ratio, Sight, TowerPowerUp }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -178,7 +170,7 @@ class GameMenuController(
       towerStatus.children += box
     }
 
-    def addToTowerStatus[T](title: String, argument: T, powerUp: PowerUp): Unit = {
+    def addToTowerStatus[T](title: String, argument: T, powerUp: TowerPowerUp): Unit = {
       val box: HBox = new HBox()
       val key: Label = Label(title + ": ")
       val value: Label = Label(argument.toString)

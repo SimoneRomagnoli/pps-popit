@@ -4,6 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.{
   BalloonDetected,
+  Boost,
   EntitySpawned,
   EntityUpdated,
   SearchBalloon,
@@ -15,6 +16,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
+import model.entities.towers.towerpowerups.TowerUpgrades.BoostedTower
 import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
 import scala.language.postfixOps
@@ -56,6 +58,12 @@ case class TowerActor[B <: Bullet](
       shootingTime += elapsedTime
       replyTo ! EntityUpdated(tower, ctx.self)
       Behaviors.same
+
+    case Boost(powerUp) =>
+      println("boost bruh")
+      tower = tower boost powerUp
+      Behaviors.same
+
     case _ => Behaviors.same
   }
 }

@@ -128,6 +128,8 @@ class GameMenuController(
       val space: Double = 10.0
       gameMenu.setSpacing(space)
       towerDepot.setSpacing(space)
+      statusUpperBox.setAlignment(Pos.CenterLeft)
+      statusLowerBox.setAlignment(Pos.CenterLeft)
     }
 
     def setupButtons(): Unit =
@@ -193,6 +195,7 @@ class GameMenuController(
       box.children += emptyBox
       box.children += button
       box.styleClass += "towerStatusBox"
+      box.setAlignment(Pos.CenterLeft)
       towerStatus.children += box
     }
 

@@ -49,7 +49,6 @@ object Model {
       controller: ActorRef[Input],
       stats: GameStats = GameStats(),
       var entities: List[EntityActor] = List(),
-      var actors: Seq[ActorRef[Update]] = Seq(),
       var track: Track = Track(),
       var spawner: Option[ActorRef[Update]] = None) {
 
@@ -73,7 +72,6 @@ object Model {
 
         case EntitySpawned(entity, actor) =>
           entities = EntityActor(actor, entity) :: entities
-          actors = actors :+ actor
           Behaviors.same
 
         case TowerIn(cell) =>
@@ -85,7 +83,7 @@ object Model {
           Behaviors.same
 
         case TickUpdate(elapsedTime, replyTo) =>
-          actors foreach {
+          entities.map(_.actorRef) foreach {
             _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
           }
           updating(replyTo)
@@ -100,7 +98,6 @@ object Model {
 
         case EntityKilled(_, actorRef) =>
           entities = entities.filter(_.actorRef != actorRef)
-          actors = actors.filter(_ != actorRef)
           Behaviors.same
 
         case _ => Behaviors.same
@@ -130,7 +127,6 @@ object Model {
 
         case EntitySpawned(entity, actor) =>
           entities = EntityActor(actor, entity) :: entities
-          actors = actors :+ actor
           ctx.self ! EntityUpdated(entity, actor)
           updating(replyTo, updatedEntities)
 
@@ -139,16 +135,14 @@ object Model {
           ctx.self ! EntityKilled(balloon, actorRef)
           Behaviors.same
 
-        case EntityKilled(entity, actorRef) =>
+        case EntityKilled(_, actorRef) =>
           updatedEntities match {
             case full if full.size == entities.size - 1 =>
               replyTo ! ModelUpdated(full.map(_.entity), stats)
               entities = full
-              actors = actors.filter(_ != actorRef)
               running()
             case notFull =>
               entities = entities.filter(_.actorRef != actorRef)
-              actors = actors.filter(_ != actorRef)
               updating(replyTo, notFull)
           }
 

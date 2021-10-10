@@ -27,15 +27,15 @@ object Positions {
     def -(other: Vector2D): Vector2D = (v.x - other.x, v.y - other.y)
     def *(value: Double): Vector2D = (v.x * value, v.y * value)
 
-    def intersectsWith(balloon: Balloon)(sightRange: Double): Boolean =
+    def intersectsWith(balloon: Balloon)(radius: Double): Boolean =
       distanceVector(v)(balloon position) match {
-        case Vector2DImpl(x, _) if x > ((balloon.boundary._1 / 2) + sightRange) => false
-        case Vector2DImpl(_, y) if y > ((balloon.boundary._2 / 2) + sightRange) => false
-        case Vector2DImpl(x, _) if x <= (balloon.boundary._1 / 2)               => true
-        case Vector2DImpl(_, y) if y <= (balloon.boundary._2 / 2)               => true
+        case Vector2DImpl(x, _) if x > ((balloon.boundary._1 / 2) + radius) => false
+        case Vector2DImpl(_, y) if y > ((balloon.boundary._2 / 2) + radius) => false
+        case Vector2DImpl(x, _) if x <= (balloon.boundary._1 / 2)           => true
+        case Vector2DImpl(_, y) if y <= (balloon.boundary._2 / 2)           => true
         case distance =>
           squareDistance(distance)((balloon.boundary._1 / 2, balloon.boundary._2 / 2)) <= Math.pow(
-            sightRange,
+            radius,
             2
           )
       }

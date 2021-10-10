@@ -3,12 +3,16 @@ package model.actors
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.{ EntityKilled, EntityUpdated, Update, UpdateEntity }
-import model.entities.Entities
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.BulletMessages.BalloonHit
 import model.entities.bullets.Bullets.{ Bullet, Explosion }
 
 import scala.language.postfixOps
+
+object BulletMessages {
+  case class BalloonHit(bullet: Bullet, balloons: List[Balloon]) extends Update
+  case class BulletKilled(bullet: Bullet, actorRef: ActorRef[Update]) extends Update
+}
 
 object BulletActor {
 
@@ -26,12 +30,12 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
         replyTo ! EntityKilled(bullet, ctx.self)
         Behaviors.stopped
       } else {
-        entities.collect { case balloon: Balloon =>
+        val balloons: List[Balloon] = entities.collect { case balloon: Balloon =>
           balloon
-        }.filter(b => bullet hit b).sorted.reverse match {
-          case h :: _ =>
-            replyTo ! BalloonHit(bullet, h)
-            exploding(entities, bullet, replyTo)
+        }
+        balloons.filter(b => bullet hit b) match {
+          case list if list.nonEmpty =>
+            exploding(balloons, bullet, replyTo)
           case _ =>
             replyTo ! EntityUpdated(bullet, ctx.self)
             Behaviors.same
@@ -42,8 +46,8 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
 
   /**
    * Behaviour that the bulletActor assume when the bullet hits a balloon.
-   * @param entities
-   *   all the entities in the game
+   * @param balloons
+   *   all the balloons in the game
    * @param bullet
    *   current bullet
    * @param replyTo
@@ -53,21 +57,21 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
    */
 
   private def exploding(
-      entities: List[Entities.Entity],
+      balloons: List[Balloon],
       bullet: Bullet,
       replyTo: ActorRef[Update]): Behavior[Update] = {
     bullet match {
       case bullet: Explosion =>
-        entities foreach {
-          case balloon: Balloon =>
-            if (bullet include balloon) {
-              replyTo ! BalloonHit(bullet, balloon)
-            }
-          case _ =>
-        }
-      case _ =>
+        replyTo ! BalloonHit(bullet, balloons.filter(bullet include _))
+      /*balloons foreach { balloon =>
+          if (bullet include balloon) {
+            replyTo ! BalloonHit(bullet, balloon)
+          }
+        }*/
+      case bullet =>
+        replyTo ! BalloonHit(bullet, List(balloons.filter(bullet hit _).sorted.reverse.head))
     }
-    replyTo ! EntityKilled(bullet, ctx.self)
+    replyTo ! BulletKilled(bullet, ctx.self)
     Behaviors.stopped
   }
 }

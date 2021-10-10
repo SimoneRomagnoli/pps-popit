@@ -4,20 +4,20 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages
 import controller.Messages._
-import model.actors.BalloonMessages.Hit
+import model.actors.BalloonMessages.{ BalloonKilled, Hit }
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
 import model.actors.SpawnerMessages.StartRound
 import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.BulletMessages.BalloonHit
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
 import model.spawn.SpawnManager.Streak
 import model.spawn.SpawnerMonad.{ add, RichIO }
 import model.stats.Stats.GameStats
-import utils.Constants.Maps.gameGrid
+import utils.Constants.Maps.{ basicTrack, gameGrid }
 
 import scala.language.postfixOps
 
@@ -100,6 +100,10 @@ object Model {
           entities = entities.filter(_.actorRef != actorRef)
           Behaviors.same
 
+        case BalloonKilled(_, actorRef) =>
+          entities = entities.filter(_.actorRef != actorRef)
+          Behaviors.same
+
         case _ => Behaviors.same
       }
 
@@ -135,7 +139,18 @@ object Model {
           ctx.self ! EntityKilled(balloon, actorRef)
           Behaviors.same
 
-        case EntityKilled(_, actorRef) =>
+        /*case EntityKilled(_, actorRef) =>
+          updatedEntities match {
+            case full if full.size == entities.size - 1 =>
+              replyTo ! ModelUpdated(full.map(_.entity), stats)
+              entities = full
+              running()
+            case notFull =>
+              entities = entities.filter(_.actorRef != actorRef)
+              updating(replyTo, notFull)
+          }*/
+
+        case BulletKilled(_, actorRef) =>
           updatedEntities match {
             case full if full.size == entities.size - 1 =>
               replyTo ! ModelUpdated(full.map(_.entity), stats)
@@ -146,6 +161,22 @@ object Model {
               updating(replyTo, notFull)
           }
 
+        case BalloonKilled(_, actorRef) =>
+          if (updatedEntities.map(_.actorRef).contains(actorRef)) {
+            entities = entities.filter(_.actorRef != actorRef)
+            updating(replyTo, updatedEntities.filter(_.actorRef != actorRef))
+          } else {
+            updatedEntities match {
+              case full if full.size == entities.size - 1 =>
+                replyTo ! ModelUpdated(full.map(_.entity), stats)
+                entities = full
+                running()
+              case notFull =>
+                entities = entities.filter(_.actorRef != actorRef)
+                updating(replyTo, notFull)
+            }
+          }
+
         case WalletQuantity(replyTo) =>
           replyTo ! CurrentWallet(stats.wallet)
           Behaviors.same
@@ -154,11 +185,9 @@ object Model {
           stats spend amount
           Behaviors.same
 
-        case BalloonHit(bullet, balloon) =>
-          entities.find(_.entity == balloon) match {
-            case Some(entityActor) =>
-              entityActor.actorRef ! Hit(bullet, ctx.self)
-            case _ =>
+        case BalloonHit(bullet, balloons) =>
+          entities.filter(e => balloons.contains(e.entity)).foreach {
+            _.actorRef ! Hit(bullet, ctx.self)
           }
           Behaviors.same
 

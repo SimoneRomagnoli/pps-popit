@@ -1,20 +1,14 @@
 package model.entities.bullets
 
-import controller.Messages.Update
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, MovementAbility }
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import utils.Constants
 import utils.Constants.Entities.Bullets._
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.{ implicitConversions, postfixOps }
-
-object BulletMessages {
-  case class BalloonHit(bullet: Bullet, balloon: Balloon) extends Update
-}
 
 object Bullets {
 

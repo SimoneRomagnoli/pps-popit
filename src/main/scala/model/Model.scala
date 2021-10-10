@@ -17,7 +17,7 @@ import model.maps.Tracks.Track
 import model.spawn.SpawnManager.Streak
 import model.spawn.SpawnerMonad.{ add, RichIO }
 import model.stats.Stats.GameStats
-import utils.Constants.Maps.{ basicTrack, gameGrid }
+import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
 
@@ -96,10 +96,6 @@ object Model {
           stats spend amount
           Behaviors.same
 
-        case EntityKilled(_, actorRef) =>
-          entities = entities.filter(_.actorRef != actorRef)
-          Behaviors.same
-
         case BalloonKilled(_, actorRef) =>
           entities = entities.filter(_.actorRef != actorRef)
           Behaviors.same
@@ -136,19 +132,8 @@ object Model {
 
         case ExitedBalloon(balloon, actorRef) =>
           stats lose balloon.life
-          ctx.self ! EntityKilled(balloon, actorRef)
+          ctx.self ! BalloonKilled(balloon, actorRef)
           Behaviors.same
-
-        /*case EntityKilled(_, actorRef) =>
-          updatedEntities match {
-            case full if full.size == entities.size - 1 =>
-              replyTo ! ModelUpdated(full.map(_.entity), stats)
-              entities = full
-              running()
-            case notFull =>
-              entities = entities.filter(_.actorRef != actorRef)
-              updating(replyTo, notFull)
-          }*/
 
         case BulletKilled(_, actorRef) =>
           updatedEntities match {

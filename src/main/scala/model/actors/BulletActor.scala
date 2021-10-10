@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages.{ EntityKilled, EntityUpdated, Update, UpdateEntity }
+import controller.Messages.{ EntityUpdated, Update, UpdateEntity }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Explosion }
@@ -27,7 +27,7 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
     case UpdateEntity(elapsedTime, entities, replyTo) =>
       bullet = bullet.update(elapsedTime).asInstanceOf[Bullet]
       if (bullet.exitedFromScreen()) {
-        replyTo ! EntityKilled(bullet, ctx.self)
+        replyTo ! BulletKilled(bullet, ctx.self)
         Behaviors.stopped
       } else {
         val balloons: List[Balloon] = entities.collect { case balloon: Balloon =>

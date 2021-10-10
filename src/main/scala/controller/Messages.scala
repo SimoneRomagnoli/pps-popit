@@ -53,16 +53,11 @@ object Messages {
   case class WalletQuantity(replyTo: ActorRef[Input]) extends Update
   case class Pay(amount: Int) extends Update
 
-  case class UpdateEntity(
-      elapsedTime: Double,
-      entities: List[Entity],
-      replyTo: ActorRef[Update],
-      track: Track)
+  case class UpdateEntity(elapsedTime: Double, entities: List[Entity], replyTo: ActorRef[Update])
       extends Update
-  case class EntityUpdated(entity: Entity) extends Update
+  case class EntityUpdated(entity: Entity, ref: ActorRef[Update]) extends Update
   case class SpawnEntity(entity: Entity) extends Update
   case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
-  case class EntityKilled(entity: Entity, actorRef: ActorRef[Update]) extends Update
   case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
   case class TowerIn(cell: Cell) extends Update
 

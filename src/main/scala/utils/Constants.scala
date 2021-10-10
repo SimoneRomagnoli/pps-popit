@@ -37,7 +37,7 @@ object Constants {
 
     object Towers {
       val towerDefaultSightRange: Double = cellSize * 3 / 2
-      val towerDefaultShotRatio: Double = 0.2
+      val towerDefaultShotRatio: Double = 0.5
       val towerDefaultBoundary: (Double, Double) = (cellSize / 2, cellSize / 2)
       val towerDefaultDirection: Vector2D = (0.0, 0.0)
 
@@ -61,10 +61,10 @@ object Constants {
     object Bullets {
       val bulletDefaultBoundary: (Double, Double) = (20.0, 20.0)
       val bulletDefaultDamage: Double = 1.0
-      val bulletDefaultRadius: Double = 2.0
+      val bulletDefaultRadius: Double = 20.0
       val bulletFreezingTime: Double = 1.0
       val bulletDefaultSpeed: Vector2D = (100.0, -100.0)
-      val bulletSpeedFactor: Double = 400.0
+      val bulletSpeedFactor: Double = 1000.0
     }
   }
 

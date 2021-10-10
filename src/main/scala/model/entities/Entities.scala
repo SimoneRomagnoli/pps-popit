@@ -6,7 +6,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Bullet
-import model.maps.Tracks.Directions.{ DOWN, LEFT, RIGHT, UP }
+import model.maps.Tracks.Directions.{ DOWN, UP }
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -17,7 +17,7 @@ object Entities {
    * Basic entity of the system which:
    *   - has a boundary
    *   - has a position
-   *   - can update its position
+   *   - can change its position
    *   - can update itself
    */
   trait Entity {
@@ -35,7 +35,7 @@ object Entities {
   /**
    * Adds to the [[Entity]] the ability to move:
    *   - has a speed
-   *   - can update its speed
+   *   - can change its speed
    */
   trait MovementAbility extends Entity {
     def speed: Vector2D
@@ -46,8 +46,13 @@ object Entities {
       super.update(dt).asInstanceOf[MovementAbility] move dt
   }
 
-  trait TrackFollowing extends MovementAbility {
-    protected var linearPosition: Double = 0.0
+  /**
+   * Adds to the [[Entity]] the ability to follow a [[Track]]:
+   *   - has a [[Track]]
+   *   - can change the [[Track]]
+   */
+  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
+    private var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing
@@ -55,6 +60,12 @@ object Entities {
     private def following(lp: Double): TrackFollowing = {
       this.linearPosition = lp
       this
+    }
+
+    override def compareTo(o: TrackFollowing): Int = linearPosition - o.linearPosition match {
+      case d if d > 0 => 1
+      case d if d < 0 => -1
+      case _          => 0
     }
 
     override protected def move(dt: Double): Entity = {
@@ -78,7 +89,7 @@ object Entities {
   }
 
   /**
-   * Adds to the [[Entity]] the ability to see other entities within his sight range.
+   * Adds to the [[Entity]] the ability to see a [[Balloon]] within his sight range.
    */
   trait SightAbility extends Entity {
     def sightRange: Double
@@ -95,10 +106,16 @@ object Entities {
     }
   }
 
+  /**
+   * Adds to the [[Entity]] the ability to see even a [[CamoBalloon]] within its sight range.
+   */
   trait EnhancedSightAbility extends SightAbility {
     override def canSee(balloon: Balloon): Boolean = isInSightOfRangeOf(balloon)
   }
 
+  /**
+   * Adds to the [[Entity]] the ability to shoot a [[Bullet]].
+   */
   trait ShotAbility extends Entity {
     def bullet: Bullet
     def shotRatio: Double

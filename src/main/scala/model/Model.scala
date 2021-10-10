@@ -4,17 +4,24 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages
 import controller.Messages._
-import model.actors.{ BalloonActor, BulletActor, TowerActor }
+import model.actors.BalloonMessages.{ BalloonKilled, Hit }
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
+import model.actors.SpawnerMessages.StartRound
+import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ Bullet, Dart }
+import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Tracks.Track
+import model.spawn.SpawnManager.Streak
+import model.spawn.SpawnerMonad.{ add, RichIO }
 import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
+
+case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
 
 /**
  * Model of the application, fundamental in the MVC pattern. It receives [[Update]] messages from
@@ -41,18 +48,18 @@ object Model {
       ctx: ActorContext[Update],
       controller: ActorRef[Input],
       stats: GameStats = GameStats(),
-      var entities: List[Entity] = List(),
-      var actors: Seq[ActorRef[Update]] = Seq(),
-      var track: Track = Track()) {
+      var entities: List[EntityActor] = List(),
+      var track: Track = Track(),
+      var spawner: Option[ActorRef[Update]] = None) {
 
     def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
       track = Track(gameGrid)
+      spawner = Some(ctx.spawnAnonymous(SpawnerActor(ctx.self, track)))
       replyTo ! MapCreated(track)
-      entities = List((Red balloon) on track at (10.0, 5.0))
-      actors = entities map {
-        case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-        case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-        case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
+      spawner.get ! StartRound {
+        (for {
+          _ <- add(Streak(10) :- Red)
+        } yield ()).get
       }
       running()
     }
@@ -60,29 +67,24 @@ object Model {
     def running(): Behavior[Update] =
       Behaviors.receiveMessage {
         case SpawnEntity(entity) =>
-          val actor: ActorRef[Update] = entity match {
-            case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-            case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-            case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
-          }
-          ctx.self ! EntitySpawned(entity, actor)
+          ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
           Behaviors.same
 
         case EntitySpawned(entity, actor) =>
-          entities = entity :: entities
-          actors = actors :+ actor
+          entities = EntityActor(actor, entity) :: entities
           Behaviors.same
 
         case TowerIn(cell) =>
           val tower: Option[Tower[Bullet]] = entities
+            .map(_.entity)
             .find(e => e.isInstanceOf[Tower[Bullet]] && e.position == cell.centralPosition)
             .map(_.asInstanceOf[Tower[Bullet]])
           controller ! TowerOption(tower)
           Behaviors.same
 
         case TickUpdate(elapsedTime, replyTo) =>
-          actors foreach {
-            _ ! UpdateEntity(elapsedTime, entities, ctx.self, track)
+          entities.map(_.actorRef) foreach {
+            _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
           }
           updating(replyTo)
 
@@ -93,51 +95,55 @@ object Model {
         case Pay(amount) =>
           stats spend amount
           Behaviors.same
+
+        case BalloonKilled(actorRef) =>
+          entities = entities.filter(_.actorRef != actorRef)
+          Behaviors.same
+
+        case _ => Behaviors.same
       }
 
     def updating(
         replyTo: ActorRef[Messages.Input],
-        updatedEntities: List[Entity] = List()): Behavior[Update] =
+        updatedEntities: List[EntityActor] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
-        case EntityUpdated(entity) =>
-          entity :: updatedEntities match {
+        case EntityUpdated(entity, ref) =>
+          EntityActor(ref, entity) :: updatedEntities match {
             case full if full.size == entities.size =>
-              replyTo ! ModelUpdated(full, stats)
+              val (balloons, others): (List[Entity], List[Entity]) =
+                full.map(_.entity).partition(_.isInstanceOf[Balloon])
+              replyTo ! ModelUpdated(
+                others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
+                stats
+              )
               entities = full
               running()
             case notFull => updating(replyTo, notFull)
           }
 
         case SpawnEntity(entity) =>
-          val actor: ActorRef[Update] = entity match {
-            case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
-            case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
-            case dart: Dart       => ctx.spawnAnonymous(BulletActor(dart))
-          }
-          ctx.self ! EntitySpawned(entity, actor)
+          ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
           Behaviors.same
 
         case EntitySpawned(entity, actor) =>
-          entities = entity :: entities
-          actors = actors :+ actor
-          updating(replyTo, entity :: updatedEntities)
+          entities = EntityActor(actor, entity) :: entities
+          ctx.self ! EntityUpdated(entity, actor)
+          updating(replyTo, updatedEntities)
 
         case ExitedBalloon(balloon, actorRef) =>
           stats lose balloon.life
-          ctx.self ! EntityKilled(balloon, actorRef)
+          ctx.self ! BalloonKilled(actorRef)
           Behaviors.same
 
-        case EntityKilled(entity, actorRef) =>
-          updatedEntities match {
-            case full if full.size == entities.size - 1 =>
-              replyTo ! ModelUpdated(full, stats)
-              entities = full
-              actors = actors.filter(_ != actorRef)
-              running()
-            case notFull =>
-              entities = entities.filter(_ not entity)
-              actors = actors.filter(_ != actorRef)
-              updating(replyTo, notFull)
+        case BulletKilled(actorRef) =>
+          killEntity(updatedEntities, replyTo, actorRef)
+
+        case BalloonKilled(actorRef) =>
+          if (updatedEntities.map(_.actorRef).contains(actorRef)) {
+            entities = entities.filter(_.actorRef != actorRef)
+            updating(replyTo, updatedEntities.filter(_.actorRef != actorRef))
+          } else {
+            killEntity(updatedEntities, replyTo, actorRef)
           }
 
         case WalletQuantity(replyTo) =>
@@ -148,8 +154,33 @@ object Model {
           stats spend amount
           Behaviors.same
 
+        case BalloonHit(bullet, balloons) =>
+          entities.filter(e => balloons.contains(e.entity)).foreach {
+            _.actorRef ! Hit(bullet, ctx.self)
+          }
+          Behaviors.same
+
         case _ => Behaviors.same
       }
+
+    def killEntity(
+        updatedEntities: List[EntityActor],
+        replyTo: ActorRef[Input],
+        actorRef: ActorRef[Update]): Behavior[Update] = updatedEntities match {
+      case full if full.size == entities.size - 1 =>
+        replyTo ! ModelUpdated(full.map(_.entity), stats)
+        entities = full
+        running()
+      case notFull =>
+        entities = entities.filter(_.actorRef != actorRef)
+        updating(replyTo, notFull)
+    }
+  }
+
+  def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {
+    case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+    case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
+    case bullet: Bullet   => ctx.spawnAnonymous(BulletActor(bullet))
   }
 
 }

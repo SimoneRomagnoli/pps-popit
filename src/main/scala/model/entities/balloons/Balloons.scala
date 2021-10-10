@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ Entity, MovementAbility, Poppable, TrackFollowing }
+import model.entities.Entities.{ Entity, Poppable, TrackFollowing }
 import model.maps.Tracks.Track
 import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
 import utils.Constants.Entities.defaultPosition
@@ -11,7 +11,8 @@ import scala.language.{ implicitConversions, postfixOps }
 object Balloons {
 
   /**
-   * A [[Balloon]] is an [[Entity]] with the ability to move thanks to [[MovementAbility]].
+   * A [[Balloon]] is an [[Entity]] with the ability to move on a [[Track]] thanks to
+   * [[TrackFollowing]] and to be popped thanks to [[Poppable]].
    */
   trait Balloon extends Entity with TrackFollowing with Poppable {
     type Boundary = (Double, Double)
@@ -45,7 +46,7 @@ object Balloons {
   }
 
   /**
-   * A [[Simple]] balloon can be wrapped my many layers of [[Complex]] balloons, each of which
+   * A [[Simple]] balloon can be wrapped by many layers of [[Complex]] balloons, each of which
    * protects the inner ones.
    */
   case class Simple(

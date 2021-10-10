@@ -18,7 +18,7 @@ object SpawnManager {
   case class Streak(
       quantity: Int = 1,
       balloonInfo: BalloonInfo = BalloonInfo(),
-      interval: FiniteDuration = 100.milliseconds)
+      interval: FiniteDuration = 300.milliseconds)
 
   case class Round(streaks: Seq[Streak])
 

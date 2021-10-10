@@ -47,8 +47,10 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
     popped shouldBe regenerating(Blue balloon)
     (popped.update(1) in zeroVector) shouldBe regenerating(Blue balloon)
     popped.update(1).life shouldBe 2
-    (popped.update(regenerationTime) in zeroVector) shouldBe regenerating(Green balloon)
-    popped.update(regenerationTime).life shouldBe 3
+    (popped.update(regenerationTime / 2) in zeroVector) shouldBe regenerating(Blue balloon)
+    (popped
+      .update(regenerationTime / 2)
+      .update(regenerationTime / 2) in zeroVector) shouldBe regenerating(Green balloon)
   }
 
   it should "be able to double wrap a balloon" in {

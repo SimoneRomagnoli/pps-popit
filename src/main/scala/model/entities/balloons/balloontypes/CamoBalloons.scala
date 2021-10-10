@@ -6,6 +6,9 @@ import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 
 object CamoBalloons {
 
+  /**
+   * Adds to a [[Balloon]] the ability to hide from [[model.entities.towers.Towers.Tower]] s.
+   */
   trait Camo extends Balloon { balloon: Balloon => }
 
   case class CamoBalloon(override val balloon: Balloon)

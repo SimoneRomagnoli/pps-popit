@@ -5,10 +5,12 @@ import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Messages.{ EntitySpawned, Update }
 import model.actors.SpawnerActorTest.{ balloonsSpawned, dummyModel, waitSomeTime }
-import model.entities.balloons.BalloonDecorations.Regenerating
+import model.actors.SpawnerMessages.StartRound
+import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
+import model.maps.Tracks.Track
 import model.spawn.SpawnManager.{ Round, Streak }
 import model.spawn.SpawnerMonad.{ add, RichIO }
 import org.scalatest.BeforeAndAfterEach
@@ -37,7 +39,7 @@ class SpawnerActorTest
     with Matchers
     with BeforeAndAfterEach {
   val model: ActorRef[Update] = testKit.spawn(dummyModel)
-  val spawner: ActorRef[Update] = testKit.spawn(SpawnerActor(model))
+  val spawner: ActorRef[Update] = testKit.spawn(SpawnerActor(model, Track()))
   val nBalloons: Int = 5
   val simpleRound: Round = Round(Seq(Streak(nBalloons)))
 
@@ -45,18 +47,21 @@ class SpawnerActorTest
     LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
 
   val complexRound: Round = (for {
-    _ <- add(Streak(nBalloons) :- Red)
-    _ <- add(Streak(nBalloons) :- (Blue & Regenerating & Regenerating & Regenerating))
-    _ <- add((Streak(nBalloons) :- Green) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- Red) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Blue & Camo & Regenerating & Regenerating)) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Green & Lead & Regenerating)) @@ 50.milliseconds)
   } yield ()).get
 
   val complexRoundBalloons: List[Balloon] =
     (LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList appendedAll
       LazyList
-        .iterate((Blue balloon) adding Regenerating)(b => b)
+        .iterate((Blue balloon) adding List(Camo, Regenerating))(b => b)
         .take(nBalloons)
         .toList appendedAll
-      LazyList.iterate(Green balloon)(b => b).take(nBalloons).toList).reverse
+      LazyList
+        .iterate((Green balloon) adding List(Lead, Camo))(b => b)
+        .take(nBalloons)
+        .toList).reverse
 
   override def beforeEach(): Unit = balloonsSpawned = List()
 

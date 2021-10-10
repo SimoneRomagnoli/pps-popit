@@ -11,7 +11,7 @@ import scala.language.postfixOps
 
 object BulletMessages {
   case class BalloonHit(bullet: Bullet, balloons: List[Balloon]) extends Update
-  case class BulletKilled(bullet: Bullet, actorRef: ActorRef[Update]) extends Update
+  case class BulletKilled(actorRef: ActorRef[Update]) extends Update
 }
 
 object BulletActor {
@@ -27,7 +27,7 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
     case UpdateEntity(elapsedTime, entities, replyTo) =>
       bullet = bullet.update(elapsedTime).asInstanceOf[Bullet]
       if (bullet.exitedFromScreen()) {
-        replyTo ! BulletKilled(bullet, ctx.self)
+        replyTo ! BulletKilled(ctx.self)
         Behaviors.stopped
       } else {
         val balloons: List[Balloon] = entities.collect { case balloon: Balloon =>
@@ -63,15 +63,10 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
     bullet match {
       case bullet: Explosion =>
         replyTo ! BalloonHit(bullet, balloons.filter(bullet include _))
-      /*balloons foreach { balloon =>
-          if (bullet include balloon) {
-            replyTo ! BalloonHit(bullet, balloon)
-          }
-        }*/
       case bullet =>
         replyTo ! BalloonHit(bullet, List(balloons.filter(bullet hit _).sorted.reverse.head))
     }
-    replyTo ! BulletKilled(bullet, ctx.self)
+    replyTo ! BulletKilled(ctx.self)
     Behaviors.stopped
   }
 }

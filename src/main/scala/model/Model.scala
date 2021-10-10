@@ -96,7 +96,7 @@ object Model {
           stats spend amount
           Behaviors.same
 
-        case BalloonKilled(_, actorRef) =>
+        case BalloonKilled(actorRef) =>
           entities = entities.filter(_.actorRef != actorRef)
           Behaviors.same
 
@@ -132,34 +132,18 @@ object Model {
 
         case ExitedBalloon(balloon, actorRef) =>
           stats lose balloon.life
-          ctx.self ! BalloonKilled(balloon, actorRef)
+          ctx.self ! BalloonKilled(actorRef)
           Behaviors.same
 
-        case BulletKilled(_, actorRef) =>
-          updatedEntities match {
-            case full if full.size == entities.size - 1 =>
-              replyTo ! ModelUpdated(full.map(_.entity), stats)
-              entities = full
-              running()
-            case notFull =>
-              entities = entities.filter(_.actorRef != actorRef)
-              updating(replyTo, notFull)
-          }
+        case BulletKilled(actorRef) =>
+          killEntity(updatedEntities, replyTo, actorRef)
 
-        case BalloonKilled(_, actorRef) =>
+        case BalloonKilled(actorRef) =>
           if (updatedEntities.map(_.actorRef).contains(actorRef)) {
             entities = entities.filter(_.actorRef != actorRef)
             updating(replyTo, updatedEntities.filter(_.actorRef != actorRef))
           } else {
-            updatedEntities match {
-              case full if full.size == entities.size - 1 =>
-                replyTo ! ModelUpdated(full.map(_.entity), stats)
-                entities = full
-                running()
-              case notFull =>
-                entities = entities.filter(_.actorRef != actorRef)
-                updating(replyTo, notFull)
-            }
+            killEntity(updatedEntities, replyTo, actorRef)
           }
 
         case WalletQuantity(replyTo) =>
@@ -178,6 +162,19 @@ object Model {
 
         case _ => Behaviors.same
       }
+
+    def killEntity(
+        updatedEntities: List[EntityActor],
+        replyTo: ActorRef[Input],
+        actorRef: ActorRef[Update]): Behavior[Update] = updatedEntities match {
+      case full if full.size == entities.size - 1 =>
+        replyTo ! ModelUpdated(full.map(_.entity), stats)
+        entities = full
+        running()
+      case notFull =>
+        entities = entities.filter(_.actorRef != actorRef)
+        updating(replyTo, notFull)
+    }
   }
 
   def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {

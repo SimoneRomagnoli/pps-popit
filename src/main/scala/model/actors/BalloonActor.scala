@@ -10,7 +10,7 @@ import utils.Constants
 
 object BalloonMessages {
   case class Hit(bullet: Bullet, replyTo: ActorRef[Update]) extends Update
-  case class BalloonKilled(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
+  case class BalloonKilled(actorRef: ActorRef[Update]) extends Update
 }
 
 /**
@@ -46,7 +46,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
     case Hit(bullet, replyTo) =>
       balloon.pop(bullet) match {
         case None =>
-          replyTo ! BalloonKilled(balloon, ctx.self)
+          replyTo ! BalloonKilled(ctx.self)
           Behaviors.stopped
         case Some(b) =>
           balloon = b

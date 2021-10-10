@@ -57,6 +57,20 @@ object Controller {
         model ! message.asInstanceOf[Update]
         interacting(replyTo)
 
+      case BoostTowerIn(cell, powerUp) =>
+        model ask WalletQuantity onComplete {
+          case Success(value) =>
+            value match {
+              case CurrentWallet(amount) =>
+                if (amount >= powerUp.cost) {
+                  println("boosted tower")
+                  //model ! BoostTowerIn(cell, powerUp)
+                }
+            }
+          case Failure(exception) => println(exception)
+        }
+        Behaviors.same
+
       case PlaceTower(cell, towerType) =>
         model ask WalletQuantity onComplete {
           case Success(value) =>

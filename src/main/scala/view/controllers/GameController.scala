@@ -179,10 +179,12 @@ class GameController(
               option match {
                 case Some(_) =>
                 case _ =>
-                  removeEffects()
-                  gameMenuController.unselectDepot()
-                  occupy(cell)
-                  send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+                  Platform runLater {
+                    removeEffects()
+                    gameMenuController.unselectDepot()
+                    occupy(cell)
+                    send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+                  }
               }
           }
         case Failure(exception) => println(exception)

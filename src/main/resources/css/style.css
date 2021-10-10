@@ -23,7 +23,8 @@
 }
 
 .inputButton {
--fx-background-color: #FEC89A;
+-fx-background-color: #FFE5D9;
+-fx-cursor: hand;
 -fx-margin: 10;
 -fx-padding: 0 10;
 -fx-border-color:#000000;
@@ -51,7 +52,7 @@
 }
 
 .towerDepotTitle {
--fx-padding: 5 5 0 5;
+-fx-padding: 5 5 0 0;
 }
 
 .towerBox {
@@ -64,6 +65,30 @@
 -fx-border-style: solid;
 -fx-border-radius: 10;
 -fx-background-radius: 10;
+}
+
+.towerStatusBox {
+-fx-padding: 10 0;
+-fx-margin: 10 0;
+-fx-spacing: 10 0;
+}
+
+.towerStatusImage {
+-fx-padding: 10;
+-fx-margin: 10;
+-fx-border-color:#000000;
+-fx-border-width: 2;
+-fx-border-style: solid;
+-fx-border-radius: 10;
+}
+
+.powerUpButton {
+-fx-padding: 0;
+-fx-margin: 0;
+-fx-border-color:#000000;
+-fx-border-width: 2;
+-fx-border-style: solid;
+-fx-border-radius: 10;
 }
 
 .selected {

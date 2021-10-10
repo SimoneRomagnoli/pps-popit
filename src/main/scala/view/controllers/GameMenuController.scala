@@ -1,17 +1,28 @@
 package view.controllers
 
 import controller.Messages
-import controller.Messages.{ Input, Message, PauseGame, ResumeGame }
+import controller.Messages.{
+  BoostTowerIn,
+  Input,
+  Message,
+  PauseGame,
+  ResumeGame,
+  TowerIn,
+  TowerOption
+}
+import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.entities.towers.towerpowerups.TowerUpgrades.{ Camo, PowerUp, Ratio, Sight }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
+import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
@@ -19,7 +30,9 @@ import utils.Constants.Maps.outerCell
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{ Failure, Success }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
@@ -92,12 +105,15 @@ class GameMenuController(
       highlight(tower, false)
     } else {
       currentCell = cell
-      Rendering a tower into towerStatus.children
-      //addToTowerStatus("Position", tower.position)
-      addToTowerStatus("Sight Range", tower.sightRange)
-      addToTowerStatus("Shot Ratio", tower.shotRatio)
-      addToTowerStatus("Damage", tower.bullet.damage)
-      addToTowerStatus("Bullet Speed", tower.bullet.speed)
+      addToTowerStatus(Rendering a tower as single)
+      addToTowerStatus("Sight Range", tower.sightRange, Sight)
+      addToTowerStatus("Shot Ratio", tower.shotRatio, Ratio)
+      //addToTowerStatus("Damage", tower.bullet.damage, Damage)
+      addToTowerStatus(
+        "Camo Vision",
+        if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",
+        Camo
+      )
       highlight(tower, true)
     }
   }
@@ -152,13 +168,47 @@ class GameMenuController(
         towerDepot.children.add(towerBox)
       }
 
-    def addToTowerStatus[T](title: String, argument: T): Unit = {
+    def addToTowerStatus(shape: Shape): Unit = {
+      val box: HBox = new HBox()
+      box.children += shape
+      box.styleClass += "towerStatusImage"
+      box.setAlignment(Pos.Center)
+      towerStatus.children += box
+    }
+
+    def addToTowerStatus[T](title: String, argument: T, powerUp: PowerUp): Unit = {
       val box: HBox = new HBox()
       val key: Label = Label(title + ": ")
       val value: Label = Label(argument.toString)
+      val emptyBox: HBox = new HBox()
+      emptyBox.hgrow = Always
+      val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
+      button.onMouseClicked = _ => {
+        send(BoostTowerIn(currentCell, powerUp))
+        refreshTowerStatus()
+      }
+      button.styleClass += "inputButton"
       box.children += key
       box.children += value
+      box.children += emptyBox
+      box.children += button
+      box.styleClass += "towerStatusBox"
       towerStatus.children += box
+    }
+
+    def refreshTowerStatus(): Unit = Platform runLater {
+      ask(TowerIn(currentCell)) onComplete {
+        case Failure(exception) => println(exception)
+        case Success(value) =>
+          value.asInstanceOf[TowerOption] match {
+            case TowerOption(option) =>
+              option match {
+                case Some(tower) =>
+                  fillTowerStatus(tower, currentCell); fillTowerStatus(tower, currentCell)
+                case _ =>
+              }
+          }
+      }
     }
   }
 }

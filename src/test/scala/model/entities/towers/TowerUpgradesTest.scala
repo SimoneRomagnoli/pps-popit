@@ -6,8 +6,15 @@ import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.{ BoostedTower, Camo, Ratio, Sight }
+import model.entities.towers.towerpowerups.TowerUpgrades.{
+  BoostedTower,
+  Camo,
+  Damage,
+  Ratio,
+  Sight
+}
 import org.scalatest.wordspec.AnyWordSpecLike
+import utils.Constants.Entities.Bullets.bulletDefaultDamage
 
 import scala.language.postfixOps
 
@@ -53,6 +60,17 @@ class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         (arrowTower canSee balloon) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Sight
         (boostedTower canSee balloon) shouldBe true
+      }
+    }
+    "the tower get the damage boost" should {
+      "increment the bullet damage value" in {
+        val arrowTower: Tower[Dart] =
+          (Arrow tower) has values sight sightRange ratio shotRatio
+
+        arrowTower.bullet.damage shouldBe bulletDefaultDamage
+        val boostedTower: Tower[Dart] = arrowTower boost Damage
+        boostedTower.bullet.isInstanceOf[Dart] shouldBe true
+        boostedTower.bullet.damage shouldBe (bulletDefaultDamage * Damage.factor)
       }
     }
     "a normal tower see a camo balloon" should {

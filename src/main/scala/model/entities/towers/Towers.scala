@@ -32,9 +32,11 @@ object Towers {
 
     def has(v: values.type): Tower[B] = this
 
-    override def ratio(radius: Double): Tower[B]
+    override def ratio(ratio: Double): Tower[B]
 
-    override def sight(ratio: Double): Tower[B]
+    override def sight(radius: Double): Tower[B]
+
+    def damage(ammo: Bullet): Tower[B]
 
     override def toString: String = "towers/" + bullet.toString + "-TOWER"
 
@@ -85,6 +87,8 @@ object Towers {
     override def sight(radius: Double): Tower[B] = copy(sightRange = radius)
 
     override def ratio(ratio: Double): Tower[B] = copy(shotRatio = ratio)
+
+    override def damage(ammo: Bullet): Tower[B] = copy(bullet = ammo.asInstanceOf[B])
 
     override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
 

@@ -23,6 +23,8 @@ object Bullets {
 
     override def in(position: Vector2D): Bullet
     override def at(speed: Vector2D): Bullet
+
+    def hurt(damage: Double): Bullet
   }
 
   /**
@@ -44,12 +46,17 @@ object Bullets {
       extends Bullet {
 
     override def in(pos: Vector2D): Bullet = {
-      position = pos
+      this.position = pos
       this
     }
 
     override def at(velocity: Vector2D): Bullet = {
       this.speed = velocity
+      this
+    }
+
+    override def hurt(damage: Double): Bullet = {
+      this.damage = damage
       this
     }
 

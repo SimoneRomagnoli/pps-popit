@@ -6,6 +6,13 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages._
 import model.Positions.Vector2D
 import model.actors.TowerActorTest._
+import model.actors.TowerMessages.{
+  BalloonDetected,
+  BalloonMoved,
+  SearchBalloon,
+  Tick,
+  UpdatePosition
+}
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow

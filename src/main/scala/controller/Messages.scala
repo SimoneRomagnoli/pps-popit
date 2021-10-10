@@ -61,11 +61,4 @@ object Messages {
   case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
   case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
   case class TowerIn(cell: Cell) extends Update
-
-  //TOWER
-  case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update
-  case class BalloonDetected() extends Update
-  case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
-  case class Tick(replyTo: ActorRef[Update]) extends Update
-  case class BalloonMoved(balloon: Balloon) extends Update
 }

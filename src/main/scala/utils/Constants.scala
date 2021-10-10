@@ -48,13 +48,13 @@ object Constants {
       }
 
       object TowerPowerUps {
-        // val boostedRatioTime: Double = 3.0
         val boostedRatioCost: Int = 200
         val boostedRatioFactor: Double = 2.0
-        // val boostedSightTime: Double = 5.0
         val boostedSightCost: Int = 200
         val boostedSightFactor: Double = 2.0
         val boostedCamoCost: Int = 200
+        val boostedDamageCost: Int = 200
+        val boostedDamageFactor: Double = 2.0
       }
     }
 

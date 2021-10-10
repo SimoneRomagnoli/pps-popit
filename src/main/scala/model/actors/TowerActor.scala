@@ -2,16 +2,9 @@ package model.actors
 
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages.{
-  BalloonDetected,
-  Boost,
-  EntitySpawned,
-  EntityUpdated,
-  SearchBalloon,
-  Update,
-  UpdateEntity
-}
+import controller.Messages.{ Boost, EntitySpawned, EntityUpdated, Update, UpdateEntity }
 import model.Positions.{ normalized, vector }
+import model.actors.TowerMessages.{ BalloonDetected, SearchBalloon }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
@@ -20,6 +13,14 @@ import model.entities.towers.towerpowerups.TowerUpgrades.BoostedTower
 import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
 import scala.language.postfixOps
+
+object TowerMessages {
+  case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update
+  case class BalloonDetected() extends Update
+  case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
+  case class Tick(replyTo: ActorRef[Update]) extends Update
+  case class BalloonMoved(balloon: Balloon) extends Update
+}
 
 object TowerActor {
 

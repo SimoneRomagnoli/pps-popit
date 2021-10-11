@@ -1,10 +1,12 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Messages.{ Input, Message, PlaceTower, TowerIn, TowerOption }
+import controller.Controller.ControllerMessages.{ PlaceTower, TowerOption }
+import controller.Messages.{ Input, Message }
 import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.ImagePattern
+import model.Model.ModelMessages.TowerIn
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
@@ -183,15 +185,17 @@ class GameController(
                     removeEffects()
                     gameMenuController.unselectDepot()
                     send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-                    ask(TowerIn(cell)) onComplete { case Success(value) =>
-                      value match {
-                        case TowerOption(option) =>
-                          option match {
-                            case Some(_) => occupy(cell)
-                            case _       =>
-                          }
-                        case _ =>
-                      }
+                    ask(TowerIn(cell)) onComplete {
+                      case Failure(exception) => println(exception)
+                      case Success(value) =>
+                        value match {
+                          case TowerOption(option) =>
+                            option match {
+                              case Some(_) => occupy(cell)
+                              case _       =>
+                            }
+                          case _ =>
+                        }
                     }
                   }
               }

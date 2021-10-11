@@ -2,8 +2,10 @@ package model
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Messages
+import controller.Controller.ControllerMessages._
+import controller.GameLoop.GameLoopMessages.{ MapCreated, ModelUpdated }
 import controller.Messages._
+import model.Model.ModelMessages._
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
 import model.actors.SpawnerMessages.StartRound
@@ -13,6 +15,7 @@ import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
+import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 import model.spawn.SpawnManager.Streak
 import model.spawn.SpawnerMonad.{ add, RichIO }
@@ -28,6 +31,21 @@ case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
  * the game loop and updates the actors governing game entities.
  */
 object Model {
+
+  object ModelMessages {
+    case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
+    case class NewMap(replyTo: ActorRef[Input]) extends Update
+    case class WalletQuantity(replyTo: ActorRef[Input]) extends Update
+    case class Pay(amount: Int) extends Update
+
+    case class UpdateEntity(elapsedTime: Double, entities: List[Entity], replyTo: ActorRef[Update])
+        extends Update
+    case class EntityUpdated(entity: Entity, ref: ActorRef[Update]) extends Update
+    case class SpawnEntity(entity: Entity) extends Update
+    case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
+    case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
+    case class TowerIn(cell: Cell) extends Update
+  }
 
   object ModelActor {
 
@@ -112,7 +130,7 @@ object Model {
       }
 
     def updating(
-        replyTo: ActorRef[Messages.Input],
+        replyTo: ActorRef[Input],
         updatedEntities: List[EntityActor] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
         case EntityUpdated(entity, ref) =>

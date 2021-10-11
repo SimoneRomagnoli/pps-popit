@@ -2,8 +2,15 @@ package controller
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerMessages._
+import controller.GameLoop.GameLoopMessages._
 import controller.GameLoop.Time._
 import controller.Messages._
+import model.Model.ModelMessages._
+import model.entities.Entities.Entity
+import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
+import view.View.ViewMessages._
 
 import scala.concurrent.duration.DurationDouble
 
@@ -12,6 +19,14 @@ import scala.concurrent.duration.DurationDouble
  * model and [[Render]] messages to a view, performing a fundamental duty in the MVC pattern.
  */
 object GameLoop {
+
+  object GameLoopMessages {
+    case object Tick extends Input
+    case class Start() extends Input
+    case class MapCreated(track: Track) extends Input
+    case class ModelUpdated(entities: List[Entity], stats: GameStats) extends Input
+
+  }
 
   /**
    * The loop is obtained by exploiting the reactivity of an actor: the actor just sends a [[Tick]]

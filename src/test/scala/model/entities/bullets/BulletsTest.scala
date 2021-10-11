@@ -60,9 +60,9 @@ class BulletsTest extends AnyFlatSpec with Matchers {
   "A Dart" should "collide with a ballon" in {
     dart in (0.0, 0.0)
     dart at (100.0, 100.0)
-    dart hit (balloon) shouldBe false
+    dart hit balloon shouldBe false
     dart.update(1.0)
-    dart hit (balloon) shouldBe true
+    dart hit balloon shouldBe true
   }
 
   "A Dart" should "recognize when it exit from the screen" in {

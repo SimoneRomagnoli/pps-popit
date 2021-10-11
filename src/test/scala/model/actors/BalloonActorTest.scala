@@ -4,28 +4,17 @@ import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.GameLoopActor
-import controller.Messages.{
-  EntityUpdated,
-  Input,
-  ModelUpdated,
-  Render,
-  RenderEntities,
-  RenderStats,
-  Start,
-  TickUpdate,
-  Update,
-  UpdateEntity
-}
+import controller.GameLoop.GameLoopMessages._
+import controller.Messages.{ Input, Render, Update }
+import model.Model.ModelMessages._
 import model.actors.BalloonActorTest.{ dummyModel, testBalloon }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.maps.Grids.Grid
-import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants
 import utils.Constants.Entities.defaultPosition
+import view.View.ViewMessages._
 
 import scala.language.postfixOps
 

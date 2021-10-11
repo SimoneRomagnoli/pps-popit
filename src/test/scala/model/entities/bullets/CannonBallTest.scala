@@ -1,12 +1,11 @@
 package model.entities.bullets
 
-import model.Positions.{ fromTuple, Vector2D }
+import model.Positions.Vector2D
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
+import model.entities.bullets.Bullets.CannonBall
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import utils.Constants
 import utils.Constants.Entities.Bullets.{
   bulletDefaultBoundary,
   bulletDefaultDamage,

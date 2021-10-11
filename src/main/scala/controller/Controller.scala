@@ -5,12 +5,17 @@ import akka.actor.typed.Scheduler
 import akka.util.Timeout
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopActor
+import controller.GameLoop.GameLoopMessages.Start
 import controller.Messages._
 import model.Model.ModelActor
-import model.actors.TowerActor
+import model.Model.ModelMessages.{ Pay, SpawnEntity, WalletQuantity }
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.entities.towers.PowerUps.TowerPowerUp
+import model.maps.Cells.Cell
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
@@ -22,6 +27,28 @@ import scala.util.{ Failure, Success }
  * the view controllers.
  */
 object Controller {
+
+  object ControllerMessages {
+    case class NewGame() extends Input
+    case class PauseGame() extends Input
+    case class ResumeGame() extends Input
+    case class NewTimeRatio(value: Double) extends Input
+    case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
+    case class CurrentWallet(amount: Int) extends Input
+    case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
+    case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
+    case class Boost(powerUp: TowerPowerUp) extends Update
+
+    sealed trait Interaction extends Input {
+      def replyTo: ActorRef[Message]
+      def request: Message
+    }
+
+    case class ActorInteraction(
+        override val replyTo: ActorRef[Message],
+        override val request: Message)
+        extends Interaction
+  }
 
   object ControllerActor {
 
@@ -53,7 +80,7 @@ object Controller {
         gameLoop() ! Start()
         Behaviors.same
 
-      case MvcInteraction(replyTo, message) =>
+      case ActorInteraction(replyTo, message) =>
         model ! message.asInstanceOf[Update]
         interacting(replyTo)
 

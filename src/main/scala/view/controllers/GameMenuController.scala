@@ -1,19 +1,15 @@
 package view.controllers
 
+import controller.Controller.ControllerMessages.{ BoostTowerIn, PauseGame, ResumeGame, TowerOption }
 import controller.Messages
 import controller.Messages._
+import model.Model.ModelMessages.TowerIn
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.{
-  Camo,
-  Damage,
-  Ratio,
-  Sight,
-  TowerPowerUp
-}
+import model.entities.towers.PowerUps.{ Camo, Damage, Ratio, Sight, TowerPowerUp }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -183,6 +179,7 @@ class GameMenuController(
       val emptyBox: HBox = new HBox()
       emptyBox.hgrow = Always
       val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
+      button.disable = true
       button.onMouseClicked = _ => {
         send(BoostTowerIn(currentCell, powerUp))
         refreshTowerStatus()

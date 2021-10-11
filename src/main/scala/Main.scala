@@ -3,6 +3,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, ActorSystem, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerActor
+import controller.Controller.ControllerMessages._
 import controller.Messages._
 import javafx.scene.layout.BorderPane
 import scalafx.Includes._
@@ -34,7 +35,7 @@ object Main extends JFXApp3 {
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
         mainController.setSend(controller ! _)
-        mainController.setAsk(request => controller ? (ctx => MvcInteraction(ctx, request)))
+        mainController.setAsk(request => controller ? (ctx => ActorInteraction(ctx, request)))
         controller ! NewGame()
         Behaviors.empty
       },

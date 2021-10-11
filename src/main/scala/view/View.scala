@@ -2,9 +2,12 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Messages.{ Render, RenderEntities, RenderMap, RenderStats }
+import controller.Messages.Render
 import model.entities.Entities.Entity
+import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
+import view.View.ViewMessages._
 import view.controllers.{ ViewGameController, ViewMainController }
 
 import scala.language.reflectiveCalls
@@ -14,6 +17,12 @@ import scala.language.reflectiveCalls
  * game loop and renders their content via fxml controllers.
  */
 object View {
+
+  object ViewMessages {
+    case class RenderStats(stats: GameStats) extends Render
+    case class RenderEntities(entities: List[Entity]) extends Render
+    case class RenderMap(track: Track) extends Render
+  }
 
   object ViewActor {
 

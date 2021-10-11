@@ -2,14 +2,16 @@ package model.actors
 
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages.{ Boost, EntitySpawned, EntityUpdated, Update, UpdateEntity }
+import controller.Controller.ControllerMessages.Boost
+import controller.Messages._
+import model.Model.ModelMessages._
 import model.Positions.{ normalized, vector }
 import model.actors.TowerMessages.{ BalloonDetected, SearchBalloon }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.BoostedTower
+import model.entities.towers.PowerUps.BoostedTower
 import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
 import scala.language.postfixOps
@@ -61,7 +63,6 @@ case class TowerActor[B <: Bullet](
       Behaviors.same
 
     case Boost(powerUp) =>
-      println("boost bruh")
       tower = tower boost powerUp
       Behaviors.same
 

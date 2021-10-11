@@ -3,6 +3,10 @@ package controller
 import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerMessages._
+import controller.GameLoop.GameLoopMessages._
+import view.View.ViewMessages._
+import model.Model.ModelMessages._
 import controller.GameLoop.GameLoopActor
 import controller.GameLoopTest._
 import controller.Messages._

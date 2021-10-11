@@ -6,13 +6,7 @@ import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.{
-  BoostedTower,
-  Camo,
-  Damage,
-  Ratio,
-  Sight
-}
+import PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.Constants.Entities.Bullets.bulletDefaultDamage
 

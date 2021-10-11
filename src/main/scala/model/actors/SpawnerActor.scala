@@ -3,7 +3,8 @@ package model.actors
 import akka.actor.typed.scaladsl.ActorContext
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Messages.{ EntitySpawned, Update }
+import controller.Messages.Update
+import model.Model.ModelMessages.EntitySpawned
 import model.actors.SpawnerMessages.{ SpawnTick, StartRound }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon

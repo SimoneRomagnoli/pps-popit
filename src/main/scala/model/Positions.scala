@@ -52,8 +52,10 @@ object Positions {
 
   /**
    * Calculates the distance between two points.
-   * @param from
-   * @param to
+   * @param from,
+   *   first position
+   * @param to,
+   *   second position
    * @return
    */
   def distance(from: Vector2D)(to: Vector2D): Double =

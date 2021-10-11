@@ -1,20 +1,11 @@
-package model.entities.towers.towerpowerups
+package model.entities.towers
 
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.{ BaseTower, Tower }
-import model.entities.towers.values
-import utils.Constants.Entities.Towers.TowerPowerUps.{
-  boostedCamoCost,
-  boostedDamageCost,
-  boostedDamageFactor,
-  boostedRatioCost,
-  boostedRatioFactor,
-  boostedSightCost,
-  boostedSightFactor
-}
+import utils.Constants.Entities.Towers.TowerPowerUps._
 
-object TowerUpgrades {
+object PowerUps {
 
   sealed trait PowerUp {
     def cost: Int

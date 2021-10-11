@@ -1,0 +1,46 @@
+name: CD
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Create Release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            java: 15
+          - os: windows-latest
+            java: 15
+          - os: macos-latest
+            java: 15
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Setup
+        uses: olafurpg/setup-scala@v10
+        with:
+          java-version: "adopt@1.${{ matrix.java }}"
+      - name: Lint
+        run: sbt scalafmt
+      - name: Lint Check
+        run: sbt scalafmtCheck
+      - name: Build and test
+        run: sbt test
+        shell: bash
+      - name: Create jar
+        run: sbt assembly
+        shell: bash
+      - name: Create Release
+        id: create_release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          title: pps-popit-${{ matrix.os }}
+          automatic_release_tag: 0.2.0
+          draft: false
+          prerelease: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          files: target/scala-2.13/*.jar

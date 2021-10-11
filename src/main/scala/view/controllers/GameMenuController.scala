@@ -7,7 +7,13 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.entities.towers.towerpowerups.TowerUpgrades.{ Camo, Ratio, Sight, TowerPowerUp }
+import model.entities.towers.towerpowerups.TowerUpgrades.{
+  Camo,
+  Damage,
+  Ratio,
+  Sight,
+  TowerPowerUp
+}
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -100,7 +106,7 @@ class GameMenuController(
       addToTowerStatus(Rendering a tower as single)
       addToTowerStatus("Sight Range", tower.sightRange, Sight)
       addToTowerStatus("Shot Ratio", tower.shotRatio, Ratio)
-      //addToTowerStatus("Damage", tower.bullet.damage, Damage)
+      addToTowerStatus("Damage", tower.bullet.damage, Damage)
       addToTowerStatus(
         "Camo Vision",
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",

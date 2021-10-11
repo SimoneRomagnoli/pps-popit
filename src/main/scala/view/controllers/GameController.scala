@@ -182,8 +182,17 @@ class GameController(
                   Platform runLater {
                     removeEffects()
                     gameMenuController.unselectDepot()
-                    occupy(cell)
                     send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+                    ask(TowerIn(cell)) onComplete { case Success(value) =>
+                      value match {
+                        case TowerOption(option) =>
+                          option match {
+                            case Some(_) => occupy(cell)
+                            case _       =>
+                          }
+                        case _ =>
+                      }
+                    }
                   }
               }
           }

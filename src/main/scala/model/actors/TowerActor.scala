@@ -4,7 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.{ Boost, EntitySpawned, EntityUpdated, Update, UpdateEntity }
 import model.Positions.{ normalized, vector }
-import model.actors.TowerMessages.{ BalloonDetected, SearchBalloon }
+import model.actors.TowerMessages.{ BalloonDetected, SearchBalloon, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
@@ -20,6 +20,7 @@ object TowerMessages {
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
   case class Tick(replyTo: ActorRef[Update]) extends Update
   case class BalloonMoved(balloon: Balloon) extends Update
+  case class TowerBoosted[B <: Bullet](tower: Tower[B], actorRef: ActorRef[Update]) extends Update
 }
 
 object TowerActor {
@@ -60,9 +61,9 @@ case class TowerActor[B <: Bullet](
       replyTo ! EntityUpdated(tower, ctx.self)
       Behaviors.same
 
-    case Boost(powerUp) =>
-      println("boost bruh")
+    case Boost(powerUp, replyTo) =>
       tower = tower boost powerUp
+      replyTo ! TowerBoosted(tower, ctx.self)
       Behaviors.same
 
     case _ => Behaviors.same

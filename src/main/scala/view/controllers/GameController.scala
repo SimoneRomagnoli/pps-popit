@@ -3,9 +3,7 @@ package view.controllers
 import cats.effect.IO
 import controller.Controller.ControllerMessages.{ PlaceTower, TowerOption }
 import controller.Messages.{ Input, Message }
-import javafx.scene.image.Image
 import javafx.scene.input.MouseEvent
-import javafx.scene.paint.ImagePattern
 import model.Model.ModelMessages.TowerIn
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
@@ -16,16 +14,17 @@ import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.control.Label
-import scalafx.scene.layout.{ BorderPane, Pane, VBox }
+import scalafx.scene.layout.{ BorderPane, Pane, StackPane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import view.render.Animations.Animations
 import view.render.Drawings.Drawing
 import view.render.{ Animating, Rendering }
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.language.{ implicitConversions, reflectiveCalls }
 import scala.util.{ Failure, Random, Success }
 
@@ -50,11 +49,13 @@ trait ViewGameController extends ViewController {
 @sfxml
 class GameController(
     val mainPane: BorderPane,
-    val gameBoard: Pane,
+    val gameBoard: StackPane,
+    val trackPane: Pane,
+    val highlightPane: Pane,
+    val entitiesPane: Pane,
+    val animationsPane: Pane,
     val gameMenu: VBox,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
-    var mapNodes: Int = 0,
-    var highlightNodes: Int = 0,
     var send: Input => Unit,
     var ask: Message => Future[Message],
     var occupiedCells: Seq[Cell] = Seq())
@@ -62,15 +63,21 @@ class GameController(
 
   import GameUtilities._
   import MouseEvents._
-
+  val images: Animations = Animations()
   val drawing: Drawing = Drawing()
-  val bulletPic: ImagePattern = new ImagePattern(new Image("images/bullets/DART.png"))
   setup()
 
   override def setup(): Unit = Platform runLater {
     this draw gameGrid
     loading()
     Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+    Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
+    Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
+    Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
+    Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
+    highlightPane.setMouseTransparent(true)
+    entitiesPane.setMouseTransparent(true)
+    animationsPane.setMouseTransparent(true)
     Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
     setMouseHandlers()
     gameMenuController.setup()
@@ -97,12 +104,11 @@ class GameController(
       .layoutYProperty()
       .bind(gameBoard.heightProperty().subtract(loadingLabel.heightProperty()).divide(2))
 
-    gameBoard.children.add(loadingLabel)
+    trackPane.children.add(loadingLabel)
   }
 
   override def reset(): Unit = Platform runLater {
-    gameBoard.children.clear()
-    mapNodes = 0
+    trackPane.children.clear()
   }
 
   override def update(stats: GameStats): Unit = Platform runLater {
@@ -110,47 +116,43 @@ class GameController(
   }
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {
-    mapNodes += grid.width * grid.height
-    Rendering a grid into gameBoard.children
+    Rendering a grid into trackPane.children
   }
 
   override def draw(track: Track): Unit = Platform runLater {
-    mapNodes += track.cells.size
     occupiedCells = track.cells
-    Rendering a track into gameBoard.children
+    Rendering a track into trackPane.children
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
-    gameBoard.children.removeRange(mapNodes + highlightNodes, gameBoard.children.size)
-    entities foreach (entity => Rendering an entity into gameBoard.children)
+    entitiesPane.children.clear()
+    entities foreach (entity => Rendering an entity into entitiesPane.children)
   }
 
   override def animate(entity: Entity): Unit = Platform runLater {
-    Animating.in(entity, gameBoard).play()
+    Animating an entity into animationsPane.children
   }
 
   private object GameUtilities {
 
     def highlight(tower: Tower[_], insertion: Boolean): Unit =
       if (insertion) {
-        highlightNodes = 1
-        gameBoard.children.removeRange(mapNodes, gameBoard.children.size)
-        Rendering sightOf tower into gameBoard.children
+        Rendering sightOf tower into highlightPane.children
       } else {
-        highlightNodes = 0
+        highlightPane.children.clear()
       }
 
     def removeEffects(): Unit =
-      gameBoard.children.foreach(_.setEffect(null))
+      trackPane.children.foreach(_.setEffect(null))
   }
 
   private object MouseEvents {
     import InputEventHandlers._
 
     def setMouseHandlers(): Unit = {
-      gameBoard.onMouseExited = _ => removeEffects()
-      gameBoard.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
-      gameBoard.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
+      trackPane.onMouseExited = _ => removeEffects()
+      trackPane.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
+      trackPane.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
     }
 
     def click(e: MouseEvent): IO[Unit] = for {

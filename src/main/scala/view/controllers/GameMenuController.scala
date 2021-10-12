@@ -51,10 +51,14 @@ class GameMenuController(
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
+    val statusMiddleBox: HBox,
+    val pointsLabel: Label,
     val statusLowerBox: HBox,
     val moneyLabel: Label,
     val towerDepot: VBox,
     val towerStatus: VBox,
+    val startRoundContainer: VBox,
+    val startRound: ToggleButton,
     var currentCell: Cell = outerCell,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -119,11 +123,12 @@ class GameMenuController(
   private object MenuSetters {
 
     def setSpacing(): Unit = {
-      val space: Double = 10.0
+      val space: Double = 8.0
       gameMenu.setSpacing(space)
       towerDepot.setSpacing(space)
       statusUpperBox.setAlignment(Pos.CenterLeft)
       statusLowerBox.setAlignment(Pos.CenterLeft)
+      startRoundContainer.setAlignment(Pos.Center)
     }
 
     def setupButtons(): Unit =

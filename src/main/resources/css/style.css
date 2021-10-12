@@ -52,7 +52,8 @@
 }
 
 .towerDepotTitle {
--fx-padding: 5 5 0 0;
+-fx-padding: 0;
+-fx-margin: 0;
 }
 
 .towerBox {
@@ -68,7 +69,7 @@
 }
 
 .towerStatusBox {
--fx-padding: 10 0;
+-fx-padding: 5 0;
 -fx-margin: 10 0;
 }
 
@@ -88,6 +89,10 @@
 -fx-border-width: 2;
 -fx-border-style: solid;
 -fx-border-radius: 10;
+}
+
+.startRound {
+-fx-padding: 5 10;
 }
 
 .selected {

@@ -9,6 +9,7 @@ import model.Model.ModelMessages._
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
 import model.actors.SpawnerMessages.StartRound
+import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.BalloonLives.Red
@@ -119,7 +120,11 @@ object Model {
           entities.collect {
             case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
               actorRef
-          }.head ! Boost(powerUp)
+          }.head ! Boost(powerUp, ctx.self)
+          Behaviors.same
+
+        case TowerBoosted(tower, actorRef) =>
+          entities = entities.filter(_.actorRef != actorRef).appended(EntityActor(actorRef, tower))
           Behaviors.same
 
         case BalloonKilled(actorRef) =>
@@ -165,7 +170,11 @@ object Model {
           entities.collect {
             case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
               actorRef
-          }.head ! Boost(powerUp)
+          }.head ! Boost(powerUp, ctx.self)
+          Behaviors.same
+
+        case TowerBoosted(tower, actorRef) =>
+          entities = entities.filter(_.actorRef != actorRef).appended(EntityActor(actorRef, tower))
           Behaviors.same
 
         case BulletKilled(actorRef) =>

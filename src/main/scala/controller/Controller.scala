@@ -37,7 +37,6 @@ object Controller {
     case class CurrentWallet(amount: Int) extends Input
     case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
     case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
-    case class Boost(powerUp: TowerPowerUp) extends Update
 
     sealed trait Interaction extends Input {
       def replyTo: ActorRef[Message]

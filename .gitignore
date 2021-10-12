@@ -16,6 +16,7 @@ project/metals.sbt
 project/project/
 project/target/
 target/
+out/
 
 # eclipse
 build/

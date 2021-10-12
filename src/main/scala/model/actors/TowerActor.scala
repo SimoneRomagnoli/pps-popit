@@ -2,16 +2,15 @@ package model.actors
 
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Controller.ControllerMessages.Boost
 import controller.Messages._
 import model.Model.ModelMessages._
 import model.Positions.{ normalized, vector }
-import model.actors.TowerMessages.{ BalloonDetected, SearchBalloon }
+import model.actors.TowerMessages.{ BalloonDetected, Boost, SearchBalloon, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.entities.towers.PowerUps.BoostedTower
+import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
 import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
 import scala.language.postfixOps
@@ -22,6 +21,8 @@ object TowerMessages {
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
   case class Tick(replyTo: ActorRef[Update]) extends Update
   case class BalloonMoved(balloon: Balloon) extends Update
+  case class TowerBoosted[B <: Bullet](tower: Tower[B], actorRef: ActorRef[Update]) extends Update
+  case class Boost(powerUp: TowerPowerUp, replyTo: ActorRef[Update]) extends Update
 }
 
 object TowerActor {
@@ -62,8 +63,9 @@ case class TowerActor[B <: Bullet](
       replyTo ! EntityUpdated(tower, ctx.self)
       Behaviors.same
 
-    case Boost(powerUp) =>
+    case Boost(powerUp, replyTo) =>
       tower = tower boost powerUp
+      replyTo ! TowerBoosted(tower, ctx.self)
       Behaviors.same
 
     case _ => Behaviors.same

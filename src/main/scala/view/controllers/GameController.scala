@@ -22,7 +22,7 @@ import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 import view.render.Drawings.Drawing
-import view.render.Rendering
+import view.render.{ Animating, Rendering }
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,6 +41,7 @@ trait ViewGameController extends ViewController {
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
+  def animate(entity: Entity): Unit
 }
 
 /**
@@ -122,6 +123,10 @@ class GameController(
   override def draw(entities: List[Entity]): Unit = Platform runLater {
     gameBoard.children.removeRange(mapNodes + highlightNodes, gameBoard.children.size)
     entities foreach (entity => Rendering an entity into gameBoard.children)
+  }
+
+  override def animate(entity: Entity): Unit = Platform runLater {
+    Animating.in(entity, gameBoard).play()
   }
 
   private object GameUtilities {

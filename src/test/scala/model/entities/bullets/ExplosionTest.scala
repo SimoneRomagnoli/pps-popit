@@ -8,7 +8,7 @@ import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
 import scalafx.scene.layout.Pane
-import scalafx.scene.shape.Rectangle
+import scalafx.scene.shape.{ Rectangle, Shape }
 
 import scala.language.postfixOps
 
@@ -23,7 +23,7 @@ object ExplosionTest extends JFXApp3 {
       scene = new Scene(pane)
     }
 
-    val rec1: Rectangle = Rectangle(100, 100, 100, 100)
+    val rec1: Shape = Rectangle(100, 100, 100, 100)
 
     val exp_1: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_1.png"))
     val exp_2: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_2.png"))

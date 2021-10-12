@@ -105,7 +105,7 @@ class GameController(
   }
 
   override def update(stats: GameStats): Unit = Platform runLater {
-    gameMenuController update stats
+    gameMenuController updateStats stats
   }
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {

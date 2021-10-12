@@ -33,6 +33,7 @@ object Controller {
     case class NewGame() extends Input
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
+    case class StartNextRound() extends Input with Update
     case class NewTimeRatio(value: Double) extends Input
     case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input
@@ -83,6 +84,10 @@ object Controller {
       case ActorInteraction(replyTo, message) =>
         model ! message.asInstanceOf[Update]
         interacting(replyTo)
+
+      case StartNextRound() =>
+        model ! StartNextRound()
+        Behaviors.same
 
       case BoostTowerIn(cell, powerUp) =>
         model ask WalletQuantity onComplete {

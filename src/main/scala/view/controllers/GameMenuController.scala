@@ -1,6 +1,11 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ BoostTowerIn, PauseGame, ResumeGame }
+import controller.Controller.ControllerMessages.{
+  BoostTowerIn,
+  PauseGame,
+  ResumeGame,
+  StartNextRound
+}
 import controller.Messages
 import controller.Messages._
 import model.actors.TowerMessages.TowerBoosted
@@ -31,7 +36,7 @@ import scala.util.{ Failure, Success }
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
   def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit
-  def update(stats: GameStats): Unit
+  def updateStats(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
   def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit
@@ -91,7 +96,7 @@ class GameMenuController(
   override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
     selectedTowerType.asInstanceOf[TowerType[B]]
 
-  override def update(stats: GameStats): Unit = {
+  override def updateStats(stats: GameStats): Unit = {
     lifeLabel.text = stats.life.toString
     moneyLabel.text = stats.wallet.toString
   }
@@ -131,7 +136,7 @@ class GameMenuController(
       startRoundContainer.setAlignment(Pos.Center)
     }
 
-    def setupButtons(): Unit =
+    def setupButtons(): Unit = {
       //exitButton.onMouseClicked = _ =>
       playButton.onMouseClicked = _ =>
         if (paused) {
@@ -141,6 +146,12 @@ class GameMenuController(
           send(PauseGame())
           paused = true
         }
+
+      startRound.onMouseClicked = _ => {
+        send(StartNextRound())
+        startRound.disable = true
+      }
+    }
 
     def setupTowerDepot[B <: Bullet](): Unit =
       TowerTypes.values.foreach { towerValue =>
@@ -177,6 +188,11 @@ class GameMenuController(
       towerStatus.children += box
     }
 
+    def refreshTowerStatus(tower: Tower[Bullet]): Unit = {
+      fillTowerStatus(tower, currentCell)
+      fillTowerStatus(tower, currentCell)
+    }
+
     def addToTowerStatus[T](title: String, argument: T, powerUp: TowerPowerUp): Unit = {
       val box: HBox = new HBox()
       val key: Label = Label(title + ": ")
@@ -189,7 +205,7 @@ class GameMenuController(
           case Success(value) =>
             value match {
               case TowerBoosted(tower, _) =>
-                fillTowerStatus(tower, currentCell); fillTowerStatus(tower, currentCell)
+                refreshTowerStatus(tower)
             }
           case Failure(exception) => println(exception)
         }

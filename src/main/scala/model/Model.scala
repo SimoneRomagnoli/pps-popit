@@ -8,18 +8,14 @@ import controller.Messages._
 import model.Model.ModelMessages._
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
-import model.actors.SpawnerMessages.StartRound
 import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
-import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
-import model.spawn.SpawnManager.Streak
-import model.spawn.SpawnerMonad.{ add, RichIO }
 import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 
@@ -75,16 +71,15 @@ object Model {
       track = Track(gameGrid)
       spawner = Some(ctx.spawnAnonymous(SpawnerActor(ctx.self, track)))
       replyTo ! MapCreated(track)
-      spawner.get ! StartRound {
-        (for {
-          _ <- add(Streak(10) :- Red)
-        } yield ()).get
-      }
       running()
     }
 
     def running(): Behavior[Update] =
       Behaviors.receiveMessage {
+        case StartNextRound() =>
+          spawner.get ! StartNextRound()
+          Behaviors.same
+
         case SpawnEntity(entity) =>
           ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
           Behaviors.same
@@ -153,6 +148,10 @@ object Model {
             case notFull => updating(replyTo, notFull)
           }
 
+        case StartNextRound() =>
+          spawner.get ! StartNextRound()
+          Behaviors.same
+
         case SpawnEntity(entity) =>
           ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
           Behaviors.same
@@ -168,6 +167,7 @@ object Model {
           Behaviors.same
 
         case BoostTowerIn(cell, powerUp) =>
+          stats spend powerUp.cost
           entities.collect {
             case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
               actorRef

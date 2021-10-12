@@ -3,13 +3,16 @@ package model.actors
 import akka.actor.typed.scaladsl.ActorContext
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.Behaviors
+import controller.Controller.ControllerMessages.StartNextRound
 import controller.Messages.Update
 import model.Model.ModelMessages.EntitySpawned
 import model.actors.SpawnerMessages.{ SpawnTick, StartRound }
+import model.entities.balloons.BalloonLives.{ Blue, Red }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.maps.Tracks.Track
 import model.spawn.SpawnManager.{ Round, Streak }
+import model.spawn.SpawnerMonad._
 
 import scala.language.postfixOps
 
@@ -24,7 +27,7 @@ object SpawnerMessages {
 object SpawnerActor {
 
   def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
-    Spawner(ctx, model, track).waiting()
+    Spawner(ctx, model, track, 0).waiting()
   }
 }
 
@@ -38,9 +41,22 @@ object SpawnerActor {
  * @param track
  *   The [[Track]] the [[Balloon]] s are gonna follow.
  */
-case class Spawner private (ctx: ActorContext[Update], model: ActorRef[Update], track: Track) {
+case class Spawner private (
+    ctx: ActorContext[Update],
+    model: ActorRef[Update],
+    track: Track,
+    var round: Int) {
 
   def waiting(): Behavior[Update] = Behaviors.receiveMessage {
+    case StartNextRound() =>
+      round += 1
+      ctx.self ! StartRound {
+        (for {
+          _ <- add(Streak(round * 10) :- Red)
+          _ <- add(Streak(round * 5) :- Blue)
+        } yield ()).get
+      }
+      Behaviors.same
     case StartRound(round) =>
       spawningRound(round.streaks)
     case _ => Behaviors.same

@@ -2,6 +2,7 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
+import controller.Controller.ControllerMessages.StartAnimation
 import controller.Messages.Render
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
@@ -52,6 +53,10 @@ object View {
           gameController.reset()
           gameController draw gameGrid
           gameController draw track
+          Behaviors.same
+
+        case StartAnimation(entity) =>
+          gameController animate entity
           Behaviors.same
 
         case _ => Behaviors.same

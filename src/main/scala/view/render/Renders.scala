@@ -17,12 +17,15 @@ object Renders {
   /** Represents a container for view objects. */
   sealed trait ToBeRendered {
     def into(buffer: ObservableBuffer[Node]): Unit
+    def outOf(buffer: ObservableBuffer[Node]): Unit
     def as(renderMode: RenderMode): Seq[Shape]
   }
 
   /** Wrapper for view-ready shapes. */
   case class Rendered(shapes: Seq[Shape]) extends ToBeRendered {
     override def into(buffer: ObservableBuffer[Node]): Unit = shapes foreach (buffer += _)
+
+    override def outOf(buffer: ObservableBuffer[Node]): Unit = shapes foreach (buffer -= _)
 
     override def as(renderMode: RenderMode): Seq[Shape] = renderMode match {
       case _ => shapes

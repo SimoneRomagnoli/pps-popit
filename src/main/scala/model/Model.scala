@@ -7,7 +7,7 @@ import controller.GameLoop.GameLoopMessages.{ MapCreated, ModelUpdated }
 import controller.Messages._
 import model.Model.ModelMessages._
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
-import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
 import model.entities.Entities.Entity
@@ -202,6 +202,10 @@ object Model {
           entities.filter(e => balloons.contains(e.entity)).foreach {
             _.actorRef ! Hit(bullet, ctx.self)
           }
+          Behaviors.same
+
+        case StartExplosion(bullet) =>
+          controller ! StartAnimation(bullet)
           Behaviors.same
 
         case _ => Behaviors.same

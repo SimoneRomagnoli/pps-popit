@@ -12,6 +12,7 @@ import controller.Messages._
 import model.Model.ModelActor
 import model.Model.ModelMessages.{ Pay, SpawnEntity, WalletQuantity }
 import model.actors.TowerMessages.TowerBoosted
+import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
@@ -39,6 +40,7 @@ object Controller {
     case class CurrentWallet(amount: Int) extends Input
     case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
     case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
+    case class StartAnimation(entity: Entity) extends Input with Render
 
     sealed trait Interaction extends Input {
       def replyTo: ActorRef[Message]
@@ -119,6 +121,10 @@ object Controller {
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>
         gameLoop() ! input
+        Behaviors.same
+
+      case StartAnimation(entity) =>
+        view ! StartAnimation(entity)
         Behaviors.same
 
       case _ => Behaviors.same

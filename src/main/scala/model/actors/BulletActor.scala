@@ -4,7 +4,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.Update
 import model.Model.ModelMessages.{ EntityUpdated, UpdateEntity }
-import model.actors.BulletMessages.{ BalloonHit, BulletKilled }
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Explosion }
 
@@ -13,6 +13,7 @@ import scala.language.postfixOps
 object BulletMessages {
   case class BalloonHit(bullet: Bullet, balloons: List[Balloon]) extends Update
   case class BulletKilled(actorRef: ActorRef[Update]) extends Update
+  case class StartExplosion(bullet: Bullet) extends Update
 }
 
 object BulletActor {
@@ -63,6 +64,7 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
       replyTo: ActorRef[Update]): Behavior[Update] = {
     bullet match {
       case bullet: Explosion =>
+        replyTo ! StartExplosion(bullet)
         replyTo ! BalloonHit(bullet, balloons.filter(bullet include _))
       case bullet =>
         replyTo ! BalloonHit(bullet, List(balloons.filter(bullet hit _).sorted.reverse.head))

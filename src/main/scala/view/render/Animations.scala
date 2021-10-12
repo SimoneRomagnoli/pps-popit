@@ -5,23 +5,19 @@ import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Explosion
 import scalafx.Includes.{ at, double2DurationHelper, _ }
-import scalafx.animation.{ KeyValue, Timeline }
-import scalafx.application.JFXApp3
-import scalafx.application.JFXApp3.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.scene.layout.Pane
-import scalafx.scene.shape.{ Rectangle, Shape }
+import scalafx.animation.Timeline
+import scalafx.scene.shape.Shape
 
 import scala.language.postfixOps
 
-object Animations2 {
+object Animations {
 
-  sealed trait Composable
-  case class Item(entity: Entity, shape: Shape) extends Composable
+  sealed trait Animable
+  case class Item(entity: Entity, shape: Shape) extends Animable
 
-  case class Composing(images: Composings = Composings()) {
+  case class Moving(images: Animations = Animations()) {
 
-    def the(composable: Composable): Timeline = composable match {
+    def the(animable: Animable): Timeline = animable match {
       case Item(entity, shape) =>
         entity match {
           case _: Explosion =>
@@ -46,7 +42,7 @@ object Animations2 {
   }
 
   /** Class preloading all images. */
-  case class Composings(
+  case class Animations(
       exp_1: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_1.png")),
       exp_2: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_2.png")),
       exp_3: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_3.png")),

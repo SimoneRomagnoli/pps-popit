@@ -1,33 +1,44 @@
 package view.render
 
+import javafx.scene.Node
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.{ Bullet, Explosion }
-import model.entities.towers.Towers.Tower
+import model.entities.bullets.Bullets.Explosion
 import scalafx.animation.Timeline
-import scalafx.scene.layout.Pane
-import scalafx.scene.shape.Rectangle
-import view.render.Animations2.Composing
-import view.render.Animations2.Item
-import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
+import scalafx.collections.ObservableBuffer
+import scalafx.scene.shape.{ Rectangle, Shape }
+import view.render.Animations.{ Item, Moving }
 
 import scala.language.{ implicitConversions, reflectiveCalls }
 
 object Animating {
 
-  val composing: Composing = Composing()
+  trait ToBeAnimated {
+    def into(buffer: ObservableBuffer[Node]): Unit
+  }
 
-  def in(entity: Entity, pane: Pane): Timeline = {
+  case class Animated(shape: Shape, timeline: Timeline) extends ToBeAnimated {
+
+    override def into(buffer: ObservableBuffer[Node]): Unit = {
+      buffer += shape
+      timeline.onFinished = _ => buffer -= shape
+      timeline.play()
+    }
+  }
+
+  val moving: Moving = Moving()
+
+  def an(entity: Entity): ToBeAnimated = {
     val rectangle: Rectangle = Rectangle(
-      entity.position.x - entity.boundary._1 / 2,
-      entity.position.y - entity.boundary._2 / 2,
-      300,
-      300
+      entity.position.x - (entity.boundary._1 * 2),
+      entity.position.y - (entity.boundary._2 * 2),
+      entity.boundary._2 * 4,
+      entity.boundary._2 * 4
     )
 
     val timeline: Timeline = entity match {
-      case explosion: Explosion => composing the Item(explosion, rectangle)
+      case explosion: Explosion => moving the Item(explosion, rectangle)
     }
-    Drawings into pane.children
-    timeline
+
+    Animated(rectangle, timeline)
   }
 }

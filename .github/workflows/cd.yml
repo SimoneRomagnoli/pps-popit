@@ -1,21 +1,15 @@
 name: CD
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   build:
-    name: Create Release
+    name: Create jars
     strategy:
-      fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            java: 15
-          - os: windows-latest
-            java: 15
-          - os: macos-latest
-            java: 15
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -23,7 +17,7 @@ jobs:
       - name: Setup
         uses: olafurpg/setup-scala@v10
         with:
-          java-version: "adopt@1.${{ matrix.java }}"
+          java-version: "adopt@1.15"
       - name: Lint
         run: sbt scalafmt
       - name: Lint Check
@@ -34,13 +28,33 @@ jobs:
       - name: Create jar
         run: sbt assembly
         shell: bash
-      - name: Create Release
+      - name: Upload jar
         id: create_release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: actions/upload-artifact@v2
         with:
-          title: pps-popit-${{ matrix.os }}
-          automatic_release_tag: 0.2.0
-          draft: false
-          prerelease: true
+          name: pps-popit-${{ matrix.os }}
+          path: target/scala-2.13/*.jar
+          retention-days: 1
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+      - name: Rename artifacts
+        run: mv pps-popit-windows-latest/*.jar pps-popit-windows-latest/pps-popit-windows.jar
+      - name: Rename artifacts
+        run: mv pps-popit-ubuntu-latest/*.jar pps-popit-ubuntu-latest/pps-popit-ubuntu.jar
+      - name: Rename artifacts
+        run: mv pps-popit-macos-latest/*.jar pps-popit-macos-latest/pps-popit-macos.jar
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          files: target/scala-2.13/*.jar
+          automatic_release_tag: "0.2.0"
+          prerelease: true
+          title: "Scrum Sprint 2 - Release"
+          files: |
+            pps-popit-windows-latest/*.jar
+            pps-popit-macos-latest/*.jar
+            pps-popit-ubuntu-latest/*.jar

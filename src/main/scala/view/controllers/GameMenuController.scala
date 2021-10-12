@@ -1,15 +1,15 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ BoostTowerIn, PauseGame, ResumeGame, TowerOption }
+import controller.Controller.ControllerMessages.{ BoostTowerIn, PauseGame, ResumeGame }
 import controller.Messages
 import controller.Messages._
-import model.Model.ModelMessages.TowerIn
+import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.PowerUps.{ Camo, Damage, Ratio, Sight, TowerPowerUp }
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.entities.towers.PowerUps.{ Camo, Damage, Ratio, Sight, TowerPowerUp }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -179,11 +179,15 @@ class GameMenuController(
       val emptyBox: HBox = new HBox()
       emptyBox.hgrow = Always
       val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
-      button.disable = true
-      button.onMouseClicked = _ => {
-        send(BoostTowerIn(currentCell, powerUp))
-        refreshTowerStatus()
-      }
+      button.onMouseClicked = _ =>
+        ask(BoostTowerIn(currentCell, powerUp)) onComplete {
+          case Success(value) =>
+            value match {
+              case TowerBoosted(tower, _) =>
+                fillTowerStatus(tower, currentCell); fillTowerStatus(tower, currentCell)
+            }
+          case Failure(exception) => println(exception)
+        }
       button.styleClass += "inputButton"
       box.children += key
       box.children += value
@@ -192,21 +196,6 @@ class GameMenuController(
       box.styleClass += "towerStatusBox"
       box.setAlignment(Pos.CenterLeft)
       towerStatus.children += box
-    }
-
-    def refreshTowerStatus(): Unit = Platform runLater {
-      ask(TowerIn(currentCell)) onComplete {
-        case Failure(exception) => println(exception)
-        case Success(value) =>
-          value.asInstanceOf[TowerOption] match {
-            case TowerOption(option) =>
-              option match {
-                case Some(tower) =>
-                  fillTowerStatus(tower, currentCell); fillTowerStatus(tower, currentCell)
-                case _ =>
-              }
-          }
-      }
     }
   }
 }

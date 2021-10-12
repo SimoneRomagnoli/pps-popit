@@ -124,6 +124,7 @@ object Model {
           Behaviors.same
 
         case TowerBoosted(tower, actorRef) =>
+          controller ! TowerBoosted(tower, actorRef)
           entities = entities.filter(_.actorRef != actorRef).appended(EntityActor(actorRef, tower))
           Behaviors.same
 
@@ -174,6 +175,7 @@ object Model {
           Behaviors.same
 
         case TowerBoosted(tower, actorRef) =>
+          controller ! TowerBoosted(tower, actorRef)
           entities = entities.filter(_.actorRef != actorRef).appended(EntityActor(actorRef, tower))
           Behaviors.same
 

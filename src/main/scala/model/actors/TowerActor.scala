@@ -21,7 +21,10 @@ object TowerMessages {
   case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
   case class Tick(replyTo: ActorRef[Update]) extends Update
   case class BalloonMoved(balloon: Balloon) extends Update
-  case class TowerBoosted[B <: Bullet](tower: Tower[B], actorRef: ActorRef[Update]) extends Update
+
+  case class TowerBoosted[B <: Bullet](tower: Tower[B], actorRef: ActorRef[Update])
+      extends Update
+      with Input
   case class Boost(powerUp: TowerPowerUp, replyTo: ActorRef[Update]) extends Update
 }
 
@@ -38,12 +41,6 @@ case class TowerActor[B <: Bullet](
     var shootingTime: Double = 0.0) {
 
   private def detecting: Behavior[Update] = Behaviors.receiveMessage {
-    case SearchBalloon(replyTo, balloon) =>
-      if (tower canSee balloon) {
-        replyTo ! BalloonDetected()
-      }
-      Behaviors.same
-
     case UpdateEntity(elapsedTime, entities, replyTo) =>
       entities.collect { case balloon: Balloon =>
         balloon

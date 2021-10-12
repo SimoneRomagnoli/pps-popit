@@ -11,6 +11,7 @@ import controller.GameLoop.GameLoopMessages.Start
 import controller.Messages._
 import model.Model.ModelActor
 import model.Model.ModelMessages.{ Pay, SpawnEntity, WalletQuantity }
+import model.actors.TowerMessages.TowerBoosted
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
@@ -122,6 +123,19 @@ object Controller {
       case TowerOption(tower) =>
         replyTo ! TowerOption(tower)
         default()
+
+      case TowerBoosted(tower, actorRef) =>
+        replyTo ! TowerBoosted(tower, actorRef)
+        default()
+
+      /*
+        EVERYTHING SHOULD BE RESUMED WITH THIS HANDLER
+
+      case message: Message =>
+        replyTo ! message
+        default()
+
+       */
 
       case _ => Behaviors.same
     }

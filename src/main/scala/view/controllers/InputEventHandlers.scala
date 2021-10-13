@@ -1,14 +1,13 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Controller.ControllerMessages._
 import controller.Messages.Message
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.TowerIn
+import model.managers.EntitiesMessages.{ TowerIn, TowerOption }
 import model.maps.Cells.Cell
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust

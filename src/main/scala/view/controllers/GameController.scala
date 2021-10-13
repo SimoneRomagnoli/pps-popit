@@ -1,12 +1,12 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Controller.ControllerMessages.{ PlaceTower, TowerOption }
+import controller.Controller.ControllerMessages.PlaceTower
 import controller.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.TowerIn
+import model.managers.EntitiesMessages.{ Selectable, Selected, TowerIn, TowerOption }
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
@@ -187,31 +187,29 @@ class GameController(
 
     private def placeTower(e: MouseEvent): IO[Unit] = {
       val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-      ask(TowerIn(cell)).onComplete {
+      ask(Selectable(cell)).onComplete {
         case Success(value) =>
-          value.asInstanceOf[TowerOption] match {
-            case TowerOption(option) =>
-              option match {
-                case Some(_) =>
-                case _ =>
-                  Platform runLater {
-                    removeEffects()
-                    gameMenuController.unselectDepot()
-                    send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-                    ask(TowerIn(cell)) onComplete {
-                      case Failure(exception) => println(exception)
-                      case Success(value) =>
-                        value match {
-                          case TowerOption(option) =>
-                            option match {
-                              case Some(_) => occupy(cell)
-                              case _       =>
-                            }
-                          case _ =>
-                        }
-                    }
+          value.asInstanceOf[Selected] match {
+            case Selected(selectable) =>
+              if (selectable) {
+                Platform runLater {
+                  removeEffects()
+                  gameMenuController.unselectDepot()
+                  send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
+                  ask(TowerIn(cell)) onComplete {
+                    case Failure(exception) => println(exception)
+                    case Success(value) =>
+                      value match {
+                        case TowerOption(option) =>
+                          option match {
+                            case Some(_) => occupy(cell)
+                            case _       =>
+                          }
+                        case _ =>
+                      }
                   }
-              }
+                }
+              } else {}
           }
         case Failure(exception) => println(exception)
       }

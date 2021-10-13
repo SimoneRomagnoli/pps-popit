@@ -1,22 +1,20 @@
 package controller
 
 import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.Scheduler
-import akka.util.Timeout
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
+import akka.util.Timeout
 import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages.{ Start, Stop }
 import controller.Messages._
 import model.Model.ModelActor
 import model.Model.ModelMessages.{ Pay, WalletQuantity }
-import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.entities.towers.PowerUps.TowerPowerUp
 import model.managers.EntitiesMessages.SpawnEntity
 import model.maps.Cells.Cell
 
@@ -40,7 +38,6 @@ object Controller {
     case class NewTimeRatio(value: Double) extends Input
     case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input
-    case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
     case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
     case class StartAnimation(entity: Entity) extends Render
 
@@ -139,24 +136,9 @@ object Controller {
     }
 
     def interacting(replyTo: ActorRef[Message]): Behavior[Input] = Behaviors.receiveMessage {
-      case TowerOption(tower) =>
-        replyTo ! TowerOption(tower)
-        default()
-
-      case TowerBoosted(tower, actorRef) =>
-        replyTo ! TowerBoosted(tower, actorRef)
-        default()
-
-      /*
-        EVERYTHING SHOULD BE RESUMED WITH THIS HANDLER
-
-      case message: Message =>
+      message =>
         replyTo ! message
         default()
-
-       */
-
-      case _ => Behaviors.same
     }
   }
 }

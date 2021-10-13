@@ -49,7 +49,7 @@ object Model {
     def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
       track = Track(gameGrid)
       handlers = (ctx.spawnAnonymous(SpawnManager(ctx.self, track)), SpawnMessage) :: handlers
-      handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
+      handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self, track)), EntityMessage) :: handlers
 
       replyTo ! MapCreated(track)
       default()

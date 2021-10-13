@@ -2,7 +2,7 @@ package model.managers
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.{ BoostTowerIn, TowerOption }
+import controller.Controller.ControllerMessages.BoostTowerIn
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ Lose, Pay }
@@ -18,12 +18,16 @@ import model.managers.EntitiesMessages.{
   EntitySpawned,
   EntityUpdated,
   ExitedBalloon,
+  Selectable,
+  Selected,
   SpawnEntity,
   TickUpdate,
   TowerIn,
+  TowerOption,
   UpdateEntity
 }
 import model.maps.Cells.Cell
+import model.maps.Tracks.Track
 
 case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
 
@@ -45,7 +49,12 @@ object EntitiesMessages {
   case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update])
       extends Update
       with EntitiesManagerMessage
+
   case class TowerIn(cell: Cell) extends Update with EntitiesManagerMessage
+  case class Selectable(cell: Cell) extends Update with EntitiesManagerMessage
+
+  case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
+  case class Selected(selectable: Boolean) extends Input with Update
 
   case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input])
       extends Update
@@ -54,14 +63,15 @@ object EntitiesMessages {
 
 object EntitiesManager {
 
-  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
-    EntityManager(ctx, model).running()
+  def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
+    EntityManager(ctx, model, track).running()
   }
 }
 
 case class EntityManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
+    track: Track,
     var entities: List[EntityActor] = List(),
     var messageQueue: Seq[Update] = Seq()) {
 
@@ -78,10 +88,6 @@ case class EntityManager private (
       }
       updating(replyTo)
 
-    case EntityUpdated(a, b) =>
-      println(a + b.toString)
-      Behaviors.same
-
     case SpawnEntity(entity) =>
       ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
       Behaviors.same
@@ -92,6 +98,15 @@ case class EntityManager private (
 
     case WithReplyTo(msg, replyTo) =>
       msg match {
+        case Selectable(cell) =>
+          val selectable: Boolean = track.cells.forall(c => c.x != cell.x || c.y != cell.y) &&
+            entities
+              .map(_.entity)
+              .collect { case e: Tower[Bullet] => e }
+              .forall(t => !cell.contains(t.position))
+
+          replyTo ! Selected(selectable)
+
         case TowerIn(cell) =>
           val tower: Option[Tower[Bullet]] = entities
             .map(_.entity)

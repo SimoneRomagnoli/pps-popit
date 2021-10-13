@@ -28,7 +28,7 @@ object GameLoopTest {
     Behaviors.receiveMessage {
       case TickUpdate(elapsedTime, replyTo) =>
         counter.inc(elapsedTime)
-        replyTo ! ModelUpdated(List())
+        replyTo ! ModelUpdated(List(), List())
         Behaviors.same
       case _ => Behaviors.same
     }

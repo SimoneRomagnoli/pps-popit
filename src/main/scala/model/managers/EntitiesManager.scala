@@ -2,7 +2,7 @@ package model.managers
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.{ BoostTowerIn, StartAnimation, TowerOption }
+import controller.Controller.ControllerMessages.{ BoostTowerIn, TowerOption }
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ Lose, Pay }
@@ -114,16 +114,20 @@ case class EntityManager private (
 
   def updating(
       replyTo: ActorRef[Input],
-      updatedEntities: List[EntityActor] = List()): Behavior[Update] = Behaviors.receiveMessage {
+      updatedEntities: List[EntityActor] = List(),
+      animations: List[Entity] = List()): Behavior[Update] = Behaviors.receiveMessage {
     case EntityUpdated(entity, ref) =>
       EntityActor(ref, entity) :: updatedEntities match {
         case full if full.size == entities.size =>
           val (balloons, others): (List[Entity], List[Entity]) =
             full.map(_.entity).partition(_.isInstanceOf[Balloon])
-          replyTo ! ModelUpdated(others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted))
+          replyTo ! ModelUpdated(
+            others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
+            animations
+          )
           entities = full
           dequeue()
-        case notFull => updating(replyTo, notFull)
+        case notFull => updating(replyTo, notFull, animations)
       }
 
     case ExitedBalloon(balloon, actorRef) =>
@@ -132,14 +136,14 @@ case class EntityManager private (
       Behaviors.same
 
     case BulletKilled(actorRef) =>
-      killEntity(updatedEntities, replyTo, actorRef)
+      killEntity(updatedEntities, replyTo, actorRef, animations)
 
     case BalloonKilled(actorRef) =>
       if (updatedEntities.map(_.actorRef).contains(actorRef)) {
         entities = entities.filter(_.actorRef != actorRef)
-        updating(replyTo, updatedEntities.filter(_.actorRef != actorRef))
+        updating(replyTo, updatedEntities.filter(_.actorRef != actorRef), animations)
       } else {
-        killEntity(updatedEntities, replyTo, actorRef)
+        killEntity(updatedEntities, replyTo, actorRef, animations)
       }
 
     case BalloonHit(bullet, balloons) =>
@@ -149,13 +153,12 @@ case class EntityManager private (
       Behaviors.same
 
     case StartExplosion(bullet) =>
-      replyTo ! StartAnimation(bullet)
-      Behaviors.same
+      updating(replyTo, updatedEntities, bullet :: animations)
 
     case EntitySpawned(entity, actor) =>
       entities = EntityActor(actor, entity) :: entities
       ctx.self ! EntityUpdated(entity, actor)
-      updating(replyTo, updatedEntities)
+      updating(replyTo, updatedEntities, animations)
 
     case msg =>
       if (!msg.isInstanceOf[TickUpdate]) {
@@ -168,14 +171,15 @@ case class EntityManager private (
   def killEntity(
       updatedEntities: List[EntityActor],
       replyTo: ActorRef[Input],
-      actorRef: ActorRef[Update]): Behavior[Update] = updatedEntities match {
+      actorRef: ActorRef[Update],
+      animations: List[Entity]): Behavior[Update] = updatedEntities match {
     case full if full.size == entities.size - 1 =>
-      replyTo ! ModelUpdated(full.map(_.entity))
+      replyTo ! ModelUpdated(full.map(_.entity), animations)
       entities = full
       dequeue()
     case notFull =>
       entities = entities.filter(_.actorRef != actorRef)
-      updating(replyTo, notFull)
+      updating(replyTo, notFull, animations)
   }
 
   def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {

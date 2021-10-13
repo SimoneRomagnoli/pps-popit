@@ -32,7 +32,7 @@ object BalloonActorTest {
           Behaviors.same
         case EntityUpdated(entity, _) =>
           testBalloon = entity.asInstanceOf[Balloon]
-          gameLoop.get ! ModelUpdated(List())
+          gameLoop.get ! ModelUpdated(List(), List())
           Behaviors.same
         case _ => Behaviors.same
       }

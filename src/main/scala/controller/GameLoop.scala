@@ -24,7 +24,7 @@ object GameLoop {
     case object Tick extends Input
     case class Start() extends Input
     case class MapCreated(track: Track) extends Input
-    case class ModelUpdated(entities: List[Entity]) extends Input
+    case class ModelUpdated(entities: List[Entity], animations: List[Entity]) extends Input
 
   }
 
@@ -73,16 +73,16 @@ object GameLoop {
       case MapCreated(track) =>
         view ! RenderMap(track)
         Behaviors.same
-      case ModelUpdated(entities) =>
+      case ModelUpdated(entities, animations) =>
         view ! RenderEntities(entities)
+        animations.foreach {
+          view ! StartAnimation(_)
+        }
         Behaviors.same
       case PauseGame() =>
         paused()
       case NewTimeRatio(value) =>
         timeRatio = value
-        Behaviors.same
-      case StartAnimation(entity) =>
-        view ! StartAnimation(entity)
         Behaviors.same
       case _ => Behaviors.same
     }

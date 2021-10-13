@@ -4,9 +4,9 @@ import cats.effect.IO
 import controller.Controller.ControllerMessages.{ PlaceTower, TowerOption }
 import controller.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
-import model.Model.ModelMessages.TowerIn
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
+import model.managers.EntitiesMessages.TowerIn
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track

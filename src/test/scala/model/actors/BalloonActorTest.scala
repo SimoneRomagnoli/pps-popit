@@ -6,10 +6,10 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages._
 import controller.Messages.{ Input, Render, Update }
-import model.Model.ModelMessages._
 import model.actors.BalloonActorTest.{ dummyModel, testBalloon }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
+import model.managers.EntitiesMessages.{ EntityUpdated, TickUpdate, UpdateEntity }
 import model.stats.Stats.GameStats
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -31,7 +31,7 @@ object BalloonActorTest {
           Behaviors.same
         case EntityUpdated(entity, _) =>
           testBalloon = entity.asInstanceOf[Balloon]
-          gameLoop.get ! ModelUpdated(List(), GameStats())
+          gameLoop.get ! ModelUpdated(List(), List())
           Behaviors.same
         case _ => Behaviors.same
       }
@@ -50,7 +50,7 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
     "asked to update" should {
       "reply to the model which should contact the view" in {
         gameLoop ! Start()
-        view expectMessage RenderStats(GameStats())
+        //view expectMessage RenderStats(GameStats())
         view expectMessage RenderEntities(List())
       }
       "update the position of its balloon" in {

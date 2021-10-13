@@ -6,9 +6,9 @@ import controller.Messages.Message
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
-import model.Model.ModelMessages.TowerIn
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
+import model.managers.EntitiesMessages.TowerIn
 import model.maps.Cells.Cell
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust

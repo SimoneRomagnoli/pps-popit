@@ -5,7 +5,7 @@ import model.entities.balloons.BalloonLives.{ BalloonLife, Red }
 
 import scala.concurrent.duration.{ DurationInt, FiniteDuration }
 
-object SpawnManager {
+object Rounds {
 
   case class BalloonInfo(balloonTypes: List[BalloonType] = List(), balloonLife: BalloonLife = Red)
 

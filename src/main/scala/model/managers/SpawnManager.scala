@@ -1,30 +1,30 @@
-package model.actors
+package model.managers
 
-import akka.actor.typed.scaladsl.ActorContext
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import akka.actor.typed.scaladsl.Behaviors
 import controller.Controller.ControllerMessages.StartNextRound
-import controller.Messages.Update
-import model.Model.ModelMessages.EntitySpawned
-import model.actors.SpawnerMessages.{ SpawnTick, StartRound }
+import controller.Messages.{ SpawnManagerMessage, Update }
+import model.actors.BalloonActor
 import model.entities.balloons.BalloonLives.{ Blue, Red }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
+import model.managers.EntitiesMessages.EntitySpawned
+import model.managers.SpawnerMessages.{ SpawnTick, StartRound }
 import model.maps.Tracks.Track
-import model.spawn.SpawnManager.{ Round, Streak }
-import model.spawn.SpawnerMonad._
+import model.spawn.RoundBuilders._
+import model.spawn.Rounds.{ Round, Streak }
 
 import scala.language.postfixOps
 
 object SpawnerMessages {
-  case class StartRound(round: Round) extends Update
-  case object SpawnTick extends Update
+  case class StartRound(round: Round) extends Update with SpawnManagerMessage
+  case object SpawnTick extends Update with SpawnManagerMessage
 }
 
 /**
  * The actor responsible of spawning new [[Balloon]] s.
  */
-object SpawnerActor {
+object SpawnManager {
 
   def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
     Spawner(ctx, model, track, 0).waiting()
@@ -32,7 +32,7 @@ object SpawnerActor {
 }
 
 /**
- * The [[SpawnerActor]] related class, conforming to a common Akka pattern.
+ * The [[SpawnManager]] related class, conforming to a common Akka pattern.
  *
  * @param ctx
  *   The actor's context.

@@ -1,11 +1,11 @@
 package model.spawn
 
 import cats.effect.IO
-import model.spawn.SpawnManager.{ Round, Streak }
+import model.spawn.Rounds.{ Round, Streak }
 
 import scala.language.implicitConversions
 
-object SpawnerMonad {
+object RoundBuilders {
 
   object RoundBuilder {
     var round: Seq[Streak] = Seq()
@@ -14,8 +14,6 @@ object SpawnerMonad {
 
     def get: Round = Round(round)
   }
-
-  //def build(): IO[Unit] = RoundBuilder.round = Seq()
 
   def add(streak: Streak): IO[Unit] =
     RoundBuilder.round = streak +: RoundBuilder.round

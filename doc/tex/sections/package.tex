@@ -1,0 +1,83 @@
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+%%libreria per accettare i caratteri digitati da tastiera come è à
+\usepackage{fancyhdr}
+%libreria per avere l'indentazione  all'inizio dei capitoli, ...
+\usepackage{indentfirst}
+% migliora l'espansione dei caratteri per adattarli alla riga
+%permette ad alcuni simboli di sbordare leggermente
+\usepackage{microtype}
+%libreria per inserire grafici
+\usepackage{graphicx}
+%libreria per utilizzare font particolari ad esempio \textsc{}
+\usepackage{newlfont}
+%librerie matematiche
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amsthm}
+\usepackage{cite}
+\usepackage{listings}
+%\usepackage{minted}
+\usepackage{hyperref}
+\usepackage[italian]{varioref}
+%\usepackage{cleveref}
+%\usepackage[square,numbers,sort]{natbib}
+%\usepackage{color}
+%\usepackage{caption}
+%\usepackage{comment}
+%\usepackage{tikz}
+%\usepackage[normalem]{ulem}
+
+%\newcommand{\mybox}[1]{\vspace{10mm}
+%\hspace*{-5mm}\begin{tikzpicture}
+%\node [mybox] (box){
+%    \begin{minipage}{.96\textwidth}
+% #1
+%    \end{minipage}
+%};
+%\end{tikzpicture}}
+
+\newcommand{\red}{\textcolor{red}}
+% mi rende i link blue
+\hypersetup{colorlinks=false, linkcolor=blue, urlcolor=blue}
+%\tikzstyle{mybox} = [draw=black, very thick, rectangle, inner ysep=5pt, inner xsep=5pt]
+%\captionsetup{tableposition=top,figureposition=bottom,font=small}
+%\bibliographystyle{unsrt}
+\bibliographystyle{unsrtnat}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+%\definecolor{lightgoldenrodyellow}{rgb}{0.98, 0.98, 0.82}
+%definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
+\definecolor{ghostwhite}{rgb}{0.97, 0.97, 1.0}
+%\definecolor{linen}{rgb}{0.98, 0.94, 0.9}
+\lstset{frame=tb,
+   language=Java,
+   aboveskip=3mm,
+   belowskip=3mm,
+   showstringspaces=false,
+   columns=flexible,
+   basicstyle={\small\ttfamily},
+   numbers=none,
+   numberstyle=\tiny\color{gray},
+   keywordstyle=\color{blue},
+   commentstyle=\color{dkgreen},
+   stringstyle=\color{mauve},
+   breaklines=true,
+   breakatwhitespace=true,
+   tabsize=1,
+   backgroundcolor=\color{ghostwhite},
+   breaklines=true,
+  %postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+   }
+   
+%\captionsetup{tableposition=top,figureposition=bottom,font=small,format=hang,labelfont={sf,bf}}
+
+
+\cfoot{}
+\linespread{1.3}  

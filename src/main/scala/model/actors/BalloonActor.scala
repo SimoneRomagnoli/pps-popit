@@ -51,6 +51,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
           Behaviors.stopped
         case Some(b) =>
           balloon = b
+          println("blue popped -> red")
           replyTo ! EntityUpdated(balloon, ctx.self)
           Behaviors.same
       }

@@ -51,6 +51,7 @@ object View {
     }
 
     def inGame(gameController: ViewGameController): Behavior[Render] = {
+      gameController.setup()
       gameController.show()
       Behaviors.receiveMessage {
         case RenderStats(stats) =>

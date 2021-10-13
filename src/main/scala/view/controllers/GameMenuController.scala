@@ -74,7 +74,8 @@ class GameMenuController(
     extends ViewGameMenuController {
   import MenuSetters._
 
-  override def setup(): Unit = {
+  override def setup(): Unit = Platform runLater {
+    reset()
     setSpacing()
     setupButtons()
     setupTowerDepot()
@@ -129,6 +130,12 @@ class GameMenuController(
 
   /** Private methods for setting the controller. */
   private object MenuSetters {
+
+    def reset(): Unit = {
+      startRound.disable = false
+      towerDepot.children.removeRange(1, towerDepot.children.size)
+      towerStatus.children.clear()
+    }
 
     def setSpacing(): Unit = {
       val space: Double = 8.0

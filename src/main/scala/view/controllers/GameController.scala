@@ -112,6 +112,9 @@ class GameController(
 
   override def reset(): Unit = Platform runLater {
     trackPane.children.clear()
+    highlightPane.children.clear()
+    entitiesPane.children.clear()
+    animationsPane.children.clear()
   }
 
   override def update(stats: GameStats): Unit = Platform runLater {

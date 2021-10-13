@@ -65,11 +65,12 @@ object Model {
       stats: GameStats = GameStats(),
       var entities: List[EntityActor] = List(),
       var track: Track = Track(),
-      var spawner: Option[ActorRef[Update]] = None) {
+      var handlers: List[(ActorRef[Update], MessageType)] = List()) {
 
     def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
       track = Track(gameGrid)
-      spawner = Some(ctx.spawnAnonymous(SpawnerActor(ctx.self, track)))
+      handlers = (ctx.spawnAnonymous(SpawnerActor(ctx.self, track)), Spawn) :: handlers
+
       replyTo ! MapCreated(track)
       running()
     }
@@ -77,7 +78,7 @@ object Model {
     def running(): Behavior[Update] =
       Behaviors.receiveMessage {
         case StartNextRound() =>
-          spawner.get ! StartNextRound()
+          handle(StartNextRound())
           Behaviors.same
 
         case SpawnEntity(entity) =>
@@ -149,7 +150,7 @@ object Model {
           }
 
         case StartNextRound() =>
-          spawner.get ! StartNextRound()
+          handle(StartNextRound())
           Behaviors.same
 
         case SpawnEntity(entity) =>
@@ -223,6 +224,17 @@ object Model {
         entities = entities.filter(_.actorRef != actorRef)
         updating(replyTo, notFull)
     }
+
+    def handle(msg: Update): Unit = msg match {
+      case sm: SpawnerMessage => choose(messageType(sm)).foreach(_ ! sm)
+      case _                  =>
+    }
+
+    def choose(messageType: MessageType)(implicit
+        handlers: List[(ActorRef[Update], MessageType)] = handlers): List[ActorRef[Update]] =
+      handlers.collect {
+        case (actorRef, msgType) if msgType == messageType => actorRef
+      }
   }
 
   def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {

@@ -34,7 +34,7 @@ object Controller {
     case class NewGame() extends Input
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
-    case class StartNextRound() extends Input with Update
+    case class StartNextRound() extends Input with SpawnerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input

@@ -4,7 +4,7 @@ import akka.actor.typed.scaladsl.ActorContext
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Controller.ControllerMessages.StartNextRound
-import controller.Messages.Update
+import controller.Messages.{ SpawnerMessage, Update }
 import model.Model.ModelMessages.EntitySpawned
 import model.actors.SpawnerMessages.{ SpawnTick, StartRound }
 import model.entities.balloons.BalloonLives.{ Blue, Red }
@@ -17,8 +17,8 @@ import model.spawn.SpawnerMonad._
 import scala.language.postfixOps
 
 object SpawnerMessages {
-  case class StartRound(round: Round) extends Update
-  case object SpawnTick extends Update
+  case class StartRound(round: Round) extends Update with SpawnerMessage
+  case object SpawnTick extends Update with SpawnerMessage
 }
 
 /**

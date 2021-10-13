@@ -2,6 +2,7 @@ package view.controllers
 
 import controller.Controller.ControllerMessages.NewGame
 import controller.Messages.{ Input, Message }
+import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, VBox }
 import scalafxml.core.macros.sfxml
@@ -35,6 +36,7 @@ class MainMenuController(
 
     def setup(): Unit = {
       Rendering.setLayout(mainMenuPane, Constants.Screen.width, Constants.Screen.height)
+      mainMenuButtons.setAlignment(Pos.Center)
       setupButtons()
     }
 

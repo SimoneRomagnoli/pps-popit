@@ -77,8 +77,10 @@ object Controller {
 
     def default(): Behavior[Input] = Behaviors.receiveMessage {
       case NewGame() =>
-        val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")
-        gameLoop = Some(actor)
+        if (gameLoop.isEmpty) {
+          val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")
+          gameLoop = Some(actor)
+        }
         gameLoop.get ! Start()
         Behaviors.same
 

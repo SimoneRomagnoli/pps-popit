@@ -6,9 +6,9 @@ import controller.Controller.ControllerMessages.{ BoostTowerIn, StartAnimation, 
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ Lose, Pay }
-import model.Model.entitySpawned
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
+import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.actors.TowerMessages.Boost
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
@@ -176,5 +176,11 @@ case class EntityManager private (
     case notFull =>
       entities = entities.filter(_.actorRef != actorRef)
       updating(replyTo, notFull)
+  }
+
+  def entitySpawned(entity: Entity, ctx: ActorContext[Update]): ActorRef[Update] = entity match {
+    case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
+    case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
+    case bullet: Bullet   => ctx.spawnAnonymous(BulletActor(bullet))
   }
 }

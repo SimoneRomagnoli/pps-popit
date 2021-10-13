@@ -41,6 +41,12 @@ case class TowerActor[B <: Bullet](
     var shootingTime: Double = 0.0) {
 
   private def detecting: Behavior[Update] = Behaviors.receiveMessage {
+    case SearchBalloon(replyTo, balloon) =>
+      if (tower canSee balloon) {
+        replyTo ! BalloonDetected()
+      }
+      Behaviors.same
+
     case UpdateEntity(elapsedTime, entities, replyTo) =>
       entities.collect { case balloon: Balloon =>
         balloon

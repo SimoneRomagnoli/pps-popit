@@ -22,7 +22,7 @@ object Positions {
    * @param v:
    *   The [[Vector2D]] we want to operate with.
    */
-  implicit class Positions(v: Vector2D) {
+  implicit class RichPosition(v: Vector2D) {
     def +(other: Vector2D): Vector2D = (v.x + other.x, v.y + other.y)
     def -(other: Vector2D): Vector2D = (v.x - other.x, v.y - other.y)
     def *(value: Double): Vector2D = (v.x * value, v.y * value)

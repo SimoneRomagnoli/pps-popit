@@ -130,10 +130,4 @@ object Entities {
 
   }
 
-  implicit class RichEntity(entity: Entity) {
-
-    def not(other: Entity): Boolean =
-      entity != other || other.position != entity.position
-  }
-
 }

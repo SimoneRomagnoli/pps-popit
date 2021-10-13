@@ -3,10 +3,10 @@ package model.actors
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.Update
-import model.Model.ModelMessages.{ EntityUpdated, UpdateEntity }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Explosion }
+import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 
 import scala.language.postfixOps
 

@@ -1,19 +1,28 @@
 package controller
 
+import akka.actor.typed.ActorRef
+
 object Messages {
   trait Message
   trait Render extends Message
   trait Input extends Message
   trait Update extends Message
 
-  trait SpawnerMessage extends Update
+  trait SpawnManagerMessage extends Update
+  trait EntitiesManagerMessage extends Update
 
   sealed trait MessageType
-  case object Spawn extends MessageType
+  case object SpawnMessage extends MessageType
+  case object EntityMessage extends MessageType
 
   val messageType: Update => MessageType = {
-    case _: SpawnerMessage => Spawn
-    case _                 => Spawn
+    case _: SpawnManagerMessage    => SpawnMessage
+    case _: EntitiesManagerMessage => EntityMessage
+    case _                         => SpawnMessage
   }
+
+  case class WithReplyTo[T <: Update](message: T, replyTo: ActorRef[Input])
+      extends Update
+      with Input
 
 }

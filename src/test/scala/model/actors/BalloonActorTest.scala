@@ -10,6 +10,7 @@ import model.Model.ModelMessages._
 import model.actors.BalloonActorTest.{ dummyModel, testBalloon }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
+import model.managers.EntitiesMessages.{ EntityUpdated, TickUpdate, UpdateEntity }
 import model.stats.Stats.GameStats
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -31,7 +32,7 @@ object BalloonActorTest {
           Behaviors.same
         case EntityUpdated(entity, _) =>
           testBalloon = entity.asInstanceOf[Balloon]
-          gameLoop.get ! ModelUpdated(List(), GameStats())
+          gameLoop.get ! ModelUpdated(List())
           Behaviors.same
         case _ => Behaviors.same
       }

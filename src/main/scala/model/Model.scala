@@ -6,22 +6,18 @@ import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopMessages.{ MapCreated, ModelUpdated }
 import controller.Messages._
 import model.Model.ModelMessages._
-import model.actors.BalloonMessages.{ BalloonKilled, Hit }
-import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
-import model.actors.TowerMessages.{ Boost, TowerBoosted }
-import model.actors.{ BalloonActor, BulletActor, SpawnerActor, TowerActor }
+import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.maps.Cells.Cell
+import model.managers.EntitiesMessages.TickUpdate
+import model.managers.{ EntitiesManager, EntityActor, SpawnManager }
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 
 import scala.language.postfixOps
-
-case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
 
 /**
  * Model of the application, fundamental in the MVC pattern. It receives [[Update]] messages from
@@ -30,18 +26,10 @@ case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
 object Model {
 
   object ModelMessages {
-    case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input]) extends Update
     case class NewMap(replyTo: ActorRef[Input]) extends Update
     case class WalletQuantity(replyTo: ActorRef[Input]) extends Update
     case class Pay(amount: Int) extends Update
-
-    case class UpdateEntity(elapsedTime: Double, entities: List[Entity], replyTo: ActorRef[Update])
-        extends Update
-    case class EntityUpdated(entity: Entity, ref: ActorRef[Update]) extends Update
-    case class SpawnEntity(entity: Entity) extends Update
-    case class EntitySpawned(entity: Entity, actor: ActorRef[Update]) extends Update
-    case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update]) extends Update
-    case class TowerIn(cell: Cell) extends Update
+    case class Lose(amount: Int) extends Update
   }
 
   object ModelActor {
@@ -69,7 +57,8 @@ object Model {
 
     def init(): Behavior[Update] = Behaviors.receiveMessage { case NewMap(replyTo) =>
       track = Track(gameGrid)
-      handlers = (ctx.spawnAnonymous(SpawnerActor(ctx.self, track)), Spawn) :: handlers
+      handlers = (ctx.spawnAnonymous(SpawnManager(ctx.self, track)), SpawnMessage) :: handlers
+      handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
 
       replyTo ! MapCreated(track)
       running()
@@ -77,7 +66,7 @@ object Model {
 
     def running(): Behavior[Update] =
       Behaviors.receiveMessage {
-        case StartNextRound() =>
+        /*case StartNextRound() =>
           handle(StartNextRound())
           Behaviors.same
 
@@ -98,11 +87,9 @@ object Model {
           controller ! TowerOption(tower)
           Behaviors.same
 
-        case TickUpdate(elapsedTime, replyTo) =>
-          entities.map(_.actorRef) foreach {
-            _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
-          }
-          updating(replyTo)
+        case WithReplyTo(message, replyTo) =>
+          handle(WithReplyTo(message, replyTo))
+          Behaviors.same*/
 
         case WalletQuantity(replyTo) =>
           replyTo ! CurrentWallet(stats.wallet)
@@ -112,7 +99,7 @@ object Model {
           stats spend amount
           Behaviors.same
 
-        case BoostTowerIn(cell, powerUp) =>
+        /*case BoostTowerIn(cell, powerUp) =>
           entities.collect {
             case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
               actorRef
@@ -126,23 +113,24 @@ object Model {
 
         case BalloonKilled(actorRef) =>
           entities = entities.filter(_.actorRef != actorRef)
-          Behaviors.same
+          Behaviors.same*/
 
-        case _ => Behaviors.same
+        case msg =>
+          handle(msg)
+          Behaviors.same
       }
 
     def updating(
         replyTo: ActorRef[Input],
         updatedEntities: List[EntityActor] = List()): Behavior[Update] =
       Behaviors.receiveMessage {
-        case EntityUpdated(entity, ref) =>
+        /*case EntityUpdated(entity, ref) =>
           EntityActor(ref, entity) :: updatedEntities match {
             case full if full.size == entities.size =>
               val (balloons, others): (List[Entity], List[Entity]) =
                 full.map(_.entity).partition(_.isInstanceOf[Balloon])
               replyTo ! ModelUpdated(
-                others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
-                stats
+                others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted)
               )
               entities = full
               running()
@@ -189,7 +177,7 @@ object Model {
             updating(replyTo, updatedEntities.filter(_.actorRef != actorRef))
           } else {
             killEntity(updatedEntities, replyTo, actorRef)
-          }
+          }*/
 
         case WalletQuantity(replyTo) =>
           replyTo ! CurrentWallet(stats.wallet)
@@ -199,7 +187,7 @@ object Model {
           stats spend amount
           Behaviors.same
 
-        case BalloonHit(bullet, balloons) =>
+        /*case BalloonHit(bullet, balloons) =>
           entities.filter(e => balloons.contains(e.entity)).foreach {
             _.actorRef ! Hit(bullet, ctx.self)
           }
@@ -207,9 +195,11 @@ object Model {
 
         case StartExplosion(bullet) =>
           controller ! StartAnimation(bullet)
-          Behaviors.same
+          Behaviors.same*/
 
-        case _ => Behaviors.same
+        case msg =>
+          handle(msg)
+          Behaviors.same
       }
 
     def killEntity(
@@ -217,7 +207,7 @@ object Model {
         replyTo: ActorRef[Input],
         actorRef: ActorRef[Update]): Behavior[Update] = updatedEntities match {
       case full if full.size == entities.size - 1 =>
-        replyTo ! ModelUpdated(full.map(_.entity), stats)
+        replyTo ! ModelUpdated(full.map(_.entity))
         entities = full
         running()
       case notFull =>
@@ -226,8 +216,9 @@ object Model {
     }
 
     def handle(msg: Update): Unit = msg match {
-      case sm: SpawnerMessage => choose(messageType(sm)).foreach(_ ! sm)
-      case _                  =>
+      case WithReplyTo(m, _) => choose(messageType(m)).foreach(_ ! msg)
+      case msg               => choose(messageType(msg)).foreach(_ ! msg)
+      case _                 =>
     }
 
     def choose(messageType: MessageType)(implicit

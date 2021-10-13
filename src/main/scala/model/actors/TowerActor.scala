@@ -11,6 +11,7 @@ import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
+import model.managers.EntitiesMessages.{ EntitySpawned, EntityUpdated, UpdateEntity }
 import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
 import scala.language.postfixOps
@@ -25,7 +26,7 @@ object TowerMessages {
   case class TowerBoosted[B <: Bullet](tower: Tower[B], actorRef: ActorRef[Update])
       extends Update
       with Input
-  case class Boost(powerUp: TowerPowerUp, replyTo: ActorRef[Update]) extends Update
+  case class Boost(powerUp: TowerPowerUp, replyTo: ActorRef[Input]) extends Update
 }
 
 object TowerActor {

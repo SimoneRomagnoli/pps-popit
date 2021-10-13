@@ -8,8 +8,8 @@ import controller.GameLoop.Time._
 import controller.Messages._
 import model.Model.ModelMessages._
 import model.entities.Entities.Entity
+import model.managers.EntitiesMessages.TickUpdate
 import model.maps.Tracks.Track
-import model.stats.Stats.GameStats
 import view.View.ViewMessages._
 
 import scala.concurrent.duration.DurationDouble
@@ -24,7 +24,7 @@ object GameLoop {
     case object Tick extends Input
     case class Start() extends Input
     case class MapCreated(track: Track) extends Input
-    case class ModelUpdated(entities: List[Entity], stats: GameStats) extends Input
+    case class ModelUpdated(entities: List[Entity]) extends Input
 
   }
 
@@ -73,14 +73,16 @@ object GameLoop {
       case MapCreated(track) =>
         view ! RenderMap(track)
         Behaviors.same
-      case ModelUpdated(entities, stats) =>
-        view ! RenderStats(stats)
+      case ModelUpdated(entities) =>
         view ! RenderEntities(entities)
         Behaviors.same
       case PauseGame() =>
         paused()
       case NewTimeRatio(value) =>
         timeRatio = value
+        Behaviors.same
+      case StartAnimation(entity) =>
+        view ! StartAnimation(entity)
         Behaviors.same
       case _ => Behaviors.same
     }

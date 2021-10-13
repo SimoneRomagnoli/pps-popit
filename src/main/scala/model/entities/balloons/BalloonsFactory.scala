@@ -5,7 +5,7 @@ import model.entities.balloons.Balloons.{ complex, simple, Balloon }
 import model.entities.balloons.balloontypes.CamoBalloons.camo
 import model.entities.balloons.balloontypes.LeadBalloons.lead
 import model.entities.balloons.balloontypes.RegeneratingBalloons.{ regenerating, Regenerating }
-import model.spawn.SpawnManager.BalloonInfo
+import model.spawn.Rounds.BalloonInfo
 
 import scala.language.{ implicitConversions, postfixOps }
 

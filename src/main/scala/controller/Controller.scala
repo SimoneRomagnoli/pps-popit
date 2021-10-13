@@ -10,13 +10,14 @@ import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages.Start
 import controller.Messages._
 import model.Model.ModelActor
-import model.Model.ModelMessages.{ Pay, SpawnEntity, WalletQuantity }
+import model.Model.ModelMessages.{ Pay, WalletQuantity }
 import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.entities.towers.PowerUps.TowerPowerUp
+import model.managers.EntitiesMessages.SpawnEntity
 import model.maps.Cells.Cell
 
 import scala.concurrent.ExecutionContextExecutor
@@ -34,7 +35,7 @@ object Controller {
     case class NewGame() extends Input
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
-    case class StartNextRound() extends Input with SpawnerMessage
+    case class StartNextRound() extends Input with SpawnManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input
@@ -83,7 +84,7 @@ object Controller {
         Behaviors.same
 
       case ActorInteraction(replyTo, message) =>
-        model ! message.asInstanceOf[Update]
+        model ! WithReplyTo(message.asInstanceOf[Update], ctx.self)
         interacting(replyTo)
 
       case StartNextRound() =>
@@ -120,10 +121,6 @@ object Controller {
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>
         gameLoop.get ! input
-        Behaviors.same
-
-      case StartAnimation(entity) =>
-        view ! StartAnimation(entity)
         Behaviors.same
 
       case _ => Behaviors.same

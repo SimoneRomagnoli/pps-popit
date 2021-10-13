@@ -10,6 +10,7 @@ import model.Model.ModelMessages._
 import controller.GameLoop.GameLoopActor
 import controller.GameLoopTest._
 import controller.Messages._
+import model.managers.EntitiesMessages.TickUpdate
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -27,7 +28,7 @@ object GameLoopTest {
     Behaviors.receiveMessage {
       case TickUpdate(elapsedTime, replyTo) =>
         counter.inc(elapsedTime)
-        replyTo ! ModelUpdated(List(), GameStats())
+        replyTo ! ModelUpdated(List())
         Behaviors.same
       case _ => Behaviors.same
     }

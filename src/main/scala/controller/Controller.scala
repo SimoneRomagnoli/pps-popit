@@ -56,7 +56,7 @@ object Controller {
   object ControllerActor {
 
     def apply(view: ActorRef[Render]): Behavior[Input] = Behaviors.setup { ctx =>
-      ControllerActor(ctx, view, ctx.spawn(ModelActor(ctx.self), "model")).default()
+      ControllerActor(ctx, view).default()
     }
   }
 
@@ -69,7 +69,7 @@ object Controller {
   case class ControllerActor private (
       ctx: ActorContext[Input],
       view: ActorRef[Render],
-      var model: ActorRef[Update],
+      var model: Option[ActorRef[Update]] = None,
       var gameLoop: Option[ActorRef[Input]] = None) {
     implicit val timeout: Timeout = Timeout(1.seconds)
     implicit val scheduler: Scheduler = ctx.system.scheduler
@@ -78,27 +78,28 @@ object Controller {
     def default(): Behavior[Input] = Behaviors.receiveMessage {
       case NewGame() =>
         if (gameLoop.isEmpty) {
-          val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")
+          model = Some(ctx.spawn(ModelActor(ctx.self), "model"))
+          val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model.get, view), "gameLoop")
           gameLoop = Some(actor)
         }
         gameLoop.get ! Start()
         Behaviors.same
 
       case ActorInteraction(replyTo, message) =>
-        model ! message.asInstanceOf[Update]
+        model.get ! message.asInstanceOf[Update]
         interacting(replyTo)
 
       case StartNextRound() =>
-        model ! StartNextRound()
+        model.get ! StartNextRound()
         Behaviors.same
 
       case BoostTowerIn(cell, powerUp) =>
-        model ask WalletQuantity onComplete {
+        model.get ask WalletQuantity onComplete {
           case Success(value) =>
             value match {
               case CurrentWallet(amount) =>
                 if (amount >= powerUp.cost) {
-                  model ! BoostTowerIn(cell, powerUp)
+                  model.get ! BoostTowerIn(cell, powerUp)
                 }
             }
           case Failure(exception) => println(exception)
@@ -106,14 +107,14 @@ object Controller {
         Behaviors.same
 
       case PlaceTower(cell, towerType) =>
-        model ? WalletQuantity onComplete {
+        model.get ? WalletQuantity onComplete {
           case Success(value) =>
             value match {
               case CurrentWallet(amount) =>
                 if (amount >= towerType.cost) {
                   val tower: Tower[Bullet] = towerType.tower in cell
-                  model ! SpawnEntity(tower)
-                  model ! Pay(towerType.cost)
+                  model.get ! SpawnEntity(tower)
+                  model.get ! Pay(towerType.cost)
                 }
             }
           case Failure(exception) => println(exception)

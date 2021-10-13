@@ -76,7 +76,6 @@ object Model {
     def handle(msg: Update): Unit = msg match {
       case WithReplyTo(m, _) => choose(messageType(m)).foreach(_ ! msg)
       case msg               => choose(messageType(msg)).foreach(_ ! msg)
-      case _                 =>
     }
 
     def choose(messageType: MessageType)(implicit

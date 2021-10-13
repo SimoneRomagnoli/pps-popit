@@ -52,7 +52,7 @@ case class Spawner private (
       round += 1
       ctx.self ! StartRound {
         (for {
-          _ <- add(Streak(round * 10) :- Red)
+          //_ <- add(Streak(round * 10) :- Red)
           _ <- add(Streak(round * 5) :- Blue)
         } yield ()).get
       }

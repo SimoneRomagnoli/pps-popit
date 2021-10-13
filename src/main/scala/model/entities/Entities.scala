@@ -52,10 +52,13 @@ object Entities {
    *   - can change the [[Track]]
    */
   trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
-    private var linearPosition: Double = 0.0
+    protected var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing
+
+    protected def following(trackFollowing: TrackFollowing): TrackFollowing =
+      following(trackFollowing.linearPosition)
 
     private def following(lp: Double): TrackFollowing = {
       this.linearPosition = lp

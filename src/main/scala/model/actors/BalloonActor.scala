@@ -31,10 +31,14 @@ object BalloonActor {
  * @param balloon
  *   The encapsulated [[Balloon]].
  */
-case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon) {
+case class BalloonActor private (
+    ctx: ActorContext[Update],
+    var balloon: Balloon,
+    var hit: Boolean = false) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
     case UpdateEntity(elapsedTime, _, replyTo) =>
+      //if (hit) println("sono stato gia colpito e ora vengo aggiornato")
       balloon.position.x match {
         case outOfBounds if outOfBounds >= Constants.View.gameBoardWidth =>
           replyTo ! ExitedBalloon(balloon, ctx.self)
@@ -45,14 +49,14 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
           Behaviors.same
       }
     case Hit(bullet, replyTo) =>
+      hit = true
       balloon.pop(bullet) match {
         case None =>
           replyTo ! BalloonKilled(ctx.self)
           Behaviors.stopped
         case Some(b) =>
           balloon = b
-          println("blue popped -> red")
-          replyTo ! EntityUpdated(balloon, ctx.self)
+          //replyTo ! EntityUpdated(balloon, ctx.self)
           Behaviors.same
       }
   }

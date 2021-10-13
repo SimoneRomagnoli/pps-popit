@@ -40,7 +40,7 @@ object Balloons {
     override def on(t: Track): Balloon = change(Simple(position, speed, t))
 
     override def pop(bullet: Entity): Option[Balloon] = this match {
-      case Complex(balloon) => Some(balloon)
+      case Complex(balloon) => Some((balloon following this).asInstanceOf[Balloon])
       case _                => None
     }
   }

@@ -78,6 +78,10 @@ case class EntityManager private (
       }
       updating(replyTo)
 
+    case EntityUpdated(a, b) =>
+      println(a + b.toString)
+      Behaviors.same
+
     case SpawnEntity(entity) =>
       ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
       Behaviors.same

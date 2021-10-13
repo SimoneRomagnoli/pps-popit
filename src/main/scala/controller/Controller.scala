@@ -32,6 +32,7 @@ object Controller {
 
   object ControllerMessages {
     case class NewGame() extends Input with Render
+    case class ExitGame() extends Input with Render
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
     case class StartNextRound() extends Input with Update
@@ -79,11 +80,18 @@ object Controller {
       case NewGame() =>
         view ! NewGame()
         if (gameLoop.isEmpty) {
-          model = Some(ctx.spawn(ModelActor(ctx.self), "model"))
-          val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model.get, view), "gameLoop")
-          gameLoop = Some(actor)
+          model = Some(ctx.spawnAnonymous(ModelActor(ctx.self)))
+          gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
         }
         gameLoop.get ! Start()
+        Behaviors.same
+
+      case ExitGame() =>
+        view ! ExitGame()
+        //model.get ! Stop()
+        //gameLoop.get ! Stop()
+        gameLoop = None
+        model = None
         Behaviors.same
 
       case ActorInteraction(replyTo, message) =>

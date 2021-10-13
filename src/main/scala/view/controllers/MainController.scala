@@ -53,6 +53,7 @@ class MainController(
   private def setup(): Unit = {
     Rendering.setLayout(mainPane, Constants.Screen.width, Constants.Screen.height)
     gameController.hide()
+    menuController.show()
   }
 
 }

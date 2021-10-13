@@ -2,7 +2,7 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{ NewGame, StartAnimation }
+import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
 import controller.Messages.Render
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
@@ -70,6 +70,10 @@ object View {
         case StartAnimation(entity) =>
           gameController animate entity
           Behaviors.same
+
+        case ExitGame() =>
+          gameController.hide()
+          inMenu(mainController.menuController)
 
         case _ => Behaviors.same
       }

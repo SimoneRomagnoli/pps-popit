@@ -2,6 +2,7 @@ package view.controllers
 
 import controller.Controller.ControllerMessages.{
   BoostTowerIn,
+  ExitGame,
   PauseGame,
   ResumeGame,
   StartNextRound
@@ -139,7 +140,7 @@ class GameMenuController(
     }
 
     def setupButtons(): Unit = {
-      //exitButton.onMouseClicked = _ =>
+      exitButton.onMouseClicked = _ => send(ExitGame())
       playButton.onMouseClicked = _ =>
         if (paused) {
           send(ResumeGame())

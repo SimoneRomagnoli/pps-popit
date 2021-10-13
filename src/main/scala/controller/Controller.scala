@@ -70,8 +70,7 @@ object Controller {
       ctx: ActorContext[Input],
       view: ActorRef[Render],
       var model: ActorRef[Update],
-      var gameLoops: Seq[ActorRef[Input]] = Seq()) {
-    private def gameLoop: () => ActorRef[Input] = () => gameLoops.head
+      var gameLoop: Option[ActorRef[Input]] = None) {
     implicit val timeout: Timeout = Timeout(1.seconds)
     implicit val scheduler: Scheduler = ctx.system.scheduler
     implicit val ec: ExecutionContextExecutor = ctx.system.executionContext
@@ -79,8 +78,8 @@ object Controller {
     def default(): Behavior[Input] = Behaviors.receiveMessage {
       case NewGame() =>
         val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model, view), "gameLoop")
-        gameLoops = gameLoops :+ actor
-        gameLoop() ! Start()
+        gameLoop = Some(actor)
+        gameLoop.get ! Start()
         Behaviors.same
 
       case ActorInteraction(replyTo, message) =>
@@ -120,7 +119,7 @@ object Controller {
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>
-        gameLoop() ! input
+        gameLoop.get ! input
         Behaviors.same
 
       case StartAnimation(entity) =>

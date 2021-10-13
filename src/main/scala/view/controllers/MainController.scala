@@ -1,7 +1,7 @@
 package view.controllers
 
 import controller.Messages.{ Input, Message }
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.layout.{ BorderPane, StackPane }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import view.render.Rendering
@@ -15,10 +15,13 @@ import scala.concurrent.Future
 trait ViewController {
   def setSend(send: Input => Unit): Unit
   def setAsk(reference: Message => Future[Message]): Unit
+  def show(): Unit
+  def hide(): Unit
 }
 
 trait ViewMainController extends ViewController {
   def gameController: ViewGameController
+  def menuController: ViewMainMenuController
 }
 
 /**
@@ -26,15 +29,30 @@ trait ViewMainController extends ViewController {
  */
 @sfxml
 class MainController(
-    val mainPane: BorderPane,
+    val mainPane: StackPane,
     val game: BorderPane,
-    @nested[GameController] val gameController: ViewGameController)
+    val menu: BorderPane,
+    @nested[GameController] val gameController: ViewGameController,
+    @nested[MainMenuController] val menuController: ViewMainMenuController)
     extends ViewMainController {
-  Rendering.setLayout(mainPane, Constants.Screen.width, Constants.Screen.height)
+  setup()
 
-  override def setSend(reference: Input => Unit): Unit =
+  override def setSend(reference: Input => Unit): Unit = {
+    menuController.setSend(reference)
     gameController.setSend(reference)
+  }
 
-  override def setAsk(reference: Message => Future[Message]): Unit =
+  override def setAsk(reference: Message => Future[Message]): Unit = {
+    menuController.setAsk(reference)
     gameController.setAsk(reference)
+  }
+
+  override def show(): Unit = mainPane.visible = true
+  override def hide(): Unit = mainPane.visible = false
+
+  private def setup(): Unit = {
+    Rendering.setLayout(mainPane, Constants.Screen.width, Constants.Screen.height)
+    gameController.hide()
+  }
+
 }

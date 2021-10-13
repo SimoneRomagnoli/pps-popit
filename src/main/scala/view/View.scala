@@ -2,14 +2,14 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.StartAnimation
+import controller.Controller.ControllerMessages.{ NewGame, StartAnimation }
 import controller.Messages.Render
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 import view.View.ViewMessages._
-import view.controllers.{ ViewGameController, ViewMainController }
+import view.controllers.{ ViewGameController, ViewMainController, ViewMainMenuController }
 
 import scala.language.reflectiveCalls
 
@@ -28,7 +28,7 @@ object View {
   object ViewActor {
 
     def apply(mainController: ViewMainController): Behavior[Render] = Behaviors.setup { _ =>
-      new ViewActor(mainController).inGame(mainController.gameController)
+      new ViewActor(mainController).inMenu(mainController.menuController)
     }
   }
 
@@ -39,7 +39,19 @@ object View {
    */
   class ViewActor private (mainController: ViewMainController) {
 
-    def inGame(gameController: ViewGameController): Behavior[Render] =
+    def inMenu(menuController: ViewMainMenuController): Behavior[Render] = {
+      menuController.show()
+      Behaviors.receiveMessage {
+        case NewGame() =>
+          menuController.hide()
+          inGame(mainController.gameController)
+
+        case _ => Behaviors.same
+      }
+    }
+
+    def inGame(gameController: ViewGameController): Behavior[Render] = {
+      gameController.show()
       Behaviors.receiveMessage {
         case RenderStats(stats) =>
           gameController update stats
@@ -61,6 +73,7 @@ object View {
 
         case _ => Behaviors.same
       }
+    }
   }
 
 }

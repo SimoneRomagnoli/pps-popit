@@ -31,7 +31,7 @@ import scala.util.{ Failure, Success }
 object Controller {
 
   object ControllerMessages {
-    case class NewGame() extends Input
+    case class NewGame() extends Input with Render
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
     case class StartNextRound() extends Input with Update
@@ -77,6 +77,7 @@ object Controller {
 
     def default(): Behavior[Input] = Behaviors.receiveMessage {
       case NewGame() =>
+        view ! NewGame()
         if (gameLoop.isEmpty) {
           model = Some(ctx.spawn(ModelActor(ctx.self), "model"))
           val actor: ActorRef[Input] = ctx.spawn(GameLoopActor(model.get, view), "gameLoop")

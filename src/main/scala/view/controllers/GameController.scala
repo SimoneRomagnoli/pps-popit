@@ -94,6 +94,9 @@ class GameController(
     gameMenuController.setAsk(reference)
   }
 
+  override def show(): Unit = mainPane.visible = true
+  override def hide(): Unit = mainPane.visible = false
+
   override def loading(): Unit = Platform runLater {
     val loadingLabel: Label =
       Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))

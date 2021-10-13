@@ -3,6 +3,11 @@
 -fx-font-size: 25px;
 }
 
+.mainMenu {
+-fx-font-weight: bold;
+-fx-font-size: 30px;
+}
+
 .gameMenu {
 -fx-font-weight: bold;
 -fx-font-size: 13px;

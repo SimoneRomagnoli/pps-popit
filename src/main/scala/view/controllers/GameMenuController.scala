@@ -81,6 +81,8 @@ class GameMenuController(
 
   override def setSend(reference: Messages.Input => Unit): Unit = send = reference
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
+  override def show(): Unit = gameMenu.visible = true
+  override def hide(): Unit = gameMenu.visible = false
 
   override def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit = highlight =
     reference

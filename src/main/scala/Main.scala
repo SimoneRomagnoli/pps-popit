@@ -5,7 +5,7 @@ import akka.util.Timeout
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.Messages._
-import javafx.scene.layout.BorderPane
+import javafx.scene.layout.StackPane
 import scalafx.Includes._
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
@@ -20,7 +20,7 @@ object Main extends JFXApp3 {
 
   override def start(): Unit = {
     val loader: FXMLLoader = loadRootFXML()
-    val root: BorderPane = loader.getRoot[BorderPane]
+    val root: StackPane = loader.getRoot[StackPane]
     val mainController: ViewMainController = loader.getController[ViewMainController]()
 
     stage = new PrimaryStage() {
@@ -36,7 +36,6 @@ object Main extends JFXApp3 {
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")
         mainController.setSend(controller ! _)
         mainController.setAsk(request => controller ? (ctx => ActorInteraction(ctx, request)))
-        controller ! NewGame()
         Behaviors.empty
       },
       "system"

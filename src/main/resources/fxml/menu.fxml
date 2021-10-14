@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -11,8 +13,13 @@
             fx:controller="view.controllers.MainMenuController"
             prefHeight="400.0" prefWidth="600.0">
     <center>
-        <VBox fx:id="mainMenuButtons" >
-            <ToggleButton text="NEW GAME" fx:id="newGameBtn" styleClass="menuButton"/>
-        </VBox>
+        <HBox>
+            <VBox HBox.hgrow="ALWAYS"/>
+            <VBox fx:id="mainMenuButtons" styleClass="mainMenuButtons">
+                <HBox fx:id="titleLogo" styleClass="titleLogo"/>
+                <ToggleButton text="NEW GAME" fx:id="newGameBtn" styleClass="menuButton"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS"/>
+        </HBox>
     </center>
 </BorderPane>

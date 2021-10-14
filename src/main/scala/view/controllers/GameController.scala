@@ -20,7 +20,7 @@ import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 import view.render.Animations.Animations
-import view.render.Drawings.Drawing
+import view.render.Drawings.{ Drawing, GameDrawings }
 import view.render.{ Animating, Rendering }
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -64,7 +64,7 @@ class GameController(
   import GameUtilities._
   import MouseEvents._
   val images: Animations = Animations()
-  val drawing: Drawing = Drawing()
+  val drawing: Drawing = Drawing(GameDrawings())
   setup()
 
   override def setup(): Unit = Platform runLater {

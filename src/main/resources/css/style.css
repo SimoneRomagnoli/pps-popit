@@ -8,6 +8,11 @@
 -fx-font-size: 30px;
 }
 
+.mainMenuButtons {
+-fx-spacing: 10;
+-fx-padding: 10;
+}
+
 .gameMenu {
 -fx-font-weight: bold;
 -fx-font-size: 13px;

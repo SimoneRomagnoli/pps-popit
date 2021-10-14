@@ -2,7 +2,7 @@ package view.render
 
 import javafx.scene.Node
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.Explosion
+import model.entities.bullets.Bullets.{ CannonBall, Explosion, IceBall }
 import scalafx.animation.Timeline
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.shape.{ Rectangle, Shape }
@@ -36,7 +36,8 @@ object Animating {
     )
 
     val timeline: Timeline = entity match {
-      case explosion: Explosion => moving the Item(explosion, rectangle)
+      case cannonBall: CannonBall => moving the Item(cannonBall, rectangle)
+      case iceBall: IceBall       => moving the Item(iceBall, rectangle)
     }
 
     Animated(rectangle, timeline)

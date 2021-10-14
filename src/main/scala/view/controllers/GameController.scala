@@ -14,7 +14,7 @@ import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.{ Label, ToggleButton }
+import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, Pane, StackPane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
@@ -27,14 +27,13 @@ import view.render.{ Animating, Rendering }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.{ implicitConversions, reflectiveCalls }
-import scala.util.{ Failure, Random, Success }
+import scala.util.{ Failure, Success }
 
 /**
  * Controller of the game. This controller loads the game fxml file and is able to draw every
  * element of a game.
  */
 trait ViewGameController extends ViewController {
-  def loading(): Unit
   def reset(): Unit
   def setup(): Unit
   def update(stats: GameStats): Unit
@@ -75,7 +74,6 @@ class GameController(
   override def setup(): Unit = Platform runLater {
     resetAll()
     Rendering a gameGrid into trackPane.children
-    loading()
     setLayouts()
     setMouseHandlers()
     gameMenuController.setup()
@@ -94,19 +92,6 @@ class GameController(
 
   override def show(): Unit = mainPane.visible = true
   override def hide(): Unit = mainPane.visible = false
-
-  override def loading(): Unit = Platform runLater {
-    val loadingLabel: Label =
-      Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))
-    loadingLabel
-      .layoutXProperty()
-      .bind(gameBoard.widthProperty().subtract(loadingLabel.widthProperty()).divide(2))
-    loadingLabel
-      .layoutYProperty()
-      .bind(gameBoard.heightProperty().subtract(loadingLabel.heightProperty()).divide(2))
-
-    trackPane.children.add(loadingLabel)
-  }
 
   override def reset(): Unit = Platform runLater {
     resetAll()
@@ -179,6 +164,8 @@ class GameController(
       }
       changeTrack.onMouseClicked = _ => {
         send(NewTrack())
+        trackPane.children.clear()
+        Rendering a gameGrid into trackPane.children
         trackChoiceContainer.visible = false
       }
       trackPane.onMouseExited = _ => removeEffects()

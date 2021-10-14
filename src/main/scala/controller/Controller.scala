@@ -88,7 +88,6 @@ object Controller {
         Behaviors.same
 
       case NewTrack() =>
-        println("received new track request")
         model.get ! NewMap(ctx.self)
         Behaviors.same
 

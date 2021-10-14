@@ -186,7 +186,6 @@ case class EntityManager private (
 
     case msg =>
       if (!msg.isInstanceOf[TickUpdate]) {
-        println(messageQueue)
         messageQueue = messageQueue :+ msg
       }
       Behaviors.same

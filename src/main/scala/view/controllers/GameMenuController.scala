@@ -44,6 +44,8 @@ trait ViewGameMenuController extends ViewController {
   def clearTowerStatus(): Unit
   def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
+  def disableRoundButton(): Unit
+  def enableRoundButton(): Unit
 }
 
 /**
@@ -125,6 +127,10 @@ class GameMenuController(
     }
   }
 
+  override def disableRoundButton(): Unit = startRound.disable = true
+
+  override def enableRoundButton(): Unit = startRound.disable = false
+
   override def clearTowerStatus(): Unit =
     towerStatus.children.clear()
 
@@ -132,7 +138,7 @@ class GameMenuController(
   private object MenuSetters {
 
     def reset(): Unit = {
-      startRound.disable = false
+      disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
     }
@@ -159,7 +165,7 @@ class GameMenuController(
 
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
-        startRound.disable = true
+        disableRoundButton()
       }
     }
 

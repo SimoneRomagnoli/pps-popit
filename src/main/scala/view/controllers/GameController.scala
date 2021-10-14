@@ -68,7 +68,8 @@ class GameController(
   setup()
 
   override def setup(): Unit = Platform runLater {
-    this draw gameGrid
+    resetAll()
+    Rendering a gameGrid into trackPane.children
     loading()
     Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
     Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
@@ -111,10 +112,7 @@ class GameController(
   }
 
   override def reset(): Unit = Platform runLater {
-    trackPane.children.clear()
-    highlightPane.children.clear()
-    entitiesPane.children.clear()
-    animationsPane.children.clear()
+    resetAll()
   }
 
   override def update(stats: GameStats): Unit = Platform runLater {
@@ -128,6 +126,7 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     occupiedCells = track.cells
     Rendering a track into trackPane.children
+    gameMenuController.enableRoundButton()
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
@@ -140,6 +139,13 @@ class GameController(
   }
 
   private object GameUtilities {
+
+    def resetAll(): Unit = {
+      trackPane.children.clear()
+      highlightPane.children.clear()
+      entitiesPane.children.clear()
+      animationsPane.children.clear()
+    }
 
     def highlight(tower: Tower[_], insertion: Boolean): Unit =
       if (insertion) {

@@ -13,7 +13,7 @@
                     <VBox HBox.hgrow="ALWAYS"/>
                     <VBox fx:id="trackChoiceVerticalContainer">
                         <VBox fx:id="trackChoiceContainer" styleClass="trackChoiceContainer">
-                            <Label text="Do you want to keep this track?"/>
+                            <Label text="Do you like this track?"/>
                             <HBox>
                                 <ToggleButton text="Keep-it!" fx:id="keepTrack" styleClass="trackButtons"/>
                                 <HBox HBox.hgrow="ALWAYS"/>

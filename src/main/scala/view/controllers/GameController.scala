@@ -144,9 +144,9 @@ class GameController(
       Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
-      highlightPane.setMouseTransparent(true)
       entitiesPane.setMouseTransparent(true)
       animationsPane.setMouseTransparent(true)
+      highlightPane.setPickOnBounds(false)
       Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
       trackChoiceVerticalContainer.setAlignment(Pos.Center)
     }
@@ -178,7 +178,6 @@ class GameController(
         trackChoiceContainer.visible = false
       }
       changeTrack.onMouseClicked = _ => {
-        println("requested new track")
         send(NewTrack())
         trackChoiceContainer.visible = false
       }

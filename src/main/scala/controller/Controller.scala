@@ -6,7 +6,7 @@ import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopActor
-import controller.GameLoop.GameLoopMessages.{ Start, Stop }
+import controller.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.Messages._
 import model.Model.ModelActor
 import model.entities.Entities.Entity
@@ -15,8 +15,9 @@ import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.SpawnEntity
-import model.managers.GameDynamicsMessages.{ Pay, WalletQuantity }
+import model.managers.GameDynamicsMessages.{ NewMap, Pay, WalletQuantity }
 import model.maps.Cells.Cell
+import view.View.ViewMessages.RenderMap
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
@@ -82,11 +83,17 @@ object Controller {
           model = Some(ctx.spawnAnonymous(ModelActor(ctx.self)))
           gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
         }
+        model.get ! NewMap(ctx.self)
         gameLoop.get ! Start()
         Behaviors.same
 
       case NewTrack() =>
-        gameLoop.get ! NewTrack()
+        println("received new track request")
+        model.get ! NewMap(ctx.self)
+        Behaviors.same
+
+      case MapCreated(track) =>
+        view ! RenderMap(track)
         Behaviors.same
 
       case ExitGame() =>

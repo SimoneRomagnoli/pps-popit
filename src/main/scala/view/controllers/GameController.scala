@@ -15,7 +15,7 @@ import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.{ Label, ToggleButton }
-import scalafx.scene.layout.{ BorderPane, HBox, Pane, StackPane, VBox }
+import scalafx.scene.layout.{ BorderPane, Pane, StackPane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
@@ -57,7 +57,7 @@ class GameController(
     val animationsPane: Pane,
     val gameMenu: VBox,
     val trackChoiceVerticalContainer: VBox,
-    val trackChoiceContainer: HBox,
+    val trackChoiceContainer: VBox,
     val keepTrack: ToggleButton,
     val changeTrack: ToggleButton,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
@@ -123,8 +123,8 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     occupiedCells = track.cells
     Rendering a track into trackPane.children
-
-    //gameMenuController.enableRoundButton()
+    highlightPane.visible = true
+    trackChoiceContainer.visible = true
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
@@ -153,7 +153,7 @@ class GameController(
 
     def resetAll(): Unit = {
       trackPane.children.clear()
-      highlightPane.children.clear()
+      highlightPane.children.removeRange(1, highlightPane.children.size)
       entitiesPane.children.clear()
       animationsPane.children.clear()
     }
@@ -173,18 +173,22 @@ class GameController(
     import InputEventHandlers._
 
     def setMouseHandlers(): Unit = {
+      keepTrack.onMouseClicked = _ => {
+        gameMenuController.enableRoundButton()
+        trackChoiceContainer.visible = false
+      }
+      changeTrack.onMouseClicked = _ => {
+        println("requested new track")
+        send(NewTrack())
+        trackChoiceContainer.visible = false
+      }
       trackPane.onMouseExited = _ => removeEffects()
       trackPane.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
       trackPane.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
-      keepTrack.onMouseClicked = _ => {
-        trackChoiceContainer.visible = false
-        gameMenuController.enableRoundButton()
-      }
-      changeTrack.onMouseClicked = _ => send(NewTrack())
-      trackChoiceContainer.visible = false
     }
 
     def click(e: MouseEvent): IO[Unit] = for {
+      _ <- println(e)
       _ <-
         if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
           clickedTower(e, ask, gameMenuController.fillTowerStatus)

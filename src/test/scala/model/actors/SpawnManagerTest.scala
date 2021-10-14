@@ -1,21 +1,19 @@
 package model.actors
 
-import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages.Update
-import model.Model.ModelMessages._
 import model.actors.SpawnManagerTest.{ balloonsSpawned, dummyModel, waitSomeTime }
-import model.managers.SpawnerMessages.StartRound
 import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.managers.EntitiesMessages.EntitySpawned
 import model.managers.SpawnManager
-import model.maps.Tracks.Track
-import model.spawn.Rounds.{ Round, Streak }
+import model.managers.SpawnerMessages.StartRound
 import model.spawn.RoundBuilders.{ add, RichIO }
+import model.spawn.Rounds.{ Round, Streak }
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -42,7 +40,7 @@ class SpawnManagerTest
     with Matchers
     with BeforeAndAfterEach {
   val model: ActorRef[Update] = testKit.spawn(dummyModel)
-  val spawner: ActorRef[Update] = testKit.spawn(SpawnManager(model, Track()))
+  val spawner: ActorRef[Update] = testKit.spawn(SpawnManager(model))
   val nBalloons: Int = 5
   val simpleRound: Round = Round(Seq(Streak(nBalloons)))
 

@@ -15,7 +15,7 @@ import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
 import scalafx.scene.control.ToggleButton
-import scalafx.scene.layout.{ BorderPane, Pane, StackPane, VBox }
+import scalafx.scene.layout.{ BorderPane, HBox, Pane, StackPane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
@@ -51,7 +51,7 @@ class GameController(
     val mainPane: BorderPane,
     val gameBoard: StackPane,
     val trackPane: Pane,
-    val highlightPane: Pane,
+    val highlightPane: HBox,
     val entitiesPane: Pane,
     val animationsPane: Pane,
     val gameMenu: VBox,
@@ -131,14 +131,16 @@ class GameController(
       Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
       entitiesPane.setMouseTransparent(true)
       animationsPane.setMouseTransparent(true)
+      highlightPane.setMouseTransparent(false)
       highlightPane.setPickOnBounds(false)
+      highlightPane.visible = false
       Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
       trackChoiceVerticalContainer.setAlignment(Pos.Center)
     }
 
     def resetAll(): Unit = {
       trackPane.children.clear()
-      highlightPane.children.removeRange(1, highlightPane.children.size)
+      highlightPane.children.removeRange(3, highlightPane.children.size)
       entitiesPane.children.clear()
       animationsPane.children.clear()
     }
@@ -161,6 +163,7 @@ class GameController(
       keepTrack.onMouseClicked = _ => {
         gameMenuController.enableRoundButton()
         trackChoiceContainer.visible = false
+        highlightPane.setMouseTransparent(true)
       }
       changeTrack.onMouseClicked = _ => {
         send(NewTrack())
@@ -174,7 +177,6 @@ class GameController(
     }
 
     def click(e: MouseEvent): IO[Unit] = for {
-      _ <- println(e)
       _ <-
         if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
           clickedTower(e, ask, gameMenuController.fillTowerStatus)
@@ -207,20 +209,9 @@ class GameController(
               if (selectable) {
                 Platform runLater {
                   removeEffects()
+                  occupiedCells = occupiedCells :+ cell
                   gameMenuController.unselectDepot()
                   send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-                  ask(TowerIn(cell)) onComplete {
-                    case Failure(exception) => println(exception)
-                    case Success(value) =>
-                      value match {
-                        case TowerOption(option) =>
-                          option match {
-                            case Some(_) => occupy(cell)
-                            case _       =>
-                          }
-                        case _ =>
-                      }
-                  }
                 }
               } else {}
           }

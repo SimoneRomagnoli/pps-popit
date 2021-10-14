@@ -8,7 +8,6 @@ import controller.GameLoop.Time._
 import controller.Messages._
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.TickUpdate
-import model.managers.GameDynamicsMessages.NewMap
 import model.maps.Tracks.Track
 import view.View.ViewMessages._
 

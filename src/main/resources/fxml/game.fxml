@@ -8,22 +8,20 @@
         <StackPane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
             <Pane fx:id="trackPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard"
                   BorderPane.alignment="CENTER"/>
-            <Pane fx:id="highlightPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
-                <HBox>
-                    <VBox HBox.hgrow="ALWAYS"/>
-                    <VBox fx:id="trackChoiceVerticalContainer">
-                        <VBox fx:id="trackChoiceContainer" styleClass="trackChoiceContainer">
-                            <Label text="Do you like this track?"/>
-                            <HBox>
-                                <ToggleButton text="Keep-it!" fx:id="keepTrack" styleClass="trackButtons"/>
-                                <HBox HBox.hgrow="ALWAYS"/>
-                                <ToggleButton text="Change-it!" fx:id="changeTrack" styleClass="trackButtons"/>
-                            </HBox>
-                        </VBox>
+            <HBox fx:id="highlightPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
+                <VBox HBox.hgrow="ALWAYS"/>
+                <VBox fx:id="trackChoiceVerticalContainer">
+                    <VBox fx:id="trackChoiceContainer" styleClass="trackChoiceContainer">
+                        <Label text="Do you want to change this track?"/>
+                        <HBox>
+                            <ToggleButton text="Keep-it!" fx:id="keepTrack" styleClass="trackButtons"/>
+                            <HBox HBox.hgrow="ALWAYS"/>
+                            <ToggleButton text="Change-it!" fx:id="changeTrack" styleClass="trackButtons"/>
+                        </HBox>
                     </VBox>
-                    <VBox HBox.hgrow="ALWAYS"/>
-                </HBox>
-            </Pane>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS"/>
+            </HBox>
             <Pane fx:id="entitiesPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
             <Pane fx:id="animationsPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
         </StackPane>

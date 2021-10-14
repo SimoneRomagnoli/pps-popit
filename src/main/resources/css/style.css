@@ -105,6 +105,16 @@
 -fx-padding: 5 10;
 }
 
+.trackChoiceContainer {
+-fx-background-color: #FFE5D9;
+-fx-padding: 10;
+-fx-spacing: 10;
+-fx-margin: 10;
+-fx-opacity: 0.3;
+-fx-border-radius: 10;
+-fx-background-radius: 10;
+}
+
 .selected {
 -fx-border-color:#2BD011;
 -fx-border-width: 2;

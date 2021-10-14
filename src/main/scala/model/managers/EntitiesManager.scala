@@ -5,7 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.BoostTowerIn
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
-import model.Model.ModelMessages.{ Lose, Pay }
+import model.Model.ModelMessages.TrackChangedForEntitiesManager
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.actors.{ BalloonActor, BulletActor, TowerActor }
@@ -26,6 +26,7 @@ import model.managers.EntitiesMessages.{
   TowerOption,
   UpdateEntity
 }
+import model.managers.GameDynamicsMessages.{ Lose, Pay }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 
@@ -63,15 +64,15 @@ object EntitiesMessages {
 
 object EntitiesManager {
 
-  def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
-    EntityManager(ctx, model, track).running()
+  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+    EntityManager(ctx, model).running()
   }
 }
 
 case class EntityManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
-    track: Track,
+    var track: Track = Track(),
     var entities: List[EntityActor] = List(),
     var messageQueue: Seq[Update] = Seq()) {
 
@@ -82,6 +83,10 @@ case class EntityManager private (
   }
 
   def running(): Behavior[Update] = Behaviors.receiveMessage {
+    case TrackChangedForEntitiesManager(newTrack) =>
+      track = newTrack
+      Behaviors.same
+
     case TickUpdate(elapsedTime, replyTo) =>
       entities.map(_.actorRef).foreach {
         _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)

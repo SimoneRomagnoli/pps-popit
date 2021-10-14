@@ -1,14 +1,13 @@
 package model.maps
 
-import alice.tuprolog.SolveInfo
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ Direction, LEFT, RIGHT }
 import model.maps.prolog.PrologUtils.Engines._
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.{ Solutions, Theories }
+import utils.Constants.Maps.gameGrid
 
-import scala.collection.SeqView
 import scala.language.postfixOps
 
 object Plots {
@@ -32,14 +31,15 @@ object Plots {
    */
   object PrologPlotter {
 
-    def apply(grid: Grid = Grid(16, 8), start: Direction = LEFT, end: Direction = RIGHT): Plotter =
+    def apply(grid: Grid = gameGrid, start: Direction = LEFT, end: Direction = RIGHT): Plotter =
       TuPrologPlotter(grid, start, end)
   }
 
   case class TuPrologPlotter(
       override val grid: Grid,
       override val start: Direction,
-      override val end: Direction)
+      override val end: Direction,
+      engine: Engine = Engine(Theories from gameGrid))
       extends Plotter {
     override def in(newGrid: Grid): Plotter = PrologPlotter(newGrid, start, end)
 
@@ -47,11 +47,9 @@ object Plots {
 
     override def endingAt(newEnd: Direction): Plotter = PrologPlotter(grid, start, newEnd)
 
-    override def plot: Seq[Cell] = {
-      val solutionStream: SeqView[SolveInfo] = Engine(Theories from grid).solve(
-        PrologQuery(from = grid randomInBorder start, to = grid randomInBorder end)
-      )
-      Solutions.trackFromPrologSolution(solutionStream.head)
-    }
+    override def plot: Seq[Cell] = Solutions.trackFromPrologSolution(engine.solve(query).head)
+
+    private def query: String =
+      PrologQuery(from = grid randomInBorder start, to = grid randomInBorder end)
   }
 }

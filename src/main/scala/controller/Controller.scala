@@ -9,13 +9,13 @@ import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages.{ Start, Stop }
 import controller.Messages._
 import model.Model.ModelActor
-import model.Model.ModelMessages.{ Pay, WalletQuantity }
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.SpawnEntity
+import model.managers.GameDynamicsMessages.{ Pay, WalletQuantity }
 import model.maps.Cells.Cell
 
 import scala.concurrent.ExecutionContextExecutor
@@ -34,6 +34,7 @@ object Controller {
     case class ExitGame() extends Input with Render
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
+    case class NewTrack() extends Input
     case class StartNextRound() extends Input with SpawnManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
@@ -82,6 +83,10 @@ object Controller {
           gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
         }
         gameLoop.get ! Start()
+        Behaviors.same
+
+      case NewTrack() =>
+        gameLoop.get ! NewTrack()
         Behaviors.same
 
       case ExitGame() =>

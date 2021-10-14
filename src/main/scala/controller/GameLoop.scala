@@ -9,6 +9,7 @@ import controller.Messages._
 import model.Model.ModelMessages._
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.TickUpdate
+import model.managers.GameDynamicsMessages.NewMap
 import model.maps.Tracks.Track
 import view.View.ViewMessages._
 
@@ -39,7 +40,6 @@ object GameLoop {
       ctx =>
         Behaviors.receiveMessage {
           case Start() =>
-            model ! NewMap(ctx.self)
             Behaviors.withTimers { timers =>
               timers.startTimerWithFixedDelay(Tick, delay(frameRate).seconds)
               GameLoopActor(ctx, model, view).running()
@@ -70,6 +70,9 @@ object GameLoop {
     private def running(): Behavior[Input] = Behaviors.receiveMessage {
       case Tick =>
         model ! TickUpdate(elapsedTime(frameRate)(timeRatio), ctx.self)
+        Behaviors.same
+      case NewTrack() =>
+        model ! NewMap(ctx.self)
         Behaviors.same
       case MapCreated(track) =>
         view ! RenderMap(track)

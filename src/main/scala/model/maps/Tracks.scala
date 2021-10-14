@@ -62,6 +62,9 @@ object Tracks {
     def apply(): Track =
       TrackMap(Constants.Maps.basicTrack)
 
+    def apply(cells: Seq[Cell]): Track =
+      TrackMap(cells)
+
     def apply(grid: Grid, plotter: Plotter = PrologPlotter()): Track =
       TrackMap(plotter in grid startingFrom LEFT endingAt RIGHT plot)
   }

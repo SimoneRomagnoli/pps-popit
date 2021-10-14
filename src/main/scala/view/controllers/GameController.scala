@@ -1,7 +1,7 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Controller.ControllerMessages.PlaceTower
+import controller.Controller.ControllerMessages.{ NewTrack, PlaceTower }
 import controller.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
@@ -12,9 +12,10 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
+import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.Label
-import scalafx.scene.layout.{ BorderPane, Pane, StackPane, VBox }
+import scalafx.scene.control.{ Label, ToggleButton }
+import scalafx.scene.layout.{ BorderPane, HBox, Pane, StackPane, VBox }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
@@ -55,6 +56,10 @@ class GameController(
     val entitiesPane: Pane,
     val animationsPane: Pane,
     val gameMenu: VBox,
+    val trackChoiceVerticalContainer: VBox,
+    val trackChoiceContainer: HBox,
+    val keepTrack: ToggleButton,
+    val changeTrack: ToggleButton,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -71,15 +76,7 @@ class GameController(
     resetAll()
     Rendering a gameGrid into trackPane.children
     loading()
-    Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
-    highlightPane.setMouseTransparent(true)
-    entitiesPane.setMouseTransparent(true)
-    animationsPane.setMouseTransparent(true)
-    Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+    setLayouts()
     setMouseHandlers()
     gameMenuController.setup()
     gameMenuController.setHighlightingTower(highlight)
@@ -126,7 +123,8 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     occupiedCells = track.cells
     Rendering a track into trackPane.children
-    gameMenuController.enableRoundButton()
+
+    //gameMenuController.enableRoundButton()
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
@@ -139,6 +137,19 @@ class GameController(
   }
 
   private object GameUtilities {
+
+    def setLayouts(): Unit = {
+      Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
+      highlightPane.setMouseTransparent(true)
+      entitiesPane.setMouseTransparent(true)
+      animationsPane.setMouseTransparent(true)
+      Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+      trackChoiceVerticalContainer.setAlignment(Pos.Center)
+    }
 
     def resetAll(): Unit = {
       trackPane.children.clear()
@@ -165,6 +176,12 @@ class GameController(
       trackPane.onMouseExited = _ => removeEffects()
       trackPane.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
       trackPane.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
+      keepTrack.onMouseClicked = _ => {
+        trackChoiceContainer.visible = false
+        gameMenuController.enableRoundButton()
+      }
+      changeTrack.onMouseClicked = _ => send(NewTrack())
+      trackChoiceContainer.visible = false
     }
 
     def click(e: MouseEvent): IO[Unit] = for {

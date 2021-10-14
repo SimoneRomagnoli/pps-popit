@@ -4,8 +4,9 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.StartNextRound
 import controller.Messages.{ SpawnManagerMessage, Update }
+import model.Model.ModelMessages.TrackChangedForSpawnManager
 import model.actors.BalloonActor
-import model.entities.balloons.BalloonLives.{ Blue, Red }
+import model.entities.balloons.BalloonLives.Blue
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.managers.EntitiesMessages.EntitySpawned
@@ -26,8 +27,8 @@ object SpawnerMessages {
  */
 object SpawnManager {
 
-  def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
-    Spawner(ctx, model, track, 0).waiting()
+  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+    Spawner(ctx, model, 0).waiting()
   }
 }
 
@@ -44,8 +45,8 @@ object SpawnManager {
 case class Spawner private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
-    track: Track,
-    var round: Int) {
+    var round: Int,
+    var track: Track = Track()) {
 
   def waiting(): Behavior[Update] = Behaviors.receiveMessage {
     case StartNextRound() =>
@@ -59,6 +60,11 @@ case class Spawner private (
       Behaviors.same
     case StartRound(round) =>
       spawningRound(round.streaks)
+
+    case TrackChangedForSpawnManager(newTrack) =>
+      track = newTrack
+      Behaviors.same
+
     case _ => Behaviors.same
   }
 

@@ -28,6 +28,7 @@ object Drawings {
       case draw: MenuDrawings =>
         drawable match {
           case Title => draw title
+          case _     => null
         }
       case draw: GameDrawings =>
         drawable match {
@@ -51,6 +52,7 @@ object Drawings {
                   case IceBall(_, _) => draw iceTower
                 }
             }
+          case _ => null
         }
     }
   }

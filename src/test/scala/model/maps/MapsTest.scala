@@ -118,15 +118,10 @@ class MapsTest extends AnyWordSpec with Matchers {
   "The Plotter" when {
     "given a start and an end borders" should {
       "plot a track by forming a query" in {
-        val plotter: Plotter = PrologPlotter()
-
-        val leftToRightTrack: Track = Track(plotter in grid startingFrom LEFT endingAt RIGHT plot)
-        leftToRightTrack.start.x shouldBe 0
-        leftToRightTrack.finish.x shouldBe (grid.width - 1)
-
-        val upToDownTrack: Track = Track(plotter in grid startingFrom UP endingAt DOWN plot)
-        upToDownTrack.start.y shouldBe 0
-        upToDownTrack.finish.y shouldBe (grid.height - 1)
+        val plotter: Plotter = PrologPlotter() in grid startingFrom LEFT endingAt RIGHT
+        val track: Track = Track(plotter plot)
+        track.start.x shouldBe 0
+        track.finish.x shouldBe (grid.width - 1)
       }
     }
   }

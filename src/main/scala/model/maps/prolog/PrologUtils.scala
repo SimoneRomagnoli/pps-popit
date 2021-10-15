@@ -140,20 +140,17 @@ object PrologUtils {
   object Solutions {
 
     def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] = {
-      val track: Seq[Cell] =
-        if (!prologInfo.hasOpenAlternatives) basicTrack
-        else
-          prologInfo
-            .getTerm("P")
-            .castTo(classOf[Struct])
-            .listStream()
-            .map { e =>
-              val scanner: Scanner = new Scanner(e.toString).useDelimiter("\\D+")
-              GridCell(scanner.nextInt(), scanner.nextInt())
-            }
-            .toArray
-            .toList
-            .map(_.asInstanceOf[Cell])
+      val track: Seq[Cell] = prologInfo
+        .getTerm("P")
+        .castTo(classOf[Struct])
+        .listStream()
+        .map { e =>
+          val scanner: Scanner = new Scanner(e.toString).useDelimiter("\\D+")
+          GridCell(scanner.nextInt(), scanner.nextInt())
+        }
+        .toArray
+        .toList
+        .map(_.asInstanceOf[Cell])
 
       track.zipWithIndex.map {
         case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)

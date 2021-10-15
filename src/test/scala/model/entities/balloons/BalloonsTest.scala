@@ -26,7 +26,7 @@ class BalloonsTest extends AnyWordSpec with Matchers {
       }
       "use its dsl" in {
         (Red balloon) shouldBe simple()
-        (Green balloon) shouldBe complex(complex(simple()))
+        (Green balloon) shouldBe (complex(complex(simple())) at ((Green balloon) speed))
       }
       "have default values" in {
         testDefaultValues(balloon)

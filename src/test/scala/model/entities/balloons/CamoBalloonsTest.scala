@@ -40,8 +40,12 @@ class CamoBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "be able to be double wrap a balloon" in {
-    instance(instance(Blue balloon)).pop(Dart()).get shouldBe instance(instance(Red balloon))
-    instance(instance(Blue balloon)).pop(IceBall()).get shouldBe instance(instance(Red balloon))
+    instance(instance(Blue balloon)).pop(Dart()).get shouldBe instance(
+      instance((Red balloon) at ((Blue balloon) speed))
+    )
+    instance(instance(Blue balloon)).pop(IceBall()).get shouldBe instance(
+      instance((Red balloon) at ((Blue balloon) speed))
+    )
     instance(instance(Blue balloon)).pop(CannonBall()).get.pop(CannonBall()) shouldBe None
   }
 

@@ -1,19 +1,23 @@
 package view.render
 
+import javafx.scene.effect.ImageInput
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
+import model.entities.balloons.balloontypes.CamoBalloons.Camo
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
 import model.maps.Tracks.Track
+import scalafx.scene.effect.{ Blend, BlendMode }
 import scalafx.scene.layout.Region
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
 import utils.Constants.Screen.cellSize
-import view.render.Drawings.{ Drawing, GameDrawings, Grass, Item, Road }
+import view.render.Drawings._
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
 
 import scala.language.{ implicitConversions, reflectiveCalls }
@@ -53,6 +57,14 @@ object Rendering {
       case tower: Tower[_] =>
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         rectangle.styleClass += "tower"
+      case decoration: BalloonDecoration =>
+        val blend: Blend = new Blend()
+        val effect: ImagePattern = decoration match {
+          case _: Camo => drawing the CamoPattern
+        }
+        blend.setTopInput(new ImageInput(effect.getImage, rectangle.x.value, rectangle.y.value))
+        blend.setMode(BlendMode.Difference)
+        rectangle.setEffect(blend)
       case _ =>
     }
     rectangle

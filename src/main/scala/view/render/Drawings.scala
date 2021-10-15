@@ -6,8 +6,9 @@ import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.BaseTower
-import scala.language.postfixOps
+import utils.Constants.Entities.Balloons.balloonDefaultBoundary
 
+import scala.language.postfixOps
 import scala.language.postfixOps
 
 /**
@@ -23,6 +24,9 @@ object Drawings {
   case class Road(direction: String) extends Drawable
   case class Item(entity: Entity) extends Drawable
 
+  sealed trait BalloonPattern extends Drawable
+  case object CamoPattern extends BalloonPattern
+
   /** Class that allows to get an image corresponding to a view entity. */
   case class Drawing(images: Drawings) {
 
@@ -36,6 +40,10 @@ object Drawings {
         drawable match {
           case Grass   => draw grass
           case Road(s) => draw road s
+          case pattern: BalloonPattern =>
+            pattern match {
+              case CamoPattern => draw camoBalloon
+            }
           case Item(entity) =>
             entity match {
               case balloon: Balloon =>
@@ -61,6 +69,8 @@ object Drawings {
 
   trait Drawings
 
+  val (x: Double, y: Double) = balloonDefaultBoundary
+
   /** Class preloading all game images. */
   case class GameDrawings(
       grass: ImagePattern = new ImagePattern(new Image("images/backgrounds/GRASS.png")),
@@ -75,7 +85,10 @@ object Drawings {
       iceTower: ImagePattern = new ImagePattern(new Image("images/towers/ICE-BALL-TOWER.png")),
       redBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/RED.png")),
       blueBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/BLUE.png")),
-      greenBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/GREEN.png")))
+      greenBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/GREEN.png")),
+      camoBalloon: ImagePattern = new ImagePattern(
+        new Image("images/balloons/CAMO3.png", x, y, false, false)
+      ))
       extends Drawings
 
   /** Class preloading all menu images. */

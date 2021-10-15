@@ -58,5 +58,5 @@ object Balloons {
   case class Complex(balloon: Balloon) extends Balloon
 
   def simple(): Balloon = Simple()
-  def complex(balloon: Balloon): Balloon = Complex(balloon)
+  def complex(balloon: Balloon): Balloon = Complex(balloon).following(balloon).asInstanceOf[Balloon]
 }

@@ -1,6 +1,7 @@
 package model.entities.balloons.balloontypes
 
 import model.entities.Entities
+import model.entities.Entities.TrackFollowing
 import model.entities.balloons.BalloonLives.Green
 import model.entities.balloons.Balloons.{ complex, Balloon }
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
@@ -20,19 +21,28 @@ object RegeneratingBalloons {
       this
     }
 
-    private def regenerate(dt: Double): Regenerating = dt match {
-      case t if t <= 0 && maxLife > this.life =>
-        regenerating(complex(this match {
-          case BalloonDecoration(b) => b
-          case b                    => b
-        })).asInstanceOf[Regenerating].timing(regenerationTime)
-      case t => this.asInstanceOf[Regenerating].timing(t)
-    }
+    private def regenerate(dt: Double): Regenerating =
+      dt match {
+        case t if t <= 0 && maxLife > this.life =>
+          regenerating(complex(this match {
+            case BalloonDecoration(b) => b
+            case b                    => b
+          }))
+            .asInstanceOf[Regenerating]
+            .timing(regenerationTime)
+        case t => this.asInstanceOf[Regenerating].timing(t)
 
-    override def update(dt: Double): Regenerating = regenerating((this match {
-      case BalloonDecoration(b) => b.update(dt)
-      case b                    => b.update(dt)
-    }).asInstanceOf[Balloon]).asInstanceOf[Regenerating].regenerate(this.timer - dt)
+      }
+
+    override def update(dt: Double): Regenerating =
+      regenerating((this match {
+        case BalloonDecoration(b) => b.update(dt)
+        case b                    => b
+      }).asInstanceOf[Balloon])
+        .asInstanceOf[Regenerating]
+        .regenerate(this.timer - dt)
+        .asInstanceOf[Regenerating]
+
   }
 
   case class RegeneratingBalloon(override val balloon: Balloon)
@@ -44,6 +54,7 @@ object RegeneratingBalloons {
       balloon.pop(bullet).map(regenerating)
   }
 
-  def regenerating(balloon: Balloon): RegeneratingBalloon = RegeneratingBalloon(balloon)
+  def regenerating(balloon: Balloon): RegeneratingBalloon =
+    RegeneratingBalloon(balloon).following(balloon).asInstanceOf[RegeneratingBalloon]
 
 }

@@ -6,7 +6,6 @@ import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopMessages._
 import controller.GameLoop.Time._
 import controller.Messages._
-import model.Model.ModelMessages._
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.TickUpdate
 import model.maps.Tracks.Track
@@ -26,7 +25,7 @@ object GameLoop {
     case class Stop() extends Input with Update
     case class MapCreated(track: Track) extends Input
     case class ModelUpdated(entities: List[Entity], animations: List[Entity]) extends Input
-
+    case class CanStartNextRound() extends Input with Render
   }
 
   /**
@@ -39,7 +38,6 @@ object GameLoop {
       ctx =>
         Behaviors.receiveMessage {
           case Start() =>
-            model ! NewMap(ctx.self)
             Behaviors.withTimers { timers =>
               timers.startTimerWithFixedDelay(Tick, delay(frameRate).seconds)
               GameLoopActor(ctx, model, view).running()
@@ -71,9 +69,6 @@ object GameLoop {
       case Tick =>
         model ! TickUpdate(elapsedTime(frameRate)(timeRatio), ctx.self)
         Behaviors.same
-      case MapCreated(track) =>
-        view ! RenderMap(track)
-        Behaviors.same
       case ModelUpdated(entities, animations) =>
         view ! RenderEntities(entities)
         animations.foreach {
@@ -88,6 +83,10 @@ object GameLoop {
 
       case Stop() =>
         Behaviors.stopped
+
+      case msg: Render =>
+        view ! msg
+        Behaviors.same
 
       case _ => Behaviors.same
     }

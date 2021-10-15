@@ -5,6 +5,7 @@ import model.Positions.Vector2D
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.MapsTest._
+import model.maps.Plots.{ Plotter, PrologPlotter }
 import model.maps.Tracks.Directions._
 import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Engines._
@@ -114,6 +115,17 @@ class MapsTest extends AnyWordSpec with Matchers {
     }
   }
 
+  "The Plotter" when {
+    "given a start and an end borders" should {
+      "plot a track by forming a query" in {
+        val plotter: Plotter = PrologPlotter() in grid startingFrom LEFT endingAt RIGHT
+        val track: Track = Track(plotter plot)
+        track.start.x shouldBe 0
+        track.finish.x shouldBe (grid.width - 1)
+      }
+    }
+  }
+
   "The Tracks" when {
     "created with prolog" should {
       "return a track" in {
@@ -133,25 +145,6 @@ class MapsTest extends AnyWordSpec with Matchers {
         track.foreach { cell =>
           track.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
         }
-      }
-    }
-    "created from object" should {
-      "be long enough" in {
-        Track(grid).cells.size should be >= grid.width
-      }
-      "have directions" in {
-        Track(grid).cells.forall(_.direction != NONE) shouldBe true
-      }
-      "not repeat" in {
-        val track: Track = Track(grid)
-        track.cells.foreach { cell =>
-          track.cells.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
-        }
-      }
-      "contain cells" in {
-        val track: Track = Track(grid)
-        track.start.in(track) shouldBe true
-        track.finish.in(track) shouldBe true
       }
     }
   }

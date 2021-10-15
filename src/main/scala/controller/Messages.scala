@@ -10,15 +10,18 @@ object Messages {
 
   trait SpawnManagerMessage extends Update
   trait EntitiesManagerMessage extends Update
+  trait GameDynamicsManagerMessage extends Update
 
   sealed trait MessageType
   case object SpawnMessage extends MessageType
   case object EntityMessage extends MessageType
+  case object GameDynamicsMessage extends MessageType
 
   val messageType: Update => MessageType = {
-    case _: SpawnManagerMessage    => SpawnMessage
-    case _: EntitiesManagerMessage => EntityMessage
-    case _                         => SpawnMessage
+    case _: SpawnManagerMessage        => SpawnMessage
+    case _: EntitiesManagerMessage     => EntityMessage
+    case _: GameDynamicsManagerMessage => GameDynamicsMessage
+    case _                             => SpawnMessage
   }
 
   case class WithReplyTo[T <: Update](message: T, replyTo: ActorRef[Input])

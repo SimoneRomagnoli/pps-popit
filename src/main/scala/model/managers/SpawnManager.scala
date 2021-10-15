@@ -3,22 +3,24 @@ package model.managers
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.StartNextRound
-import controller.Messages.{ SpawnManagerMessage, Update }
+import controller.GameLoop.GameLoopMessages.CanStartNextRound
+import controller.Messages.{ Input, SpawnManagerMessage, Update }
+import model.Model.ModelMessages.TrackChangedForSpawnManager
 import model.actors.BalloonActor
-import model.entities.balloons.BalloonLives.{ Blue, Red }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.managers.EntitiesMessages.EntitySpawned
-import model.managers.SpawnerMessages.{ SpawnTick, StartRound }
+import model.managers.SpawnerMessages.{ RoundOver, SpawnTick, StartRound }
 import model.maps.Tracks.Track
-import model.spawn.RoundBuilders._
 import model.spawn.Rounds.{ Round, Streak }
+import model.spawn.RoundsFactory
 
 import scala.language.postfixOps
 
 object SpawnerMessages {
   case class StartRound(round: Round) extends Update with SpawnManagerMessage
   case object SpawnTick extends Update with SpawnManagerMessage
+  case class RoundOver(actorRef: ActorRef[Input]) extends Update with SpawnManagerMessage
 }
 
 /**
@@ -26,8 +28,8 @@ object SpawnerMessages {
  */
 object SpawnManager {
 
-  def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
-    Spawner(ctx, model, track, 0).waiting()
+  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+    Spawner(ctx, model).waiting()
   }
 }
 
@@ -44,21 +46,23 @@ object SpawnManager {
 case class Spawner private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
-    track: Track,
-    var round: Int) {
+    var track: Track = Track()) {
 
   def waiting(): Behavior[Update] = Behaviors.receiveMessage {
     case StartNextRound() =>
-      round += 1
-      ctx.self ! StartRound {
-        (for {
-          //_ <- add(Streak(round * 10) :- Red)
-          _ <- add(Streak(round * 5) :- Blue)
-        } yield ()).get
-      }
+      ctx.self ! StartRound(RoundsFactory.nextRound())
       Behaviors.same
     case StartRound(round) =>
       spawningRound(round.streaks)
+
+    case TrackChangedForSpawnManager(newTrack) =>
+      track = newTrack
+      Behaviors.same
+
+    case RoundOver(actorRef) =>
+      actorRef ! CanStartNextRound()
+      Behaviors.same
+
     case _ => Behaviors.same
   }
 

@@ -36,7 +36,7 @@ import scala.util.{ Failure, Success }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
-  def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit
+  def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def updateStats(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
@@ -44,6 +44,10 @@ trait ViewGameMenuController extends ViewController {
   def clearTowerStatus(): Unit
   def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
+  def disableRoundButton(): Unit
+  def enableRoundButton(): Unit
+  def disableAllButtons(): Unit
+  def enableAllButtons(): Unit
 }
 
 /**
@@ -68,7 +72,7 @@ class GameMenuController(
     var currentCell: Cell = outerCell,
     var send: Input => Unit,
     var ask: Message => Future[Message],
-    var highlight: (Tower[_], Boolean) => Unit,
+    var highlight: Option[Tower[_]] => Unit,
     var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
@@ -86,8 +90,8 @@ class GameMenuController(
   override def show(): Unit = gameMenu.visible = true
   override def hide(): Unit = gameMenu.visible = false
 
-  override def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit = highlight =
-    reference
+  override def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit =
+    highlight = reference
 
   override def isPaused: Boolean = paused
 
@@ -109,7 +113,7 @@ class GameMenuController(
     clearTowerStatus()
     if (currentCell == cell) {
       currentCell = outerCell
-      highlight(tower, false)
+      highlight(None)
     } else {
       currentCell = cell
       addToTowerStatus(Rendering a tower as single)
@@ -121,8 +125,24 @@ class GameMenuController(
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",
         Camo
       )
-      highlight(tower, true)
+      highlight(Some(tower))
     }
+  }
+
+  override def disableRoundButton(): Unit = startRound.disable = true
+
+  override def enableRoundButton(): Unit = startRound.disable = false
+
+  override def disableAllButtons(): Unit = {
+    disableRoundButton()
+    playButton.disable = true
+    towerDepot.disable = true
+  }
+
+  override def enableAllButtons(): Unit = {
+    enableRoundButton()
+    playButton.disable = false
+    towerDepot.disable = false
   }
 
   override def clearTowerStatus(): Unit =
@@ -132,7 +152,7 @@ class GameMenuController(
   private object MenuSetters {
 
     def reset(): Unit = {
-      startRound.disable = false
+      disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
     }
@@ -159,7 +179,7 @@ class GameMenuController(
 
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
-        startRound.disable = true
+        disableRoundButton()
       }
     }
 

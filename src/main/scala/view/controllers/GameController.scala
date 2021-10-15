@@ -1,39 +1,39 @@
 package view.controllers
 
 import cats.effect.IO
-import controller.Controller.ControllerMessages.PlaceTower
+import controller.Controller.ControllerMessages.{ NewTrack, PlaceTower }
 import controller.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.{ Selectable, Selected, TowerIn, TowerOption }
+import model.managers.EntitiesMessages.{ Selectable, Selected }
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
+import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.Label
-import scalafx.scene.layout.{ BorderPane, Pane, StackPane, VBox }
+import scalafx.scene.control.ToggleButton
+import scalafx.scene.layout._
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
 import utils.Constants.Maps.gameGrid
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 import view.render.Animations.Animations
-import view.render.Drawings.Drawing
+import view.render.Drawings.{ Drawing, GameDrawings }
 import view.render.{ Animating, Rendering }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.{ implicitConversions, reflectiveCalls }
-import scala.util.{ Failure, Random, Success }
+import scala.util.{ Failure, Success }
 
 /**
  * Controller of the game. This controller loads the game fxml file and is able to draw every
  * element of a game.
  */
 trait ViewGameController extends ViewController {
-  def loading(): Unit
   def reset(): Unit
   def setup(): Unit
   def update(stats: GameStats): Unit
@@ -41,6 +41,7 @@ trait ViewGameController extends ViewController {
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
   def animate(entity: Entity): Unit
+  def gameMenuController: ViewGameMenuController
 }
 
 /**
@@ -52,9 +53,14 @@ class GameController(
     val gameBoard: StackPane,
     val trackPane: Pane,
     val highlightPane: Pane,
+    val trackChoicePane: HBox,
     val entitiesPane: Pane,
     val animationsPane: Pane,
     val gameMenu: VBox,
+    val trackChoiceVerticalContainer: VBox,
+    val trackChoiceContainer: VBox,
+    val keepTrack: ToggleButton,
+    val changeTrack: ToggleButton,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -64,21 +70,13 @@ class GameController(
   import GameUtilities._
   import MouseEvents._
   val images: Animations = Animations()
-  val drawing: Drawing = Drawing()
+  val drawing: Drawing = Drawing(GameDrawings())
   setup()
 
   override def setup(): Unit = Platform runLater {
-    this draw gameGrid
-    loading()
-    Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
-    Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
-    highlightPane.setMouseTransparent(true)
-    entitiesPane.setMouseTransparent(true)
-    animationsPane.setMouseTransparent(true)
-    Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+    resetAll()
+    Rendering a gameGrid into trackPane.children
+    setLayouts()
     setMouseHandlers()
     gameMenuController.setup()
     gameMenuController.setHighlightingTower(highlight)
@@ -97,24 +95,8 @@ class GameController(
   override def show(): Unit = mainPane.visible = true
   override def hide(): Unit = mainPane.visible = false
 
-  override def loading(): Unit = Platform runLater {
-    val loadingLabel: Label =
-      Label(Constants.View.loadingLabels(Random.between(0, Constants.View.loadingLabels.size)))
-    loadingLabel
-      .layoutXProperty()
-      .bind(gameBoard.widthProperty().subtract(loadingLabel.widthProperty()).divide(2))
-    loadingLabel
-      .layoutYProperty()
-      .bind(gameBoard.heightProperty().subtract(loadingLabel.heightProperty()).divide(2))
-
-    trackPane.children.add(loadingLabel)
-  }
-
   override def reset(): Unit = Platform runLater {
-    trackPane.children.clear()
-    highlightPane.children.clear()
-    entitiesPane.children.clear()
-    animationsPane.children.clear()
+    resetAll()
   }
 
   override def update(stats: GameStats): Unit = Platform runLater {
@@ -128,6 +110,8 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     occupiedCells = track.cells
     Rendering a track into trackPane.children
+    trackChoicePane.visible = true
+    trackChoiceContainer.visible = true
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
@@ -141,12 +125,38 @@ class GameController(
 
   private object GameUtilities {
 
-    def highlight(tower: Tower[_], insertion: Boolean): Unit =
-      if (insertion) {
-        Rendering sightOf tower into highlightPane.children
-      } else {
-        highlightPane.children.clear()
+    def setLayouts(): Unit = {
+      Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(trackChoicePane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
+      entitiesPane.setMouseTransparent(true)
+      animationsPane.setMouseTransparent(true)
+      trackChoicePane.setMouseTransparent(false)
+      highlightPane.setMouseTransparent(true)
+      trackChoicePane.setPickOnBounds(false)
+      trackChoicePane.visible = false
+      gameMenuController.disableAllButtons()
+      Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+      trackChoiceVerticalContainer.setAlignment(Pos.Center)
+    }
+
+    def resetAll(): Unit = {
+      trackPane.children.clear()
+      highlightPane.children.clear()
+      trackChoicePane.children.removeRange(3, trackChoicePane.children.size)
+      entitiesPane.children.clear()
+      animationsPane.children.clear()
+    }
+
+    def highlight(tower: Option[Tower[_]]): Unit = {
+      highlightPane.children.clear()
+      if (tower.isDefined) {
+        Rendering sightOf tower.get into highlightPane.children
       }
+    }
 
     def removeEffects(): Unit =
       trackPane.children.foreach(_.setEffect(null))
@@ -156,6 +166,17 @@ class GameController(
     import InputEventHandlers._
 
     def setMouseHandlers(): Unit = {
+      keepTrack.onMouseClicked = _ => {
+        gameMenuController.enableAllButtons()
+        trackChoiceContainer.visible = false
+        trackChoicePane.setMouseTransparent(true)
+      }
+      changeTrack.onMouseClicked = _ => {
+        send(NewTrack())
+        trackPane.children.clear()
+        Rendering a gameGrid into trackPane.children
+        trackChoiceContainer.visible = false
+      }
       trackPane.onMouseExited = _ => removeEffects()
       trackPane.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
       trackPane.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
@@ -194,28 +215,14 @@ class GameController(
               if (selectable) {
                 Platform runLater {
                   removeEffects()
+                  occupiedCells = occupiedCells :+ cell
                   gameMenuController.unselectDepot()
                   send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-                  ask(TowerIn(cell)) onComplete {
-                    case Failure(exception) => println(exception)
-                    case Success(value) =>
-                      value match {
-                        case TowerOption(option) =>
-                          option match {
-                            case Some(_) => occupy(cell)
-                            case _       =>
-                          }
-                        case _ =>
-                      }
-                  }
                 }
               } else {}
           }
         case Failure(exception) => println(exception)
       }
     }
-
-    private def occupy(cell: Cell): Unit =
-      occupiedCells = occupiedCells :+ cell
   }
 }

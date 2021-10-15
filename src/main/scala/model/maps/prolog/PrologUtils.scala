@@ -4,6 +4,7 @@ import alice.tuprolog.{ Prolog, SolveInfo, Struct, Term, Theory }
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
+import utils.Constants.Maps.basicTrack
 
 import java.util.Scanner
 import scala.collection.SeqView
@@ -139,7 +140,7 @@ object PrologUtils {
   object Solutions {
 
     def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] = {
-      val track: List[Cell] = prologInfo
+      val track: Seq[Cell] = prologInfo
         .getTerm("P")
         .castTo(classOf[Struct])
         .listStream()

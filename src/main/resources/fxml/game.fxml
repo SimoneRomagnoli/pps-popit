@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
 <BorderPane fx:id="mainPane" prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameController">
     <center>
         <StackPane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
-            <Pane fx:id="trackPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
-            <Pane fx:id="highlightPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
+            <Pane fx:id="trackPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard"
+                  BorderPane.alignment="CENTER"/>
+            <Pane fx:id="highlightPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER"/>
+            <HBox fx:id="trackChoicePane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
+                <VBox HBox.hgrow="ALWAYS"/>
+                <VBox fx:id="trackChoiceVerticalContainer">
+                    <VBox fx:id="trackChoiceContainer" styleClass="trackChoiceContainer">
+                        <Label text="Do you want to change this track?"/>
+                        <HBox>
+                            <ToggleButton text="Keep-it!" fx:id="keepTrack" styleClass="trackButtons"/>
+                            <HBox HBox.hgrow="ALWAYS"/>
+                            <ToggleButton text="Change-it!" fx:id="changeTrack" styleClass="trackButtons"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS"/>
+            </HBox>
             <Pane fx:id="entitiesPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
             <Pane fx:id="animationsPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
         </StackPane>

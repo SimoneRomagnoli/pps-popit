@@ -8,7 +8,7 @@ import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages.{ ActorInteraction, NewGame }
 import controller.GameLoop.GameLoopMessages.Start
 import controller.Messages.{ Input, Render, Update }
-import model.Model.ModelMessages.WalletQuantity
+import model.managers.GameDynamicsMessages.WalletQuantity
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.util.concurrent.TimeUnit

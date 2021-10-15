@@ -1,18 +1,18 @@
 package model.entities.towers
 
-import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Dart
+import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
 import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.Towers.Tower
-import PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
-import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import utils.Constants.Entities.Bullets.bulletDefaultDamage
 
 import scala.language.postfixOps
 
-class TowerUpgradesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+class TowerUpgradesTest extends AnyWordSpec with Matchers {
 
   val boostedSight: Double = 2.0
   val boostedRatio: Double = 1.0

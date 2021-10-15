@@ -4,9 +4,10 @@ import controller.Controller.ControllerMessages.NewGame
 import controller.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
-import scalafx.scene.layout.{ BorderPane, VBox }
+import scalafx.scene.layout.{ BorderPane, HBox, VBox }
 import scalafxml.core.macros.sfxml
 import utils.Constants
+import view.render.Drawings.{ Drawing, MenuDrawings, Title }
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -19,12 +20,14 @@ trait ViewMainMenuController extends ViewController {}
 @sfxml
 class MainMenuController(
     val mainMenuPane: BorderPane,
+    val titleLogo: HBox,
     val mainMenuButtons: VBox,
     val newGameBtn: ToggleButton,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewMainMenuController {
   import MenuSetters._
+  val drawing: Drawing = Drawing(MenuDrawings())
   setup()
 
   override def setSend(reference: Input => Unit): Unit = send = reference
@@ -37,6 +40,9 @@ class MainMenuController(
     def setup(): Unit = {
       Rendering.setLayout(mainMenuPane, Constants.Screen.width, Constants.Screen.height)
       mainMenuButtons.setAlignment(Pos.Center)
+
+      val logo = drawing the Title
+      Rendering a logo into titleLogo.children
       setupButtons()
     }
 

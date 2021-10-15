@@ -13,7 +13,7 @@ import scalafx.scene.layout.Region
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
 import utils.Constants.Screen.cellSize
-import view.render.Drawings.{ Drawing, Grass, Item, Road }
+import view.render.Drawings.{ Drawing, GameDrawings, Grass, Item, Road }
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
 
 import scala.language.{ implicitConversions, reflectiveCalls }
@@ -23,7 +23,9 @@ import scala.language.{ implicitConversions, reflectiveCalls }
  */
 object Rendering {
 
-  val drawing: Drawing = Drawing()
+  val drawing: Drawing = Drawing(GameDrawings())
+  val defaultWidth: Double = 400.0
+  val defaultHeight: Double = 200.0
 
   /** Renders a [[Grid]] with grass drawings. */
   def a(grid: Grid): ToBeRendered = Rendered {
@@ -82,6 +84,13 @@ object Rendering {
         rect
       }
       .toSeq
+  }
+
+  /** Renders a [[ImagePattern]] just with a square [[Shape]]. */
+  def a(image: ImagePattern): ToBeRendered = Rendered {
+    val rectangle: Rectangle = Rectangle(defaultWidth, defaultHeight)
+    rectangle.setFill(image)
+    rectangle
   }
 
   /** Utility method for generating a [[Rectangle]] with the specified picture path. */

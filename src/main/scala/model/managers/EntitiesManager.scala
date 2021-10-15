@@ -5,7 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.BoostTowerIn
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
-import model.Model.ModelMessages.{ Lose, Pay }
+import model.Model.ModelMessages.TrackChangedForEntitiesManager
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.actors.{ BalloonActor, BulletActor, TowerActor }
@@ -26,6 +26,8 @@ import model.managers.EntitiesMessages.{
   TowerOption,
   UpdateEntity
 }
+import model.managers.GameDynamicsMessages.{ Lose, Pay }
+import model.managers.SpawnerMessages.RoundOver
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 
@@ -63,30 +65,40 @@ object EntitiesMessages {
 
 object EntitiesManager {
 
-  def apply(model: ActorRef[Update], track: Track): Behavior[Update] = Behaviors.setup { ctx =>
-    EntityManager(ctx, model, track).running()
+  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+    EntityManager(ctx, model).running()
   }
 }
 
 case class EntityManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
-    track: Track,
+    var track: Track = Track(),
     var entities: List[EntityActor] = List(),
     var messageQueue: Seq[Update] = Seq()) {
 
-  def dequeue(): Behavior[Update] = {
+  def dequeueAndRun(): Behavior[Update] = {
     messageQueue.foreach(ctx.self ! _)
     messageQueue = Seq()
     running()
   }
 
+  def dequeueAndUpdate(replyTo: ActorRef[Input]): Behavior[Update] = {
+    messageQueue.foreach(ctx.self ! _)
+    messageQueue = Seq()
+    updating(replyTo)
+  }
+
   def running(): Behavior[Update] = Behaviors.receiveMessage {
+    case TrackChangedForEntitiesManager(newTrack) =>
+      track = newTrack
+      Behaviors.same
+
     case TickUpdate(elapsedTime, replyTo) =>
       entities.map(_.actorRef).foreach {
         _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
       }
-      updating(replyTo)
+      dequeueAndUpdate(replyTo)
 
     case SpawnEntity(entity) =>
       ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
@@ -124,11 +136,7 @@ case class EntityManager private (
       }
       Behaviors.same
 
-    case BalloonKilled(actorRef) =>
-      entities = entities.filter(_.actorRef != actorRef)
-      Behaviors.same
-
-    case _ => Behaviors.same
+    case msg => enqueue(msg)
   }
 
   def updating(
@@ -145,7 +153,7 @@ case class EntityManager private (
             animations
           )
           entities = full
-          dequeue()
+          dequeueAndRun()
         case notFull => updating(replyTo, notFull, animations)
       }
 
@@ -158,6 +166,7 @@ case class EntityManager private (
       killEntity(updatedEntities, replyTo, actorRef, animations)
 
     case BalloonKilled(actorRef) =>
+      checkRoundOver(replyTo)
       if (updatedEntities.map(_.actorRef).contains(actorRef)) {
         entities = entities.filter(_.actorRef != actorRef)
         updating(replyTo, updatedEntities.filter(_.actorRef != actorRef), animations)
@@ -179,12 +188,11 @@ case class EntityManager private (
       ctx.self ! EntityUpdated(entity, actor)
       updating(replyTo, updatedEntities, animations)
 
-    case msg =>
-      if (!msg.isInstanceOf[TickUpdate]) {
-        println(messageQueue)
-        messageQueue = messageQueue :+ msg
-      }
-      Behaviors.same
+    case TickUpdate(_, _) if entities.isEmpty =>
+      dequeueAndRun()
+
+    case msg => enqueue(msg)
+
   }
 
   def killEntity(
@@ -195,7 +203,7 @@ case class EntityManager private (
     case full if full.size == entities.size - 1 =>
       replyTo ! ModelUpdated(full.map(_.entity), animations)
       entities = full
-      dequeue()
+      dequeueAndRun()
     case notFull =>
       entities = entities.filter(_.actorRef != actorRef)
       updating(replyTo, notFull, animations)
@@ -205,5 +213,20 @@ case class EntityManager private (
     case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
     case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
     case bullet: Bullet   => ctx.spawnAnonymous(BulletActor(bullet))
+  }
+
+  def checkRoundOver(replyTo: ActorRef[Input]): Unit = entities.collect {
+    case EntityActor(_, b: Balloon) =>
+      b
+  } match {
+    case _ :: t if t.isEmpty => model ! RoundOver(replyTo)
+    case _                   =>
+  }
+
+  def enqueue(msg: Update): Behavior[Update] = {
+    if (!msg.isInstanceOf[TickUpdate]) {
+      messageQueue = messageQueue :+ msg
+    }
+    Behaviors.same
   }
 }

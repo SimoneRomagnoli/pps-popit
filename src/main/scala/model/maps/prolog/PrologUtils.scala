@@ -4,6 +4,7 @@ import alice.tuprolog.{ Prolog, SolveInfo, Struct, Term, Theory }
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
+import utils.Constants.Maps.basicTrack
 
 import java.util.Scanner
 import scala.collection.SeqView
@@ -139,17 +140,20 @@ object PrologUtils {
   object Solutions {
 
     def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] = {
-      val track: List[Cell] = prologInfo
-        .getTerm("P")
-        .castTo(classOf[Struct])
-        .listStream()
-        .map { e =>
-          val scanner: Scanner = new Scanner(e.toString).useDelimiter("\\D+")
-          GridCell(scanner.nextInt(), scanner.nextInt())
-        }
-        .toArray
-        .toList
-        .map(_.asInstanceOf[Cell])
+      val track: Seq[Cell] =
+        if (!prologInfo.hasOpenAlternatives) basicTrack
+        else
+          prologInfo
+            .getTerm("P")
+            .castTo(classOf[Struct])
+            .listStream()
+            .map { e =>
+              val scanner: Scanner = new Scanner(e.toString).useDelimiter("\\D+")
+              GridCell(scanner.nextInt(), scanner.nextInt())
+            }
+            .toArray
+            .toList
+            .map(_.asInstanceOf[Cell])
 
       track.zipWithIndex.map {
         case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)

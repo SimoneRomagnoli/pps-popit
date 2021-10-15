@@ -6,7 +6,6 @@ import model.entities.balloons.balloontypes.CamoBalloons.camo
 import model.entities.balloons.balloontypes.LeadBalloons.lead
 import model.entities.balloons.balloontypes.RegeneratingBalloons.{ regenerating, Regenerating }
 import model.spawn.Rounds.BalloonInfo
-import utils.Constants.Entities.Balloons.balloonDefaultSpeed
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -64,7 +63,7 @@ object BalloonLives {
 
     def balloon: Balloon = l match {
       case BalloonLife(n) if n > 1 =>
-        complex(BalloonLife(n - 1) balloon) at (simple().speed * n)
+        complex(BalloonLife(n - 1) balloon) at (simple().speed * (n / 1.5))
       case _ => simple()
     }
 

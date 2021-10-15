@@ -184,6 +184,9 @@ case class EntityManager private (
       ctx.self ! EntityUpdated(entity, actor)
       updating(replyTo, updatedEntities, animations)
 
+    case TickUpdate(_, _) if entities.isEmpty =>
+      dequeue()
+
     case msg =>
       if (!msg.isInstanceOf[TickUpdate]) {
         messageQueue = messageQueue :+ msg

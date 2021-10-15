@@ -26,7 +26,7 @@ object GameLoop {
     case class Stop() extends Input with Update
     case class MapCreated(track: Track) extends Input
     case class ModelUpdated(entities: List[Entity], animations: List[Entity]) extends Input
-
+    case class CanStartNextRound() extends Input with Render
   }
 
   /**
@@ -88,6 +88,10 @@ object GameLoop {
 
       case Stop() =>
         Behaviors.stopped
+
+      case msg: Render =>
+        view ! msg
+        Behaviors.same
 
       case _ => Behaviors.same
     }

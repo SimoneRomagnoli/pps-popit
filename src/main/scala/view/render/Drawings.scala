@@ -7,6 +7,8 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.BaseTower
 
+import scala.language.postfixOps
+
 /**
  * Object that encapsulates all pre-loaded images of the game. It is useful as some view entities
  * are loaded a lot of times during a game, so it allows to earn better performances avoiding

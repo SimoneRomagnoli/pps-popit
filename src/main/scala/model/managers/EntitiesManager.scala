@@ -27,6 +27,7 @@ import model.managers.EntitiesMessages.{
   UpdateEntity
 }
 import model.managers.GameDynamicsMessages.{ Lose, Pay }
+import model.managers.SpawnerMessages.RoundOver
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 
@@ -76,10 +77,16 @@ case class EntityManager private (
     var entities: List[EntityActor] = List(),
     var messageQueue: Seq[Update] = Seq()) {
 
-  def dequeue(): Behavior[Update] = {
+  def dequeueAndRun(): Behavior[Update] = {
     messageQueue.foreach(ctx.self ! _)
     messageQueue = Seq()
     running()
+  }
+
+  def dequeueAndUpdate(replyTo: ActorRef[Input]): Behavior[Update] = {
+    messageQueue.foreach(ctx.self ! _)
+    messageQueue = Seq()
+    updating(replyTo)
   }
 
   def running(): Behavior[Update] = Behaviors.receiveMessage {
@@ -91,7 +98,7 @@ case class EntityManager private (
       entities.map(_.actorRef).foreach {
         _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
       }
-      updating(replyTo)
+      dequeueAndUpdate(replyTo)
 
     case SpawnEntity(entity) =>
       ctx.self ! EntitySpawned(entity, entitySpawned(entity, ctx))
@@ -129,11 +136,7 @@ case class EntityManager private (
       }
       Behaviors.same
 
-    case BalloonKilled(actorRef) =>
-      entities = entities.filter(_.actorRef != actorRef)
-      Behaviors.same
-
-    case _ => Behaviors.same
+    case msg => enqueue(msg)
   }
 
   def updating(
@@ -150,7 +153,7 @@ case class EntityManager private (
             animations
           )
           entities = full
-          dequeue()
+          dequeueAndRun()
         case notFull => updating(replyTo, notFull, animations)
       }
 
@@ -163,6 +166,7 @@ case class EntityManager private (
       killEntity(updatedEntities, replyTo, actorRef, animations)
 
     case BalloonKilled(actorRef) =>
+      checkRoundOver(replyTo)
       if (updatedEntities.map(_.actorRef).contains(actorRef)) {
         entities = entities.filter(_.actorRef != actorRef)
         updating(replyTo, updatedEntities.filter(_.actorRef != actorRef), animations)
@@ -185,13 +189,10 @@ case class EntityManager private (
       updating(replyTo, updatedEntities, animations)
 
     case TickUpdate(_, _) if entities.isEmpty =>
-      dequeue()
+      dequeueAndRun()
 
-    case msg =>
-      if (!msg.isInstanceOf[TickUpdate]) {
-        messageQueue = messageQueue :+ msg
-      }
-      Behaviors.same
+    case msg => enqueue(msg)
+
   }
 
   def killEntity(
@@ -202,7 +203,7 @@ case class EntityManager private (
     case full if full.size == entities.size - 1 =>
       replyTo ! ModelUpdated(full.map(_.entity), animations)
       entities = full
-      dequeue()
+      dequeueAndRun()
     case notFull =>
       entities = entities.filter(_.actorRef != actorRef)
       updating(replyTo, notFull, animations)
@@ -212,5 +213,20 @@ case class EntityManager private (
     case balloon: Balloon => ctx.spawnAnonymous(BalloonActor(balloon))
     case tower: Tower[_]  => ctx.spawnAnonymous(TowerActor(tower))
     case bullet: Bullet   => ctx.spawnAnonymous(BulletActor(bullet))
+  }
+
+  def checkRoundOver(replyTo: ActorRef[Input]): Unit = entities.collect {
+    case EntityActor(_, b: Balloon) =>
+      b
+  } match {
+    case _ :: t if t.isEmpty => model ! RoundOver(replyTo)
+    case _                   =>
+  }
+
+  def enqueue(msg: Update): Behavior[Update] = {
+    if (!msg.isInstanceOf[TickUpdate]) {
+      messageQueue = messageQueue :+ msg
+    }
+    Behaviors.same
   }
 }

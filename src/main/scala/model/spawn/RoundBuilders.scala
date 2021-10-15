@@ -12,7 +12,7 @@ object RoundBuilders {
 
     def empty(): Unit = round = Seq()
 
-    def get: Round = Round(round)
+    def get: Round = Round(round.reverse)
   }
 
   def add(streak: Streak): IO[Unit] =

@@ -3,6 +3,7 @@ package view
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
+import controller.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.Messages.Render
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
@@ -70,6 +71,10 @@ object View {
 
         case StartAnimation(entity) =>
           gameController animate entity
+          Behaviors.same
+
+        case CanStartNextRound() =>
+          gameController.gameMenuController.enableRoundButton()
           Behaviors.same
 
         case ExitGame() =>

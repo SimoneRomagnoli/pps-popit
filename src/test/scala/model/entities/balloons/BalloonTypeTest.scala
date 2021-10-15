@@ -21,7 +21,7 @@ object BalloonTypeTest {
 
   def testDefaultValues(balloon: Balloon): Unit = {
     balloon.position shouldBe defaultPosition
-    balloon.speed shouldBe balloonDefaultSpeed
+    balloon.speed shouldBe (balloonDefaultSpeed * balloon.life)
     balloon.track shouldBe track
     balloon.boundary shouldBe balloonDefaultBoundary
   }
@@ -47,9 +47,15 @@ object BalloonTypeTest {
   }
 
   def testPoppingByAllBullets(instance: Balloon => Balloon): Unit = {
-    instance(Blue balloon).pop(Dart()).get shouldBe instance(Red balloon)
-    instance(Blue balloon).pop(IceBall()).get shouldBe instance(Red balloon)
-    instance(Blue balloon).pop(CannonBall()).get shouldBe instance(Red balloon)
+    instance(Blue balloon).pop(Dart()).get shouldBe instance(
+      (Red balloon) at ((Blue balloon) speed)
+    )
+    instance(Blue balloon).pop(IceBall()).get shouldBe instance(
+      (Red balloon) at ((Blue balloon) speed)
+    )
+    instance(Blue balloon).pop(CannonBall()).get shouldBe instance(
+      (Red balloon) at ((Blue balloon) speed)
+    )
     instance(Red balloon).pop(Dart()) shouldBe None
     instance(Red balloon).pop(IceBall()) shouldBe None
     instance(Red balloon).pop(CannonBall()) shouldBe None

@@ -64,9 +64,6 @@ object Tracks {
 
     def apply(cells: Seq[Cell]): Track =
       TrackMap(cells)
-
-    def apply(grid: Grid, plotter: Plotter = PrologPlotter()): Track =
-      TrackMap(plotter in grid startingFrom LEFT endingAt RIGHT plot)
   }
 
   implicit class RichTrack(track: Track) {

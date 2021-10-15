@@ -2,8 +2,9 @@ package model.entities.bullets
 
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
+import org.scalatest.Ignore
 import scalafx.Includes.{ at, double2DurationHelper, _ }
-import scalafx.animation.{ KeyValue, Timeline }
+import scalafx.animation.Timeline
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
@@ -12,6 +13,7 @@ import scalafx.scene.shape.{ Rectangle, Shape }
 
 import scala.language.postfixOps
 
+@Ignore
 object ExplosionTest extends JFXApp3 {
 
   override def start(): Unit = {

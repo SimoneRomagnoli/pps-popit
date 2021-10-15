@@ -10,6 +10,7 @@ import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Engines._
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.{ Solutions, Theories }
+import org.scalatest.Ignore
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -133,25 +134,6 @@ class MapsTest extends AnyWordSpec with Matchers {
         track.foreach { cell =>
           track.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
         }
-      }
-    }
-    "created from object" should {
-      "be long enough" in {
-        Track(grid).cells.size should be >= grid.width
-      }
-      "have directions" in {
-        Track(grid).cells.forall(_.direction != NONE) shouldBe true
-      }
-      "not repeat" in {
-        val track: Track = Track(grid)
-        track.cells.foreach { cell =>
-          track.cells.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
-        }
-      }
-      "contain cells" in {
-        val track: Track = Track(grid)
-        track.start.in(track) shouldBe true
-        track.finish.in(track) shouldBe true
       }
     }
   }

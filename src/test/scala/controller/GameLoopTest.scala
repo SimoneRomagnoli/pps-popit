@@ -3,6 +3,7 @@ package controller
 import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages._
@@ -41,7 +42,7 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref))
   val fastGameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(fastModel, view.ref))
   val mapView: TestProbe[Render] = testKit.createTestProbe[Render]()
-  val mapGameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, mapView.ref))
+  val mapController: ActorRef[Input] = testKit.spawn(ControllerActor(mapView.ref))
 
   "The GameLoop" when {
     "just created" should {
@@ -95,8 +96,7 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "receives the map from the model" should {
       "send it to the view" in {
         val track: Track = Track()
-        mapGameLoop ! Start()
-        mapGameLoop ! MapCreated(track)
+        mapController ! MapCreated(track)
         mapView expectMessage RenderMap(track)
       }
     }

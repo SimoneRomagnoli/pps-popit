@@ -8,7 +8,8 @@
         <StackPane fx:id="gameBoard" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
             <Pane fx:id="trackPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard"
                   BorderPane.alignment="CENTER"/>
-            <HBox fx:id="highlightPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
+            <Pane fx:id="highlightPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER"/>
+            <HBox fx:id="trackChoicePane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER">
                 <VBox HBox.hgrow="ALWAYS"/>
                 <VBox fx:id="trackChoiceVerticalContainer">
                     <VBox fx:id="trackChoiceContainer" styleClass="trackChoiceContainer">

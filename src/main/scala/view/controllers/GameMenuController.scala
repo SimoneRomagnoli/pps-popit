@@ -36,7 +36,7 @@ import scala.util.{ Failure, Success }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
-  def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit
+  def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def updateStats(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
@@ -70,7 +70,7 @@ class GameMenuController(
     var currentCell: Cell = outerCell,
     var send: Input => Unit,
     var ask: Message => Future[Message],
-    var highlight: (Tower[_], Boolean) => Unit,
+    var highlight: Option[Tower[_]] => Unit,
     var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
@@ -88,8 +88,8 @@ class GameMenuController(
   override def show(): Unit = gameMenu.visible = true
   override def hide(): Unit = gameMenu.visible = false
 
-  override def setHighlightingTower(reference: (Tower[_], Boolean) => Unit): Unit = highlight =
-    reference
+  override def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit =
+    highlight = reference
 
   override def isPaused: Boolean = paused
 
@@ -111,7 +111,7 @@ class GameMenuController(
     clearTowerStatus()
     if (currentCell == cell) {
       currentCell = outerCell
-      highlight(tower, false)
+      highlight(None)
     } else {
       currentCell = cell
       addToTowerStatus(Rendering a tower as single)
@@ -123,7 +123,7 @@ class GameMenuController(
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",
         Camo
       )
-      highlight(tower, true)
+      highlight(Some(tower))
     }
   }
 

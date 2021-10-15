@@ -30,7 +30,7 @@ class CannonBallTest extends AnyFlatSpec with Matchers {
   val balloon2: Balloon = (Red balloon) in (102.0, 102.0)
   val balloon3: Balloon = (Red balloon) in (98.0, 98.0)
 
-  "A CannonBall explosion" should "include all the ballon in his damage area" in {
+  "A CannonBall explosion" should "include all the balloon in his damage area" in {
     cannonBall in (0.0, 0.0)
     cannonBall include balloon1 shouldBe false
     cannonBall in (100.0, 100.0)

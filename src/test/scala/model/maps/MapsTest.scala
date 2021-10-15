@@ -5,12 +5,12 @@ import model.Positions.Vector2D
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.MapsTest._
+import model.maps.Plots.{ Plotter, PrologPlotter }
 import model.maps.Tracks.Directions._
 import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Engines._
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.{ Solutions, Theories }
-import org.scalatest.Ignore
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -111,6 +111,22 @@ class MapsTest extends AnyWordSpec with Matchers {
         grid.border(RIGHT) shouldBe Seq(Cell(1, 0), Cell(1, 1))
         grid.border(DOWN) shouldBe Seq(Cell(0, 1), Cell(1, 1))
         grid.border(NONE) shouldBe grid.cells
+      }
+    }
+  }
+
+  "The Plotter" when {
+    "given a start and an end borders" should {
+      "plot a track by forming a query" in {
+        val plotter: Plotter = PrologPlotter()
+
+        val leftToRightTrack: Track = Track(plotter in grid startingFrom LEFT endingAt RIGHT plot)
+        leftToRightTrack.start.x shouldBe 0
+        leftToRightTrack.finish.x shouldBe (grid.width - 1)
+
+        val upToDownTrack: Track = Track(plotter in grid startingFrom UP endingAt DOWN plot)
+        upToDownTrack.start.y shouldBe 0
+        upToDownTrack.finish.y shouldBe (grid.height - 1)
       }
     }
   }

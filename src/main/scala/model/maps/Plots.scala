@@ -38,9 +38,10 @@ object Plots {
   case class TuPrologPlotter(
       override val grid: Grid,
       override val start: Direction,
-      override val end: Direction,
-      engine: Engine = Engine(Theories from gameGrid))
+      override val end: Direction)
       extends Plotter {
+    val engine: Engine = Engine(Theories from grid)
+
     override def in(newGrid: Grid): Plotter = PrologPlotter(newGrid, start, end)
 
     override def startingFrom(newStart: Direction): Plotter = PrologPlotter(grid, newStart, end)

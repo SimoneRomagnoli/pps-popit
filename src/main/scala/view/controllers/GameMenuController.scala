@@ -46,6 +46,8 @@ trait ViewGameMenuController extends ViewController {
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
   def disableRoundButton(): Unit
   def enableRoundButton(): Unit
+  def disableAllButtons(): Unit
+  def enableAllButtons(): Unit
 }
 
 /**
@@ -130,6 +132,18 @@ class GameMenuController(
   override def disableRoundButton(): Unit = startRound.disable = true
 
   override def enableRoundButton(): Unit = startRound.disable = false
+
+  override def disableAllButtons(): Unit = {
+    disableRoundButton()
+    playButton.disable = true
+    towerDepot.disable = true
+  }
+
+  override def enableAllButtons(): Unit = {
+    enableRoundButton()
+    playButton.disable = false
+    towerDepot.disable = false
+  }
 
   override def clearTowerStatus(): Unit =
     towerStatus.children.clear()

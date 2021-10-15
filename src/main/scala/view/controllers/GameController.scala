@@ -137,6 +137,7 @@ class GameController(
       highlightPane.setMouseTransparent(true)
       trackChoicePane.setPickOnBounds(false)
       trackChoicePane.visible = false
+      gameMenuController.disableAllButtons()
       Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
       trackChoiceVerticalContainer.setAlignment(Pos.Center)
     }
@@ -165,7 +166,7 @@ class GameController(
 
     def setMouseHandlers(): Unit = {
       keepTrack.onMouseClicked = _ => {
-        gameMenuController.enableRoundButton()
+        gameMenuController.enableAllButtons()
         trackChoiceContainer.visible = false
         trackChoicePane.setMouseTransparent(true)
       }

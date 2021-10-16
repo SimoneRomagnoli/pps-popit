@@ -11,11 +11,6 @@
             <Pane HBox.hgrow="ALWAYS" />
             <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>
         </HBox>
-        <HBox fx:id="statusMiddleBox">
-            <Label text="Points: "/>
-            <Label fx:id="pointsLabel"/>
-            <Pane HBox.hgrow="ALWAYS" />
-        </HBox>
         <HBox fx:id="statusLowerBox">
             <Label text="Money: "/>
             <Label fx:id="moneyLabel"/>

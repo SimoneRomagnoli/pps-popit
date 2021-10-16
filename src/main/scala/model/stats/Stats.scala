@@ -6,35 +6,28 @@ package model.stats
 object Stats {
 
   val startingLife: Int = 100
-  val startingWallet: Int = Int.MaxValue
+  val startingWallet: Int = 500
   val startingPoints: Int = 0
 
   trait GameStats {
-    def points: Int
-    def score(score: Int): Unit
     def life: Int
     def wallet: Int
-    def win(money: Int): Unit
-    def spend(money: Int): Unit
+    def gain(money: Int): Unit
+    def pay(money: Int): Unit
     def lose(lifePoints: Int): Unit
   }
 
   object GameStats {
 
-    def apply(
-        life: Int = startingLife,
-        wallet: Int = startingWallet,
-        points: Int = startingPoints): GameStats =
-      GameStatistics(life, wallet, points)
+    def apply(life: Int = startingLife, wallet: Int = startingWallet): GameStats =
+      GameStatistics(life, wallet)
   }
 
-  case class GameStatistics(var life: Int, var wallet: Int, var points: Int) extends GameStats {
-    override def win(money: Int): Unit = wallet += money
+  case class GameStatistics(var life: Int, var wallet: Int) extends GameStats {
+    override def gain(money: Int): Unit = wallet += money
 
-    override def spend(money: Int): Unit = wallet -= money
+    override def pay(money: Int): Unit = wallet -= money
 
     override def lose(lifePoints: Int): Unit = life -= lifePoints
-
-    override def score(score: Int): Unit = points += score
   }
 }

@@ -59,9 +59,9 @@ object Constants {
     }
 
     object Bullets {
-      val bulletDefaultBoundary: (Double, Double) = (20.0, 20.0)
+      val bulletDefaultBoundary: (Double, Double) = (cellSize / 4, cellSize / 4)
       val bulletDefaultDamage: Double = 1.0
-      val bulletDefaultRadius: Double = 20.0
+      val bulletDefaultRadius: Double = cellSize / 4
       val bulletFreezingTime: Double = 1.0
       val bulletDefaultSpeed: Vector2D = (100.0, -100.0)
       val bulletSpeedFactor: Double = 1000.0

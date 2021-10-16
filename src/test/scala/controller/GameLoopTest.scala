@@ -9,7 +9,7 @@ import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages._
 import controller.GameLoopTest._
 import controller.Messages._
-import model.managers.EntitiesMessages.TickUpdate
+import model.Model.ModelMessages.TickUpdate
 import model.maps.Tracks.Track
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages._

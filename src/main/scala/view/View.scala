@@ -56,7 +56,7 @@ object View {
       gameController.show()
       Behaviors.receiveMessage {
         case RenderStats(stats) =>
-          gameController update stats
+          gameController render stats
           Behaviors.same
 
         case RenderEntities(entities: List[Entity]) =>

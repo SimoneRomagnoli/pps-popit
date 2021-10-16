@@ -9,7 +9,6 @@ import model.entities.towers.Towers.BaseTower
 import utils.Constants.Entities.Balloons.balloonDefaultBoundary
 
 import scala.language.postfixOps
-import scala.language.postfixOps
 
 /**
  * Object that encapsulates all pre-loaded images of the game. It is useful as some view entities
@@ -31,35 +30,35 @@ object Drawings {
   case class Drawing(images: Drawings) {
 
     def the(drawable: Drawable): ImagePattern = images match {
-      case draw: MenuDrawings =>
+      case drawing: MenuDrawings =>
         drawable match {
-          case Title => draw title
+          case Title => drawing.title
           case _     => null
         }
-      case draw: GameDrawings =>
+      case drawing: GameDrawings =>
         drawable match {
-          case Grass   => draw grass
-          case Road(s) => draw road s
+          case Grass   => drawing.grass
+          case Road(s) => drawing.road(s)
           case pattern: BalloonPattern =>
             pattern match {
-              case CamoPattern => draw camoBalloon
+              case CamoPattern => drawing.camoBalloon
             }
           case Item(entity) =>
             entity match {
               case balloon: Balloon =>
                 balloon.life match {
-                  case 1 => draw redBalloon
-                  case 2 => draw blueBalloon
-                  case 3 => draw greenBalloon
+                  case 1 => drawing.redBalloon
+                  case 2 => drawing.blueBalloon
+                  case 3 => drawing.greenBalloon
                 }
-              case Dart()        => draw dart
-              case CannonBall(_) => draw cannonBall
-              case IceBall(_, _) => draw iceBall
+              case Dart()        => drawing.dart
+              case CannonBall(_) => drawing.cannonBall
+              case IceBall(_, _) => drawing.iceBall
               case BaseTower(b, _, _, _, _, _) =>
                 b match {
-                  case Dart()        => draw arrowTower
-                  case CannonBall(_) => draw cannonTower
-                  case IceBall(_, _) => draw iceTower
+                  case Dart()        => drawing.arrowTower
+                  case CannonBall(_) => drawing.cannonTower
+                  case IceBall(_, _) => drawing.iceTower
                 }
             }
           case _ => null

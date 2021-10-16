@@ -2,6 +2,8 @@ package controller
 
 import akka.actor.typed.ActorRef
 
+import scala.annotation.tailrec
+
 object Messages {
   trait Message
   trait Render extends Message
@@ -17,11 +19,19 @@ object Messages {
   case object EntityMessage extends MessageType
   case object GameDynamicsMessage extends MessageType
 
-  val messageType: Update => MessageType = {
-    case _: SpawnManagerMessage        => SpawnMessage
-    case _: EntitiesManagerMessage     => EntityMessage
-    case _: GameDynamicsManagerMessage => GameDynamicsMessage
-    case _                             => SpawnMessage
+  def messageTypes: Update => List[MessageType] = { msg =>
+    @tailrec
+    def _messageTypes(msg: Update, types: List[MessageType] = List()): List[MessageType] =
+      msg match {
+        case _: SpawnManagerMessage if !types.contains(SpawnMessage) =>
+          _messageTypes(msg, SpawnMessage :: types)
+        case _: EntitiesManagerMessage if !types.contains(EntityMessage) =>
+          _messageTypes(msg, EntityMessage :: types)
+        case _: GameDynamicsManagerMessage if !types.contains(GameDynamicsMessage) =>
+          _messageTypes(msg, GameDynamicsMessage :: types)
+        case _ => types
+      }
+    _messageTypes(msg)
   }
 
   case class WithReplyTo[T <: Update](message: T, replyTo: ActorRef[Input])

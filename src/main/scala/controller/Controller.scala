@@ -80,7 +80,7 @@ object Controller {
       case NewGame() =>
         view ! NewGame()
         if (gameLoop.isEmpty) {
-          model = Some(ctx.spawnAnonymous(ModelActor(ctx.self)))
+          model = Some(ctx.spawnAnonymous(ModelActor()))
           gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
         }
         model.get ! NewMap(ctx.self)

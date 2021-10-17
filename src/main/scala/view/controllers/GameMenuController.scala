@@ -37,7 +37,7 @@ import scala.util.{ Failure, Success }
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
-  def updateStats(stats: GameStats): Unit
+  def renderStats(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
   def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit
@@ -61,8 +61,6 @@ class GameMenuController(
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
-    val statusMiddleBox: HBox,
-    val pointsLabel: Label,
     val statusLowerBox: HBox,
     val moneyLabel: Label,
     val towerDepot: VBox,
@@ -104,7 +102,7 @@ class GameMenuController(
   override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
     selectedTowerType.asInstanceOf[TowerType[B]]
 
-  override def updateStats(stats: GameStats): Unit = {
+  override def renderStats(stats: GameStats): Unit = {
     lifeLabel.text = stats.life.toString
     moneyLabel.text = stats.wallet.toString
   }

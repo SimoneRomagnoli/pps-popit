@@ -37,26 +37,19 @@ object ViewControllerUtilities {
   def hoverCell(e: MouseEvent, ask: Message => Future[Message], pane: Pane): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     val effect: ColorAdjust = new ColorAdjust()
-    ask(Selectable(cell)) onComplete {
-      case Failure(_) =>
-      case Success(value) =>
-        value match {
-          case ActorInteraction(_, _) =>
-          case Selected(selectable) =>
-            Platform runLater {
-              removeEffectsIn(pane)
-              if (selectable) {
-                effect.hue = 0.12
-                effect.brightness = 0.2
-                e.getTarget.setCursor(Cursor.Hand)
-                e.getTarget.setEffect(effect)
-              } else {
-                e.getTarget.setCursor(Cursor.Default)
-              }
-            }
+    retrieve(ask(Selectable(cell))) { case Selected(selectable) =>
+      Platform runLater {
+        removeEffectsIn(pane)
+        if (selectable) {
+          effect.hue = 0.12
+          effect.brightness = 0.2
+          e.getTarget.setCursor(Cursor.Hand)
+          e.getTarget.setEffect(effect)
+        } else {
+          e.getTarget.setCursor(Cursor.Default)
         }
+      }
     }
-
   }
 
   /** When clicked a tower for more information. */
@@ -65,23 +58,8 @@ object ViewControllerUtilities {
       ask: Message => Future[Message],
       fillStatus: (Tower[Bullet], Cell) => Unit): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-    ask(TowerIn(cell)).onComplete {
-      case Success(value) =>
-        value.asInstanceOf[TowerOption] match {
-          case TowerOption(tower) =>
-            tower match {
-              case Some(tower) => fillStatus(tower, cell)
-              case _           =>
-            }
-        }
-      case Failure(exception) => println(exception)
-    }
-    if (e.getTarget.getStyleClass.contains("tower")) {
-      val effect: ColorAdjust = new ColorAdjust()
-      effect.hue = 0.12
-      effect.brightness = 0.2
-      e.getTarget.setEffect(effect)
-      e.getTarget.setCursor(Cursor.Hand)
+    retrieve(ask(TowerIn(cell))) { case TowerOption(tower) =>
+      if (tower.isDefined) Platform runLater fillStatus(tower.get, cell)
     }
   }
 
@@ -92,22 +70,17 @@ object ViewControllerUtilities {
       send: Input => Unit,
       menu: ViewGameMenuController): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-    ask(Selectable(cell)).onComplete {
-      case Success(value) =>
-        value match {
-          case Selected(selectable) =>
-            if (selectable) {
-              Platform runLater {
-                menu.unselectDepot()
-                send(PlaceTower(cell, menu.getSelectedTowerType))
-              }
-            }
+    retrieve(ask(Selectable(cell))) { case Selected(selectable) =>
+      if (selectable) {
+        Platform runLater {
+          menu.unselectDepot()
+          send(PlaceTower(cell, menu.getSelectedTowerType))
         }
-      case Failure(exception) =>
+      }
     }
   }
 
-  private def andThen(implicit future: Future[Message], handler: Message => Unit): Unit =
+  private def retrieve(future: Future[Message])(handler: PartialFunction[Message, Unit]): Unit =
     future onComplete {
       case Failure(_) =>
       case Success(value) =>

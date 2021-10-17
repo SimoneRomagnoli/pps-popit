@@ -3,7 +3,7 @@ package model.managers
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.CurrentWallet
-import controller.GameLoop.GameLoopMessages.{ GameStatsUpdated, MapCreated }
+import controller.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
 import controller.Messages.{ GameDynamicsManagerMessage, Input, Update }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.managers.GameDynamicsMessages.{ Gain, Lose, NewMap, Pay, WalletQuantity }
@@ -57,7 +57,10 @@ case class DynamicsManager private (
       Behaviors.same
 
     case TickUpdate(_, replyTo) =>
-      replyTo ! GameStatsUpdated(stats)
+      stats.life match {
+        case x if x <= 0 => replyTo ! GameOver()
+        case _           => replyTo ! GameStatsUpdated(stats)
+      }
       Behaviors.same
 
     case _ => Behaviors.same

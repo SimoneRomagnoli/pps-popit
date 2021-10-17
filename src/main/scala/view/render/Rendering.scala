@@ -6,6 +6,8 @@ import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.Camo
+import model.entities.balloons.balloontypes.LeadBalloons.Lead
+import model.entities.balloons.balloontypes.RegeneratingBalloons.Regenerating
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
@@ -20,6 +22,7 @@ import utils.Constants.Screen.cellSize
 import view.render.Drawings._
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
 
+import scala.annotation.tailrec
 import scala.language.{ implicitConversions, reflectiveCalls }
 
 /**
@@ -59,16 +62,35 @@ object Rendering {
         rectangle.styleClass += "tower"
       case decoration: BalloonDecoration =>
         val blend: Blend = new Blend()
-        val effect: ImagePattern = decoration match {
-          case _: Camo => drawing the CamoPattern
+        val patterns: Seq[BalloonPattern] = effects(decoration)
+        patterns.foreach { pattern =>
+          val image: ImagePattern = drawing the pattern
+          blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
+          pattern match {
+            case CamoPattern         => blend.setMode(BlendMode.Darken)
+            case RegeneratingPattern => blend.setMode(BlendMode.Lighten)
+          }
+          blend.opacity = 0.6
         }
-        blend.setTopInput(new ImageInput(effect.getImage, rectangle.x.value, rectangle.y.value))
-        blend.setMode(BlendMode.Difference)
         rectangle.setEffect(blend)
       case _ =>
     }
     rectangle
   }
+
+  @tailrec
+  private def effects(
+      decoration: BalloonDecoration,
+      patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
+    decoration match {
+      case _: Camo if !patterns.contains(CamoPattern) =>
+        effects(decoration, patterns :+ CamoPattern)
+      case _: Lead if !patterns.contains(LeadPattern) =>
+        effects(decoration, patterns :+ LeadPattern)
+      case _: Regenerating if !patterns.contains(RegeneratingPattern) =>
+        effects(decoration, patterns :+ RegeneratingPattern)
+      case _ => patterns
+    }
 
   /** Renders the sight range of a [[Tower]]. */
   def sightOf(tower: Tower[_]): ToBeRendered = Rendered {

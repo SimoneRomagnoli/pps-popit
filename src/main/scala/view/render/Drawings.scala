@@ -8,8 +8,6 @@ import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.BaseTower
 import utils.Constants.Entities.Balloons.balloonDefaultBoundary
 
-import scala.language.postfixOps
-
 /**
  * Object that encapsulates all pre-loaded images of the game. It is useful as some view entities
  * are loaded a lot of times during a game, so it allows to earn better performances avoiding
@@ -25,6 +23,8 @@ object Drawings {
 
   sealed trait BalloonPattern extends Drawable
   case object CamoPattern extends BalloonPattern
+  case object LeadPattern extends BalloonPattern
+  case object RegeneratingPattern extends BalloonPattern
 
   /** Class that allows to get an image corresponding to a view entity. */
   case class Drawing(images: Drawings) {
@@ -41,7 +41,8 @@ object Drawings {
           case Road(s) => drawing.road(s)
           case pattern: BalloonPattern =>
             pattern match {
-              case CamoPattern => drawing.camoBalloon
+              case CamoPattern         => drawing.camoBalloon
+              case RegeneratingPattern => drawing.regeneratingBalloon
             }
           case Item(entity) =>
             entity match {
@@ -86,7 +87,10 @@ object Drawings {
       blueBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/BLUE.png")),
       greenBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/GREEN.png")),
       camoBalloon: ImagePattern = new ImagePattern(
-        new Image("images/balloons/CAMO3.png", x, y, false, false)
+        new Image("images/balloons/CAMO.png", x, y, false, false)
+      ),
+      regeneratingBalloon: ImagePattern = new ImagePattern(
+        new Image("images/balloons/REGENERATING.png", x, y, false, false)
       ))
       extends Drawings
 

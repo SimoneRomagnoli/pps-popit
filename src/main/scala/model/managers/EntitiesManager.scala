@@ -15,7 +15,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
-import model.managers.GameDynamicsMessages.{ Lose, Pay }
+import model.managers.GameDynamicsMessages.{ Gain, Lose, Pay }
 import model.managers.SpawnerMessages.RoundOver
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
@@ -160,8 +160,9 @@ case class EntityManager private (
       }
 
     case BalloonHit(bullet, balloons) =>
-      entities.filter(e => balloons.contains(e.entity)).foreach {
-        _.actorRef ! Hit(bullet, ctx.self)
+      entities.filter(e => balloons.contains(e.entity)).foreach { balloon =>
+        model ! Gain(10)
+        balloon.actorRef ! Hit(bullet, ctx.self)
       }
       Behaviors.same
 

@@ -23,6 +23,7 @@ object GameLoop {
   object GameLoopMessages {
     case object Tick extends Input
     case class Start() extends Input
+    case class GameOver() extends Input
     case class Stop() extends Input with Update
     case class MapCreated(track: Track) extends Input
     case class ModelUpdated(entities: List[Entity], animations: List[Entity]) extends Input
@@ -75,6 +76,11 @@ object GameLoop {
 
       case PauseGame() =>
         paused()
+
+      case GameOver() =>
+        ctx.self ! Stop()
+        model ! Stop()
+        Behaviors.same
 
       case Stop() =>
         Behaviors.stopped

@@ -4,10 +4,10 @@ import javafx.scene.effect.ImageInput
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
-import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
-import model.entities.balloons.balloontypes.CamoBalloons.Camo
-import model.entities.balloons.balloontypes.LeadBalloons.Lead
-import model.entities.balloons.balloontypes.RegeneratingBalloons.Regenerating
+import model.entities.balloons.Balloons.Balloon
+import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
+import model.entities.balloons.balloontypes.LeadBalloons.LeadBalloon
+import model.entities.balloons.balloontypes.RegeneratingBalloons.RegeneratingBalloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
@@ -60,9 +60,10 @@ object Rendering {
       case tower: Tower[_] =>
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         rectangle.styleClass += "tower"
-      case decoration: BalloonDecoration =>
+      case balloon: Balloon =>
         val blend: Blend = new Blend()
-        val patterns: Seq[BalloonPattern] = effects(decoration)
+        val patterns: Seq[BalloonPattern] = effects(balloon)
+        println(patterns)
         patterns.foreach { pattern =>
           val image: ImagePattern = drawing the pattern
           blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
@@ -80,15 +81,15 @@ object Rendering {
 
   @tailrec
   private def effects(
-      decoration: BalloonDecoration,
+      balloon: Balloon,
       patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
-    decoration match {
-      case _: Camo if !patterns.contains(CamoPattern) =>
-        effects(decoration, patterns :+ CamoPattern)
-      case _: Lead if !patterns.contains(LeadPattern) =>
-        effects(decoration, patterns :+ LeadPattern)
-      case _: Regenerating if !patterns.contains(RegeneratingPattern) =>
-        effects(decoration, patterns :+ RegeneratingPattern)
+    balloon match {
+      case CamoBalloon(b) =>
+        effects(b, patterns :+ CamoPattern)
+      case LeadBalloon(b) =>
+        effects(b, patterns :+ LeadPattern)
+      case RegeneratingBalloon(b) =>
+        effects(b, patterns :+ RegeneratingPattern)
       case _ => patterns
     }
 

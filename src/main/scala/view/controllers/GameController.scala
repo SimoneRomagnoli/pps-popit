@@ -1,12 +1,9 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.PlaceTower
 import controller.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.{ Selectable, Selected }
-import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
@@ -21,10 +18,8 @@ import view.render.Animations.Animations
 import view.render.Drawings.{ Drawing, GameDrawings }
 import view.render.{ Animating, Rendering }
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.{ implicitConversions, reflectiveCalls }
-import scala.util.{ Failure, Success }
 
 /**
  * Controller of the game. This controller loads the game fxml file and is able to draw every
@@ -184,7 +179,7 @@ class GameController(
 
   /** Mouse events handlers. */
   private object MouseEvents {
-    import InputEventHandlers._
+    import ViewControllerUtilities._
 
     def setMouseHandlers(): Unit = {
       trackPane.onMouseExited = _ => removeEffects()
@@ -195,35 +190,17 @@ class GameController(
     def click(e: MouseEvent): Unit = {
       if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
         clickedTower(e, ask, gameMenuController.fillTowerStatus)
-      if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
-        placeTower(e)
+      if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected()) {
+        removeEffects()
+        placeTower(e, ask, send, gameMenuController)
+      }
     }
 
-    def move(e: MouseEvent): Unit = {
-      removeEffects()
+    def move(e: MouseEvent): Unit =
       if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
-        hoverCell(e, ask)
+        hoverCell(e, ask, trackPane)
       else {
         e.getTarget.setCursor(Cursor.Default)
       }
-    }
-
-    private def placeTower(e: MouseEvent): Unit = {
-      val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
-      ask(Selectable(cell)).onComplete {
-        case Success(value) =>
-          value.asInstanceOf[Selected] match {
-            case Selected(selectable) =>
-              if (selectable) {
-                Platform runLater {
-                  removeEffects()
-                  gameMenuController.unselectDepot()
-                  send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
-                }
-              }
-          }
-        case Failure(exception) => println(exception)
-      }
-    }
   }
 }

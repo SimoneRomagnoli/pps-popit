@@ -25,18 +25,15 @@ import scala.util.{ Failure, Success }
  */
 object InputEventHandlers {
 
-  /** Implicit conversion for Unit monad. */
-  implicit def unitToIO(exp: => Unit): IO[Unit] = IO(exp)
-
   /** Get target [[Node]] of a [[MouseEvent]]. */
   implicit def asNode(t: EventTarget): Node = t.asInstanceOf[Node]
 
   /** Remove all additional effects in the scene. */
-  def removeEffectsIn(pane: Pane): IO[Unit] =
+  def removeEffectsIn(pane: Pane): Unit =
     pane.children.foreach(_.setEffect(null))
 
   /** Handler when hovering a cell to be selected. */
-  def hoverCell(e: MouseEvent, occupiedCells: Seq[Cell]): IO[Unit] = {
+  def hoverCell(e: MouseEvent, occupiedCells: Seq[Cell]): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     val effect: ColorAdjust = new ColorAdjust()
     if (selectable(occupiedCells, cell)) {
@@ -53,7 +50,7 @@ object InputEventHandlers {
   def clickedTower(
       e: MouseEvent,
       ask: Message => Future[Message],
-      fillStatus: (Tower[Bullet], Cell) => Unit): IO[Unit] = {
+      fillStatus: (Tower[Bullet], Cell) => Unit): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     ask(TowerIn(cell)).onComplete {
       case Success(value) =>

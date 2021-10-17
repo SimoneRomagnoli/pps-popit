@@ -1,7 +1,6 @@
 package view.controllers
 
-import cats.effect.IO
-import controller.Controller.ControllerMessages.{ NewTrack, PlaceTower }
+import controller.Controller.ControllerMessages.PlaceTower
 import controller.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
@@ -12,9 +11,7 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
-import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout._
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Constants
@@ -36,12 +33,20 @@ import scala.util.{ Failure, Success }
 trait ViewGameController extends ViewController {
   def reset(): Unit
   def setup(): Unit
+  def newTrack(): Unit
   def render(stats: GameStats): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
   def animate(entity: Entity): Unit
   def gameMenuController: ViewGameMenuController
+}
+
+trait GameControllerChild extends ViewController {
+  def setParent(controller: ViewGameController): Unit
+  def setLayout(): Unit
+  def setTransparency(): Unit
+  def reset(): Unit
 }
 
 /**
@@ -53,14 +58,13 @@ class GameController(
     val gameBoard: StackPane,
     val trackPane: Pane,
     val highlightPane: Pane,
-    val trackChoicePane: HBox,
     val entitiesPane: Pane,
     val animationsPane: Pane,
     val gameMenu: VBox,
-    val trackChoiceVerticalContainer: VBox,
-    val trackChoiceContainer: VBox,
-    val keepTrack: ToggleButton,
-    val changeTrack: ToggleButton,
+    val trackChoice: HBox,
+    val gameOver: HBox,
+    @nested[TrackChoiceController] val trackChoiceController: ViewTrackChoiceController,
+    @nested[GameOverController] val gameOverController: ViewGameOverController,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -77,6 +81,8 @@ class GameController(
     resetAll()
     Rendering a gameGrid into trackPane.children
     setLayouts()
+    setChildren()
+    setTransparency()
     setMouseHandlers()
     gameMenuController.setup()
     gameMenuController.setHighlightingTower(highlight)
@@ -84,12 +90,16 @@ class GameController(
 
   override def setSend(reference: Input => Unit): Unit = {
     send = reference
+    trackChoiceController.setSend(reference)
     gameMenuController.setSend(reference)
+    gameOverController.setSend(reference)
   }
 
   override def setAsk(reference: Message => Future[Message]): Unit = {
     ask = reference
+    trackChoiceController.setAsk(reference)
     gameMenuController.setAsk(reference)
+    gameOverController.setAsk(reference)
   }
 
   override def show(): Unit = mainPane.visible = true
@@ -110,8 +120,7 @@ class GameController(
   override def draw(track: Track): Unit = Platform runLater {
     occupiedCells = track.cells
     Rendering a track into trackPane.children
-    trackChoicePane.visible = true
-    trackChoiceContainer.visible = true
+    trackChoiceController.show()
   }
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
@@ -123,32 +132,45 @@ class GameController(
     Animating an entity into animationsPane.children
   }
 
+  override def newTrack(): Unit = {
+    trackPane.children.clear()
+    Rendering a gameGrid into trackPane.children
+  }
+
+  private def setChildren(): Unit = {
+    trackChoiceController.setParent(this)
+    gameOverController.setParent(this)
+  }
+
+  /** Some private verbose methods. */
   private object GameUtilities {
 
     def setLayouts(): Unit = {
       Rendering.setLayout(gameBoard, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(trackPane, gameBoardWidth, gameBoardHeight)
-      Rendering.setLayout(trackChoicePane, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(highlightPane, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(entitiesPane, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
+      Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
+      trackChoiceController.setLayout()
+    }
+
+    def setTransparency(): Unit = {
       entitiesPane.setMouseTransparent(true)
       animationsPane.setMouseTransparent(true)
-      trackChoicePane.setMouseTransparent(false)
       highlightPane.setMouseTransparent(true)
-      trackChoicePane.setPickOnBounds(false)
-      trackChoicePane.visible = false
+      trackChoiceController.setTransparency()
+      gameOverController.setTransparency()
       gameMenuController.disableAllButtons()
-      Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
-      trackChoiceVerticalContainer.setAlignment(Pos.Center)
     }
 
     def resetAll(): Unit = {
       trackPane.children.clear()
       highlightPane.children.clear()
-      trackChoicePane.children.removeRange(3, trackChoicePane.children.size)
       entitiesPane.children.clear()
       animationsPane.children.clear()
+      trackChoiceController.reset()
+      gameOverController.reset()
     }
 
     def highlight(tower: Option[Tower[_]]): Unit = {
@@ -162,51 +184,33 @@ class GameController(
       trackPane.children.foreach(_.setEffect(null))
   }
 
+  /** Mouse events handlers. */
   private object MouseEvents {
     import InputEventHandlers._
 
     def setMouseHandlers(): Unit = {
-      keepTrack.onMouseClicked = _ => {
-        gameMenuController.enableAllButtons()
-        trackChoiceContainer.visible = false
-        trackChoicePane.setMouseTransparent(true)
-      }
-      changeTrack.onMouseClicked = _ => {
-        send(NewTrack())
-        trackPane.children.clear()
-        Rendering a gameGrid into trackPane.children
-        trackChoiceContainer.visible = false
-      }
       trackPane.onMouseExited = _ => removeEffects()
-      trackPane.onMouseMoved = MouseEvents.move(_).unsafeRunSync()
-      trackPane.onMouseClicked = MouseEvents.click(_).unsafeRunSync()
+      trackPane.onMouseMoved = MouseEvents.move(_)
+      trackPane.onMouseClicked = MouseEvents.click(_)
     }
 
-    def click(e: MouseEvent): IO[Unit] = for {
-      _ <-
-        if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
-          clickedTower(e, ask, gameMenuController.fillTowerStatus)
-        else
-          IO.unit
-      _ <-
-        if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
-          placeTower(e)
-        else IO.unit
+    def click(e: MouseEvent): Unit = {
+      if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
+        clickedTower(e, ask, gameMenuController.fillTowerStatus)
+      if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+        placeTower(e)
+    }
 
-    } yield ()
+    def move(e: MouseEvent): Unit = {
+      removeEffects()
+      if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+        hoverCell(e, occupiedCells)
+      else {
+        e.getTarget.setCursor(Cursor.Default)
+      }
+    }
 
-    def move(e: MouseEvent): IO[Unit] = for {
-      _ <- removeEffects()
-      _ <-
-        if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
-          hoverCell(e, occupiedCells)
-        else {
-          e.getTarget.setCursor(Cursor.Default)
-          IO.unit
-        }
-    } yield ()
-
-    private def placeTower(e: MouseEvent): IO[Unit] = {
+    private def placeTower(e: MouseEvent): Unit = {
       val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
       ask(Selectable(cell)).onComplete {
         case Success(value) =>
@@ -219,7 +223,7 @@ class GameController(
                   gameMenuController.unselectDepot()
                   send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
                 }
-              } else {}
+              }
           }
         case Failure(exception) => println(exception)
       }

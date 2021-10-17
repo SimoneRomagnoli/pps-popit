@@ -4,6 +4,7 @@ import javafx.scene.effect.ImageInput
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.Camo
 import model.entities.balloons.balloontypes.LeadBalloons.Lead
@@ -29,7 +30,7 @@ import scala.language.{ implicitConversions, reflectiveCalls }
  * Object that simulates a DSL for rendering logic entities as shapes for a scalafx pane.
  */
 object Rendering {
-
+  import view.render.Rendering.RenderingUtilities._
   val drawing: Drawing = Drawing(GameDrawings())
   val defaultWidth: Double = 400.0
   val defaultHeight: Double = 200.0
@@ -47,7 +48,7 @@ object Rendering {
 
   /** Renders an [[Entity]] with its corresponding drawing. */
   def an(entity: Entity): ToBeRendered = Rendered {
-    val rectangle: Rectangle = Rectangle(
+    implicit val rectangle: Rectangle = Rectangle(
       entity.position.x - entity.boundary._1 / 2,
       entity.position.y - entity.boundary._2 / 2,
       entity.boundary._1,
@@ -61,36 +62,14 @@ object Rendering {
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         rectangle.styleClass += "tower"
       case decoration: BalloonDecoration =>
-        val blend: Blend = new Blend()
-        val patterns: Seq[BalloonPattern] = effects(decoration)
-        patterns.foreach { pattern =>
-          val image: ImagePattern = drawing the pattern
-          blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
-          pattern match {
-            case CamoPattern         => blend.setMode(BlendMode.Darken)
-            case RegeneratingPattern => blend.setMode(BlendMode.Lighten)
-          }
-          blend.opacity = 0.6
-        }
-        rectangle.setEffect(blend)
+        val effects: Seq[Blend] = patternsOf(decoration).map(toBlend)
+        for (i <- 0 until effects.size - 1) effects(i).bottomInput = effects(i + 1)
+        //effects.sliding(2).foreach(couple => couple.head.bottomInput = couple.last)
+        rectangle.setEffect(effects.head)
       case _ =>
     }
     rectangle
   }
-
-  @tailrec
-  private def effects(
-      decoration: BalloonDecoration,
-      patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
-    decoration match {
-      case _: Camo if !patterns.contains(CamoPattern) =>
-        effects(decoration, patterns :+ CamoPattern)
-      case _: Lead if !patterns.contains(LeadPattern) =>
-        effects(decoration, patterns :+ LeadPattern)
-      case _: Regenerating if !patterns.contains(RegeneratingPattern) =>
-        effects(decoration, patterns :+ RegeneratingPattern)
-      case _ => patterns
-    }
 
   /** Renders the sight range of a [[Tower]]. */
   def sightOf(tower: Tower[_]): ToBeRendered = Rendered {
@@ -141,4 +120,40 @@ object Rendering {
     region.minHeight = height
   }
 
+  private object RenderingUtilities {
+
+    @tailrec
+    def patternsOf(balloon: Balloon, patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
+      balloon match {
+        case decoration: BalloonDecoration =>
+          decoration match {
+            case _: Camo if !patterns.contains(CamoPattern) =>
+              patternsOf(decoration.balloon, patterns :+ CamoPattern)
+            case _: Regenerating if !patterns.contains(RegeneratingPattern) =>
+              patternsOf(decoration.balloon, patterns :+ RegeneratingPattern)
+            case _: Lead if !patterns.contains(LeadPattern) =>
+              patternsOf(decoration.balloon, patterns :+ LeadPattern)
+            case _ => patterns
+          }
+        case _ => patterns
+      }
+
+    def toBlend(implicit rectangle: Rectangle): BalloonPattern => Blend = { pattern =>
+      val image: ImagePattern = drawing the pattern
+      val blend: Blend = new Blend()
+      blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
+      pattern match {
+        case CamoPattern =>
+          blend.opacity = 0.5
+          blend.setMode(BlendMode.Darken)
+        case RegeneratingPattern =>
+          blend.opacity = 0.5
+          blend.setMode(BlendMode.Lighten)
+        case LeadPattern =>
+          blend.opacity = 1.0
+          blend.setMode(BlendMode.SrcOver)
+      }
+      blend
+    }
+  }
 }

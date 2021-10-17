@@ -42,6 +42,7 @@ object Drawings {
           case pattern: BalloonPattern =>
             pattern match {
               case CamoPattern         => drawing.camoBalloon
+              case LeadPattern         => drawing.leadBalloon
               case RegeneratingPattern => drawing.regeneratingBalloon
             }
           case Item(entity) =>
@@ -88,6 +89,9 @@ object Drawings {
       greenBalloon: ImagePattern = new ImagePattern(new Image("images/balloons/GREEN.png")),
       camoBalloon: ImagePattern = new ImagePattern(
         new Image("images/balloons/CAMO.png", x, y, false, false)
+      ),
+      leadBalloon: ImagePattern = new ImagePattern(
+        new Image("images/balloons/LEAD6.png", x, y, false, false)
       ),
       regeneratingBalloon: ImagePattern = new ImagePattern(
         new Image("images/balloons/REGENERATING.png", x, y, false, false)

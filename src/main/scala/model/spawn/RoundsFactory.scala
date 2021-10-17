@@ -1,7 +1,7 @@
 package model.spawn
 
 import cats.effect.IO
-import model.entities.balloons.BalloonDecorations.{ Camo, Regenerating }
+import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives.{ Blue, Green, Red }
 import model.spawn.RoundBuilders.{ add, RichIO }
 import model.spawn.Rounds.{ Round, Streak }
@@ -13,12 +13,12 @@ object RoundsFactory {
 
   def nextRound(): Round = (for {
     _ <- incrementRound()
-    _ <- add(Streak(round * 5) :- (Red & Camo))
-    _ <- add(Streak(round * 5) :- (Blue & Camo))
-    _ <- add(Streak(round * 5) :- (Green & Camo))
-    _ <- add(Streak(round * 5) :- (Red & Regenerating))
-    _ <- add(Streak(round * 5) :- (Blue & Regenerating))
-    _ <- add(Streak(round * 5) :- (Green & Regenerating))
+    _ <- add(Streak(round) :- (Red & Lead))
+    _ <- add(Streak(round) :- (Blue & Lead))
+    _ <- add(Streak(round) :- (Green & Lead))
+    _ <- add(Streak(round) :- (Red & Lead & Regenerating & Camo))
+    _ <- add(Streak(round) :- (Blue & Lead & Regenerating & Camo))
+    _ <- add(Streak(round) :- (Green & Lead & Regenerating & Camo))
   } yield ()).get
 
   private def incrementRound(): IO[Unit] = IO(round += 1)

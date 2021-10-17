@@ -13,7 +13,7 @@ object BalloonsFactory {
 
   implicit class RichBalloon(b: Balloon) {
 
-    def adding(balloonTypes: List[BalloonType]): Balloon = balloonTypes match {
+    def adding(balloonTypes: List[BalloonType]): Balloon = balloonTypes.distinct match {
       case h :: t => h.decorate(b) adding t
       case _      => b
     }

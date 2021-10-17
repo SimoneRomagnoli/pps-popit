@@ -103,9 +103,9 @@ object Entities {
     def isInSightOfRangeOf(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
-      case CamoBalloon(_)       => false
-      case BalloonDecoration(b) => canSee(b)
-      case _                    => isInSightOfRangeOf(balloon)
+      case CamoBalloon(_)          => false
+      case BalloonDecoration(b, _) => canSee(b)
+      case _                       => isInSightOfRangeOf(balloon)
     }
   }
 

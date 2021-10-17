@@ -1,7 +1,6 @@
 package model.entities.balloons.balloontypes
 
 import model.entities.Entities
-import model.entities.Entities.TrackFollowing
 import model.entities.balloons.BalloonLives.Green
 import model.entities.balloons.Balloons.{ complex, Balloon }
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
@@ -21,13 +20,15 @@ object RegeneratingBalloons {
       this
     }
 
+    private def addLife(balloon: Balloon): Balloon = balloon match {
+      case BalloonDecoration(b, decorate) => decorate(addLife(b))
+      case b => complex(b)
+    }
+
     private def regenerate(dt: Double): Regenerating =
       dt match {
         case t if t <= 0 && maxLife > this.life =>
-          regenerating(complex(this match {
-            case BalloonDecoration(b) => b
-            case b                    => b
-          }))
+          addLife(this)
             .asInstanceOf[Regenerating]
             .timing(regenerationTime)
         case t => this.asInstanceOf[Regenerating].timing(t)
@@ -36,7 +37,7 @@ object RegeneratingBalloons {
 
     override def update(dt: Double): Regenerating =
       regenerating((this match {
-        case BalloonDecoration(b) => b.update(dt)
+        case BalloonDecoration(b, _) => b.update(dt)
         case b                    => b
       }).asInstanceOf[Balloon])
         .asInstanceOf[Regenerating]

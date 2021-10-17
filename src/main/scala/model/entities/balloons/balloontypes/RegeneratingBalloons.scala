@@ -22,7 +22,7 @@ object RegeneratingBalloons {
 
     private def addLife(balloon: Balloon): Balloon = balloon match {
       case BalloonDecoration(b, decorate) => decorate(addLife(b))
-      case b => complex(b)
+      case b                              => complex(b)
     }
 
     private def regenerate(dt: Double): Regenerating =
@@ -38,7 +38,7 @@ object RegeneratingBalloons {
     override def update(dt: Double): Regenerating =
       regenerating((this match {
         case BalloonDecoration(b, _) => b.update(dt)
-        case b                    => b
+        case b                       => b
       }).asInstanceOf[Balloon])
         .asInstanceOf[Regenerating]
         .regenerate(this.timer - dt)

@@ -67,8 +67,7 @@ class GameController(
     @nested[GameOverController] val gameOverController: ViewGameOverController,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var send: Input => Unit,
-    var ask: Message => Future[Message],
-    var occupiedCells: Seq[Cell] = Seq())
+    var ask: Message => Future[Message])
     extends ViewGameController {
 
   import GameUtilities._
@@ -118,7 +117,6 @@ class GameController(
   }
 
   override def draw(track: Track): Unit = Platform runLater {
-    occupiedCells = track.cells
     Rendering a track into trackPane.children
     trackChoiceController.show()
   }
@@ -204,7 +202,7 @@ class GameController(
     def move(e: MouseEvent): Unit = {
       removeEffects()
       if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
-        hoverCell(e, occupiedCells)
+        hoverCell(e, ask)
       else {
         e.getTarget.setCursor(Cursor.Default)
       }
@@ -219,7 +217,6 @@ class GameController(
               if (selectable) {
                 Platform runLater {
                   removeEffects()
-                  occupiedCells = occupiedCells :+ cell
                   gameMenuController.unselectDepot()
                   send(PlaceTower(cell, gameMenuController.getSelectedTowerType))
                 }

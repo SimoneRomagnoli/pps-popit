@@ -1,13 +1,12 @@
 package view.controllers
 
-import cats.effect.IO
 import controller.Messages.Message
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.{ TowerIn, TowerOption }
+import model.managers.EntitiesMessages.{ Selectable, Selected, TowerIn, TowerOption }
 import model.maps.Cells.Cell
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust
@@ -20,8 +19,8 @@ import scala.language.implicitConversions
 import scala.util.{ Failure, Success }
 
 /**
- * Contains utility methods that exploit [[IO]] in order to make a more readable sequence of actions
- * in ViewControllers as handlers to input events.
+ * Contains utility methods in order to make a more readable sequence of actions in ViewControllers
+ * as handlers to input events.
  */
 object InputEventHandlers {
 
@@ -33,15 +32,20 @@ object InputEventHandlers {
     pane.children.foreach(_.setEffect(null))
 
   /** Handler when hovering a cell to be selected. */
-  def hoverCell(e: MouseEvent, occupiedCells: Seq[Cell]): Unit = {
+  def hoverCell(e: MouseEvent, ask: Message => Future[Message]): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     val effect: ColorAdjust = new ColorAdjust()
-    if (selectable(occupiedCells, cell)) {
-      effect.hue = 0.12
-      effect.brightness = 0.2
-      e.getTarget.setCursor(Cursor.Hand)
-    } else {
-      e.getTarget.setCursor(Cursor.Default)
+    ask(Selectable(cell)) onComplete { case Success(value) =>
+      value match {
+        case Selected(selectable) =>
+          if (selectable) {
+            effect.hue = 0.12
+            effect.brightness = 0.2
+            e.getTarget.setCursor(Cursor.Hand)
+          } else {
+            e.getTarget.setCursor(Cursor.Default)
+          }
+      }
     }
     e.getTarget.setEffect(effect)
   }
@@ -71,9 +75,4 @@ object InputEventHandlers {
       e.getTarget.setCursor(Cursor.Hand)
     }
   }
-
-  /** Returns true if the specified [[Cell]] is not in the specified sequence. */
-  private def selectable(occupiedCells: Seq[Cell], cell: Cell): Boolean =
-    !occupiedCells.exists(c => c.x == cell.x && c.y == cell.y)
-
 }

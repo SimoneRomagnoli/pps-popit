@@ -1,11 +1,10 @@
 package model.maps
 
 import model.Positions.Vector2D
-import utils.Constants
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Plots.{ Plotter, PrologPlotter }
-import model.maps.Tracks.Directions.{ Direction, LEFT, RIGHT }
+import model.maps.Tracks.Directions.{ Direction, RIGHT }
+import utils.Constants
 
 import scala.language.postfixOps
 

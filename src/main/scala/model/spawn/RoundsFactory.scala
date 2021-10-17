@@ -7,7 +7,6 @@ import model.spawn.RoundBuilders.{RichIO, add}
 import model.spawn.Rounds.{Round, Streak}
 
 import scala.concurrent.duration.DurationInt
-import scala.util.Random
 
 object RoundsFactory {
   private var round: Int = 14
@@ -41,7 +40,4 @@ object RoundsFactory {
   } yield()
 
   private def incrementRound(): IO[Unit] = IO(round += 1)
-
-  private val nBalloons: Double => Int = probability =>
-    (Random.nextDouble() * round * probability * 10).toInt
 }

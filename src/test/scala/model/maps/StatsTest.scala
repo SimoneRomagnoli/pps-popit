@@ -18,19 +18,16 @@ class StatsTest extends AnyWordSpec with Matchers {
       "have default behaviour" in {
         stats.wallet shouldBe Stats.startingWallet
         stats.life shouldBe Stats.startingLife
-        stats.points shouldBe Stats.startingPoints
       }
     }
     "modified" should {
       "change its values" in {
-        stats spend amount
+        stats pay amount
         stats.wallet shouldBe Stats.startingWallet - amount
-        stats win amount
+        stats gain amount
         stats.wallet shouldBe Stats.startingWallet
         stats lose amount
         stats.life shouldBe Stats.startingLife - amount
-        stats score amount
-        stats.points shouldBe Stats.startingPoints + amount
       }
     }
   }

@@ -36,7 +36,7 @@ import scala.util.{ Failure, Success }
 trait ViewGameController extends ViewController {
   def reset(): Unit
   def setup(): Unit
-  def update(stats: GameStats): Unit
+  def render(stats: GameStats): Unit
   def draw(grid: Grid): Unit
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
@@ -99,8 +99,8 @@ class GameController(
     resetAll()
   }
 
-  override def update(stats: GameStats): Unit = Platform runLater {
-    gameMenuController updateStats stats
+  override def render(stats: GameStats): Unit = Platform runLater {
+    gameMenuController renderStats stats
   }
 
   override def draw(grid: Grid = Constants.Maps.gameGrid): Unit = Platform runLater {

@@ -11,7 +11,6 @@ import controller.Messages._
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.SpawnEntity
@@ -40,7 +39,6 @@ object Controller {
     case class NewTimeRatio(value: Double) extends Input
     case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input
-    case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
     case class StartAnimation(entity: Entity) extends Render
 
     sealed trait Interaction extends Input {
@@ -109,19 +107,6 @@ object Controller {
 
       case StartNextRound() =>
         model.get ! StartNextRound()
-        Behaviors.same
-
-      case BoostTowerIn(cell, powerUp) =>
-        model.get ask WalletQuantity onComplete {
-          case Success(value) =>
-            value match {
-              case CurrentWallet(amount) =>
-                if (amount >= powerUp.cost) {
-                  model.get ! BoostTowerIn(cell, powerUp)
-                }
-            }
-          case Failure(exception) => println(exception)
-        }
         Behaviors.same
 
       case PlaceTower(cell, towerType) =>

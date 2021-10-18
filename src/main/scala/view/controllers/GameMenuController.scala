@@ -1,12 +1,6 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{
-  BoostTowerIn,
-  ExitGame,
-  PauseGame,
-  ResumeGame,
-  StartNextRound
-}
+import controller.Controller.ControllerMessages._
 import controller.Messages
 import controller.Messages._
 import model.actors.TowerMessages.TowerBoosted
@@ -16,6 +10,7 @@ import model.entities.towers.PowerUps.{ Camo, Damage, Ratio, Sight, TowerPowerUp
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.managers.EntitiesMessages.BoostTowerIn
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -27,12 +22,11 @@ import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import utils.Constants.Maps.outerCell
+import utils.Futures.retrieve
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
 
 trait ViewGameMenuController extends ViewController {
   def setup(): Unit
@@ -229,13 +223,8 @@ class GameMenuController(
       emptyBox.hgrow = Always
       val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
       button.onMouseClicked = _ =>
-        ask(BoostTowerIn(currentCell, powerUp)) onComplete {
-          case Success(value) =>
-            value match {
-              case TowerBoosted(tower, _) =>
-                refreshTowerStatus(tower)
-            }
-          case Failure(exception) => println(exception)
+        retrieve(ask(BoostTowerIn(currentCell, powerUp))) { case TowerBoosted(tower, _) =>
+          refreshTowerStatus(tower)
         }
       button.styleClass += "inputButton"
       box.children += key

@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ ActorInteraction, PlaceTower }
+import controller.Controller.ControllerMessages.PlaceTower
 import controller.Messages.{ Input, Message }
 import javafx.event.EventTarget
 import javafx.scene.Node
@@ -14,11 +14,10 @@ import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.Pane
 import utils.Constants
+import utils.Futures.retrieve
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.implicitConversions
-import scala.util.{ Failure, Success }
 
 /**
  * Contains utility methods in order to make a more readable sequence of actions in ViewControllers
@@ -79,14 +78,4 @@ object ViewControllerUtilities {
       }
     }
   }
-
-  private def retrieve(future: Future[Message])(handler: PartialFunction[Message, Unit]): Unit =
-    future onComplete {
-      case Failure(_) =>
-      case Success(value) =>
-        value match {
-          case ActorInteraction(_, _) =>
-          case msg                    => handler(msg)
-        }
-    }
 }

@@ -1,24 +1,30 @@
 package model.managers
 
+import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.BoostTowerIn
+import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
+import akka.util.Timeout
+import controller.Controller.ControllerMessages.CurrentWallet
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
-import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.actors.TowerMessages.Boost
+import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
-import model.managers.GameDynamicsMessages.{ Gain, Lose, Pay }
+import model.managers.GameDynamicsMessages.{ Gain, Lose, Pay, WalletQuantity }
 import model.managers.SpawnerMessages.RoundOver
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
+import utils.Futures.retrieve
+
+import scala.concurrent.duration.DurationInt
 
 case class EntityActor(actorRef: ActorRef[Update], entity: Entity)
 
@@ -44,6 +50,9 @@ object EntitiesMessages {
   case class TowerIn(cell: Cell) extends Update with EntitiesManagerMessage
   case class Selectable(cell: Cell) extends Update with EntitiesManagerMessage
 
+  case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp)
+      extends Update
+      with EntitiesManagerMessage
   case class TowerOption(tower: Option[Tower[Bullet]]) extends Input with Update
   case class Selected(selectable: Boolean) extends Input with Update
 }
@@ -61,6 +70,8 @@ case class EntityManager private (
     var track: Track = Track(),
     var entities: List[EntityActor] = List(),
     var messageQueue: Seq[Update] = Seq()) {
+  implicit val timeout: Timeout = 3.seconds
+  implicit val scheduler: Scheduler = ctx.system.scheduler
 
   def dequeueAndRun(): Behavior[Update] = {
     messageQueue.foreach(ctx.self ! _)
@@ -113,11 +124,16 @@ case class EntityManager private (
           replyTo ! TowerOption(tower)
 
         case BoostTowerIn(cell, powerUp) =>
-          model ! Pay(powerUp.cost)
-          entities.collect {
-            case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
-              actorRef
-          }.head ! Boost(powerUp, replyTo)
+          retrieve(model ? WalletQuantity) {
+            case CurrentWallet(amount) if amount - powerUp.cost > 0 =>
+              model ! Pay(powerUp.cost)
+              entities.collect {
+                case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
+                  actorRef
+              }.head ! Boost(powerUp, replyTo)
+            case _ =>
+          }
+
       }
       Behaviors.same
 

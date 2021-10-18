@@ -6,9 +6,9 @@ import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
-import model.entities.balloons.balloontypes.CamoBalloons.Camo
-import model.entities.balloons.balloontypes.LeadBalloons.Lead
-import model.entities.balloons.balloontypes.RegeneratingBalloons.Regenerating
+import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
+import model.entities.balloons.balloontypes.LeadBalloons.LeadBalloon
+import model.entities.balloons.balloontypes.RegeneratingBalloons.RegeneratingBalloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
@@ -66,6 +66,7 @@ object Rendering {
         for (i <- 0 until effects.size - 1) effects(i).bottomInput = effects(i + 1)
         //effects.sliding(2).foreach(couple => couple.head.bottomInput = couple.last)
         rectangle.setEffect(effects.head)
+
       case _ =>
     }
     rectangle
@@ -125,16 +126,12 @@ object Rendering {
     @tailrec
     def patternsOf(balloon: Balloon, patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
       balloon match {
-        case decoration: BalloonDecoration =>
-          decoration match {
-            case _: Camo if !patterns.contains(CamoPattern) =>
-              patternsOf(decoration.balloon, patterns :+ CamoPattern)
-            case _: Regenerating if !patterns.contains(RegeneratingPattern) =>
-              patternsOf(decoration.balloon, patterns :+ RegeneratingPattern)
-            case _: Lead if !patterns.contains(LeadPattern) =>
-              patternsOf(decoration.balloon, patterns :+ LeadPattern)
-            case _ => patterns
-          }
+        case CamoBalloon(b) =>
+          patternsOf(b, patterns :+ CamoPattern)
+        case RegeneratingBalloon(b) =>
+          patternsOf(b, patterns :+ RegeneratingPattern)
+        case LeadBalloon(b) =>
+          patternsOf(b, patterns :+ LeadPattern)
         case _ => patterns
       }
 

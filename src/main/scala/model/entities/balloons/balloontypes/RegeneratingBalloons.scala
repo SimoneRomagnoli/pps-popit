@@ -20,19 +20,30 @@ object RegeneratingBalloons {
       this
     }
 
-    private def regenerate(dt: Double): Regenerating = dt match {
-      case t if t <= 0 && maxLife > this.life =>
-        regenerating(complex(this match {
-          case BalloonDecoration(b) => b
-          case b                    => b
-        })).asInstanceOf[Regenerating].timing(regenerationTime)
-      case t => this.asInstanceOf[Regenerating].timing(t)
+    private def addLife(balloon: Balloon): Balloon = balloon match {
+      case BalloonDecoration(b, decorate) => decorate(addLife(b))
+      case b                              => complex(b)
     }
 
-    override def update(dt: Double): Regenerating = regenerating((this match {
-      case BalloonDecoration(b) => b.update(dt)
-      case b                    => b.update(dt)
-    }).asInstanceOf[Balloon]).asInstanceOf[Regenerating].regenerate(this.timer - dt)
+    private def regenerate(dt: Double): Regenerating =
+      dt match {
+        case t if t <= 0 && maxLife > this.life =>
+          addLife(this)
+            .asInstanceOf[Regenerating]
+            .timing(regenerationTime)
+        case t => this.asInstanceOf[Regenerating].timing(t)
+
+      }
+
+    override def update(dt: Double): Regenerating =
+      regenerating((this match {
+        case BalloonDecoration(b, _) => b.update(dt)
+        case b                       => b
+      }).asInstanceOf[Balloon])
+        .asInstanceOf[Regenerating]
+        .regenerate(this.timer - dt)
+        .asInstanceOf[Regenerating]
+
   }
 
   case class RegeneratingBalloon(override val balloon: Balloon)
@@ -44,6 +55,7 @@ object RegeneratingBalloons {
       balloon.pop(bullet).map(regenerating)
   }
 
-  def regenerating(balloon: Balloon): RegeneratingBalloon = RegeneratingBalloon(balloon)
+  def regenerating(balloon: Balloon): RegeneratingBalloon =
+    RegeneratingBalloon(balloon).following(balloon).asInstanceOf[RegeneratingBalloon]
 
 }

@@ -56,7 +56,7 @@ object Drawings {
               case Dart()        => drawing.dart
               case CannonBall(_) => drawing.cannonBall
               case IceBall(_, _) => drawing.iceBall
-              case BaseTower(b, _, _, _, _, _) =>
+              case BaseTower(b, _, _, _, _, _, _) =>
                 b match {
                   case Dart()        => drawing.arrowTower
                   case CannonBall(_) => drawing.cannonTower

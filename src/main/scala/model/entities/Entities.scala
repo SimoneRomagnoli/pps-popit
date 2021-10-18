@@ -52,12 +52,12 @@ object Entities {
    *   - can change the [[Track]]
    */
   trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
-    protected var linearPosition: Double = 0.0
+    private var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing
 
-    protected def following(trackFollowing: TrackFollowing): TrackFollowing =
+    def following(trackFollowing: TrackFollowing): TrackFollowing =
       following(trackFollowing.linearPosition)
 
     private def following(lp: Double): TrackFollowing = {
@@ -103,9 +103,9 @@ object Entities {
     def isInSightOfRangeOf(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
-      case CamoBalloon(_)       => false
-      case BalloonDecoration(b) => canSee(b)
-      case _                    => isInSightOfRangeOf(balloon)
+      case CamoBalloon(_)          => false
+      case BalloonDecoration(b, _) => canSee(b)
+      case _                       => isInSightOfRangeOf(balloon)
     }
   }
 

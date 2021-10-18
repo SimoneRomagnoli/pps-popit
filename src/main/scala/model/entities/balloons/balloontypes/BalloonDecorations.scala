@@ -3,6 +3,12 @@ package model.entities.balloons.balloontypes
 import model.Positions
 import model.entities.Entities
 import model.entities.balloons.Balloons.Balloon
+import model.entities.balloons.balloontypes.CamoBalloons.{ camo, CamoBalloon }
+import model.entities.balloons.balloontypes.LeadBalloons.{ lead, LeadBalloon }
+import model.entities.balloons.balloontypes.RegeneratingBalloons.{
+  regenerating,
+  RegeneratingBalloon
+}
 import model.maps.Tracks
 
 object BalloonDecorations {
@@ -22,11 +28,21 @@ object BalloonDecorations {
     override def in(p: Positions.Vector2D): BalloonDecoration = instance(balloon.in(p))
     override def at(s: Positions.Vector2D): BalloonDecoration = instance(balloon.at(s))
     override def on(t: Tracks.Track): BalloonDecoration = instance(balloon.on(t))
+    override def update(dt: Double): Balloon = instance(balloon.update(dt).asInstanceOf[Balloon])
+
     def instance(balloon: Balloon): BalloonDecoration
   }
 
   object BalloonDecoration {
-    def unapply(d: BalloonDecoration): Option[Balloon] = Some(d.balloon)
+
+    def unapply(d: BalloonDecoration): Option[(Balloon, Balloon => Balloon)] = Some(
+      d.balloon,
+      d match {
+        case _: RegeneratingBalloon => regenerating
+        case _: CamoBalloon         => camo
+        case _: LeadBalloon         => lead
+      }
+    )
   }
 
 }

@@ -5,10 +5,10 @@ import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.defaultPosition
 
+import scala.collection.mutable
 import scala.language.{ implicitConversions, postfixOps }
 
 object values
@@ -37,6 +37,11 @@ object Towers {
     override def sight(radius: Double): Tower[B]
 
     def damage(ammo: Bullet): Tower[B]
+
+    var statsLevels: mutable.Map[String, Int]
+    def level(stats: String): Int
+    def levelUp(stat: String): Unit
+    def stats(levels: mutable.Map[String, Int]): Tower[B]
 
     override def toString: String = "towers/" + bullet.toString + "-TOWER"
 
@@ -79,8 +84,28 @@ object Towers {
       override val position: Vector2D = defaultPosition,
       override val sightRange: Double = towerDefaultSightRange,
       override val shotRatio: Double = towerDefaultShotRatio,
-      override val direction: Vector2D = towerDefaultDirection)
+      override val direction: Vector2D = towerDefaultDirection,
+      override var statsLevels: mutable.Map[String, Int] =
+        mutable.Map("sight" -> 1, "ratio" -> 1, "damage" -> 1))
       extends Tower[B] {
+
+    def this(tower: Tower[B]) = this(
+      tower.bullet,
+      tower.boundary,
+      tower.position,
+      tower.sightRange,
+      tower.shotRatio,
+      tower.direction,
+      tower.statsLevels
+    )
+
+    override def stats(levels: mutable.Map[String, Int]): Tower[B] = {
+      statsLevels = levels
+      copy()
+    }
+    override def level(stats: String): Int = statsLevels(stats)
+
+    override def levelUp(stat: String): Unit = statsLevels(stat) = statsLevels(stat) + 1
 
     override def in(pos: Vector2D): Tower[B] = copy(position = pos)
 
@@ -93,6 +118,7 @@ object Towers {
     override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
 
   }
+
 }
 
 /**

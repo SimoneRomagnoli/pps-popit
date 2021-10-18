@@ -117,7 +117,7 @@ class GameMenuController(
       addToTowerStatus(Rendering a tower as single)
       addToTowerStatus("Sight Range", tower level Sight.toString, Sight)
       addToTowerStatus("Shot Ratio", tower level Ratio.toString, Ratio)
-      addToTowerStatus("Damage", tower level Damage.toString, Damage)
+      addToTowerStatus("Bullet Damage", tower level Damage.toString, Damage)
       addToTowerStatus(
         "Camo Vision",
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",

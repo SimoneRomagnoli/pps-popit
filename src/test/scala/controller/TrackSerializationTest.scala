@@ -5,9 +5,6 @@ import alice.tuprolog.{ SolveInfo, Struct, Term }
 import controller.TrackSerializationTest.{ solve, termDecoder, termEncoder, trackFromTerm }
 import io.circe.{ Decoder, Encoder, HCursor, Json }
 import io.circe.syntax.EncoderOps
-import model.Positions.Vector2DImpl
-import model.entities.bullets.Bullets.Dart
-import model.entities.towers.Towers.BaseTower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ LEFT, RIGHT }
@@ -25,27 +22,23 @@ object TrackSerializationTest {
   val engine: Engine = Engine(Theories from grid)
   val query: String = PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT)
 
-  val solve: SeqView[SolveInfo] = engine.solve(query)
+  val solve: SeqView[SolveInfo] = engine.solve(Term.createTerm(query))
 
   implicit val termEncoder: Encoder[Term] = (a: Term) => {
-    val string: String = a.toString
-    val track: String = string
+    val track: List[String] = a.toString
       .replace("[", "")
       .replace("]", "")
       .replaceAll("(?<!\\d),", " ")
-    //.split(" ")
+      .split(" ")
+      .toList
 
-    println(track.split(" ").toList)
-
-    Json.obj(("cells", Json.fromString(track)))
+    Json.obj(("cells", Json.fromValues(track.map(s => Json.fromString(s)))))
   }
 
   implicit val termDecoder: Decoder[Term] = (c: HCursor) =>
     for {
-      cells <- c.downField("cells").as[String]
-    } yield new String(cells)
-
-  implicit def stringToTerm(s: String): Term = Term.createTerm(s)
+      track <- c.downField("cells").as[List[String]]
+    } yield Term.createTerm(track.mkString("[", ", ", "]"))
 
   def trackFromTerm(term: Term): Seq[Cell] = {
     val track: Seq[Cell] = term
@@ -71,6 +64,6 @@ class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecL
   val json: Json = term.asJson
   println(json)
 
-  //val track: Seq[Cell] = trackFromTerm(json.as[Term].getOrElse(null))
-  //println(track)
+  val track: Seq[Cell] = trackFromTerm(json.as[Term].getOrElse(Term.createTerm("")))
+  println(track)
 }

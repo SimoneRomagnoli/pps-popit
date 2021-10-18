@@ -176,8 +176,8 @@ class GameMenuController(
     }
 
     def setupTowerDepot[B <: Bullet](): Unit =
-      TowerTypes.values.foreach { towerValue =>
-        val tower: Tower[B] = towerValue.asInstanceOf[TowerType[B]].tower
+      TowerTypes.values.collect { case t: TowerType[B] => t }.foreach { towerValue =>
+        val tower: Tower[B] = towerValue.tower
         val renderedTower: Shape = Rendering a tower as single
         val towerBox: HBox = new HBox(renderedTower)
         towerBox.styleClass += "towerBox"
@@ -187,7 +187,7 @@ class GameMenuController(
             if (!towerBox.styleClass.contains("selected")) {
               unselectDepot()
               towerBox.styleClass += "selected"
-              selectedTowerType = towerValue.asInstanceOf[TowerType[B]]
+              selectedTowerType = towerValue
             } else {
               unselectDepot()
             }
@@ -195,9 +195,11 @@ class GameMenuController(
           }
         towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
-        val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
-        towerLabel.styleClass += "towerLabel"
+        val towerLabel: Label = Label(towerValue.toString().toUpperCase)
+        val towerPrice: Label = Label(towerValue.cost.toString)
         towerBox.children += towerLabel
+        towerBox.children += new Pane { hgrow = Always }
+        towerBox.children += towerPrice
         towerBox.setAlignment(Pos.CenterLeft)
         towerDepot.children.add(towerBox)
       }

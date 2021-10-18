@@ -63,7 +63,6 @@ object Rendering {
       case balloon: Balloon =>
         val blend: Blend = new Blend()
         val patterns: Seq[BalloonPattern] = effects(balloon)
-        println(patterns)
         patterns.foreach { pattern =>
           val image: ImagePattern = drawing the pattern
           blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))

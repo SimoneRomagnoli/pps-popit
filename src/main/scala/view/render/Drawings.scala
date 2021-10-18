@@ -91,10 +91,10 @@ object Drawings {
         new Image("images/balloons/CAMO.png", x, y, false, false)
       ),
       leadBalloon: ImagePattern = new ImagePattern(
-        new Image("images/balloons/LEAD6.png", x, y, false, false)
+        new Image("images/balloons/LEAD.png", x, y, false, false)
       ),
       regeneratingBalloon: ImagePattern = new ImagePattern(
-        new Image("images/balloons/REGENERATING2.png", x, y, false, false)
+        new Image("images/balloons/REGENERATING.png", x, y, false, false)
       ))
       extends Drawings
 

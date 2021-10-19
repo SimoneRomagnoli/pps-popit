@@ -50,8 +50,8 @@ trait ViewGameMenuController extends ViewController {
 @sfxml
 class GameMenuController(
     val gameMenu: VBox,
-    val playButton: ToggleButton,
-    val exitButton: ToggleButton,
+    //val playButton: ToggleButton,
+    //val exitButton: ToggleButton,
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
@@ -61,6 +61,7 @@ class GameMenuController(
     val towerStatus: VBox,
     val startRoundContainer: VBox,
     val startRound: ToggleButton,
+    val pauseRound: ToggleButton,
     var currentCell: Cell = outerCell,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -127,13 +128,13 @@ class GameMenuController(
 
   override def disableAllButtons(): Unit = {
     disableRoundButton()
-    playButton.disable = true
+    //playButton.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
     enableRoundButton()
-    playButton.disable = false
+    //playButton.disable = false
     towerDepot.disable = false
   }
 
@@ -158,7 +159,8 @@ class GameMenuController(
       startRoundContainer.setAlignment(Pos.Center)
     }
 
-    def setupButtons(): Unit = {
+    def setupButtons(): Unit =
+      /*
       exitButton.onMouseClicked = _ => send(ExitGame())
       playButton.onMouseClicked = _ =>
         if (paused) {
@@ -169,11 +171,12 @@ class GameMenuController(
           paused = true
         }
 
+       */
+
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
         disableRoundButton()
       }
-    }
 
     def setupTowerDepot[B <: Bullet](): Unit =
       TowerTypes.values.collect { case t: TowerType[B] => t }.foreach { towerValue =>
@@ -225,8 +228,10 @@ class GameMenuController(
       emptyBox.hgrow = Always
       val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
       button.onMouseClicked = _ =>
-        retrieve(ask(BoostTowerIn(currentCell, powerUp))) { case TowerBoosted(tower, _) =>
-          refreshTowerStatus(tower)
+        retrieve(ask(BoostTowerIn(currentCell, powerUp))) {
+          case TowerBoosted(tower, _) =>
+            refreshTowerStatus(tower)
+          case _ =>
         }
       button.styleClass += "inputButton"
       box.children += key

@@ -1,5 +1,6 @@
 package view.controllers
 
+import controller.Controller.ControllerMessages.{ ExitGame, ResumeGame }
 import controller.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
@@ -45,9 +46,16 @@ class PauseController(
 
     def setup(): Unit = {
       pauseVerticalContainer.setAlignment(Pos.Center)
-      //retryTrack.onMouseClicked = _ => send(Retry())
-      //saveTrack.onMouseClicked = _ => send(SaveTrack())
-      retryTrack.onMouseClicked = _ => hide()
+      //saveTrack.onMouseClicked = _ => hide()
+      //retryTrack.onMouseClicked = _ => hide()
+      resume.onMouseClicked = _ => {
+        send(ResumeGame())
+        hide()
+      }
+      quit.onMouseClicked = _ => {
+        send(ExitGame())
+        hide()
+      }
     }
   }
 }

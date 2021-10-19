@@ -101,7 +101,7 @@
 -fx-border-radius: 10;
 }
 
-.startRound {
+.startRound, .pauseRound {
 -fx-padding: 5 10;
 }
 

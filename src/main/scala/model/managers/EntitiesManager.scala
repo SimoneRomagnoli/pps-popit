@@ -121,12 +121,14 @@ case class EntityManager private (
           replyTo ! Selected(selectable)
 
         case PlaceTower(cell, towerType) =>
-          retrieve(model ? WalletQuantity) { case CurrentWallet(amount) =>
-            if (amount >= towerType.cost) {
-              val tower: Tower[Bullet] = towerType.tower in cell
-              model ! SpawnEntity(tower)
-              model ! Pay(towerType.cost)
-            }
+          retrieve(model ? WalletQuantity) {
+            case CurrentWallet(amount) =>
+              if (amount >= towerType.cost) {
+                val tower: Tower[Bullet] = towerType.tower in cell
+                model ! SpawnEntity(tower)
+                model ! Pay(towerType.cost)
+              }
+            case _ =>
           }
 
         case TowerIn(cell) =>

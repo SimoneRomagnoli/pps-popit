@@ -141,10 +141,10 @@ object Rendering {
       blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
       pattern match {
         case CamoPattern =>
-          blend.opacity = 0.5
+          blend.opacity = 0.6
           blend.setMode(BlendMode.Darken)
         case RegeneratingPattern =>
-          blend.opacity = 0.5
+          blend.opacity = 0.8
           blend.setMode(BlendMode.Lighten)
         case LeadPattern =>
           blend.opacity = 1.0

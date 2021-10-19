@@ -16,6 +16,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.PowerUps.TowerPowerUp
+import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
 import model.managers.GameDynamicsMessages.{ Gain, Lose, Pay, WalletQuantity }
@@ -45,6 +46,11 @@ object EntitiesMessages {
 
   case class ExitedBalloon(balloon: Balloon, actorRef: ActorRef[Update])
       extends Update
+      with EntitiesManagerMessage
+
+  case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B])
+      extends Input
+      with Update
       with EntitiesManagerMessage
 
   case class TowerIn(cell: Cell) extends Update with EntitiesManagerMessage
@@ -112,8 +118,16 @@ case class EntityManager private (
               .map(_.entity)
               .collect { case e: Tower[Bullet] => e }
               .forall(t => !cell.contains(t.position))
-
           replyTo ! Selected(selectable)
+
+        case PlaceTower(cell, towerType) =>
+          retrieve(model ? WalletQuantity) { case CurrentWallet(amount) =>
+            if (amount >= towerType.cost) {
+              val tower: Tower[Bullet] = towerType.tower in cell
+              model ! SpawnEntity(tower)
+              model ! Pay(towerType.cost)
+            }
+          }
 
         case TowerIn(cell) =>
           val tower: Option[Tower[Bullet]] = entities

@@ -13,7 +13,7 @@ import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.SpawnEntity
+import model.managers.EntitiesMessages.{ PlaceTower, SpawnEntity }
 import model.managers.GameDynamicsMessages.{ NewMap, Pay, WalletQuantity }
 import model.maps.Cells.Cell
 import view.View.ViewMessages.RenderMap
@@ -37,7 +37,6 @@ object Controller {
     case class NewTrack() extends Input
     case class StartNextRound() extends Input with SpawnManagerMessage
     case class NewTimeRatio(value: Double) extends Input
-    case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input
     case class StartAnimation(entity: Entity) extends Render
 
@@ -110,18 +109,7 @@ object Controller {
         Behaviors.same
 
       case PlaceTower(cell, towerType) =>
-        model.get ? WalletQuantity onComplete {
-          case Success(value) =>
-            value match {
-              case CurrentWallet(amount) =>
-                if (amount >= towerType.cost) {
-                  val tower: Tower[Bullet] = towerType.tower in cell
-                  model.get ! SpawnEntity(tower)
-                  model.get ! Pay(towerType.cost)
-                }
-            }
-          case Failure(exception) => println(exception)
-        }
+        model.get ! WithReplyTo(PlaceTower(cell, towerType), ctx.self)
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>

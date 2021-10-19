@@ -1,6 +1,5 @@
 package utils
 
-import controller.Controller.ControllerMessages.ActorInteraction
 import controller.Messages.Message
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,8 +14,8 @@ object Futures {
       case Failure(_) =>
       case Success(value) =>
         value match {
-          case ActorInteraction(_, _) =>
-          case msg                    => handler(msg)
+          case msg => handler(msg)
+          case _   =>
         }
     }
 }

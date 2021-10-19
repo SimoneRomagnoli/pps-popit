@@ -1,13 +1,12 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.PlaceTower
 import controller.Messages.{ Input, Message }
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.{ Selectable, Selected, TowerIn, TowerOption }
+import model.managers.EntitiesMessages.{ PlaceTower, Selectable, Selected, TowerIn, TowerOption }
 import model.maps.Cells.Cell
 import scalafx.application.Platform
 import scalafx.scene.Cursor

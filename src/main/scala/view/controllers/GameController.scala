@@ -34,6 +34,7 @@ trait ViewGameController extends ViewController {
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
   def animate(entity: Entity): Unit
+  def pauseController: ViewPauseController
   def gameMenuController: ViewGameMenuController
   def gameOverController: ViewGameOverController
 }
@@ -58,8 +59,8 @@ class GameController(
     val animationsPane: Pane,
     val gameMenu: VBox,
     val trackChoice: HBox,
-    val pause: HBox,
     val gameOver: HBox,
+    val pause: HBox,
     @nested[TrackChoiceController] val trackChoiceController: ViewTrackChoiceController,
     @nested[PauseController] val pauseController: ViewPauseController,
     @nested[GameOverController] val gameOverController: ViewGameOverController,
@@ -137,6 +138,8 @@ class GameController(
 
   private def setChildren(): Unit = {
     trackChoiceController.setParent(this)
+    pauseController.setParent(this)
+    gameMenuController.setParent(this)
     gameOverController.setParent(this)
   }
 
@@ -171,6 +174,7 @@ class GameController(
       entitiesPane.children.clear()
       animationsPane.children.clear()
       trackChoiceController.reset()
+      pauseController.reset()
       gameOverController.reset()
     }
 

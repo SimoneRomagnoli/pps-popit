@@ -28,7 +28,7 @@ import view.render.Renders.{ single, toSingle }
 
 import scala.concurrent.Future
 
-trait ViewGameMenuController extends ViewController {
+trait ViewGameMenuController extends GameControllerChild {
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def renderStats(stats: GameStats): Unit
@@ -36,7 +36,6 @@ trait ViewGameMenuController extends ViewController {
   def unselectDepot(): Unit
   def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit
   def clearTowerStatus(): Unit
-  def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
   def disableRoundButton(): Unit
   def enableRoundButton(): Unit
@@ -50,8 +49,6 @@ trait ViewGameMenuController extends ViewController {
 @sfxml
 class GameMenuController(
     val gameMenu: VBox,
-    //val playButton: ToggleButton,
-    //val exitButton: ToggleButton,
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
@@ -63,17 +60,17 @@ class GameMenuController(
     val startRound: ToggleButton,
     val pauseRound: ToggleButton,
     var currentCell: Cell = outerCell,
+    var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
     var highlight: Option[Tower[_]] => Unit,
-    var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
   import MenuSetters._
 
   override def setup(): Unit = Platform runLater {
     reset()
-    setSpacing()
+    setLayout()
     setupButtons()
     setupTowerDepot()
   }
@@ -82,11 +79,15 @@ class GameMenuController(
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
   override def show(): Unit = gameMenu.visible = true
   override def hide(): Unit = gameMenu.visible = false
+  override def setParent(controller: ViewGameController): Unit = parent = controller
+  override def setLayout(): Unit = setSpacing()
+
+  override def setTransparency(): Unit = {}
+
+  override def reset(): Unit = resetMenu()
 
   override def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit =
     highlight = reference
-
-  override def isPaused: Boolean = paused
 
   override def anyTowerSelected(): Boolean =
     towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
@@ -128,13 +129,13 @@ class GameMenuController(
 
   override def disableAllButtons(): Unit = {
     disableRoundButton()
-    //playButton.disable = true
+    pauseRound.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
     enableRoundButton()
-    //playButton.disable = false
+    pauseRound.disable = false
     towerDepot.disable = false
   }
 
@@ -144,7 +145,7 @@ class GameMenuController(
   /** Private methods for setting the controller. */
   private object MenuSetters {
 
-    def reset(): Unit = {
+    def resetMenu(): Unit = {
       disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
@@ -159,24 +160,17 @@ class GameMenuController(
       startRoundContainer.setAlignment(Pos.Center)
     }
 
-    def setupButtons(): Unit =
-      /*
-      exitButton.onMouseClicked = _ => send(ExitGame())
-      playButton.onMouseClicked = _ =>
-        if (paused) {
-          send(ResumeGame())
-          paused = false
-        } else {
-          send(PauseGame())
-          paused = true
-        }
-
-       */
-
+    def setupButtons(): Unit = {
+      pauseRound.onMouseClicked = _ => {
+        send(PauseGame())
+        disableAllButtons()
+        parent.pauseController.show()
+      }
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
         disableRoundButton()
       }
+    }
 
     def setupTowerDepot[B <: Bullet](): Unit =
       TowerTypes.values.collect { case t: TowerType[B] => t }.foreach { towerValue =>
@@ -186,7 +180,7 @@ class GameMenuController(
         towerBox.styleClass += "towerBox"
         towerBox.setCursor(Cursor.Hand)
         towerBox.onMousePressed = _ =>
-          if (!paused) {
+          if (true) {
             if (!towerBox.styleClass.contains("selected")) {
               unselectDepot()
               towerBox.styleClass += "selected"

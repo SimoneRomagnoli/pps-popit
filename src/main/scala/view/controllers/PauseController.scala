@@ -5,6 +5,7 @@ import controller.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ HBox, VBox }
+import scalafxml.core.macros.sfxml
 import utils.Constants.View.{ gameBoardHeight, gameBoardWidth }
 import view.render.Rendering
 
@@ -14,6 +15,7 @@ trait ViewPauseController extends GameControllerChild {
   def isPaused: Boolean
 }
 
+@sfxml
 class PauseController(
     val pause: HBox,
     val pauseVerticalContainer: VBox,
@@ -50,10 +52,12 @@ class PauseController(
 
     def setup(): Unit = {
       pauseVerticalContainer.setAlignment(Pos.Center)
+      pauseContainer.setAlignment(Pos.Center)
       //saveTrack.onMouseClicked = _ => hide()
       //retryTrack.onMouseClicked = _ => hide()
       resume.onMouseClicked = _ => {
         send(ResumeGame())
+        parent.gameMenuController.enableAllButtons()
         hide()
       }
       quit.onMouseClicked = _ => {

@@ -78,6 +78,7 @@ object GameLoop {
         paused()
 
       case GameOver() =>
+        view ! RenderGameOver()
         ctx.self ! Stop()
         model ! Stop()
         Behaviors.same

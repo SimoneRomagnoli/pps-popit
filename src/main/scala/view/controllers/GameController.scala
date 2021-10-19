@@ -35,6 +35,7 @@ trait ViewGameController extends ViewController {
   def draw(entities: List[Entity]): Unit
   def animate(entity: Entity): Unit
   def gameMenuController: ViewGameMenuController
+  def gameOverController: ViewGameOverController
 }
 
 trait GameControllerChild extends ViewController {

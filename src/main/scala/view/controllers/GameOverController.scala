@@ -1,6 +1,7 @@
 package view.controllers
 
 import controller.Messages.{ Input, Message }
+import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafxml.core.macros.sfxml
@@ -47,9 +48,10 @@ class GameOverController(
   private object Setters {
 
     def setup(): Unit =
-      //retryTrack.onMouseClicked = _ => send(Retry())
-      //saveTrack.onMouseClicked = _ => send(SaveTrack())
-      retryTrack.onMouseClicked = _ => hide()
+      gameOverVerticalContainer.setAlignment(Pos.Center)
+    //retryTrack.onMouseClicked = _ => send(Retry())
+    //saveTrack.onMouseClicked = _ => send(SaveTrack())
+    retryTrack.onMouseClicked = _ => hide()
   }
 
 }

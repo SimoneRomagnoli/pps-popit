@@ -22,6 +22,7 @@ object View {
 
   object ViewMessages {
     case class RenderStats(stats: GameStats) extends Render
+    case class RenderGameOver() extends Render
     case class RenderEntities(entities: List[Entity]) extends Render
     case class RenderMap(track: Track) extends Render
   }
@@ -75,6 +76,10 @@ object View {
 
         case CanStartNextRound() =>
           gameController.gameMenuController.enableRoundButton()
+          Behaviors.same
+
+        case RenderGameOver() =>
+          gameController.gameOverController.show()
           Behaviors.same
 
         case ExitGame() =>

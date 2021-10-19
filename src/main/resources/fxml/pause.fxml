@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="view.controllers.PauseController"
+      fx:id="pause" prefHeight="200.0" prefWidth="200.0"
+      styleClass="gameBoard" BorderPane.alignment="CENTER">
+    <VBox HBox.hgrow="ALWAYS"/>
+    <VBox fx:id="pauseVerticalContainer">
+        <VBox fx:id="pauseContainer" styleClass="pauseContainer">
+            <Label text="Pause"/>
+            <VBox>
+                <ToggleButton text="Resume-it!" fx:id="resume" styleClass="pauseMenuButtons"/>
+                <ToggleButton text="Save-it!" fx:id="saveTrack" styleClass="pauseMenuButtons"/>
+                <ToggleButton text="Retry-it!" fx:id="retryTrack" styleClass="pauseMenuButtons"/>
+                <ToggleButton text="Quit-it!" fx:id="quit" styleClass="pauseMenuButtons"/>
+            </VBox>
+        </VBox>
+    </VBox>
+    <VBox HBox.hgrow="ALWAYS"/>
+</HBox>

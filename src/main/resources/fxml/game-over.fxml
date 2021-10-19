@@ -16,9 +16,9 @@
         <VBox fx:id="gameOverContainer" styleClass="gameOverContainer">
             <Label text="Game Over"/>
             <HBox>
-                <ToggleButton text="Retry-it!" fx:id="retryTrack" styleClass="trackButtons"/>
+                <ToggleButton text="Retry-it!" fx:id="retryTrack" styleClass="gameOverButtons"/>
                 <HBox HBox.hgrow="ALWAYS"/>
-                <ToggleButton text="Save-it!" fx:id="saveTrack" styleClass="trackButtons"/>
+                <ToggleButton text="Save-it!" fx:id="saveTrack" styleClass="gameOverButtons"/>
             </HBox>
         </VBox>
     </VBox>

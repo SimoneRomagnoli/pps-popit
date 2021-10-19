@@ -1,6 +1,5 @@
 package controller
 
-import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
@@ -10,18 +9,13 @@ import controller.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.Messages._
 import model.Model.ModelActor
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.TowerTypes.TowerType
-import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.{ PlaceTower, SpawnEntity }
-import model.managers.GameDynamicsMessages.{ NewMap, Pay, WalletQuantity }
-import model.maps.Cells.Cell
+import model.managers.EntitiesMessages.PlaceTower
+import model.managers.GameDynamicsMessages.NewMap
 import view.View.ViewMessages.RenderMap
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
-import scala.util.{ Failure, Success }
 
 /**
  * Controller of the application, fundamental in the MVC pattern. It deals with inputs coming from

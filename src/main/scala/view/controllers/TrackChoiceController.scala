@@ -36,7 +36,13 @@ class TrackChoiceController(
   override def show(): Unit = trackChoice.visible = true
   override def hide(): Unit = trackChoice.visible = false
 
-  override def setLayout(): Unit = Rendering.setLayout(trackChoice, gameBoardWidth, gameBoardHeight)
+  override def setLayout(): Unit = {
+    Rendering.setLayout(trackChoice, gameBoardWidth, gameBoardHeight)
+    trackChoiceVerticalContainer.setAlignment(Pos.Center)
+    trackChoiceContainer.setAlignment(Pos.Center)
+    keepTrack.minWidth = changeTrack.width.value
+    keepTrack.maxWidth = changeTrack.width.value
+  }
 
   override def setTransparency(): Unit = {
     trackChoice.setMouseTransparent(false)
@@ -50,10 +56,8 @@ class TrackChoiceController(
 
   private object Setters {
 
-    def setup(): Unit = {
-      trackChoiceVerticalContainer.setAlignment(Pos.Center)
+    def setup(): Unit =
       setMouseHandlers()
-    }
 
     def setMouseHandlers(): Unit = {
       keepTrack.onMouseClicked = _ => {

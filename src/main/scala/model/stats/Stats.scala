@@ -5,8 +5,8 @@ package model.stats
  */
 object Stats {
 
-  val startingLife: Int = 10
-  val startingWallet: Int = 1500
+  val startingLife: Int = 100
+  val startingWallet: Int = 500
 
   trait GameStats {
     def life: Int
@@ -24,9 +24,7 @@ object Stats {
 
   case class GameStatistics(var life: Int, var wallet: Int) extends GameStats {
     override def gain(money: Int): Unit = wallet += money
-
     override def pay(money: Int): Unit = wallet -= money
-
     override def lose(lifePoints: Int): Unit = life -= lifePoints
   }
 }

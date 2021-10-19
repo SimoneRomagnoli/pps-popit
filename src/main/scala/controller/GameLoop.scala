@@ -90,6 +90,10 @@ object GameLoop {
         view ! RenderStats(stats)
         Behaviors.same
 
+      case CanStartNextRound() =>
+        view ! CanStartNextRound()
+        Behaviors.same
+
       case _ => Behaviors.same
     }
 

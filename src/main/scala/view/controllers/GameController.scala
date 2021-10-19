@@ -58,8 +58,10 @@ class GameController(
     val animationsPane: Pane,
     val gameMenu: VBox,
     val trackChoice: HBox,
+    val pause: HBox,
     val gameOver: HBox,
     @nested[TrackChoiceController] val trackChoiceController: ViewTrackChoiceController,
+    @nested[PauseController] val pauseController: ViewPauseController,
     @nested[GameOverController] val gameOverController: ViewGameOverController,
     @nested[GameMenuController] val gameMenuController: ViewGameMenuController,
     var send: Input => Unit,
@@ -86,6 +88,7 @@ class GameController(
   override def setSend(reference: Input => Unit): Unit = {
     send = reference
     trackChoiceController.setSend(reference)
+    pauseController.setSend(reference)
     gameMenuController.setSend(reference)
     gameOverController.setSend(reference)
   }
@@ -93,6 +96,7 @@ class GameController(
   override def setAsk(reference: Message => Future[Message]): Unit = {
     ask = reference
     trackChoiceController.setAsk(reference)
+    pauseController.setAsk(reference)
     gameMenuController.setAsk(reference)
     gameOverController.setAsk(reference)
   }
@@ -147,6 +151,8 @@ class GameController(
       Rendering.setLayout(animationsPane, gameBoardWidth, gameBoardHeight)
       Rendering.setLayout(gameMenu, gameMenuWidth, gameMenuHeight)
       trackChoiceController.setLayout()
+      gameOverController.setLayout()
+      pauseController.setLayout()
     }
 
     def setTransparency(): Unit = {
@@ -154,6 +160,7 @@ class GameController(
       animationsPane.setMouseTransparent(true)
       highlightPane.setMouseTransparent(true)
       trackChoiceController.setTransparency()
+      pauseController.setTransparency()
       gameOverController.setTransparency()
       gameMenuController.disableAllButtons()
     }
@@ -189,16 +196,16 @@ class GameController(
     }
 
     def click(e: MouseEvent): Unit = {
-      if (!gameMenuController.isPaused && !gameMenuController.anyTowerSelected())
+      if (!pauseController.isPaused && !gameMenuController.anyTowerSelected())
         clickedTower(e, ask, gameMenuController.fillTowerStatus)
-      if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected()) {
+      if (!pauseController.isPaused && gameMenuController.anyTowerSelected()) {
         removeEffects()
         placeTower(e, ask, send, gameMenuController)
       }
     }
 
     def move(e: MouseEvent): Unit =
-      if (!gameMenuController.isPaused && gameMenuController.anyTowerSelected())
+      if (!pauseController.isPaused && gameMenuController.anyTowerSelected())
         hoverCell(e, ask, trackPane)
       else {
         e.getTarget.setCursor(Cursor.Default)

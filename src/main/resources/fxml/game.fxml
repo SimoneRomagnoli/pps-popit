@@ -13,6 +13,7 @@
             <Pane fx:id="entitiesPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
             <Pane fx:id="animationsPane" prefHeight="200.0" prefWidth="200.0" styleClass="gameBoard" BorderPane.alignment="CENTER" />
             <fx:include fx:id="gameOver" source="game-over.fxml"/>
+            <fx:include fx:id="pause" source="pause.fxml"/>
         </StackPane>
     </center>
     <right>

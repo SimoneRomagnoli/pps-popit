@@ -10,7 +10,9 @@ import view.render.Rendering
 
 import scala.concurrent.Future
 
-trait ViewPauseController extends GameControllerChild
+trait ViewPauseController extends GameControllerChild {
+  def isPaused: Boolean
+}
 
 class PauseController(
     val pause: HBox,
@@ -41,6 +43,8 @@ class PauseController(
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
   override def show(): Unit = pause.visible = true
   override def hide(): Unit = pause.visible = false
+
+  override def isPaused: Boolean = pause.visible.value
 
   private object Setters {
 

@@ -1,0 +1,19 @@
+%! Author = alessandromarcantoni
+%! Date = 18/10/21
+
+\section{Design architetturale}\label{sec:architectural-design}
+Data la natura del progetto, si è ritenuto opportuno adottare astrazioni ben consolidate per quanto riguarda
+l'architettura.
+
+\subsection{Pattern Architetturali}
+In particolare, dato che l'applicazione, in quanto gioco, prevede interazioni con l'utente si è deciso
+di sfruttare il pattern \textbf{MVC}: uno dei più noti ed utilizzati.
+
+L'adozione di tale architettura ci ha permesso di tracciare un'efficace separazione di responsabilità
+tra i vari componenti:
+ciò si è rivelato fondamentale, in fase di design e sviluppo del dominio, per concentrare la propria attenzione
+sui propri task, senza quindi doversi preoccupare della rappresentazione.
+Inoltre, un ulteriore vantaggio che questo pattern garantisce è quello di poter fornire una diversa
+implementazione dell'interfaccia grafica senza dover applicare alcuna modifica ad altre porzioni dell'applicazione.
+
+\subsection{Framework ad Attori}

@@ -31,8 +31,11 @@ class PauseController(
   import Setters._
   setup()
 
-  override def setParent(controller: ViewGameController): Unit = parent = controller
-  override def setLayout(): Unit = Rendering.setLayout(pause, gameBoardWidth, gameBoardHeight)
+  override def setLayout(): Unit = {
+    Rendering.setLayout(pause, gameBoardWidth, gameBoardHeight)
+    pauseVerticalContainer.setAlignment(Pos.Center)
+    pauseContainer.setAlignment(Pos.Center)
+  }
 
   override def setTransparency(): Unit = {
     pause.setPickOnBounds(false)
@@ -41,6 +44,7 @@ class PauseController(
 
   override def reset(): Unit = {}
 
+  override def setParent(controller: ViewGameController): Unit = parent = controller
   override def setSend(reference: Input => Unit): Unit = send = reference
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
   override def show(): Unit = pause.visible = true
@@ -51,8 +55,6 @@ class PauseController(
   private object Setters {
 
     def setup(): Unit = {
-      pauseVerticalContainer.setAlignment(Pos.Center)
-      pauseContainer.setAlignment(Pos.Center)
       //saveTrack.onMouseClicked = _ => hide()
       //retryTrack.onMouseClicked = _ => hide()
       resume.onMouseClicked = _ => {

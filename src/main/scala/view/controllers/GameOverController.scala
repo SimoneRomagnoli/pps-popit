@@ -21,7 +21,7 @@ class GameOverController(
     val gameOverVerticalContainer: VBox,
     val gameOverContainer: VBox,
     val retryTrack: ToggleButton,
-    val saveTrack: ToggleButton,
+    val quit: ToggleButton,
     var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message])
@@ -36,7 +36,11 @@ class GameOverController(
 
   override def setParent(controller: ViewGameController): Unit = parent = controller
 
-  override def setLayout(): Unit = Rendering.setLayout(gameOver, gameBoardWidth, gameBoardHeight)
+  override def setLayout(): Unit = {
+    Rendering.setLayout(gameOver, gameBoardWidth, gameBoardHeight)
+    gameOverVerticalContainer.setAlignment(Pos.Center)
+    gameOverContainer.setAlignment(Pos.Center)
+  }
 
   override def setTransparency(): Unit = {
     gameOver.setPickOnBounds(false)
@@ -47,12 +51,10 @@ class GameOverController(
 
   private object Setters {
 
-    def setup(): Unit = {
-      gameOverVerticalContainer.setAlignment(Pos.Center)
+    def setup(): Unit =
       //retryTrack.onMouseClicked = _ => send(Retry())
       //saveTrack.onMouseClicked = _ => send(SaveTrack())
       retryTrack.onMouseClicked = _ => hide()
-    }
   }
 
 }

@@ -49,7 +49,6 @@ object Constants {
       }
 
       object TowerPowerUps {
-        val boostDefaultLevel: Int = 1
         val boostedRatioCost: Int = 200
         val boostedRatioFactor: Double = 2.0
         val boostedSightCost: Int = 200

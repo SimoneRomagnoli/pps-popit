@@ -6,7 +6,7 @@ import controller.Messages._
 import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.PowerUps.{ Camo, Damage, Ratio, Sight, TowerPowerUp }
+import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight, TowerPowerUp }
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
@@ -111,9 +111,9 @@ class GameMenuController(
     } else {
       currentCell = cell
       addToTowerStatus(Rendering a tower as single)
-      addToTowerStatus("Sight Range", tower level Sight.toString, Sight)
-      addToTowerStatus("Shot Ratio", tower level Ratio.toString, Ratio)
-      addToTowerStatus("Bullet Damage", tower level Damage.toString, Damage)
+      addToTowerStatus("Sight Range", tower levelOf Sight, Sight)
+      addToTowerStatus("Shot Ratio", tower levelOf Ratio, Ratio)
+      addToTowerStatus("Bullet Damage", tower levelOf Damage, Damage)
       addToTowerStatus(
         "Camo Vision",
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",

@@ -1,16 +1,14 @@
 package model.entities.towers
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ BoostAbility, Entity, ShotAbility, SightAbility }
+import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-import utils.Constants.Entities.Towers.TowerPowerUps.boostDefaultLevel
 import utils.Constants.Entities.Towers.TowerTypes.towerDefaultCost
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.defaultPosition
 
-import scala.collection.mutable
 import scala.language.{ implicitConversions, postfixOps }
 
 object values
@@ -24,7 +22,7 @@ object Towers {
    * @tparam B
    *   is the type of the [[Bullet]] it can shoot
    */
-  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility with BoostAbility {
+  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
 
     def bullet: B
@@ -39,11 +37,6 @@ object Towers {
     override def sight(radius: Double): Tower[B]
 
     override def damage(ammo: Bullet): Tower[B]
-
-    var statsLevels: mutable.Map[String, Int]
-    override def level(stats: String): Int
-    override def levelUp(stat: String): Unit
-    override def stats(levels: mutable.Map[String, Int]): Tower[B]
 
     override def toString: String = "towers/" + bullet.toString + "-TOWER"
 
@@ -86,12 +79,7 @@ object Towers {
       override val position: Vector2D = defaultPosition,
       override val sightRange: Double = towerDefaultSightRange,
       override val shotRatio: Double = towerDefaultShotRatio,
-      override val direction: Vector2D = towerDefaultDirection,
-      override var statsLevels: mutable.Map[String, Int] = mutable.Map(
-        "sight" -> boostDefaultLevel,
-        "ratio" -> boostDefaultLevel,
-        "damage" -> boostDefaultLevel
-      ))
+      override val direction: Vector2D = towerDefaultDirection)
       extends Tower[B] {
 
     def this(tower: Tower[B]) = this(
@@ -100,15 +88,8 @@ object Towers {
       tower.position,
       tower.sightRange,
       tower.shotRatio,
-      tower.direction,
-      tower.statsLevels
+      tower.direction
     )
-
-    override def stats(levels: mutable.Map[String, Int]): Tower[B] = copy(statsLevels = levels)
-
-    override def level(stats: String): Int = statsLevels(stats)
-
-    override def levelUp(stat: String): Unit = statsLevels(stat) = statsLevels(stat) + 1
 
     override def in(pos: Vector2D): Tower[B] = copy(position = pos)
 

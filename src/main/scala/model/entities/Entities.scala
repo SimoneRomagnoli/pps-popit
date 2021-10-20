@@ -101,12 +101,12 @@ object Entities {
 
     def rotateTo(dir: Vector2D): SightAbility
     def sight(radius: Double): SightAbility
-    def isInSightOfRangeOf(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
+    def isInSightRange(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
       case CamoBalloon(_)          => false
       case BalloonDecoration(b, _) => canSee(b)
-      case _                       => isInSightOfRangeOf(balloon)
+      case _                       => isInSightRange(balloon)
     }
   }
 
@@ -114,7 +114,7 @@ object Entities {
    * Adds to the [[Entity]] the ability to see even a [[CamoBalloon]] within its sight range.
    */
   trait EnhancedSightAbility extends SightAbility {
-    override def canSee(balloon: Balloon): Boolean = isInSightOfRangeOf(balloon)
+    override def canSee(balloon: Balloon): Boolean = isInSightRange(balloon)
   }
 
   /**
@@ -133,15 +133,6 @@ object Entities {
 
     def canShootAfter: Double => Boolean =
       _ >= shotRatio
-
-  }
-
-  trait BoostAbility extends Entity {
-    def level(stats: String): Int
-
-    def levelUp(stat: String): Unit
-
-    def stats(levels: mutable.Map[String, Int]): BoostAbility
 
   }
 

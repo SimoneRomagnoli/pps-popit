@@ -195,24 +195,26 @@ class GameController(
 
     def setMouseHandlers(): Unit = {
       trackPane.onMouseExited = _ => removeEffects()
-      trackPane.onMouseMoved = MouseEvents.move(_)
-      trackPane.onMouseClicked = MouseEvents.click(_)
+      trackPane.onMouseMoved = e => if (!pauseController.isPaused) MouseEvents.move(e)
+      trackPane.onMouseClicked = e => if (!pauseController.isPaused) MouseEvents.click(e)
     }
 
-    def click(e: MouseEvent): Unit = {
-      if (!pauseController.isPaused && !gameMenuController.anyTowerSelected())
-        clickedTower(e, ask, gameMenuController.fillTowerStatus)
-      if (!pauseController.isPaused && gameMenuController.anyTowerSelected()) {
+    def click(e: MouseEvent): Unit =
+      if (towerSelected) {
         removeEffects()
-        placeTower(e, ask, send, gameMenuController)
+        gameMenuController.unselectDepot()
+        placeTower(e, ask, send, gameMenuController.getSelectedTowerType)
+      } else {
+        clickedTower(e, ask, gameMenuController.fillTowerStatus)
       }
-    }
 
     def move(e: MouseEvent): Unit =
-      if (!pauseController.isPaused && gameMenuController.anyTowerSelected())
+      if (towerSelected)
         hoverCell(e, ask, trackPane)
       else {
         e.getTarget.setCursor(Cursor.Default)
       }
+
+    private def towerSelected: Boolean = gameMenuController.anyTowerSelected()
   }
 }

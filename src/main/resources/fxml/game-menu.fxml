@@ -7,15 +7,13 @@
     <VBox fx:id="gameStatus" styleClass="inputBox, gameStatus">
         <HBox fx:id="statusUpperBox">
             <Label text="Life: "/>
-            <Label fx:id="lifeLabel"/>
+            <Label fx:id="lifeLabel" text="100"/>
             <Pane HBox.hgrow="ALWAYS" />
-            <!--<ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>-->
         </HBox>
         <HBox fx:id="statusLowerBox">
             <Label text="Money: "/>
-            <Label fx:id="moneyLabel"/>
+            <Label fx:id="moneyLabel" text="500$"/>
             <Pane HBox.hgrow="ALWAYS" />
-            <!--<ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />-->
         </HBox>
     </VBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">

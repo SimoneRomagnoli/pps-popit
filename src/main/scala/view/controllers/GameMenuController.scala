@@ -100,7 +100,7 @@ class GameMenuController(
 
   override def renderStats(stats: GameStats): Unit = {
     lifeLabel.text = stats.life.toString
-    moneyLabel.text = stats.wallet.toString
+    moneyLabel.text = stats.wallet.toString + "$"
   }
 
   override def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit = Platform runLater {
@@ -180,20 +180,18 @@ class GameMenuController(
         towerBox.styleClass += "towerBox"
         towerBox.setCursor(Cursor.Hand)
         towerBox.onMousePressed = _ =>
-          if (true) {
+          if (!parent.pauseController.isPaused) {
+            unselectDepot()
+            towerBox.setCursor(Cursor.ClosedHand)
             if (!towerBox.styleClass.contains("selected")) {
-              unselectDepot()
               towerBox.styleClass += "selected"
               selectedTowerType = towerValue
-            } else {
-              unselectDepot()
             }
-            towerBox.setCursor(Cursor.ClosedHand)
           }
         towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
-        val towerLabel: Label = Label(towerValue.toString().toUpperCase)
-        val towerPrice: Label = Label(towerValue.cost.toString)
+        val towerLabel: Label = Label(towerValue.toString().capitalize)
+        val towerPrice: Label = Label(towerValue.cost.toString + "$")
         towerBox.children += towerLabel
         towerBox.children += new Pane { hgrow = Always }
         towerBox.children += towerPrice
@@ -220,7 +218,7 @@ class GameMenuController(
       val value: Label = Label(argument.toString)
       val emptyBox: HBox = new HBox()
       emptyBox.hgrow = Always
-      val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
+      val button: ToggleButton = new ToggleButton(powerUp.cost.toString + "$")
       button.onMouseClicked = _ =>
         retrieve(ask(BoostTowerIn(currentCell, powerUp))) {
           case TowerBoosted(tower, _) =>

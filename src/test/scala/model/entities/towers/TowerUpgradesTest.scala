@@ -19,6 +19,7 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
   val sightRange: Double = 1.0
   val shotRatio: Double = 2.0
   val defaultLevel: Int = 1
+  val nextLevel: Int = defaultLevel + 1
 
   "According to the expected system behavior" when {
     "the tower ratio is boosted" should {
@@ -85,37 +86,35 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
   "Implementing levels for powerups" when {
     "a tower is boosted, it" should {
       "increment its stats levels" in {
-        val tower: Tower[Dart] = Arrow tower
-
-        // TODO bullet.damage is 2.0 instead of default (1.0) on creation
+        val tower: Tower[IceBall] = Ice tower
 
         tower levelOf Ratio shouldBe defaultLevel
         tower levelOf Sight shouldBe defaultLevel
-        tower levelOf Damage shouldBe defaultLevel + 1
+        tower levelOf Damage shouldBe defaultLevel
 
-        var boostedTower: Tower[Dart] = tower boost Ratio
+        var boostedTower: Tower[IceBall] = tower boost Ratio
         // (boostedTower shotRatio) shouldBe boostedRatio
 
-        boostedTower levelOf Ratio shouldBe defaultLevel + 1
+        boostedTower levelOf Ratio shouldBe nextLevel
         boostedTower levelOf Sight shouldBe defaultLevel
-        boostedTower levelOf Damage shouldBe defaultLevel + 1
+        boostedTower levelOf Damage shouldBe defaultLevel
 
         boostedTower = boostedTower boost Sight
         // (boostedTower sightRange) shouldBe boostedSight
 
-        boostedTower levelOf Ratio shouldBe defaultLevel + 1
-        boostedTower levelOf Sight shouldBe defaultLevel + 1
-        boostedTower levelOf Damage shouldBe defaultLevel + 1
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe nextLevel
+        boostedTower levelOf Damage shouldBe defaultLevel
 
         boostedTower = boostedTower boost Damage
-        boostedTower levelOf Ratio shouldBe defaultLevel + 1
-        boostedTower levelOf Sight shouldBe defaultLevel + 1
-        boostedTower levelOf Damage shouldBe defaultLevel + 2
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe nextLevel
+        boostedTower levelOf Damage shouldBe nextLevel
 
         boostedTower = boostedTower boost Camo
-        boostedTower levelOf Ratio shouldBe defaultLevel + 1
-        boostedTower levelOf Sight shouldBe defaultLevel + 1
-        boostedTower levelOf Damage shouldBe defaultLevel + 2
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe nextLevel
+        boostedTower levelOf Damage shouldBe nextLevel
       }
     }
   }

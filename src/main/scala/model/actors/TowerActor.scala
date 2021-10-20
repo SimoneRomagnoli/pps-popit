@@ -3,9 +3,8 @@ package model.actors
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages._
-import model.Model.ModelMessages._
 import model.Positions.{ normalized, vector }
-import model.actors.TowerMessages.{ BalloonDetected, Boost, SearchBalloon, TowerBoosted }
+import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
@@ -17,11 +16,6 @@ import utils.Constants.Entities.Bullets.bulletSpeedFactor
 import scala.language.postfixOps
 
 object TowerMessages {
-  case class SearchBalloon(replyTo: ActorRef[Update], balloon: Balloon) extends Update
-  case class BalloonDetected() extends Update
-  case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
-  case class Tick(replyTo: ActorRef[Update]) extends Update
-  case class BalloonMoved(balloon: Balloon) extends Update
 
   case class TowerBoosted[B <: Bullet](tower: Tower[B], actorRef: ActorRef[Update])
       extends Update
@@ -42,12 +36,6 @@ case class TowerActor[B <: Bullet](
     var shootingTime: Double = 0.0) {
 
   private def detecting: Behavior[Update] = Behaviors.receiveMessage {
-    case SearchBalloon(replyTo, balloon) =>
-      if (tower canSee balloon) {
-        replyTo ! BalloonDetected()
-      }
-      Behaviors.same
-
     case UpdateEntity(elapsedTime, entities, replyTo) =>
       entities.collect { case balloon: Balloon =>
         balloon

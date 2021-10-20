@@ -6,7 +6,7 @@ package model.stats
 object Stats {
 
   val startingLife: Int = 100
-  val startingWallet: Int = 500
+  val startingWallet: Int = 1500
   val startingPoints: Int = 0
 
   trait GameStats {

@@ -80,46 +80,6 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         boostedTower.bullet.isInstanceOf[Dart] shouldBe true
       }
     }
-    /*"the tower get the ratio power up" should {
-      "not be boosted no more after 3 seconds" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
-
-        val boostedTower: Tower[Dart] = arrowTower boost Ratio
-
-        (boostedTower shotRatio) shouldBe boostedRatio
-        (boostedTower sightRange) shouldBe sightRange
-
-        (boostedTower isBoosted Ratio.time) shouldBe true
-        waitSomeTime()
-        (boostedTower isBoosted Ratio.time) shouldBe true
-        waitSomeTime()
-        (boostedTower isBoosted Ratio.time) shouldBe true
-        waitSomeTime()
-        (boostedTower isBoosted Ratio.time) shouldBe false
-      }
-      "return to the previous state after 3 seconds" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
-
-        val boostedTower: Tower[Dart] = arrowTower boost Ratio
-
-        (boostedTower shotRatio) shouldBe boostedRatio
-        (boostedTower sightRange) shouldBe sightRange
-
-        (boostedTower isBoosted Ratio.time) shouldBe true
-
-        waitSomeTime()
-        waitSomeTime()
-        waitSomeTime()
-
-        (boostedTower isBoosted Ratio.time) shouldBe false
-        val previousTower: Tower[Dart] = arrowTower.reset()
-
-        (previousTower sightRange) shouldBe sightRange
-        (previousTower shotRatio) shouldBe shotRatio
-      }
-    }*/
   }
 
   "Implementing levels for powerups" when {
@@ -128,32 +88,32 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         val arrowTower: Tower[Dart] =
           (Arrow tower) has values sight sightRange ratio shotRatio
 
-        arrowTower level "ratio" shouldBe defaultLevel
-        arrowTower level "sight" shouldBe defaultLevel
-        arrowTower level "damage" shouldBe defaultLevel
+        arrowTower levelOf Ratio shouldBe defaultLevel
+        arrowTower levelOf Sight shouldBe defaultLevel
+        arrowTower levelOf Damage shouldBe defaultLevel
 
         var boostedTower: Tower[Dart] = arrowTower boost Ratio
         (boostedTower shotRatio) shouldBe boostedRatio
-        boostedTower level "ratio" shouldBe defaultLevel + 1
-        boostedTower level "sight" shouldBe defaultLevel
-        boostedTower level "damage" shouldBe defaultLevel
+        boostedTower levelOf Ratio shouldBe defaultLevel + 1
+        boostedTower levelOf Sight shouldBe defaultLevel
+        boostedTower levelOf Damage shouldBe defaultLevel
 
         boostedTower = boostedTower boost Sight
         (boostedTower sightRange) shouldBe boostedSight
 
-        boostedTower level "ratio" shouldBe defaultLevel + 1
-        boostedTower level "sight" shouldBe defaultLevel + 1
-        boostedTower level "damage" shouldBe defaultLevel
+        boostedTower levelOf Ratio shouldBe defaultLevel + 1
+        boostedTower levelOf Sight shouldBe defaultLevel + 1
+        boostedTower levelOf Damage shouldBe defaultLevel
 
         boostedTower = boostedTower boost Damage
-        boostedTower level "ratio" shouldBe defaultLevel + 1
-        boostedTower level "sight" shouldBe defaultLevel + 1
-        boostedTower level "damage" shouldBe defaultLevel + 1
+        boostedTower levelOf Ratio shouldBe defaultLevel + 1
+        boostedTower levelOf Sight shouldBe defaultLevel + 1
+        boostedTower levelOf Damage shouldBe defaultLevel + 1
 
         boostedTower = boostedTower boost Camo
-        boostedTower level "ratio" shouldBe defaultLevel + 1
-        boostedTower level "sight" shouldBe defaultLevel + 1
-        boostedTower level "damage" shouldBe defaultLevel + 1
+        boostedTower levelOf Ratio shouldBe defaultLevel + 1
+        boostedTower levelOf Sight shouldBe defaultLevel + 1
+        boostedTower levelOf Damage shouldBe defaultLevel + 1
 
       }
     }

@@ -11,6 +11,7 @@ import controller.Messages._
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.PowerUps.{ BoostedTower, Damage, Ratio, Sight }
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.SpawnEntity

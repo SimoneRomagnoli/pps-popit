@@ -78,6 +78,7 @@ object GameLoop {
         paused()
 
       case GameOver() =>
+        view ! RenderGameOver()
         ctx.self ! Stop()
         model ! Stop()
         Behaviors.same
@@ -87,6 +88,10 @@ object GameLoop {
 
       case GameStatsUpdated(stats) =>
         view ! RenderStats(stats)
+        Behaviors.same
+
+      case CanStartNextRound() =>
+        view ! CanStartNextRound()
         Behaviors.same
 
       case _ => Behaviors.same

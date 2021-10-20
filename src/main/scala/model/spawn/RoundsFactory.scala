@@ -2,10 +2,10 @@ package model.spawn
 
 import cats.effect.IO
 import model.entities.balloons.BalloonDecorations.Regenerating
-import model.entities.balloons.BalloonLives.{Blue, Green, Red}
+import model.entities.balloons.BalloonLives.{ Blue, Green, Red }
 import model.spawn.BalloonsFunctions._
-import model.spawn.RoundBuilders.{RichIO, add}
-import model.spawn.Rounds.{Round, Streak}
+import model.spawn.RoundBuilders.{ add, RichIO }
+import model.spawn.Rounds.{ Round, Streak }
 
 import scala.concurrent.duration.DurationInt
 
@@ -48,16 +48,16 @@ object BalloonsFunctions {
 
   val redBalloonQuantity: Int => Int = {
     case x if x < easyRoundLimit / 2 => (easyRoundLimit / 3) * x
-    case x => (easyRoundLimit / 3) * (easyRoundLimit - x)
+    case x                           => (easyRoundLimit / 3) * (easyRoundLimit - x)
   }
 
   val blueBalloonQuantity: Int => Int = {
     case x if x >= (easyRoundLimit / 3) => x
-    case _ => 0
+    case _                              => 0
   }
 
   val greenBalloonQuantity: Int => Int = {
     case x if x >= (easyRoundLimit / 3 * 2) => x / 2
-    case _ => 0
+    case _                                  => 0
   }
 }

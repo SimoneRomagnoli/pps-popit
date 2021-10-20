@@ -5,6 +5,7 @@ import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
+import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.balloons.balloontypes.LeadBalloons.LeadBalloon
 import model.entities.balloons.balloontypes.RegeneratingBalloons.RegeneratingBalloon
@@ -29,7 +30,7 @@ import scala.language.{ implicitConversions, reflectiveCalls }
  * Object that simulates a DSL for rendering logic entities as shapes for a scalafx pane.
  */
 object Rendering {
-
+  import view.render.Rendering.RenderingUtilities._
   val drawing: Drawing = Drawing(GameDrawings())
   val defaultWidth: Double = 400.0
   val defaultHeight: Double = 200.0
@@ -47,7 +48,7 @@ object Rendering {
 
   /** Renders an [[Entity]] with its corresponding drawing. */
   def an(entity: Entity): ToBeRendered = Rendered {
-    val rectangle: Rectangle = Rectangle(
+    implicit val rectangle: Rectangle = Rectangle(
       entity.position.x - entity.boundary._1 / 2,
       entity.position.y - entity.boundary._2 / 2,
       entity.boundary._1,
@@ -60,38 +61,16 @@ object Rendering {
       case tower: Tower[_] =>
         rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
         rectangle.styleClass += "tower"
-      case balloon: Balloon =>
-        val blend: Blend = new Blend()
-        val patterns: Seq[BalloonPattern] = effects(balloon)
-        println(patterns)
-        patterns.foreach { pattern =>
-          val image: ImagePattern = drawing the pattern
-          blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
-          pattern match {
-            case CamoPattern         => blend.setMode(BlendMode.Darken)
-            case RegeneratingPattern => blend.setMode(BlendMode.Lighten)
-          }
-          blend.opacity = 0.6
-        }
-        rectangle.setEffect(blend)
+      case decoration: BalloonDecoration =>
+        val effects: Seq[Blend] = patternsOf(decoration).map(toBlend)
+        for (i <- 0 until effects.size - 1) effects(i).bottomInput = effects(i + 1)
+        //effects.sliding(2).foreach(couple => couple.head.bottomInput = couple.last)
+        rectangle.setEffect(effects.head)
+
       case _ =>
     }
     rectangle
   }
-
-  @tailrec
-  private def effects(
-      balloon: Balloon,
-      patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
-    balloon match {
-      case CamoBalloon(b) =>
-        effects(b, patterns :+ CamoPattern)
-      case LeadBalloon(b) =>
-        effects(b, patterns :+ LeadPattern)
-      case RegeneratingBalloon(b) =>
-        effects(b, patterns :+ RegeneratingPattern)
-      case _ => patterns
-    }
 
   /** Renders the sight range of a [[Tower]]. */
   def sightOf(tower: Tower[_]): ToBeRendered = Rendered {
@@ -142,4 +121,36 @@ object Rendering {
     region.minHeight = height
   }
 
+  private object RenderingUtilities {
+
+    @tailrec
+    def patternsOf(balloon: Balloon, patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
+      balloon match {
+        case CamoBalloon(b) =>
+          patternsOf(b, patterns :+ CamoPattern)
+        case RegeneratingBalloon(b) =>
+          patternsOf(b, patterns :+ RegeneratingPattern)
+        case LeadBalloon(b) =>
+          patternsOf(b, patterns :+ LeadPattern)
+        case _ => patterns
+      }
+
+    def toBlend(implicit rectangle: Rectangle): BalloonPattern => Blend = { pattern =>
+      val image: ImagePattern = drawing the pattern
+      val blend: Blend = new Blend()
+      blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))
+      pattern match {
+        case CamoPattern =>
+          blend.opacity = 0.6
+          blend.setMode(BlendMode.Darken)
+        case RegeneratingPattern =>
+          blend.opacity = 0.8
+          blend.setMode(BlendMode.Lighten)
+        case LeadPattern =>
+          blend.opacity = 1.0
+          blend.setMode(BlendMode.SrcOver)
+      }
+      blend
+    }
+  }
 }

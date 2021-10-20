@@ -1,6 +1,5 @@
 package controller
 
-import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
@@ -10,19 +9,13 @@ import controller.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.Messages._
 import model.Model.ModelActor
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.PowerUps.TowerPowerUp
-import model.entities.towers.TowerTypes.TowerType
-import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.SpawnEntity
-import model.managers.GameDynamicsMessages.{ NewMap, Pay, WalletQuantity }
-import model.maps.Cells.Cell
+import model.managers.EntitiesMessages.PlaceTower
+import model.managers.GameDynamicsMessages.NewMap
 import view.View.ViewMessages.RenderMap
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
-import scala.util.{ Failure, Success }
 
 /**
  * Controller of the application, fundamental in the MVC pattern. It deals with inputs coming from
@@ -38,9 +31,7 @@ object Controller {
     case class NewTrack() extends Input
     case class StartNextRound() extends Input with SpawnManagerMessage
     case class NewTimeRatio(value: Double) extends Input
-    case class PlaceTower[B <: Bullet](cell: Cell, towerType: TowerType[B]) extends Input
     case class CurrentWallet(amount: Int) extends Input
-    case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp) extends Input with Update
     case class StartAnimation(entity: Entity) extends Render
 
     sealed trait Interaction extends Input {
@@ -111,32 +102,8 @@ object Controller {
         model.get ! StartNextRound()
         Behaviors.same
 
-      case BoostTowerIn(cell, powerUp) =>
-        model.get ask WalletQuantity onComplete {
-          case Success(value) =>
-            value match {
-              case CurrentWallet(amount) =>
-                if (amount >= powerUp.cost) {
-                  model.get ! BoostTowerIn(cell, powerUp)
-                }
-            }
-          case Failure(exception) => println(exception)
-        }
-        Behaviors.same
-
       case PlaceTower(cell, towerType) =>
-        model.get ? WalletQuantity onComplete {
-          case Success(value) =>
-            value match {
-              case CurrentWallet(amount) =>
-                if (amount >= towerType.cost) {
-                  val tower: Tower[Bullet] = towerType.tower in cell
-                  model.get ! SpawnEntity(tower)
-                  model.get ! Pay(towerType.cost)
-                }
-            }
-          case Failure(exception) => println(exception)
-        }
+        model.get ! WithReplyTo(PlaceTower(cell, towerType), ctx.self)
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>

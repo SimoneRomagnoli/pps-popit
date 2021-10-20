@@ -18,6 +18,7 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
   val boostedRatio: Double = 1.0
   val sightRange: Double = 1.0
   val shotRatio: Double = 2.0
+  val defaultLevel: Int = 1
 
   "According to the expected system behavior" when {
     "the tower ratio is boosted" should {
@@ -76,6 +77,7 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         (arrowTower canSee camo) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Camo
         (boostedTower canSee camo) shouldBe true
+        boostedTower.bullet.isInstanceOf[Dart] shouldBe true
       }
     }
     /*"the tower get the ratio power up" should {
@@ -118,6 +120,43 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         (previousTower shotRatio) shouldBe shotRatio
       }
     }*/
+  }
+
+  "Implementing levels for powerups" when {
+    "a tower is boosted, it" should {
+      "increment its stats levels" in {
+        val arrowTower: Tower[Dart] =
+          (Arrow tower) has values sight sightRange ratio shotRatio
+
+        arrowTower level "ratio" shouldBe defaultLevel
+        arrowTower level "sight" shouldBe defaultLevel
+        arrowTower level "damage" shouldBe defaultLevel
+
+        var boostedTower: Tower[Dart] = arrowTower boost Ratio
+        (boostedTower shotRatio) shouldBe boostedRatio
+        boostedTower level "ratio" shouldBe defaultLevel + 1
+        boostedTower level "sight" shouldBe defaultLevel
+        boostedTower level "damage" shouldBe defaultLevel
+
+        boostedTower = boostedTower boost Sight
+        (boostedTower sightRange) shouldBe boostedSight
+
+        boostedTower level "ratio" shouldBe defaultLevel + 1
+        boostedTower level "sight" shouldBe defaultLevel + 1
+        boostedTower level "damage" shouldBe defaultLevel
+
+        boostedTower = boostedTower boost Damage
+        boostedTower level "ratio" shouldBe defaultLevel + 1
+        boostedTower level "sight" shouldBe defaultLevel + 1
+        boostedTower level "damage" shouldBe defaultLevel + 1
+
+        boostedTower = boostedTower boost Camo
+        boostedTower level "ratio" shouldBe defaultLevel + 1
+        boostedTower level "sight" shouldBe defaultLevel + 1
+        boostedTower level "damage" shouldBe defaultLevel + 1
+
+      }
+    }
   }
 
 }

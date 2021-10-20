@@ -5,6 +5,9 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.{ BaseTower, Tower }
 import utils.Constants.Entities.Towers.TowerPowerUps._
 
+import scala.collection.mutable
+import scala.language.implicitConversions
+
 object PowerUps {
 
   sealed trait PowerUp {
@@ -12,33 +15,40 @@ object PowerUps {
     def factor: Double
   }
 
-  sealed class TowerPowerUp(override val cost: Int, override val factor: Double) extends PowerUp
+  sealed class TowerPowerUp(override val cost: Int, override val factor: Double = 0.0)
+      extends PowerUp
 
-  case object Ratio extends TowerPowerUp(boostedRatioCost, boostedRatioFactor)
-  case object Sight extends TowerPowerUp(boostedSightCost, boostedSightFactor)
-  case object Camo extends TowerPowerUp(boostedCamoCost, 0.0)
-  case object Damage extends TowerPowerUp(boostedDamageCost, boostedDamageFactor)
+  case object Ratio extends TowerPowerUp(boostedRatioCost, boostedRatioFactor) {
+    override def toString: String = "ratio"
+  }
+
+  case object Sight extends TowerPowerUp(boostedSightCost, boostedSightFactor) {
+    override def toString: String = "sight"
+  }
+
+  case object Damage extends TowerPowerUp(boostedDamageCost, boostedDamageFactor) {
+    override def toString: String = "damage"
+  }
+  case object Camo extends TowerPowerUp(boostedCamoCost)
 
   implicit class BoostedTower[B <: Bullet](tower: Tower[B]) {
 
-    def boost(powerUp: TowerPowerUp): Tower[B] =
+    def boost(powerUp: TowerPowerUp): Tower[B] = {
+      if (powerUp.toString != "Camo") tower levelUp powerUp.toString
+      val levels: mutable.Map[String, Int] = tower.statsLevels
       powerUp match {
         case Ratio =>
-          tower has values ratio tower.shotRatio / powerUp.factor
+          tower has values ratio tower.shotRatio / powerUp.factor stats levels
         case Sight =>
-          tower has values sight tower.sightRange * powerUp.factor
+          tower has values sight tower.sightRange * powerUp.factor stats levels
         case Damage =>
-          tower has values damage tower.bullet.hurt(tower.bullet.damage * powerUp.factor)
+          tower has values damage tower.bullet.hurt(
+            tower.bullet.damage * powerUp.factor
+          ) stats levels
         case Camo =>
-          new BaseTower(
-            tower.bullet,
-            tower.boundary,
-            tower.position,
-            tower.sightRange,
-            tower.shotRatio,
-            tower.direction
-          ) with EnhancedSightAbility
+          new BaseTower(tower) with EnhancedSightAbility
         case _ => tower
       }
+    }
   }
 }

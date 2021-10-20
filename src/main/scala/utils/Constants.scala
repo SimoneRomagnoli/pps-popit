@@ -42,12 +42,14 @@ object Constants {
       val towerDefaultDirection: Vector2D = (0.0, 0.0)
 
       object TowerTypes {
+        val towerDefaultCost: Int = 200
         val arrow: Tower[Dart] = Arrow tower
         val cannon: Tower[CannonBall] = Cannon tower
         val ice: Tower[IceBall] = Ice tower
       }
 
       object TowerPowerUps {
+        val boostDefaultLevel: Int = 1
         val boostedRatioCost: Int = 200
         val boostedRatioFactor: Double = 2.0
         val boostedSightCost: Int = 200

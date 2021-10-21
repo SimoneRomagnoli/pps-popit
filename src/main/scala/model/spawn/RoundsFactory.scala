@@ -1,7 +1,7 @@
 package model.spawn
 
 import cats.effect.IO
-import model.entities.balloons.BalloonDecorations.Regenerating
+import model.entities.balloons.BalloonDecorations.{ BalloonType, Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives.{ Blue, Green, Red }
 import model.spawn.BalloonsFunctions._
 import model.spawn.RoundBuilders.{ add, RichIO }
@@ -21,7 +21,14 @@ object RoundsFactory {
 
   private def chooseRound(round: Int): IO[Unit] = round match {
     case i if i < easyRoundLimit => easyRounds(round)
-    case _                       => regeneratingRounds(round % easyRoundLimit + 1)
+    case i if i < regeneratingRoundLimit =>
+      decorationRounds(round % easyRoundLimit + 1)(Regenerating)
+    case i if i < leadRoundLimit => decorationRounds(round % regeneratingRoundLimit + 1)(Lead)
+    case i if i < camoRoundLimit => decorationRounds(round % leadRoundLimit + 1)(Camo)
+    case i if i < regeneratingLeadRoundLimit =>
+      decorationRounds(round % camoRoundLimit + 1)(List(Regenerating, Camo))
+    case _ =>
+      decorationRounds(round % regeneratingLeadRoundLimit + 1)(List(Regenerating, Camo, Lead))
   }
 
   private def easyRounds(round: Int): IO[Unit] = for {
@@ -30,11 +37,11 @@ object RoundsFactory {
     _ <- add((Streak(greenBalloonQuantity(round)) :- Green) @@ balloonsDelay(round).milliseconds)
   } yield ()
 
-  private def regeneratingRounds(round: Int): IO[Unit] = for {
+  private def decorationRounds(round: Int)(decorations: List[BalloonType]): IO[Unit] = for {
     _ <- easyRounds(round * 3)
-    _ <- add(Streak(round * 3) :- (Red & Regenerating))
-    _ <- add(Streak(round * 2) :- (Blue & Regenerating))
-    _ <- add(Streak(round) :- (Green & Regenerating))
+    _ <- add(Streak(round * 3) :- (Red & decorations))
+    _ <- add(Streak(round * 2) :- (Blue & decorations))
+    _ <- add(Streak(round) :- (Green & decorations))
   } yield ()
 
   private def incrementRound(): IO[Unit] = IO(round += 1)
@@ -43,6 +50,9 @@ object RoundsFactory {
 object BalloonsFunctions {
   val easyRoundLimit: Int = 15
   val regeneratingRoundLimit: Int = 20
+  val leadRoundLimit: Int = 25
+  val camoRoundLimit: Int = 30
+  val regeneratingLeadRoundLimit: Int = 35
 
   val balloonsDelay: Int => Int = x => 1000 / (x % 5 + 1)
 

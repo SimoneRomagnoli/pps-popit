@@ -16,4 +16,18 @@ sui propri task, senza quindi doversi preoccupare della rappresentazione.
 Inoltre, un ulteriore vantaggio che questo pattern garantisce è quello di poter fornire una diversa
 implementazione dell'interfaccia grafica senza dover applicare alcuna modifica ad altre porzioni dell'applicazione.
 
-\subsection{Framework ad Attori}
+\subsection{Modello ad Attori}
+La presenza di un elevato numero di entità all'interno dell'applicazione ha portato alla luce l'esigenza di gestire,
+già a livello architetturale, la possibilità di sfruttare a pieno la potenza della cpu rendendo quindi il programma
+concorrente. In particolare, per astrarre dalla gestione problematiche tipiche di sistemi concorrenti
+(mutua eclusione e corse critiche) si è deciso di adottare un approccio basato su attori. Dal momento che ogni attore
+incapsula al suo interno un flusso di controllo basato su \textit{event loop} e che le interazioni avvengono
+esclusivamente attraverso scambio di messaggi, non è necessario gestire meccanismi di sincronizzazione.
+
+Inoltre, abbiamo ritenuto il modello ad attori particolarmente adeguato per la realizzazione dell'applicazione
+in quanto essi incapsulano un \textit{comportamento}, il quale ben si adatta a descrivere l'effettivo comportamento
+delle entità all'interno del modello. Tale scelta ci ha quindi garantito un livello di astrazione ed un'espressività
+che ha positivamente influenzato anche le fasi successive di design ed implementazione.
+
+Analogamente, anche il pattern MVC adottato ha risentito dell'adozione di tale paradigma. Di fatto,
+i componenti \texttt{Model}, \texttt{View} e \texttt{Controller} sono stati modellati come attori.

@@ -80,7 +80,7 @@ class GameController(
     Rendering a gameGrid into trackPane.children
     setLayouts()
     setChildren()
-    setTransparency()
+    setTransparencies()
     setMouseHandlers()
     gameMenuController.setup()
     gameMenuController.setHighlightingTower(highlight)
@@ -107,6 +107,7 @@ class GameController(
 
   override def reset(): Unit = Platform runLater {
     resetAll()
+    setTransparencies()
   }
 
   override def render(stats: GameStats): Unit = Platform runLater {
@@ -158,7 +159,7 @@ class GameController(
       pauseController.setLayout()
     }
 
-    def setTransparency(): Unit = {
+    def setTransparencies(): Unit = {
       entitiesPane.setMouseTransparent(true)
       animationsPane.setMouseTransparent(true)
       highlightPane.setMouseTransparent(true)

@@ -4,13 +4,13 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.StartNextRound
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.Messages.{ Input, SpawnManagerMessage, Update }
+import controller.Messages.{ Input, SpawnManagerMessage, Update, WithReplyTo }
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.managers.EntitiesMessages.EntitySpawned
-import model.managers.SpawnerMessages.{ RoundOver, SpawnTick, StartRound }
+import model.managers.SpawnerMessages.{ IsRoundOver, RoundOver, RoundStatus, SpawnTick, StartRound }
 import model.maps.Tracks.Track
 import model.spawn.Rounds.{ Round, Streak }
 import model.spawn.RoundsFactory
@@ -21,6 +21,8 @@ object SpawnerMessages {
   case class StartRound(round: Round) extends Update with SpawnManagerMessage
   case object SpawnTick extends Update with SpawnManagerMessage
   case class RoundOver(actorRef: ActorRef[Input]) extends Update with SpawnManagerMessage
+  case class IsRoundOver() extends Update with SpawnManagerMessage
+  case class RoundStatus(on: Boolean) extends Input
 }
 
 /**
@@ -52,6 +54,7 @@ case class Spawner private (
     case StartNextRound() =>
       ctx.self ! StartRound(RoundsFactory.nextRound())
       Behaviors.same
+
     case StartRound(round) =>
       spawningRound(round.streaks)
 
@@ -61,6 +64,13 @@ case class Spawner private (
 
     case RoundOver(actorRef) =>
       actorRef ! CanStartNextRound()
+      Behaviors.same
+
+    case WithReplyTo(msg, replyTo) =>
+      msg match {
+        case IsRoundOver() =>
+          replyTo ! RoundStatus(true)
+      }
       Behaviors.same
 
     case _ => Behaviors.same
@@ -102,6 +112,14 @@ case class Spawner private (
               spawningRound(later)
             }
         }
+
+      case WithReplyTo(msg, replyTo) =>
+        msg match {
+          case IsRoundOver() =>
+            replyTo ! RoundStatus(false)
+        }
+        Behaviors.same
+
       case _ => Behaviors.same
     }
 }

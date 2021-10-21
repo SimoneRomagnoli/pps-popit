@@ -11,6 +11,7 @@ import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.BoostTowerIn
+import model.managers.SpawnerMessages.{ IsRoundOver, RoundStatus }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -60,6 +61,7 @@ class GameMenuController(
     val startRound: ToggleButton,
     val pauseRound: ToggleButton,
     var currentCell: Cell = outerCell,
+    var roundOver: Boolean = true,
     var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -125,18 +127,21 @@ class GameMenuController(
 
   override def disableRoundButton(): Unit = startRound.disable = true
 
-  override def enableRoundButton(): Unit = startRound.disable = false
+  override def enableRoundButton(): Unit = {
+    roundOver = true
+    startRound.disable = false
+  }
 
   override def disableAllButtons(): Unit = {
-    disableRoundButton()
+    startRound.disable = true
     pauseRound.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
-    enableRoundButton()
     pauseRound.disable = false
     towerDepot.disable = false
+    if (roundOver) startRound.disable = false
   }
 
   override def clearTowerStatus(): Unit =
@@ -146,6 +151,7 @@ class GameMenuController(
   private object MenuSetters {
 
     def resetMenu(): Unit = {
+      roundOver = true
       disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
@@ -168,6 +174,7 @@ class GameMenuController(
       }
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
+        roundOver = false
         disableRoundButton()
       }
     }

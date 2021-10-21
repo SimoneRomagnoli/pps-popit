@@ -38,7 +38,7 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     }
     "starting a game" should {
       "start a new game loop" in {
-        controller ! NewGame()
+        controller ! NewGame(None)
         gameLoop expectMessage Start()
       }
     }

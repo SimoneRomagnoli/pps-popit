@@ -18,6 +18,7 @@
             <VBox fx:id="mainMenuButtons" styleClass="mainMenuButtons">
                 <HBox fx:id="titleLogo" styleClass="titleLogo"/>
                 <ToggleButton text="NEW GAME" fx:id="newGameBtn" styleClass="menuButton"/>
+                <ToggleButton text="HIGH SCORES" fx:id="highScoresBtn" styleClass="menuButton"/>
             </VBox>
             <VBox HBox.hgrow="ALWAYS"/>
         </HBox>

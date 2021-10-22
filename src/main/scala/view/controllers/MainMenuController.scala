@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.NewGame
+import controller.Controller.ControllerMessages.{ HighScoresPage, NewGame }
 import controller.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
@@ -23,6 +23,7 @@ class MainMenuController(
     val titleLogo: HBox,
     val mainMenuButtons: VBox,
     val newGameBtn: ToggleButton,
+    val highScoresBtn: ToggleButton,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewMainMenuController {
@@ -46,7 +47,9 @@ class MainMenuController(
       setupButtons()
     }
 
-    def setupButtons(): Unit =
+    def setupButtons(): Unit = {
       newGameBtn.onMouseClicked = _ => send(NewGame())
+      highScoresBtn.onMouseClicked = _ => send(HighScoresPage())
+    }
   }
 }

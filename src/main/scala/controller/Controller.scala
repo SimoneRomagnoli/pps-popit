@@ -8,6 +8,8 @@ import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.Messages._
+import controller.TrackLoader.TrackLoaderActor
+import controller.TrackLoader.TrackLoaderMessages.SaveActualTrack
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.entities.bullets.Bullets.Bullet
@@ -33,6 +35,8 @@ object Controller {
   object ControllerMessages {
     case class NewGame() extends Input with Render
     case class ExitGame() extends Input with Render
+    case class FinishGame() extends Input with Render
+    case class HighScoresPage() extends Input with Render
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
     case class NewTrack() extends Input
@@ -71,7 +75,8 @@ object Controller {
       ctx: ActorContext[Input],
       view: ActorRef[Render],
       var model: Option[ActorRef[Update]] = None,
-      var gameLoop: Option[ActorRef[Input]] = None) {
+      var gameLoop: Option[ActorRef[Input]] = None,
+      var trackLoader: Option[ActorRef[Input]] = None) {
     implicit val timeout: Timeout = Timeout(1.seconds)
     implicit val scheduler: Scheduler = ctx.system.scheduler
     implicit val ec: ExecutionContextExecutor = ctx.system.executionContext
@@ -82,9 +87,14 @@ object Controller {
         if (gameLoop.isEmpty) {
           model = Some(ctx.spawnAnonymous(ModelActor(ctx.self)))
           gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
+          trackLoader = Some(ctx.spawnAnonymous(TrackLoaderActor()))
         }
         model.get ! NewMap(ctx.self)
         gameLoop.get ! Start()
+        Behaviors.same
+
+      case HighScoresPage() =>
+        view ! HighScoresPage()
         Behaviors.same
 
       case NewTrack() =>
@@ -92,7 +102,9 @@ object Controller {
         Behaviors.same
 
       case MapCreated(track) =>
+        trackLoader.get ! SaveActualTrack(track)
         view ! RenderMap(track)
+
         Behaviors.same
 
       case ExitGame() =>

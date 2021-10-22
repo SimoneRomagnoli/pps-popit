@@ -2,7 +2,12 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
+import controller.Controller.ControllerMessages.{
+  ExitGame,
+  HighScoresPage,
+  NewGame,
+  StartAnimation
+}
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.Messages.Render
 import model.entities.Entities.Entity
@@ -10,7 +15,13 @@ import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 import view.View.ViewMessages._
-import view.controllers.{ ViewGameController, ViewMainController, ViewMainMenuController }
+import view.controllers.{
+  PodiumController,
+  ViewGameController,
+  ViewMainController,
+  ViewMainMenuController,
+  ViewPodiumController
+}
 
 import scala.language.reflectiveCalls
 
@@ -47,6 +58,10 @@ object View {
           menuController.hide()
           inGame(mainController.gameController)
 
+        case HighScoresPage() =>
+          menuController.hide()
+          inPodium(mainController.podiumController)
+
         case _ => Behaviors.same
       }
     }
@@ -82,6 +97,13 @@ object View {
           inMenu(mainController.menuController)
 
         case _ => Behaviors.same
+      }
+    }
+
+    def inPodium(podiumController: ViewPodiumController): Behavior[Render] = {
+      podiumController.show()
+      Behaviors.receiveMessage { case _ =>
+        Behaviors.same
       }
     }
   }

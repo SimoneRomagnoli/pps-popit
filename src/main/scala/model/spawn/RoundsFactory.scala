@@ -14,6 +14,8 @@ object RoundsFactory {
 
   def currentRound: Int = round
 
+  def startGame(): Unit = round = 0
+
   def nextRound(): Round = (for {
     _ <- incrementRound()
     _ <- chooseRound(round)

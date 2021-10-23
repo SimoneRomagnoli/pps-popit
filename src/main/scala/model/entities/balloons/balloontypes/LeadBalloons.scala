@@ -2,7 +2,7 @@ package model.entities.balloons.balloontypes
 
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
-import model.entities.bullets.Bullets.{Bullet, CannonBall}
+import model.entities.bullets.Bullets.{ Bullet, CannonBall }
 
 object LeadBalloons {
 

@@ -2,9 +2,12 @@ package model.entities.balloons.balloontypes
 
 import model.Positions
 import model.entities.balloons.Balloons.Balloon
-import model.entities.balloons.balloontypes.CamoBalloons.{CamoBalloon, camo}
-import model.entities.balloons.balloontypes.LeadBalloons.{LeadBalloon, lead}
-import model.entities.balloons.balloontypes.RegeneratingBalloons.{RegeneratingBalloon, regenerating}
+import model.entities.balloons.balloontypes.CamoBalloons.{ camo, CamoBalloon }
+import model.entities.balloons.balloontypes.LeadBalloons.{ lead, LeadBalloon }
+import model.entities.balloons.balloontypes.RegeneratingBalloons.{
+  regenerating,
+  RegeneratingBalloon
+}
 import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks
 

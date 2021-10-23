@@ -1,13 +1,13 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
-import akka.actor.typed.scaladsl.AskPattern.{ schedulerFromActorSystem, Askable }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
+import akka.actor.typed.scaladsl.AskPattern.{Askable, schedulerFromActorSystem}
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.{ActorRef, Behavior}
 import controller.Controller.ControllerActor
-import controller.Controller.ControllerMessages.{ ActorInteraction, NewGame }
+import controller.Controller.ControllerMessages.{ActorInteraction, NewGame}
 import controller.GameLoop.GameLoopMessages.Start
-import controller.Messages.{ Input, Render, Update }
+import controller.Messages.{Input, Render, Update, WithReplyTo}
 import model.managers.GameDynamicsMessages.WalletQuantity
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -27,7 +27,7 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     ControllerActor(ctx, view.ref, Some(model.ref), Some(gameLoop.ref)).default()
   }
 
-  var controller: ActorRef[Input] = testKit spawn controllerActor
+  val controller: ActorRef[Input] = testKit spawn controllerActor
 
   "The Controller" when {
     "just created" should {
@@ -36,16 +36,10 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         view.expectNoMessage(FiniteDuration(1000, TimeUnit.MILLISECONDS))
       }
     }
-    "starting a game" should {
-      "start a new game loop" in {
-        controller ! NewGame(None)
-        //gameLoop expectMessage Start()
-      }
-    }
     "interacting" should {
       "interact with the model" in {
         controller ? (ref => ActorInteraction(ref, WalletQuantity(controller)))
-        //model expectMessage WalletQuantity(controller)
+        model expectMessage WithReplyTo(WalletQuantity(controller), controller)
       }
     }
   }

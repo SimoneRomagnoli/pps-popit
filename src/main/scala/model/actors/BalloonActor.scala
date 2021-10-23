@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.Update
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.Bullet
+import model.entities.bullets.Bullets.{ Bullet, Ice }
 import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
 import utils.Constants
 
@@ -38,7 +38,6 @@ case class BalloonActor private (
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
     case UpdateEntity(elapsedTime, _, replyTo) =>
-      //if (hit) println("sono stato gia colpito e ora vengo aggiornato")
       balloon.position.x match {
         case outOfBounds if outOfBounds >= Constants.View.gameBoardWidth =>
           replyTo ! ExitedBalloon(balloon, ctx.self)
@@ -48,6 +47,7 @@ case class BalloonActor private (
           replyTo ! EntityUpdated(balloon, ctx.self)
           Behaviors.same
       }
+
     case Hit(bullet, replyTo) =>
       balloon.pop(bullet) match {
         case None =>
@@ -56,7 +56,35 @@ case class BalloonActor private (
         case Some(b) =>
           balloon = b
           //replyTo ! EntityUpdated(balloon, ctx.self)
-          Behaviors.same
+          bullet match {
+            case ice: Ice => freezing(ice.freezingTime)
+            case _        => Behaviors.same
+          }
       }
   }
+
+  def freezing(freezingTime: Double, elapsed: Double = 0.0): Behavior[Update] =
+    Behaviors.receiveMessage {
+      case UpdateEntity(elapsedTime, _, replyTo) =>
+        replyTo ! EntityUpdated(balloon, ctx.self)
+        elapsed + elapsedTime match {
+          case time if time < freezingTime => freezing(freezingTime, time)
+          case _                           => default()
+        }
+
+      case Hit(bullet, replyTo) =>
+        balloon.pop(bullet) match {
+          case None =>
+            replyTo ! BalloonKilled(ctx.self)
+            Behaviors.stopped
+          case Some(b) =>
+            balloon = b
+            //replyTo ! EntityUpdated(balloon, ctx.self)
+            bullet match {
+              case ice: Ice => freezing(ice.freezingTime)
+              case _        => Behaviors.same
+            }
+        }
+    }
+
 }

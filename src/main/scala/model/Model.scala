@@ -46,7 +46,6 @@ object Model {
       var handlers: List[(ActorRef[Update], MessageType)] = List()) {
 
     def init(): Behavior[Update] = {
-      RoundsFactory.startGame()
       handlers = (ctx.spawnAnonymous(SpawnManager(ctx.self)), SpawnMessage) :: handlers
       handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
       handlers =

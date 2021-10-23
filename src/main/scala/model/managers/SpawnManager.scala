@@ -29,6 +29,7 @@ object SpawnerMessages {
 object SpawnManager {
 
   def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+    RoundsFactory.startGame()
     Spawner(ctx, model).waiting()
   }
 }

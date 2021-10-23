@@ -1,6 +1,5 @@
 package model.entities.balloons.balloontypes
 
-import model.entities.Entities
 import model.entities.balloons.BalloonLives.Green
 import model.entities.balloons.Balloons.{ complex, Balloon }
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
@@ -12,7 +11,7 @@ object RegeneratingBalloons {
   /**
    * Adds to [[Balloon]] the ability to regenerate its life after a certain amount of time.
    */
-  trait Regenerating extends Balloon {
+  trait Regenerating extends Balloon { balloon: Balloon =>
     private[this] var timer: Double = regenerationTime
 
     private def timing(t: Double): Regenerating = {
@@ -50,9 +49,6 @@ object RegeneratingBalloons {
       extends BalloonDecoration(balloon)
       with Regenerating {
     override def instance(balloon: Balloon): BalloonDecoration = regenerating(balloon)
-
-    override def pop(bullet: Entities.Entity): Option[Regenerating] =
-      balloon.pop(bullet).map(regenerating)
   }
 
   def regenerating(balloon: Balloon): RegeneratingBalloon =

@@ -3,15 +3,18 @@ package model.actors
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import controller.Messages.Update
-import model.actors.BalloonMessages.{ BalloonKilled, Hit }
+import model.actors.BalloonMessages.{ BalloonKilled, Hit, Unfreeze }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Ice }
 import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
 import utils.Constants
 
+import scala.concurrent.duration.DurationDouble
+
 object BalloonMessages {
   case class Hit(bullet: Bullet, replyTo: ActorRef[Update]) extends Update
   case class BalloonKilled(actorRef: ActorRef[Update]) extends Update
+  case object Unfreeze extends Update
 }
 
 /**
@@ -49,42 +52,39 @@ case class BalloonActor private (
       }
 
     case Hit(bullet, replyTo) =>
-      balloon.pop(bullet) match {
-        case None =>
-          replyTo ! BalloonKilled(ctx.self)
-          Behaviors.stopped
-        case Some(b) =>
-          balloon = b
-          //replyTo ! EntityUpdated(balloon, ctx.self)
-          bullet match {
-            case ice: Ice => freezing(ice.freezingTime)
-            case _        => Behaviors.same
-          }
+      hit(bullet, replyTo) {
+        case ice: Ice => freeze(ice.freezingTime)
+        case _        => Behaviors.same
       }
+
   }
 
-  def freezing(freezingTime: Double, elapsed: Double = 0.0): Behavior[Update] =
+  def freeze(freezingTime: Double): Behavior[Update] = Behaviors.withTimers { timers =>
+    timers.startTimerWithFixedDelay(Unfreeze, freezingTime.milliseconds)
+    freezing()
+  }
+
+  def freezing(): Behavior[Update] = Behaviors.withTimers { timers =>
     Behaviors.receiveMessage {
-      case UpdateEntity(elapsedTime, _, replyTo) =>
-        replyTo ! EntityUpdated(balloon, ctx.self)
-        elapsed + elapsedTime match {
-          case time if time < freezingTime => freezing(freezingTime, time)
-          case _                           => default()
-        }
+      case Unfreeze =>
+        timers.cancel(Unfreeze)
+        default()
 
       case Hit(bullet, replyTo) =>
-        balloon.pop(bullet) match {
-          case None =>
-            replyTo ! BalloonKilled(ctx.self)
-            Behaviors.stopped
-          case Some(b) =>
-            balloon = b
-            //replyTo ! EntityUpdated(balloon, ctx.self)
-            bullet match {
-              case ice: Ice => freezing(ice.freezingTime)
-              case _        => Behaviors.same
-            }
+        hit(bullet, replyTo) { case _ =>
+          Behaviors.same
         }
     }
+  }
 
+  private def hit(bullet: Bullet, replyTo: ActorRef[Update])(
+      bulletHandler: PartialFunction[Bullet, Behavior[Update]]): Behavior[Update] =
+    balloon.pop(bullet) match {
+      case None =>
+        replyTo ! BalloonKilled(ctx.self)
+        Behaviors.stopped
+      case Some(b) =>
+        balloon = b
+        bulletHandler(bullet)
+    }
 }

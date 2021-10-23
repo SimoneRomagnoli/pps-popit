@@ -2,6 +2,7 @@ package model.entities.balloons
 
 import model.Positions.Vector2D
 import model.entities.Entities.{ Entity, Poppable, TrackFollowing }
+import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks.Track
 import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
 import utils.Constants.Entities.defaultPosition
@@ -39,10 +40,13 @@ object Balloons {
     override def at(s: Vector2D): Balloon = change(Simple(position, s, track))
     override def on(t: Track): Balloon = change(Simple(position, speed, t))
 
-    override def pop(bullet: Entity): Option[Balloon] = this match {
-      case Complex(balloon) => Some(balloon following this)
-      case _                => None
-    }
+    override def pop(bullet: Bullet): Option[Balloon] = LazyList
+      .iterate(Option(this))(_ flatMap {
+        case Complex(balloon) => Some(balloon following this)
+        case _                => None
+      })
+      .take(bullet.damage.toInt + 1)
+      .last
   }
 
   /**

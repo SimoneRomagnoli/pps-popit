@@ -9,6 +9,7 @@ version := "0.1"
 scalaVersion := "2.13.6"
 
 val akkaVersion = "2.6.16"
+val circeVersion = "0.14.1"
 
 resolvers += Resolver.jcenterRepo
 
@@ -58,5 +59,8 @@ libraryDependencies ++= Seq(
   "net.aichler" % "jupiter-interface" % "0.8.4" % Test,
   "org.scalatest" %% "scalatest" % "3.1.0" % Test,
   "org.junit.vintage" % "junit-vintage-engine" % "5.7.1" % Test,
-  "org.junit.platform" % "junit-platform-launcher" % "1.7.1" % Test
+  "org.junit.platform" % "junit-platform-launcher" % "1.7.1" % Test,
+  "io.circe" %% "circe-core" % circeVersion,
+  "io.circe" %% "circe-generic" % circeVersion,
+  "io.circe" %% "circe-parser" % circeVersion
 )

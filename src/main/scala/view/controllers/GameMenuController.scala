@@ -1,21 +1,16 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{
-  BoostTowerIn,
-  ExitGame,
-  PauseGame,
-  ResumeGame,
-  StartNextRound
-}
+import controller.Controller.ControllerMessages._
 import controller.Messages
 import controller.Messages._
 import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.PowerUps.{ Camo, Damage, Ratio, Sight, TowerPowerUp }
+import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight, TowerPowerUp }
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
+import model.managers.EntitiesMessages.BoostTowerIn
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -27,22 +22,20 @@ import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import utils.Constants.Maps.outerCell
+import utils.Futures.retrieve
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
 
-trait ViewGameMenuController extends ViewController {
+trait ViewGameMenuController extends GameControllerChild {
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
-  def updateStats(stats: GameStats): Unit
+  def renderStats(stats: GameStats): Unit
   def anyTowerSelected(): Boolean
   def unselectDepot(): Unit
   def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit
   def clearTowerStatus(): Unit
-  def isPaused: Boolean
   def getSelectedTowerType[B <: Bullet]: TowerType[B]
   def disableRoundButton(): Unit
   def enableRoundButton(): Unit
@@ -56,31 +49,28 @@ trait ViewGameMenuController extends ViewController {
 @sfxml
 class GameMenuController(
     val gameMenu: VBox,
-    val playButton: ToggleButton,
-    val exitButton: ToggleButton,
     val gameStatus: VBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
-    val statusMiddleBox: HBox,
-    val pointsLabel: Label,
     val statusLowerBox: HBox,
     val moneyLabel: Label,
     val towerDepot: VBox,
     val towerStatus: VBox,
     val startRoundContainer: VBox,
     val startRound: ToggleButton,
+    val pauseRound: ToggleButton,
     var currentCell: Cell = outerCell,
+    var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
     var highlight: Option[Tower[_]] => Unit,
-    var paused: Boolean = false,
     var selectedTowerType: TowerType[_])
     extends ViewGameMenuController {
   import MenuSetters._
 
   override def setup(): Unit = Platform runLater {
     reset()
-    setSpacing()
+    setLayout()
     setupButtons()
     setupTowerDepot()
   }
@@ -89,11 +79,15 @@ class GameMenuController(
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
   override def show(): Unit = gameMenu.visible = true
   override def hide(): Unit = gameMenu.visible = false
+  override def setParent(controller: ViewGameController): Unit = parent = controller
+  override def setLayout(): Unit = setSpacing()
+
+  override def setTransparency(): Unit = {}
+
+  override def reset(): Unit = resetMenu()
 
   override def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit =
     highlight = reference
-
-  override def isPaused: Boolean = paused
 
   override def anyTowerSelected(): Boolean =
     towerDepot.children.map(_.getStyleClass.contains("selected")).reduce(_ || _)
@@ -104,7 +98,7 @@ class GameMenuController(
   override def getSelectedTowerType[B <: Bullet]: TowerType[B] =
     selectedTowerType.asInstanceOf[TowerType[B]]
 
-  override def updateStats(stats: GameStats): Unit = {
+  override def renderStats(stats: GameStats): Unit = {
     lifeLabel.text = stats.life.toString
     moneyLabel.text = stats.wallet.toString
   }
@@ -117,9 +111,9 @@ class GameMenuController(
     } else {
       currentCell = cell
       addToTowerStatus(Rendering a tower as single)
-      addToTowerStatus("Sight Range", tower.sightRange, Sight)
-      addToTowerStatus("Shot Ratio", tower.shotRatio, Ratio)
-      addToTowerStatus("Damage", tower.bullet.damage, Damage)
+      addToTowerStatus("Sight Range", tower levelOf Sight, Sight)
+      addToTowerStatus("Shot Ratio", tower levelOf Ratio, Ratio)
+      addToTowerStatus("Bullet Damage", tower levelOf Damage, Damage)
       addToTowerStatus(
         "Camo Vision",
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",
@@ -135,13 +129,13 @@ class GameMenuController(
 
   override def disableAllButtons(): Unit = {
     disableRoundButton()
-    playButton.disable = true
+    pauseRound.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
     enableRoundButton()
-    playButton.disable = false
+    pauseRound.disable = false
     towerDepot.disable = false
   }
 
@@ -151,7 +145,7 @@ class GameMenuController(
   /** Private methods for setting the controller. */
   private object MenuSetters {
 
-    def reset(): Unit = {
+    def resetMenu(): Unit = {
       disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
@@ -167,16 +161,11 @@ class GameMenuController(
     }
 
     def setupButtons(): Unit = {
-      exitButton.onMouseClicked = _ => send(ExitGame())
-      playButton.onMouseClicked = _ =>
-        if (paused) {
-          send(ResumeGame())
-          paused = false
-        } else {
-          send(PauseGame())
-          paused = true
-        }
-
+      pauseRound.onMouseClicked = _ => {
+        send(PauseGame())
+        disableAllButtons()
+        parent.pauseController.show()
+      }
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
         disableRoundButton()
@@ -184,18 +173,18 @@ class GameMenuController(
     }
 
     def setupTowerDepot[B <: Bullet](): Unit =
-      TowerTypes.values.foreach { towerValue =>
-        val tower: Tower[B] = towerValue.asInstanceOf[TowerType[B]].tower
+      TowerTypes.values.collect { case t: TowerType[B] => t }.foreach { towerValue =>
+        val tower: Tower[B] = towerValue.tower
         val renderedTower: Shape = Rendering a tower as single
         val towerBox: HBox = new HBox(renderedTower)
         towerBox.styleClass += "towerBox"
         towerBox.setCursor(Cursor.Hand)
         towerBox.onMousePressed = _ =>
-          if (!paused) {
+          if (true) {
             if (!towerBox.styleClass.contains("selected")) {
               unselectDepot()
               towerBox.styleClass += "selected"
-              selectedTowerType = towerValue.asInstanceOf[TowerType[B]]
+              selectedTowerType = towerValue
             } else {
               unselectDepot()
             }
@@ -203,9 +192,11 @@ class GameMenuController(
           }
         towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
-        val towerLabel: Label = Label(towerValue.asInstanceOf[TowerType[_]].toString().toUpperCase)
-        towerLabel.styleClass += "towerLabel"
+        val towerLabel: Label = Label(towerValue.toString().toUpperCase)
+        val towerPrice: Label = Label(towerValue.cost.toString)
         towerBox.children += towerLabel
+        towerBox.children += new Pane { hgrow = Always }
+        towerBox.children += towerPrice
         towerBox.setAlignment(Pos.CenterLeft)
         towerDepot.children.add(towerBox)
       }
@@ -231,13 +222,10 @@ class GameMenuController(
       emptyBox.hgrow = Always
       val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
       button.onMouseClicked = _ =>
-        ask(BoostTowerIn(currentCell, powerUp)) onComplete {
-          case Success(value) =>
-            value match {
-              case TowerBoosted(tower, _) =>
-                refreshTowerStatus(tower)
-            }
-          case Failure(exception) => println(exception)
+        retrieve(ask(BoostTowerIn(currentCell, powerUp))) {
+          case TowerBoosted(tower, _) =>
+            refreshTowerStatus(tower)
+          case _ =>
         }
       button.styleClass += "inputButton"
       box.children += key

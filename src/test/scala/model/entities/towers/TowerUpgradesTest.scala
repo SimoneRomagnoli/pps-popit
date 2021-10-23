@@ -2,9 +2,9 @@ package model.entities.towers
 
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
-import model.entities.bullets.Bullets.Dart
+import model.entities.bullets.Bullets.{ Dart, IceBall }
 import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
-import model.entities.towers.TowerTypes.Arrow
+import model.entities.towers.TowerTypes.{ Arrow, Ice }
 import model.entities.towers.Towers.Tower
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -18,6 +18,8 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
   val boostedRatio: Double = 1.0
   val sightRange: Double = 1.0
   val shotRatio: Double = 2.0
+  val defaultLevel: Int = 1
+  val nextLevel: Int = defaultLevel + 1
 
   "According to the expected system behavior" when {
     "the tower ratio is boosted" should {
@@ -76,48 +78,45 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         (arrowTower canSee camo) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Camo
         (boostedTower canSee camo) shouldBe true
+        boostedTower.bullet.isInstanceOf[Dart] shouldBe true
       }
     }
-    /*"the tower get the ratio power up" should {
-      "not be boosted no more after 3 seconds" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
+  }
 
-        val boostedTower: Tower[Dart] = arrowTower boost Ratio
+  "Implementing levels for powerups" when {
+    "a tower is boosted, it" should {
+      "increment its stats levels" in {
+        val tower: Tower[IceBall] = Ice tower
 
-        (boostedTower shotRatio) shouldBe boostedRatio
-        (boostedTower sightRange) shouldBe sightRange
+        tower levelOf Ratio shouldBe defaultLevel
+        tower levelOf Sight shouldBe defaultLevel
+        tower levelOf Damage shouldBe defaultLevel
 
-        (boostedTower isBoosted Ratio.time) shouldBe true
-        waitSomeTime()
-        (boostedTower isBoosted Ratio.time) shouldBe true
-        waitSomeTime()
-        (boostedTower isBoosted Ratio.time) shouldBe true
-        waitSomeTime()
-        (boostedTower isBoosted Ratio.time) shouldBe false
+        var boostedTower: Tower[IceBall] = tower boost Ratio
+        // (boostedTower shotRatio) shouldBe boostedRatio
+
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe defaultLevel
+        boostedTower levelOf Damage shouldBe defaultLevel
+
+        boostedTower = boostedTower boost Sight
+        // (boostedTower sightRange) shouldBe boostedSight
+
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe nextLevel
+        boostedTower levelOf Damage shouldBe defaultLevel
+
+        boostedTower = boostedTower boost Damage
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe nextLevel
+        boostedTower levelOf Damage shouldBe nextLevel
+
+        boostedTower = boostedTower boost Camo
+        boostedTower levelOf Ratio shouldBe nextLevel
+        boostedTower levelOf Sight shouldBe nextLevel
+        boostedTower levelOf Damage shouldBe nextLevel
       }
-      "return to the previous state after 3 seconds" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) withSightRangeOf sightRange withShotRatioOf shotRatio
-
-        val boostedTower: Tower[Dart] = arrowTower boost Ratio
-
-        (boostedTower shotRatio) shouldBe boostedRatio
-        (boostedTower sightRange) shouldBe sightRange
-
-        (boostedTower isBoosted Ratio.time) shouldBe true
-
-        waitSomeTime()
-        waitSomeTime()
-        waitSomeTime()
-
-        (boostedTower isBoosted Ratio.time) shouldBe false
-        val previousTower: Tower[Dart] = arrowTower.reset()
-
-        (previousTower sightRange) shouldBe sightRange
-        (previousTower shotRatio) shouldBe shotRatio
-      }
-    }*/
+    }
   }
 
 }

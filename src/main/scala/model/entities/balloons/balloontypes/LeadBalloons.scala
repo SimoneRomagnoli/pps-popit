@@ -10,18 +10,17 @@ object LeadBalloons {
   /**
    * Adds to a [[Balloon]] the ability to being popped only by [[CannonBall]] s.
    */
-  trait Lead extends Balloon { balloon: Balloon =>
-
-    override def pop(bullet: Entities.Entity): Option[Lead] = bullet match {
-      case CannonBall(_) => super.pop(bullet).map(lead)
-      case _             => Option(this)
-    }
-  }
+  trait Lead extends Balloon { balloon: Balloon => }
 
   case class LeadBalloon(override val balloon: Balloon)
       extends BalloonDecoration(balloon)
       with Lead {
     override def instance(balloon: Balloon): BalloonDecoration = lead(balloon)
+
+    override def pop(bullet: Entities.Entity): Option[BalloonDecoration] = bullet match {
+      case CannonBall(_) => super.pop(bullet)
+      case _             => Option(this)
+    }
   }
 
   def lead(balloon: Balloon): LeadBalloon = LeadBalloon(balloon)

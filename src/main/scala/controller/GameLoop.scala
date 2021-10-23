@@ -6,9 +6,10 @@ import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopMessages._
 import controller.GameLoop.Time._
 import controller.Messages._
+import model.Model.ModelMessages.TickUpdate
 import model.entities.Entities.Entity
-import model.managers.EntitiesMessages.TickUpdate
 import model.maps.Tracks.Track
+import model.stats.Stats.GameStats
 import view.View.ViewMessages._
 
 import scala.concurrent.duration.DurationDouble
@@ -22,10 +23,12 @@ object GameLoop {
   object GameLoopMessages {
     case object Tick extends Input
     case class Start() extends Input
+    case class GameOver() extends Input
     case class Stop() extends Input with Update
     case class MapCreated(track: Track) extends Input
     case class ModelUpdated(entities: List[Entity], animations: List[Entity]) extends Input
     case class CanStartNextRound() extends Input with Render
+    case class GameStatsUpdated(stats: GameStats) extends Input with Render
   }
 
   /**
@@ -45,12 +48,6 @@ object GameLoop {
           case _ => Behaviors.same
         }
     }
-
-    def apply(
-        ctx: ActorContext[Input],
-        model: ActorRef[Update],
-        view: ActorRef[Render]): GameLoopActor =
-      new GameLoopActor(ctx, model, view)
   }
 
   /**
@@ -59,7 +56,7 @@ object GameLoop {
    *     its response to render the view;
    *   - paused, in which it waits for the game to be resumed.
    */
-  class GameLoopActor private (
+  case class GameLoopActor private (
       ctx: ActorContext[Input],
       model: ActorRef[Update],
       view: ActorRef[Render],
@@ -69,23 +66,32 @@ object GameLoop {
       case Tick =>
         model ! TickUpdate(elapsedTime(frameRate)(timeRatio), ctx.self)
         Behaviors.same
+
       case ModelUpdated(entities, animations) =>
         view ! RenderEntities(entities)
         animations.foreach {
           view ! StartAnimation(_)
         }
         Behaviors.same
+
       case PauseGame() =>
         paused()
-      case NewTimeRatio(value) =>
-        timeRatio = value
+
+      case GameOver() =>
+        view ! RenderGameOver()
+        ctx.self ! Stop()
+        model ! Stop()
         Behaviors.same
 
       case Stop() =>
         Behaviors.stopped
 
-      case msg: Render =>
-        view ! msg
+      case GameStatsUpdated(stats) =>
+        view ! RenderStats(stats)
+        Behaviors.same
+
+      case CanStartNextRound() =>
+        view ! CanStartNextRound()
         Behaviors.same
 
       case _ => Behaviors.same

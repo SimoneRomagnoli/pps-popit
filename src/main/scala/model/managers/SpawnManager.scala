@@ -5,7 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.StartNextRound
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.Messages.{ Input, SpawnManagerMessage, Update }
-import model.Model.ModelMessages.TrackChangedForSpawnManager
+import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
@@ -29,6 +29,7 @@ object SpawnerMessages {
 object SpawnManager {
 
   def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+    RoundsFactory.startGame()
     Spawner(ctx, model).waiting()
   }
 }
@@ -55,7 +56,7 @@ case class Spawner private (
     case StartRound(round) =>
       spawningRound(round.streaks)
 
-    case TrackChangedForSpawnManager(newTrack) =>
+    case TrackChanged(newTrack) =>
       track = newTrack
       Behaviors.same
 

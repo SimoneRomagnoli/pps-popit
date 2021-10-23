@@ -6,6 +6,7 @@ import controller.GameLoop.GameLoopMessages.Stop
 import controller.Messages._
 import model.managers.{ EntitiesManager, GameDynamicsManager, SpawnManager }
 import model.maps.Tracks.Track
+import model.spawn.RoundsFactory
 
 import scala.language.postfixOps
 
@@ -17,17 +18,21 @@ object Model {
 
   object ModelMessages {
 
-    case class TrackChangedForEntitiesManager(newTrack: Track)
+    case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input])
         extends Update
         with EntitiesManagerMessage
+        with GameDynamicsManagerMessage
 
-    case class TrackChangedForSpawnManager(newTrack: Track) extends Update with SpawnManagerMessage
+    case class TrackChanged(newTrack: Track)
+        extends Update
+        with EntitiesManagerMessage
+        with SpawnManagerMessage
   }
 
   object ModelActor {
 
-    def apply(controller: ActorRef[Input]): Behavior[Update] = Behaviors setup { ctx =>
-      ModelActor(ctx, controller).init()
+    def apply(): Behavior[Update] = Behaviors setup { ctx =>
+      ModelActor(ctx).init()
     }
   }
 
@@ -38,8 +43,6 @@ object Model {
    */
   case class ModelActor private (
       ctx: ActorContext[Update],
-      controller: ActorRef[Input],
-      var track: Track = Track(),
       var handlers: List[(ActorRef[Update], MessageType)] = List()) {
 
     def init(): Behavior[Update] = {
@@ -61,14 +64,14 @@ object Model {
       }
 
     def handle(msg: Update): Unit = msg match {
-      case WithReplyTo(m, _) => choose(messageType(m)).foreach(_ ! msg)
-      case msg               => choose(messageType(msg)).foreach(_ ! msg)
+      case WithReplyTo(m, _) => choose(messageTypes(m)).foreach(_ ! msg)
+      case msg               => choose(messageTypes(msg)).foreach(_ ! msg)
     }
 
-    def choose(messageType: MessageType)(implicit
+    def choose(messageTypes: List[MessageType])(implicit
         handlers: List[(ActorRef[Update], MessageType)] = handlers): List[ActorRef[Update]] =
       handlers.collect {
-        case (actorRef, msgType) if msgType == messageType => actorRef
+        case (actorRef, msgType) if messageTypes contains msgType => actorRef
       }
   }
 

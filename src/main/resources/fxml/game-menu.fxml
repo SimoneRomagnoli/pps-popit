@@ -9,18 +9,13 @@
             <Label text="Life: "/>
             <Label fx:id="lifeLabel"/>
             <Pane HBox.hgrow="ALWAYS" />
-            <ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>
-        </HBox>
-        <HBox fx:id="statusMiddleBox">
-            <Label text="Points: "/>
-            <Label fx:id="pointsLabel"/>
-            <Pane HBox.hgrow="ALWAYS" />
+            <!--<ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>-->
         </HBox>
         <HBox fx:id="statusLowerBox">
             <Label text="Money: "/>
             <Label fx:id="moneyLabel"/>
             <Pane HBox.hgrow="ALWAYS" />
-            <ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />
+            <!--<ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />-->
         </HBox>
     </VBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">
@@ -30,8 +25,13 @@
     </VBox>
     <VBox fx:id="towerStatus" styleClass="inputBox, towerStatus" VBox.vgrow="ALWAYS"/>
     <VBox fx:id="startRoundContainer" styleClass="inputBox">
-        <ToggleButton fx:id="startRound" mnemonicParsing="false" styleClass="inputButton, startRound"
-                      VBox.vgrow="ALWAYS" text="START ROUND"/>
+        <HBox>
+            <ToggleButton fx:id="startRound" mnemonicParsing="false" styleClass="inputButton, startRound"
+                          VBox.vgrow="ALWAYS" text="START"/>
+            <HBox HBox.hgrow="ALWAYS"/>
+            <ToggleButton fx:id="pauseRound" mnemonicParsing="false" styleClass="inputButton, pauseRound"
+                          VBox.vgrow="ALWAYS" text="PAUSE"/>
+        </HBox>
     </VBox>
 
 </VBox>

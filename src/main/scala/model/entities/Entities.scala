@@ -51,14 +51,14 @@ object Entities {
    *   - has a [[Track]]
    *   - can change the [[Track]]
    */
-  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
-    protected var linearPosition: Double = 0.0
+  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] { balloon: Balloon =>
+    private var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing
 
-    protected def following(trackFollowing: TrackFollowing): TrackFollowing =
-      following(trackFollowing.linearPosition)
+    def following(trackFollowing: TrackFollowing): Balloon =
+      following(trackFollowing.linearPosition).asInstanceOf[Balloon]
 
     private def following(lp: Double): TrackFollowing = {
       this.linearPosition = lp
@@ -100,12 +100,12 @@ object Entities {
 
     def rotateTo(dir: Vector2D): SightAbility
     def sight(radius: Double): SightAbility
-    def isInSightOfRangeOf(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
+    def isInSightRange(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
-      case CamoBalloon(_)       => false
-      case BalloonDecoration(b) => canSee(b)
-      case _                    => isInSightOfRangeOf(balloon)
+      case CamoBalloon(_)          => false
+      case BalloonDecoration(b, _) => canSee(b)
+      case _                       => isInSightRange(balloon)
     }
   }
 
@@ -113,7 +113,7 @@ object Entities {
    * Adds to the [[Entity]] the ability to see even a [[CamoBalloon]] within its sight range.
    */
   trait EnhancedSightAbility extends SightAbility {
-    override def canSee(balloon: Balloon): Boolean = isInSightOfRangeOf(balloon)
+    override def canSee(balloon: Balloon): Boolean = isInSightRange(balloon)
   }
 
   /**
@@ -124,6 +124,8 @@ object Entities {
     def shotRatio: Double
 
     def ratio(ratio: Double): ShotAbility
+
+    def damage(ammo: Bullet): ShotAbility
 
     def canAttackAfter: Double => Boolean =
       lastShotTime => (System.currentTimeMillis() - lastShotTime) / 1000.0 >= shotRatio

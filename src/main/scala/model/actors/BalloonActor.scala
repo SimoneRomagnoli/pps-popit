@@ -49,7 +49,6 @@ case class BalloonActor private (
           Behaviors.same
       }
     case Hit(bullet, replyTo) =>
-      hit = true
       balloon.pop(bullet) match {
         case None =>
           replyTo ! BalloonKilled(ctx.self)

@@ -5,7 +5,7 @@ import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-
+import utils.Constants.Entities.Towers.TowerTypes.towerDefaultCost
 import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.defaultPosition
 
@@ -36,7 +36,7 @@ object Towers {
 
     override def sight(radius: Double): Tower[B]
 
-    def damage(ammo: Bullet): Tower[B]
+    override def damage(ammo: Bullet): Tower[B]
 
     override def toString: String = "towers/" + bullet.toString + "-TOWER"
 
@@ -82,6 +82,15 @@ object Towers {
       override val direction: Vector2D = towerDefaultDirection)
       extends Tower[B] {
 
+    def this(tower: Tower[B]) = this(
+      tower.bullet,
+      tower.boundary,
+      tower.position,
+      tower.sightRange,
+      tower.shotRatio,
+      tower.direction
+    )
+
     override def in(pos: Vector2D): Tower[B] = copy(position = pos)
 
     override def sight(radius: Double): Tower[B] = copy(sightRange = radius)
@@ -93,6 +102,7 @@ object Towers {
     override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
 
   }
+
 }
 
 /**
@@ -112,7 +122,7 @@ object TowerTypes extends Enumeration {
   case object Cannon extends TowerAmmo(CannonBall())
 
   case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val
-  val arrow: TowerType[Dart] = TowerType(Arrow tower, 200)
-  val cannon: TowerType[CannonBall] = TowerType(Cannon tower, 200)
-  val ice: TowerType[IceBall] = TowerType(Ice tower, 200)
+  val arrow: TowerType[Dart] = TowerType(Arrow tower, towerDefaultCost)
+  val cannon: TowerType[CannonBall] = TowerType(Cannon tower, towerDefaultCost)
+  val ice: TowerType[IceBall] = TowerType(Ice tower, towerDefaultCost)
 }

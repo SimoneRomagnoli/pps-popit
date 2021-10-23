@@ -11,7 +11,6 @@ import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.BoostTowerIn
-import model.managers.SpawnerMessages.{ IsRoundOver, RoundStatus }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -180,8 +179,9 @@ class GameMenuController(
     }
 
     def setupTowerDepot[B <: Bullet](): Unit =
-      TowerTypes.values.collect { case t: TowerType[B] => t }.foreach { towerValue =>
-        val tower: Tower[B] = towerValue.tower
+      TowerTypes.values.foreach { towerValue =>
+        val towerType: TowerType[B] = towerValue.asInstanceOf[TowerType[B]]
+        val tower: Tower[B] = towerType.tower
         val renderedTower: Shape = Rendering a tower as single
         val towerBox: HBox = new HBox(renderedTower)
         towerBox.styleClass += "towerBox"
@@ -192,13 +192,13 @@ class GameMenuController(
             towerBox.setCursor(Cursor.ClosedHand)
             if (!towerBox.styleClass.contains("selected")) {
               towerBox.styleClass += "selected"
-              selectedTowerType = towerValue
+              selectedTowerType = towerType
             }
           }
         towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
-        val towerLabel: Label = Label(towerValue.toString().capitalize)
-        val towerPrice: Label = Label(towerValue.cost.toString + "$")
+        val towerLabel: Label = Label(towerType.toString().capitalize)
+        val towerPrice: Label = Label(towerType.cost.toString + "$")
         towerBox.children += towerLabel
         towerBox.children += new Pane { hgrow = Always }
         towerBox.children += towerPrice

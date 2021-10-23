@@ -1,9 +1,8 @@
 package model.entities.balloons.balloontypes
 
-import model.entities.Entities
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
-import model.entities.bullets.Bullets.CannonBall
+import model.entities.bullets.Bullets.{Bullet, CannonBall}
 
 object LeadBalloons {
 
@@ -17,7 +16,7 @@ object LeadBalloons {
       with Lead {
     override def instance(balloon: Balloon): BalloonDecoration = lead(balloon)
 
-    override def pop(bullet: Entities.Entity): Option[BalloonDecoration] = bullet match {
+    override def pop(bullet: Bullet): Option[BalloonDecoration] = bullet match {
       case CannonBall(_) => super.pop(bullet)
       case _             => Option(this)
     }

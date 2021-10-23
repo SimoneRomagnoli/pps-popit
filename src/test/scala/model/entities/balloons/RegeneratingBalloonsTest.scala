@@ -5,6 +5,7 @@ import model.entities.balloons.BalloonTypeTest.{testChangeValues, testDefaultVal
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.RegeneratingBalloons.{RegeneratingBalloon, regenerating, regenerationTime}
+import model.entities.bullets.Bullets.Dart
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -32,7 +33,7 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "regenerate its life" in {
-    val popped: BalloonDecoration = regenerating(Green balloon).pop(null).get
+    val popped: BalloonDecoration = regenerating(Green balloon).pop(Dart()).get
     popped shouldBe regenerating((Blue balloon) at ((Green balloon) speed))
     (popped.update(1) in zeroVector) shouldBe regenerating(
       (Blue balloon) at ((Green balloon) speed)
@@ -47,7 +48,7 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
   }
 
   it should "be able to double wrap a balloon" in {
-    val popped: BalloonDecoration = regenerating(regenerating(Green balloon)).pop(null).get
+    val popped: BalloonDecoration = regenerating(regenerating(Green balloon)).pop(Dart()).get
     popped shouldBe regenerating(regenerating((Blue balloon) at ((Green balloon) speed)))
     (popped.update(1) in zeroVector) shouldBe regenerating(
       regenerating((Blue balloon) at ((Green balloon) speed))

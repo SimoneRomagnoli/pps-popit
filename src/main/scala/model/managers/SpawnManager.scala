@@ -92,6 +92,7 @@ case class Spawner private (
           LazyList
             .iterate((h.balloonInfo.balloonLife balloon) adding h.balloonInfo.balloonTypes)(b => b)
             .map(_ on track)
+            .map(_ in track.start)
             .take(h.quantity),
           t
         )

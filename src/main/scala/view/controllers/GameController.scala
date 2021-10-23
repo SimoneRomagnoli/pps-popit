@@ -37,6 +37,7 @@ trait ViewGameController extends ViewController {
   def pauseController: ViewPauseController
   def gameMenuController: ViewGameMenuController
   def gameOverController: ViewGameOverController
+  def getScenePosition: (Double, Double)
 }
 
 trait GameControllerChild extends ViewController {
@@ -215,4 +216,6 @@ class GameController(
         e.getTarget.setCursor(Cursor.Default)
       }
   }
+
+  override def getScenePosition: (Double, Double) = (gameBoard.getLayoutX, gameBoard.getLayoutY)
 }

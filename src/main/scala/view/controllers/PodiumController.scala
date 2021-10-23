@@ -1,21 +1,13 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ BoostTowerIn, NewGame }
-import controller.Messages
 import controller.Messages.{ Input, Message }
-import model.actors.TowerMessages.TowerBoosted
-import model.entities.towers.PowerUps.{ Sight, TowerPowerUp }
-import scalafx.geometry.Pos
-import scalafx.scene.control.{ Label, ToggleButton }
-import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{ BorderPane, HBox, VBox }
+import scalafx.scene.layout.{ BorderPane, HBox }
 import scalafxml.core.macros.sfxml
 import utils.Constants
 import view.render.Drawings.{ Drawing, MenuDrawings, Title }
 import view.render.Rendering
 
 import scala.concurrent.Future
-import scala.util.{ Failure, Success }
 
 trait ViewPodiumController extends ViewController {}
 

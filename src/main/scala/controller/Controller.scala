@@ -37,6 +37,7 @@ object Controller {
     case class NewTimeRatio(value: Double) extends Input
     case class CurrentWallet(amount: Int) extends Input
     case class StartAnimation(entity: Entity) extends Render
+    case class SaveCurrentTrack(pos: (Double, Double)) extends Input
 
     sealed trait Interaction extends Input {
       def replyTo: ActorRef[Message]
@@ -96,6 +97,8 @@ object Controller {
         trackLoader.get ! SaveActualTrack(track)
         view ! RenderMap(track)
 
+        Behaviors.same
+      case SaveCurrentTrack((posX, posY)) =>
         Behaviors.same
 
       case ExitGame() =>

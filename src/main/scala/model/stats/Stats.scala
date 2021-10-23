@@ -5,7 +5,7 @@ package model.stats
  */
 object Stats {
 
-  val startingLife: Int = 100
+  val startingLife: Int = 1
   val startingWallet: Int = 1500
   val startingPoints: Int = 0
 

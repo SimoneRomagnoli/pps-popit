@@ -9,7 +9,6 @@ import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks.Directions.{ DOWN, UP }
 import model.maps.Tracks.Track
 
-import scala.collection.mutable
 import scala.language.postfixOps
 
 object Entities {
@@ -52,14 +51,14 @@ object Entities {
    *   - has a [[Track]]
    *   - can change the [[Track]]
    */
-  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] {
+  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] { balloon: Balloon =>
     private var linearPosition: Double = 0.0
 
     def track: Track
     def on(track: Track): TrackFollowing
 
-    def following(trackFollowing: TrackFollowing): TrackFollowing =
-      following(trackFollowing.linearPosition)
+    def following(trackFollowing: TrackFollowing): Balloon =
+      following(trackFollowing.linearPosition).asInstanceOf[Balloon]
 
     private def following(lp: Double): TrackFollowing = {
       this.linearPosition = lp

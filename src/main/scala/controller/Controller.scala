@@ -1,5 +1,6 @@
 package controller
 
+import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
@@ -12,7 +13,9 @@ import controller.TrackLoader.TrackLoaderMessages.SaveActualTrack
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower
-import model.managers.GameDynamicsMessages.NewMap
+import model.managers.GameDynamicsMessages.{ CurrentGameTrack, CurrentTrack, NewMap }
+import model.maps.Tracks.Track
+import utils.Futures.retrieve
 import view.View.ViewMessages.RenderMap
 
 import scala.concurrent.ExecutionContextExecutor
@@ -26,12 +29,13 @@ import scala.language.postfixOps
 object Controller {
 
   object ControllerMessages {
-    case class NewGame() extends Input with Render
+    case class NewGame(withTrack: Option[Track]) extends Input with Render
     case class ExitGame() extends Input with Render
     case class FinishGame() extends Input with Render
     case class HighScoresPage() extends Input with Render
     case class PauseGame() extends Input
     case class ResumeGame() extends Input
+    case class RestartGame() extends Input
     case class NewTrack() extends Input
     case class StartNextRound() extends Input with SpawnManagerMessage
     case class NewTimeRatio(value: Double) extends Input
@@ -74,14 +78,13 @@ object Controller {
     implicit val ec: ExecutionContextExecutor = ctx.system.executionContext
 
     def default(): Behavior[Input] = Behaviors.receiveMessage {
-      case NewGame() =>
-        view ! NewGame()
-        if (gameLoop.isEmpty) {
-          model = Some(ctx.spawnAnonymous(ModelActor()))
-          gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
-          trackLoader = Some(ctx.spawnAnonymous(TrackLoaderActor()))
-        }
-        model.get ! NewMap(ctx.self)
+
+      case NewGame(withTrack) =>
+        view ! NewGame(withTrack)
+        model = Some(ctx.spawnAnonymous(ModelActor()))
+        gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
+        trackLoader = Some(ctx.spawnAnonymous(TrackLoaderActor()))
+        model.get ! NewMap(ctx.self, withTrack)
         gameLoop.get ! Start()
         Behaviors.same
 
@@ -90,7 +93,7 @@ object Controller {
         Behaviors.same
 
       case NewTrack() =>
-        model.get ! NewMap(ctx.self)
+        model.get ! NewMap(ctx.self, None)
         Behaviors.same
 
       case MapCreated(track) =>
@@ -99,6 +102,18 @@ object Controller {
 
         Behaviors.same
       case SaveCurrentTrack((posX, posY)) =>
+        Behaviors.same
+
+      case RestartGame() =>
+        retrieve(model.get ? CurrentGameTrack) {
+          case CurrentTrack(track) =>
+            gameLoop.get ! Stop()
+            model.get ! Stop()
+            gameLoop = None
+            model = None
+            ctx.self ! NewGame(Some(track))
+          case _ =>
+        }
         Behaviors.same
 
       case ExitGame() =>

@@ -6,14 +6,30 @@ import controller.Controller.ControllerMessages.CurrentWallet
 import controller.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
 import controller.Messages.{ GameDynamicsManagerMessage, Input, Update }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
-import model.managers.GameDynamicsMessages.{ Gain, Lose, NewMap, Pay, WalletQuantity }
+import model.managers.GameDynamicsMessages.{
+  CurrentGameTrack,
+  CurrentTrack,
+  Gain,
+  Lose,
+  NewMap,
+  Pay,
+  WalletQuantity
+}
 import model.maps.Plots.{ Plotter, PrologPlotter }
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 
 object GameDynamicsMessages {
-  case class NewMap(replyTo: ActorRef[Input]) extends Update with GameDynamicsManagerMessage
+
+  case class NewMap(replyTo: ActorRef[Input], withTrack: Option[Track])
+      extends Update
+      with GameDynamicsManagerMessage
   case class WalletQuantity(replyTo: ActorRef[Input]) extends Update with GameDynamicsManagerMessage
+
+  case class CurrentGameTrack(replyTo: ActorRef[Input])
+      extends Update
+      with GameDynamicsManagerMessage
+  case class CurrentTrack(track: Track) extends Input
   case class Pay(amount: Int) extends Update with GameDynamicsManagerMessage
   case class Gain(amount: Int) extends Update with GameDynamicsManagerMessage
   case class Lose(amount: Int) extends Update with GameDynamicsManagerMessage
@@ -31,17 +47,25 @@ case class DynamicsManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
     stats: GameStats = GameStats(),
-    plotter: Plotter = PrologPlotter()) {
+    plotter: Plotter = PrologPlotter(),
+    var track: Track = Track()) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
-    case NewMap(replyTo) =>
-      val track: Track = Track(plotter.plot)
+    case NewMap(replyTo, withTrack) =>
+      withTrack match {
+        case Some(t) => track = t
+        case _       => track = Track(plotter.plot)
+      }
       replyTo ! MapCreated(track)
       model ! TrackChanged(track)
       Behaviors.same
 
     case WalletQuantity(replyTo) =>
       replyTo ! CurrentWallet(stats.wallet)
+      Behaviors.same
+
+    case CurrentGameTrack(replyTo) =>
+      replyTo ! CurrentTrack(track)
       Behaviors.same
 
     case Pay(amount) =>

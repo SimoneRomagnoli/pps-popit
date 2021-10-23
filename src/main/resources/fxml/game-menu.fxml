@@ -4,20 +4,24 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="gameMenu" styleClass="gameMenu" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.GameMenuController">
-    <VBox fx:id="gameStatus" styleClass="inputBox, gameStatus">
-        <HBox fx:id="statusUpperBox">
-            <Label text="Life: "/>
-            <Label fx:id="lifeLabel"/>
-            <Pane HBox.hgrow="ALWAYS" />
-            <!--<ToggleButton fx:id="playButton" mnemonicParsing="false" styleClass="inputButton, playButton"/>-->
-        </HBox>
-        <HBox fx:id="statusLowerBox">
-            <Label text="Money: "/>
-            <Label fx:id="moneyLabel"/>
-            <Pane HBox.hgrow="ALWAYS" />
-            <!--<ToggleButton fx:id="exitButton" mnemonicParsing="false" styleClass="inputButton, exitButton" />-->
-        </HBox>
-    </VBox>
+    <HBox fx:id="gameStatus" styleClass="inputBox, gameStatus">
+        <VBox>
+            <HBox fx:id="statusUpperBox">
+                <Label text="Life: "/>
+                <Label fx:id="lifeLabel" text="100"/>
+                <Pane HBox.hgrow="ALWAYS" />
+            </HBox>
+            <HBox fx:id="statusLowerBox">
+                <Label text="Money: "/>
+                <Label fx:id="moneyLabel" text="500$"/>
+                <Pane HBox.hgrow="ALWAYS" />
+            </HBox>
+        </VBox>
+        <VBox HBox.hgrow="ALWAYS"/>
+        <VBox styleClass="">
+            <Label/>
+        </VBox>
+    </HBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">
         <HBox styleClass="towerDepotTitle">
             <Label text="Towers" />

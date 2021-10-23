@@ -81,7 +81,7 @@ class GameController(
     Rendering a gameGrid into trackPane.children
     setLayouts()
     setChildren()
-    setTransparency()
+    setTransparencies()
     setMouseHandlers()
     gameMenuController.setup()
     gameMenuController.setHighlightingTower(highlight)
@@ -108,6 +108,7 @@ class GameController(
 
   override def reset(): Unit = Platform runLater {
     resetAll()
+    setTransparencies()
   }
 
   override def render(stats: GameStats): Unit = Platform runLater {
@@ -159,7 +160,7 @@ class GameController(
       pauseController.setLayout()
     }
 
-    def setTransparency(): Unit = {
+    def setTransparencies(): Unit = {
       entitiesPane.setMouseTransparent(true)
       animationsPane.setMouseTransparent(true)
       highlightPane.setMouseTransparent(true)
@@ -196,25 +197,27 @@ class GameController(
 
     def setMouseHandlers(): Unit = {
       trackPane.onMouseExited = _ => removeEffects()
-      trackPane.onMouseMoved = MouseEvents.move(_)
-      trackPane.onMouseClicked = MouseEvents.click(_)
+      trackPane.onMouseMoved = e => if (!pauseController.isPaused) MouseEvents.move(e)
+      trackPane.onMouseClicked = e => if (!pauseController.isPaused) MouseEvents.click(e)
     }
 
-    def click(e: MouseEvent): Unit = {
-      if (!pauseController.isPaused && !gameMenuController.anyTowerSelected())
-        clickedTower(e, ask, gameMenuController.fillTowerStatus)
-      if (!pauseController.isPaused && gameMenuController.anyTowerSelected()) {
+    def click(e: MouseEvent): Unit =
+      if (towerSelected) {
         removeEffects()
-        placeTower(e, ask, send, gameMenuController)
+        gameMenuController.unselectDepot()
+        placeTower(e, ask, send, gameMenuController.getSelectedTowerType)
+      } else {
+        clickedTower(e, ask, gameMenuController.fillTowerStatus)
       }
-    }
 
     def move(e: MouseEvent): Unit =
-      if (!pauseController.isPaused && gameMenuController.anyTowerSelected())
+      if (towerSelected)
         hoverCell(e, ask, trackPane)
       else {
         e.getTarget.setCursor(Cursor.Default)
       }
+
+    private def towerSelected: Boolean = gameMenuController.anyTowerSelected()
   }
 
   override def getScenePosition: (Double, Double) = (gameBoard.getLayoutX, gameBoard.getLayoutY)

@@ -47,6 +47,6 @@ class MainMenuController(
     }
 
     def setupButtons(): Unit =
-      newGameBtn.onMouseClicked = _ => send(NewGame())
+      newGameBtn.onMouseClicked = _ => send(NewGame(None))
   }
 }

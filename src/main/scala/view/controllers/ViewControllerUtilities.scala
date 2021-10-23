@@ -5,6 +5,7 @@ import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.{ PlaceTower, Selectable, Selected, TowerIn, TowerOption }
 import model.maps.Cells.Cell
@@ -66,19 +67,16 @@ object ViewControllerUtilities {
   }
 
   /** When clicked a cell to place a new tower. */
-  def placeTower(
+  def placeTower[B <: Bullet](
       e: MouseEvent,
       ask: Message => Future[Message],
       send: Input => Unit,
-      menu: ViewGameMenuController): Unit = {
+      towerType: TowerType[B]): Unit = {
     val cell: Cell = Constants.Maps.gameGrid.specificCell(e.getX, e.getY)
     retrieve(ask(Selectable(cell))) {
       case Selected(selectable) =>
         if (selectable) {
-          Platform runLater {
-            menu.unselectDepot()
-            send(PlaceTower(cell, menu.getSelectedTowerType))
-          }
+          send(PlaceTower(cell, towerType))
         }
       case _ =>
     }

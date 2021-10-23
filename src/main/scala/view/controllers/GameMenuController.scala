@@ -11,6 +11,7 @@ import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.BoostTowerIn
+import model.managers.SpawnerMessages.{ IsRoundOver, RoundStatus }
 import model.maps.Cells.Cell
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
@@ -60,6 +61,7 @@ class GameMenuController(
     val startRound: ToggleButton,
     val pauseRound: ToggleButton,
     var currentCell: Cell = outerCell,
+    var roundOver: Boolean = true,
     var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message],
@@ -100,7 +102,7 @@ class GameMenuController(
 
   override def renderStats(stats: GameStats): Unit = {
     lifeLabel.text = stats.life.toString
-    moneyLabel.text = stats.wallet.toString
+    moneyLabel.text = stats.wallet.toString + "$"
   }
 
   override def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit = Platform runLater {
@@ -125,18 +127,21 @@ class GameMenuController(
 
   override def disableRoundButton(): Unit = startRound.disable = true
 
-  override def enableRoundButton(): Unit = startRound.disable = false
+  override def enableRoundButton(): Unit = {
+    roundOver = true
+    startRound.disable = false
+  }
 
   override def disableAllButtons(): Unit = {
-    disableRoundButton()
+    startRound.disable = true
     pauseRound.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
-    enableRoundButton()
     pauseRound.disable = false
     towerDepot.disable = false
+    if (roundOver) startRound.disable = false
   }
 
   override def clearTowerStatus(): Unit =
@@ -146,6 +151,7 @@ class GameMenuController(
   private object MenuSetters {
 
     def resetMenu(): Unit = {
+      roundOver = true
       disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
@@ -168,6 +174,7 @@ class GameMenuController(
       }
       startRound.onMouseClicked = _ => {
         send(StartNextRound())
+        roundOver = false
         disableRoundButton()
       }
     }
@@ -180,20 +187,18 @@ class GameMenuController(
         towerBox.styleClass += "towerBox"
         towerBox.setCursor(Cursor.Hand)
         towerBox.onMousePressed = _ =>
-          if (true) {
+          if (!parent.pauseController.isPaused) {
+            unselectDepot()
+            towerBox.setCursor(Cursor.ClosedHand)
             if (!towerBox.styleClass.contains("selected")) {
-              unselectDepot()
               towerBox.styleClass += "selected"
               selectedTowerType = towerValue
-            } else {
-              unselectDepot()
             }
-            towerBox.setCursor(Cursor.ClosedHand)
           }
         towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)
 
-        val towerLabel: Label = Label(towerValue.toString().toUpperCase)
-        val towerPrice: Label = Label(towerValue.cost.toString)
+        val towerLabel: Label = Label(towerValue.toString().capitalize)
+        val towerPrice: Label = Label(towerValue.cost.toString + "$")
         towerBox.children += towerLabel
         towerBox.children += new Pane { hgrow = Always }
         towerBox.children += towerPrice
@@ -220,7 +225,7 @@ class GameMenuController(
       val value: Label = Label(argument.toString)
       val emptyBox: HBox = new HBox()
       emptyBox.hgrow = Always
-      val button: ToggleButton = new ToggleButton(powerUp.cost.toString)
+      val button: ToggleButton = new ToggleButton(powerUp.cost.toString + "$")
       button.onMouseClicked = _ =>
         retrieve(ask(BoostTowerIn(currentCell, powerUp))) {
           case TowerBoosted(tower, _) =>

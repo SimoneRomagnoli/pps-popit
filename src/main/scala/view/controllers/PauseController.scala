@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ ExitGame, ResumeGame }
+import controller.Controller.ControllerMessages.{ ExitGame, RestartGame, ResumeGame }
 import controller.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
@@ -56,7 +56,10 @@ class PauseController(
 
     def setup(): Unit = {
       //saveTrack.onMouseClicked = _ => hide()
-      //retryTrack.onMouseClicked = _ => hide()
+      retryTrack.onMouseClicked = _ => {
+        send(RestartGame())
+        hide()
+      }
       resume.onMouseClicked = _ => {
         send(ResumeGame())
         parent.gameMenuController.enableAllButtons()

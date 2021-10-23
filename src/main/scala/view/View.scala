@@ -44,7 +44,7 @@ object View {
     def inMenu(menuController: ViewMainMenuController): Behavior[Render] = {
       menuController.show()
       Behaviors.receiveMessage {
-        case NewGame() =>
+        case NewGame(_) =>
           menuController.hide()
           inGame(mainController.gameController)
 

@@ -60,11 +60,11 @@ case class BalloonActor private (
   }
 
   def freeze(freezingTime: Double): Behavior[Update] = Behaviors.withTimers { timers =>
-    timers.startTimerWithFixedDelay(Unfreeze, freezingTime.milliseconds)
-    freezing()
+    timers.startTimerWithFixedDelay(Unfreeze, freezingTime.seconds)
+    frozen()
   }
 
-  def freezing(): Behavior[Update] = Behaviors.withTimers { timers =>
+  def frozen(): Behavior[Update] = Behaviors.withTimers { timers =>
     Behaviors.receiveMessage {
       case Unfreeze =>
         timers.cancel(Unfreeze)
@@ -74,6 +74,12 @@ case class BalloonActor private (
         hit(bullet, replyTo) { case _ =>
           Behaviors.same
         }
+
+      case UpdateEntity(_, _, replyTo) =>
+        replyTo ! EntityUpdated(balloon, ctx.self)
+        Behaviors.same
+
+      case _ => Behaviors.same
     }
   }
 

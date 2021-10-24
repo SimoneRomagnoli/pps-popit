@@ -1,7 +1,7 @@
 package model.entities.towers
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
+import model.entities.Entities.{ EnhancedSightAbility, Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
@@ -91,15 +91,20 @@ object Towers {
       tower.direction
     )
 
-    override def in(pos: Vector2D): Tower[B] = copy(position = pos)
+    override def in(pos: Vector2D): Tower[B] = enhanced(copy(position = pos))
 
-    override def sight(radius: Double): Tower[B] = copy(sightRange = radius)
+    override def sight(radius: Double): Tower[B] = enhanced(copy(sightRange = radius))
 
-    override def ratio(ratio: Double): Tower[B] = copy(shotRatio = ratio)
+    override def ratio(ratio: Double): Tower[B] = enhanced(copy(shotRatio = ratio))
 
-    override def damage(ammo: Bullet): Tower[B] = copy(bullet = ammo.asInstanceOf[B])
+    override def damage(ammo: Bullet): Tower[B] = enhanced(copy(bullet = ammo.asInstanceOf[B]))
 
-    override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
+    override def rotateTo(dir: Vector2D): Tower[B] = enhanced(copy(direction = dir))
+
+    private def enhanced(tower: Tower[B]): Tower[B] = this match {
+      case _: EnhancedSightAbility => new BaseTower(tower) with EnhancedSightAbility
+      case _                       => tower
+    }
 
   }
 

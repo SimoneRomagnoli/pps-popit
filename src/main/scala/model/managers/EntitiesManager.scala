@@ -124,7 +124,7 @@ case class EntityManager private (
           retrieve(model ? WalletQuantity) {
             case CurrentWallet(amount) =>
               if (amount >= towerType.cost) {
-                val tower: Tower[Bullet] = towerType.tower in cell
+                val tower: Tower[Bullet] = towerType.spawn in cell
                 model ! SpawnEntity(tower)
                 model ! Pay(towerType.cost)
               }

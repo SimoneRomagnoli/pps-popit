@@ -22,7 +22,7 @@ object Towers {
    * @tparam B
    *   is the type of the [[Bullet]] it can shoot
    */
-  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility {
+  trait Tower[+B <: Bullet] extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
 
     def bullet: B
@@ -121,7 +121,15 @@ object TowerTypes extends Enumeration {
   case object Ice extends TowerAmmo(IceBall())
   case object Cannon extends TowerAmmo(CannonBall())
 
-  case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val
+  case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val {
+
+    def spawn: Tower[Bullet] = tower.bullet match {
+      case Dart()        => Towers of Dart()
+      case CannonBall(_) => Towers of CannonBall()
+      case IceBall(_, _) => Towers of IceBall()
+    }
+  }
+
   val arrow: TowerType[Dart] = TowerType(Arrow tower, towerDefaultCost)
   val cannon: TowerType[CannonBall] = TowerType(Cannon tower, towerDefaultCost)
   val ice: TowerType[IceBall] = TowerType(Ice tower, towerDefaultCost)

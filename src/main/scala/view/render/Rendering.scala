@@ -108,7 +108,7 @@ object Rendering {
   }
 
   /** Utility method for generating a [[Rectangle]] with the specified picture path. */
-  def forInput(width: Double, height: Double, path: String): Shape = {
+  def forInput(width: Double, height: Double, path: String): ToBeRendered = Rendered {
     val rectangle: Rectangle = Rectangle(width, height)
     rectangle.setFill(new ImagePattern(new Image(path)))
     rectangle

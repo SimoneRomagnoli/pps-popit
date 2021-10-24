@@ -1,10 +1,11 @@
 package view.controllers
 
 import controller.Messages.{ Input, Message }
+import scalafx.scene.control.TitledPane
 import scalafx.scene.layout.{ BorderPane, HBox }
 import scalafxml.core.macros.sfxml
 import utils.Constants
-import view.render.Drawings.{ Drawing, MenuDrawings, Title }
+import view.render.Drawings.{ Drawing, HighScores, MenuDrawings, Title }
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -31,8 +32,7 @@ class PodiumController(
 
     def setup(): Unit = {
       Rendering.setLayout(podiumPane, Constants.Screen.width, Constants.Screen.height)
-      val logo = drawing the Title
-      Rendering a logo into titleLogo.children
+      Rendering.forInput(500, 80, "images/backgrounds/HIGHSCORES.png") into titleLogo.children
 
       addGameResults("points")
       setupButtons()

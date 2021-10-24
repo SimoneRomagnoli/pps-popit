@@ -9,7 +9,7 @@ import controller.Controller.ControllerMessages.{
   StartAnimation
 }
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.Messages.Render
+import controller.Messages.{ Input, Render }
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
@@ -23,7 +23,7 @@ import view.controllers.{
   ViewPodiumController
 }
 
-import scala.language.reflectiveCalls
+import scala.language.{ existentials, reflectiveCalls }
 
 /**
  * View of the application, fundamental in the MVC pattern. It receives [[Render]] messages from the
@@ -36,6 +36,7 @@ object View {
     case class RenderGameOver() extends Render
     case class RenderEntities(entities: List[Entity]) extends Render
     case class RenderMap(track: Track) extends Render
+    case class TrackSaved() extends Render with Input
   }
 
   object ViewActor {
@@ -85,6 +86,9 @@ object View {
           gameController draw track
           Behaviors.same
 
+        case TrackSaved() =>
+          gameController.pauseController.show()
+          Behaviors.same
         case StartAnimation(entity) =>
           gameController animate entity
           Behaviors.same

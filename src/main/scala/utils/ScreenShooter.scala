@@ -23,7 +23,7 @@ object ScreenShooter {
       )
     val bufferedImage = (new Robot).createScreenCapture(rectangle)
     // We should put the screen inside a proper directory
-    ImageIO.write(bufferedImage, "png", new File("track.png"))
+    ImageIO.write(bufferedImage, "png", new File("src/main/resources/images/tracks/track.png"))
   }
 
 }

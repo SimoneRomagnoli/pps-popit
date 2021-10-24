@@ -50,7 +50,7 @@ trait ViewGameMenuController extends GameControllerChild {
 @sfxml
 class GameMenuController(
     val gameMenu: VBox,
-    val gameStatus: VBox,
+    val gameStatus: HBox,
     val statusUpperBox: HBox,
     val lifeLabel: Label,
     val statusLowerBox: HBox,

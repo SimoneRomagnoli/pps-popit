@@ -7,13 +7,16 @@ import controller.Messages.{ Input, Render, Update }
 import controller.TrackLoader.TrackLoaderMessages.SaveActualTrack
 import model.maps.Tracks.Track
 import utils.ScreenShooter
+import view.View.ViewMessages.TrackSaved
 
 import scala.reflect.io.File
 
 object TrackLoader {
 
   object TrackLoaderMessages {
-    case class SaveActualTrack(track: Track) extends Input
+
+    case class SaveActualTrack(track: Track, posX: Double, posY: Double, replyTo: ActorRef[Input])
+        extends Input
   }
 
   // caricare da file le tracce e renderle disponibili alla pagina
@@ -35,10 +38,11 @@ object TrackLoader {
     //val tracks: Map[Int, String] = ???
 
     def default(): Behavior[Input] = Behaviors.receiveMessage {
-      case SaveActualTrack(track) =>
+      case SaveActualTrack(track, x, y, replyTo) =>
         actualTrack = track
         println(actualTrack)
-        ScreenShooter.takeScreen(0, 0)
+        ScreenShooter.takeScreen(x, y)
+        replyTo ! TrackSaved()
         Behaviors.same
       case _ =>
         Behaviors.same

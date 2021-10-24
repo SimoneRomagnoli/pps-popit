@@ -16,7 +16,7 @@ import model.managers.EntitiesMessages.PlaceTower
 import model.managers.GameDynamicsMessages.{ CurrentGameTrack, CurrentTrack, NewMap }
 import model.maps.Tracks.Track
 import utils.Futures.retrieve
-import view.View.ViewMessages.RenderMap
+import view.View.ViewMessages.{ RenderMap, TrackSaved }
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
@@ -97,11 +97,18 @@ object Controller {
         Behaviors.same
 
       case MapCreated(track) =>
-        trackLoader.get ! SaveActualTrack(track)
         view ! RenderMap(track)
 
         Behaviors.same
+
       case SaveCurrentTrack((posX, posY)) =>
+        retrieve(model.get ? CurrentGameTrack) { case CurrentTrack(track) =>
+          trackLoader.get ! SaveActualTrack(track, posX, posY, ctx.self)
+        }
+        Behaviors.same
+
+      case TrackSaved() =>
+        view ! TrackSaved()
         Behaviors.same
 
       case RestartGame() =>

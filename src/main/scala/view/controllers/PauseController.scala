@@ -1,6 +1,11 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ ExitGame, RestartGame, ResumeGame }
+import controller.Controller.ControllerMessages.{
+  ExitGame,
+  RestartGame,
+  ResumeGame,
+  SaveCurrentTrack
+}
 import controller.Messages.{ Input, Message }
 import controller.TrackLoader.TrackLoaderMessages.SaveActualTrack
 import scalafx.geometry.Pos
@@ -71,7 +76,10 @@ class PauseController(
         hide()
       }
 
-      saveTrack.onMouseClicked = _ => send(SaveCurrentTrack(parent.getScenePosition))
+      saveTrack.onMouseClicked = _ => {
+        hide()
+        send(SaveCurrentTrack(parent.getScenePosition.getX, parent.getScenePosition.getY))
+      }
     }
   }
 }

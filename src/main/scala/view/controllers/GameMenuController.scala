@@ -54,6 +54,7 @@ class GameMenuController(
     val lifeLabel: Label,
     val statusLowerBox: HBox,
     val moneyLabel: Label,
+    val roundLabel: Label,
     val towerDepot: VBox,
     val towerStatus: VBox,
     val startRoundContainer: VBox,
@@ -102,6 +103,7 @@ class GameMenuController(
   override def renderStats(stats: GameStats): Unit = {
     lifeLabel.text = stats.life.toString
     moneyLabel.text = stats.wallet.toString + "$"
+    roundLabel.text = stats.round.toString
   }
 
   override def fillTowerStatus(tower: Tower[Bullet], cell: Cell): Unit = Platform runLater {
@@ -151,6 +153,7 @@ class GameMenuController(
 
     def resetMenu(): Unit = {
       roundOver = true
+      roundLabel.text = "0"
       disableRoundButton()
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()

@@ -1,23 +1,66 @@
 \section{Requisiti}
 \subsection{Business}
-Vista la natura del sistema, non sono stati identificati requisiti business. 
+Vista la natura del sistema, non sono stati identificati requisiti business.
+
 \subsection{Funzionali}
-l'utente deve poter: 
+Il gioco si compone di un insieme di entità e regole che l'utente deve rispettare. In particolare, per quanto riguarda gli elementi di gioco:
 \begin{itemize}
-    \item scegliere la difficoltà della partita da creare: facile, media e difficile
-    \item avviare e velocizzare un round
-    \item acquistare nuove torrette e
-    \item trascinarle su una porzione di mappa libera
+    \item il percorso deve essere generato prima di una partita in maniera casuale;
+    \item i palloncini devono avanzare lungo il percorso che presenta un solo punto di ingresso ed uno solo di uscita;
+    \item ogni torretta deve possedere un campo visivo;
+    \item ogni torretta deve sparare al palloncino più avanti lungo il percorso e all'interno del proprio campo visivo;
+    \item ogni qualvolta un proiettile colpisce un palloncino, questo deve subire un danno;
+    \item al raggiungimento del punto di uscita da parte di uno o più palloncini, vengono scalati dai punti vita dell'utente un numero di vite pari alla resistenza del palloncino stesso;
 \end{itemize}
-Elementi in gioco: 
+
+I tipi di palloncino previsti sono:
 \begin{itemize}
-    \item il percorso deve essere generato prima di una partita in maniera casuale.
-    \item i palloncini devono avanzare lungo il percorso che presenta un solo punto di ingresso ed uno solo di uscita
-    \item ogni torretta deve possedere un campo visivo
-    \item ogni torretta deve sparare al palloncino più avanti lungo il percorso e all'interno del proprio campo visivo
-    \item Ogni qualvolta un proiettile colpisce un palloncino, ed è efficace, questo deve subire un danno. 
-    \item al raggiungimento del punto di uscita da parte di uno o più palloncini, vengono scalati dai punti vita dell'utente un numero di vite pari alla resistenza del palloncino stesso
-    \item devono essere previste più tipologie di palloncini, torri e proiettili
-    \item ogni torretta può subire 4 tipi di potenziamento: camo-visione, campo visivo, frequenza di fuoco e danno massimo
-    %Da finire
+    \item \textbf{Rosso} - se colpito, scoppia;
+    \item \textbf{Blu} - se colpito, genera un rosso;
+    \item \textbf{Verde} - se colpito, genera un blu;
+    \item ad ognuno dei precedenti tipi possono essere applicati uno o più potenziamenti tra i seguenti:
+    \begin{itemize}
+        \item \textbf{Rigenerazione} - il palloncino si rigenera avanzando nel percorso;
+        \item \textbf{Metallo} - il palloncino subisce danno solamente da proiettili esplosivi;
+        \item \textbf{Camouflage} - il palloncino è invisibile alle torri non dotate di un apposito potenziamento.
+    \end{itemize}
 \end{itemize}
+
+I tipi di torre previsti sono:
+\begin{itemize}
+    \item \textbf{Torre freccetta} - lancia freccette che colpiscono un singolo palloncino infliggendogli un danno minimo;
+    \item \textbf{Torre bomba} - lancia bombe che esplodono colpendo anche più palloncini infilggendo loro un danno più elevato;
+    \item \textbf{Torre ghiaccio} - lancia palle di neve che esplodono colpendo anche più palloncini infliggendo loro un danno minimo, ma riuscendo a "ghiacciare" i palloncini fermandoli per un tempo limitato sul tracciato;
+    \item ad ognuno dei precedenti tipi possono essere applicati uno o più potenziamenti tra i seguenti:
+    \begin{itemize}
+        \item \textbf{Campo visivo} - aumento del raggio visivo della torre;
+        \item \textbf{Frequenza di fuoco} - aumento della frequenza di fuoco dei proiettili della torre;
+        \item \textbf{Danno inflitto} - aumento del danno inflitto dai proiettili lanciati dalla torre;
+        \item \textbf{Camo visione} - la torre è in grado di vedere e quindi sparare ai palloncini di tipo \textit{camouflage}.
+    \end{itemize}
+\end{itemize}
+
+Infine, l'utente deve poter:
+\begin{itemize}
+    \item scegliere la difficoltà della partita da creare: facile, media e difficile;
+    \item scegliere la mappa con cui giocare tra quelle casuali generate dal gioco;
+    \item acquistare nuove torrette posizionandole su una porzione di mappa libera;
+    \item cominciare un round quando preferisce;
+    \item mettere in pausa il gioco, riprenderlo o uscirne liberamente;
+    \item durante un round, essere in grado di visualizzare lo stato delle torri acquistate cliccandoci sopra, ed, eventualmente, potenziarle dal menù laterale;
+    \item salvare una mappa per poterla rigiocare in un secondo momento;
+    \item rigiocare una mappa salvata in precedenza.
+\end{itemize}
+
+\subsection{Non Funzionali}
+Visto il genere di progetto, il numero di requisiti non funzionali individuati potrebbe essere effettivamente elevato, tuttavia è stato deciso di limitarsi durante la scelta di questi per concentrarsi sullo sviluppo di un dominio ristretto, ma espressivo e di software rivisitabile ed estendibile:
+\begin{itemize}
+    \item aumentare i tipi di palloncino;
+    \item aumentare i tipi di torre;
+    \item aumentare i potenziamenti;
+    \item inserimento di animazioni grafiche (come esplosioni);
+    \item inserimento di musica ed effetti sonori.
+\end{itemize}
+
+\subsection{Implementativi}
+Il gioco deve essere interamente sviluppato in \texttt{Scala} e deve dipendere da librerie e altri linguaggi come \textit{ScalaFX} e/o \textit{TuProlog}. Il software prodotto deve essere testato con \textit{ScalaTest} per garantire la manutenzione del dominio, la qualità e la corretta integrazione del codice dei diversi membri del team.

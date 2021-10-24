@@ -75,6 +75,7 @@ object GameLoop {
         Behaviors.same
 
       case PauseGame() =>
+        model ! PauseGame()
         paused()
 
       case GameOver() =>
@@ -99,6 +100,7 @@ object GameLoop {
 
     private def paused(): Behavior[Input] = Behaviors.receiveMessage {
       case ResumeGame() =>
+        model ! ResumeGame()
         running()
       case _ => Behaviors.same
     }

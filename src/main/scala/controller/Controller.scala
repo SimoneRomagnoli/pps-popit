@@ -29,11 +29,11 @@ object Controller {
   object ControllerMessages {
     case class NewGame(withTrack: Option[Track]) extends Input with Render
     case class ExitGame() extends Input with Render
-    case class PauseGame() extends Input
-    case class ResumeGame() extends Input
+    case class PauseGame() extends Input with SpawnManagerMessage
+    case class ResumeGame() extends Input with SpawnManagerMessage
     case class RestartGame() extends Input
     case class NewTrack() extends Input
-    case class StartNextRound() extends Input with SpawnManagerMessage
+    case class StartNextRound() extends Input with SpawnManagerMessage with EntitiesManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class CurrentWallet(amount: Int) extends Input
     case class StartAnimation(entity: Entity) extends Render

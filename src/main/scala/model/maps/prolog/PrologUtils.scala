@@ -156,5 +156,23 @@ object PrologUtils {
         case (cell, i)                        => cell.directTowards(track(i + 1))
       }
     }
+
+    def trackFromTerm(term: Term): Seq[Cell] = {
+      val track: Seq[Cell] = term
+        .castTo(classOf[Struct])
+        .listStream()
+        .map { e =>
+          val scanner: Scanner = new Scanner(e.toString).useDelimiter("\\D+")
+          GridCell(scanner.nextInt(), scanner.nextInt())
+        }
+        .toArray
+        .toList
+        .map(_.asInstanceOf[Cell])
+
+      track.zipWithIndex.map {
+        case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)
+        case (cell, i)                        => cell.directTowards(track(i + 1))
+      }
+    }
   }
 }

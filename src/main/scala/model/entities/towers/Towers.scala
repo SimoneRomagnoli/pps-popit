@@ -1,7 +1,7 @@
 package model.entities.towers
 
 import model.Positions.Vector2D
-import model.entities.Entities.{ Entity, ShotAbility, SightAbility }
+import model.entities.Entities.{ EnhancedSightAbility, Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
@@ -22,7 +22,7 @@ object Towers {
    * @tparam B
    *   is the type of the [[Bullet]] it can shoot
    */
-  trait Tower[B <: Bullet] extends Entity with SightAbility with ShotAbility {
+  trait Tower[+B <: Bullet] extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
 
     def bullet: B
@@ -91,15 +91,20 @@ object Towers {
       tower.direction
     )
 
-    override def in(pos: Vector2D): Tower[B] = copy(position = pos)
+    override def in(pos: Vector2D): Tower[B] = enhanced(copy(position = pos))
 
-    override def sight(radius: Double): Tower[B] = copy(sightRange = radius)
+    override def sight(radius: Double): Tower[B] = enhanced(copy(sightRange = radius))
 
-    override def ratio(ratio: Double): Tower[B] = copy(shotRatio = ratio)
+    override def ratio(ratio: Double): Tower[B] = enhanced(copy(shotRatio = ratio))
 
-    override def damage(ammo: Bullet): Tower[B] = copy(bullet = ammo.asInstanceOf[B])
+    override def damage(ammo: Bullet): Tower[B] = enhanced(copy(bullet = ammo.asInstanceOf[B]))
 
-    override def rotateTo(dir: Vector2D): Tower[B] = copy(direction = dir)
+    override def rotateTo(dir: Vector2D): Tower[B] = enhanced(copy(direction = dir))
+
+    private def enhanced(tower: Tower[B]): Tower[B] = this match {
+      case _: EnhancedSightAbility => new BaseTower(tower) with EnhancedSightAbility
+      case _                       => tower
+    }
 
   }
 
@@ -121,7 +126,15 @@ object TowerTypes extends Enumeration {
   case object Ice extends TowerAmmo(IceBall())
   case object Cannon extends TowerAmmo(CannonBall())
 
-  case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val
+  case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val {
+
+    def spawn: Tower[Bullet] = tower.bullet match {
+      case Dart()        => Towers of Dart()
+      case CannonBall(_) => Towers of CannonBall()
+      case IceBall(_, _) => Towers of IceBall()
+    }
+  }
+
   val arrow: TowerType[Dart] = TowerType(Arrow tower, towerDefaultCost)
   val cannon: TowerType[CannonBall] = TowerType(Cannon tower, towerDefaultCost)
   val ice: TowerType[IceBall] = TowerType(Ice tower, towerDefaultCost)

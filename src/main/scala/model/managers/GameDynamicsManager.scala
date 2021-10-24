@@ -2,7 +2,7 @@ package model.managers
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.CurrentWallet
+import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
 import controller.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
 import controller.Messages.{ GameDynamicsManagerMessage, Input, Update }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
@@ -51,6 +51,10 @@ case class DynamicsManager private (
     var track: Track = Track()) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
+    case StartNextRound() =>
+      stats.nextRound()
+      Behaviors.same
+
     case NewMap(replyTo, withTrack) =>
       withTrack match {
         case Some(t) => track = t

@@ -33,7 +33,12 @@ object Controller {
     case class ResumeGame() extends Input with SpawnManagerMessage
     case class RestartGame() extends Input
     case class NewTrack() extends Input
-    case class StartNextRound() extends Input with SpawnManagerMessage with EntitiesManagerMessage
+
+    case class StartNextRound()
+        extends Input
+        with SpawnManagerMessage
+        with GameDynamicsManagerMessage
+        with EntitiesManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class CurrentWallet(amount: Int) extends Input
     case class StartAnimation(entity: Entity) extends Render

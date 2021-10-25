@@ -115,8 +115,8 @@ class GameMenuController(
       currentCell = cell
       addToTowerStatus(Rendering a tower as single)
       addToTowerStatus("Sight Range", tower levelOf Sight, Sight)
-      addToTowerStatus("Shot Ratio", tower levelOf Ratio, Ratio)
       addToTowerStatus("Bullet Damage", tower levelOf Damage, Damage)
+      addToTowerStatus("Shot Ratio", tower levelOf Ratio, Ratio)
       addToTowerStatus(
         "Camo Vision",
         if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",

@@ -105,6 +105,17 @@
 -fx-padding: 5 10;
 }
 
+.roundCounter {
+-fx-font-weight: bold;
+-fx-font-size: 20px;
+-fx-padding: 0 20;
+-fx-margin: 0;
+-fx-border-color:#000000;
+-fx-border-width: 2;
+-fx-border-style: solid;
+-fx-border-radius: 5;
+}
+
 .trackChoiceContainer, .gameOverContainer, .pauseContainer {
 -fx-font-size: 13px;
 -fx-background-color: rgba(255, 229, 217, 0.7);

@@ -2,14 +2,14 @@ package model.managers
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.StartNextRound
+import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.Messages.{ Input, SpawnManagerMessage, Update, WithReplyTo }
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
-import model.managers.EntitiesMessages.EntitySpawned
+import model.managers.EntitiesMessages.{ DoneSpawning, EntitySpawned }
 import model.managers.SpawnerMessages.{ IsRoundOver, RoundOver, RoundStatus, SpawnTick, StartRound }
 import model.maps.Tracks.Track
 import model.spawn.Rounds.{ Round, Streak }
@@ -92,11 +92,14 @@ case class Spawner private (
           LazyList
             .iterate((h.balloonInfo.balloonLife balloon) adding h.balloonInfo.balloonTypes)(b => b)
             .map(_ on track)
+            .map(_ in track.start)
             .take(h.quantity),
           t
         )
       }
-    case _ => waiting()
+    case _ =>
+      model ! DoneSpawning()
+      waiting()
   }
 
   /** Spawns a new streak. */
@@ -121,6 +124,16 @@ case class Spawner private (
         }
         Behaviors.same
 
+      case PauseGame() =>
+        paused(streak, later)
+
+      case _ => Behaviors.same
+    }
+
+  def paused(streak: LazyList[Balloon], later: Seq[Streak]): Behavior[Update] =
+    Behaviors.receiveMessage {
+      case ResumeGame() =>
+        spawningStreak(streak, later)
       case _ => Behaviors.same
     }
 }

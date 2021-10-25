@@ -88,7 +88,7 @@ object Entities {
    */
   trait Poppable extends Entity {
     def life: Int
-    def pop(bullet: Entity): Option[Entity]
+    def pop(bullet: Bullet): Option[Entity]
   }
 
   /**

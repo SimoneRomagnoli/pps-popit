@@ -4,7 +4,7 @@ import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
-import controller.Controller.ControllerMessages.CurrentWallet
+import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
 import controller.GameLoop.GameLoopMessages.ModelUpdated
 import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
@@ -55,6 +55,7 @@ object EntitiesMessages {
 
   case class TowerIn(cell: Cell) extends Update with EntitiesManagerMessage
   case class Selectable(cell: Cell) extends Update with EntitiesManagerMessage
+  case class DoneSpawning() extends Update with EntitiesManagerMessage
 
   case class BoostTowerIn(cell: Cell, powerUp: TowerPowerUp)
       extends Update
@@ -73,6 +74,7 @@ object EntitiesManager {
 case class EntityManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
+    var spawning: Boolean = false,
     var track: Track = Track(),
     var entities: List[EntityActor] = List(),
     var messageQueue: Seq[Update] = Seq()) {
@@ -97,6 +99,7 @@ case class EntityManager private (
       Behaviors.same
 
     case TickUpdate(elapsedTime, replyTo) =>
+      checkRoundOver(replyTo)
       entities.map(_.actorRef).foreach {
         _ ! UpdateEntity(elapsedTime, entities.map(_.entity), ctx.self)
       }
@@ -108,6 +111,14 @@ case class EntityManager private (
 
     case EntitySpawned(entity, actor) =>
       entities = EntityActor(actor, entity) :: entities
+      Behaviors.same
+
+    case StartNextRound() =>
+      spawning = true
+      Behaviors.same
+
+    case DoneSpawning() =>
+      spawning = false
       Behaviors.same
 
     case WithReplyTo(msg, replyTo) =>
@@ -124,7 +135,7 @@ case class EntityManager private (
           retrieve(model ? WalletQuantity) {
             case CurrentWallet(amount) =>
               if (amount >= towerType.cost) {
-                val tower: Tower[Bullet] = towerType.tower in cell
+                val tower: Tower[Bullet] = towerType.spawn in cell
                 model ! SpawnEntity(tower)
                 model ! Pay(towerType.cost)
               }
@@ -183,7 +194,6 @@ case class EntityManager private (
       killEntity(updatedEntities, replyTo, actorRef, animations)
 
     case BalloonKilled(actorRef) =>
-      checkRoundOver(replyTo)
       if (updatedEntities.map(_.actorRef).contains(actorRef)) {
         entities = entities.filter(_.actorRef != actorRef)
         updating(replyTo, updatedEntities.filter(_.actorRef != actorRef), animations)
@@ -233,13 +243,11 @@ case class EntityManager private (
     case bullet: Bullet   => ctx.spawnAnonymous(BulletActor(bullet))
   }
 
-  def checkRoundOver(replyTo: ActorRef[Input]): Unit = entities.collect {
-    case EntityActor(_, b: Balloon) =>
-      b
-  } match {
-    case _ :: t if t.isEmpty => model ! RoundOver(replyTo)
-    case _                   =>
-  }
+  def checkRoundOver(replyTo: ActorRef[Input]): Unit =
+    if (entities.collect { case EntityActor(_, b: Balloon) =>
+        b
+      }.isEmpty && !spawning)
+      model ! RoundOver(replyTo)
 
   def enqueue(msg: Update): Behavior[Update] = {
     if (!msg.isInstanceOf[TickUpdate]) {

@@ -49,18 +49,18 @@ class SpawnManagerTest
 
   val complexRound: Round = (for {
     _ <- add((Streak(nBalloons) :- Red) @@ 50.milliseconds)
-    _ <- add((Streak(nBalloons) :- (Blue & Camo & Regenerating & Regenerating)) @@ 50.milliseconds)
-    _ <- add((Streak(nBalloons) :- (Green & Lead & Regenerating)) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Blue & Camo & Regenerating)) @@ 50.milliseconds)
+    _ <- add((Streak(nBalloons) :- (Green & Lead & Camo)) @@ 50.milliseconds)
   } yield ()).get
 
   val complexRoundBalloons: List[Balloon] =
     (LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList appendedAll
       LazyList
-        .iterate((Blue balloon) adding List(Camo, Regenerating))(b => b)
+        .iterate((Blue balloon) adding List(Regenerating, Camo))(b => b)
         .take(nBalloons)
         .toList appendedAll
       LazyList
-        .iterate((Green balloon) adding List(Lead, Camo))(b => b)
+        .iterate((Green balloon) adding List(Camo, Lead))(b => b)
         .take(nBalloons)
         .toList).reverse
 
@@ -71,12 +71,12 @@ class SpawnManagerTest
       "spawn all the balloons of a simple round" in {
         spawner ! StartRound(simpleRound)
         waitSomeTime()
-        balloonsSpawned shouldBe simpleRoundBalloons
+        balloonsSpawned.map(_ in (0.0, 0.0)) shouldBe simpleRoundBalloons
       }
       "spawn all the balloons of a more complex round" in {
         spawner ! StartRound(complexRound)
         waitSomeTime()
-        balloonsSpawned.size shouldBe complexRoundBalloons.size
+        balloonsSpawned.map(_ in (0.0, 0.0)) shouldBe complexRoundBalloons
       }
     }
   }

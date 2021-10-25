@@ -18,8 +18,8 @@
             </HBox>
         </VBox>
         <VBox HBox.hgrow="ALWAYS"/>
-        <VBox styleClass="">
-            <Label/>
+        <VBox styleClass="roundCounter">
+            <Label fx:id="roundLabel"/>
         </VBox>
     </HBox>
     <VBox fx:id="towerDepot" styleClass="inputBox, towerDepot">

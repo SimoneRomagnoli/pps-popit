@@ -81,14 +81,5 @@ object Constants {
     val gameMenuHeight: Double = height
     val gameBoardWidth: Double = width - gameMenuWidth
     val gameBoardHeight: Double = height
-
-    val loadingLabels: List[String] = List(
-      "The monkeys are teaming up...",
-      "We are building the towers...",
-      "We are blowing the balloons...",
-      "We are cleaning the roads...",
-      "We are recharging the bullets...",
-      "Your wallet is being prepared..."
-    )
   }
 }

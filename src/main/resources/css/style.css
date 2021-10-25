@@ -154,13 +154,10 @@
 }
 
 .savedTrackButton {
--fx-background-image: url('/images/tracks/track.png');
--fx-background-size: cover;
 -fx-cursor: hand;
 -fx-border-color:#000000;
 -fx-border-width: 3;
 -fx-border-style: solid;
--fx-background-size: cover;
 }
 .savedTrackButton:hover{
 -fx-border-color:#FF0000;

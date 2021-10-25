@@ -4,8 +4,8 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Controller.ControllerMessages.{
   ExitGame,
-  HighScoresPage,
   NewGame,
+  SavedTracksPage,
   StartAnimation
 }
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
@@ -35,6 +35,7 @@ object View {
     case class RenderGameOver() extends Render
     case class RenderEntities(entities: List[Entity]) extends Render
     case class RenderMap(track: Track) extends Render
+    case class RenderSavedTracks(tracks: List[Track]) extends Render
     case class TrackSaved() extends Render with Input
   }
 
@@ -59,9 +60,9 @@ object View {
           menuController.hide()
           inGame(mainController.gameController)
 
-        case HighScoresPage() =>
+        case RenderSavedTracks(tracks) =>
           menuController.hide()
-          inPodium(mainController.savedTracksController)
+          inSavedTracks(mainController.savedTracksController, tracks)
 
         case _ => Behaviors.same
       }
@@ -89,6 +90,7 @@ object View {
           gameController.showGameEntities()
           gameController.pauseController.show()
           Behaviors.same
+
         case StartAnimation(entity) =>
           gameController animate entity
           Behaviors.same
@@ -109,11 +111,13 @@ object View {
       }
     }
 
-    def inPodium(savedTrackController: ViewSavedTracksController): Behavior[Render] = {
+    def inSavedTracks(
+        savedTrackController: ViewSavedTracksController,
+        tracks: List[Track]): Behavior[Render] = {
+      savedTrackController.setup(tracks)
       savedTrackController.show()
-      Behaviors.receiveMessage { case _ =>
-        Behaviors.same
-      }
+
+      Behaviors.same
     }
   }
 

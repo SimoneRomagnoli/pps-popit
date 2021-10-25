@@ -36,6 +36,8 @@ class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecL
         List(Track(trackFromTerm(engine.solve(Term.createTerm(query)).head.getTerm("P"))))
       )
 
+  val coder: FileCoder = FileCoder()
+
   "The controller" when {
     "it has to save a list of tracks on file" should {
       "serialize and deserialize the entire list to save and retrieve it" in {
@@ -50,14 +52,22 @@ class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecL
 
     "use a FileCoder" should {
       "be able to serialize and deserialize the track list" in {
-        val coder: FileCoder = FileCoder()
-
         coder.serialize(trackList)
 
         val list: List[Track] = coder.deserialize()
 
         for (i <- trackList.indices)
           trackList(i).equals(list(i)) shouldBe true
+      }
+    }
+
+    "the json file is empty" should {
+      "return empty list without any error" in {
+        coder.serialize(List())
+
+        val list: List[Track] = coder.deserialize()
+
+        list.isEmpty shouldBe true
       }
     }
   }

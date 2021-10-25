@@ -2,25 +2,21 @@ package view.controllers
 
 import controller.Messages.{ Input, Message }
 import javafx.scene.layout.Background
-import scalafx.scene.control.{ TitledPane, Toggle, ToggleButton }
-import scalafx.scene.image.Image
-import scalafx.scene.layout.{
-  BackgroundImage,
-  BackgroundPosition,
-  BackgroundRepeat,
-  BackgroundSize,
-  BorderPane,
-  FlowPane,
-  HBox
-}
+import model.maps.Tracks.Track
+import scalafx.application.Platform
+import scalafx.scene.control.ToggleButton
+import scalafx.scene.image.{ Image, ImageView }
+import scalafx.scene.layout._
 import scalafxml.core.macros.sfxml
 import utils.Constants
-import view.render.Drawings.{ Drawing, HighScores, MenuDrawings, Title }
+import view.render.Drawings.{ Drawing, MenuDrawings }
 import view.render.Rendering
 
 import scala.concurrent.Future
 
-trait ViewSavedTracksController extends ViewController {}
+trait ViewSavedTracksController extends ViewController {
+  def setup(tracks: List[Track]): Unit
+}
 
 @sfxml
 class SavedTracksController(
@@ -30,40 +26,35 @@ class SavedTracksController(
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewSavedTracksController {
-  import savedTracksSettings._
   val drawing: Drawing = Drawing(MenuDrawings())
-  setup()
 
   override def setSend(reference: Input => Unit): Unit = send = reference
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
   override def show(): Unit = savedTracksPane.visible = true
   override def hide(): Unit = savedTracksPane.visible = false
 
+  override def setup(tracks: List[Track]): Unit = savedTracksSettings.setup(tracks)
+
   private object savedTracksSettings {
 
-    def setup(): Unit = {
+    def setup(tracks: List[Track]): Unit = {
       Rendering.setLayout(savedTracksPane, Constants.Screen.width, Constants.Screen.height)
-      Rendering.forInput(500, 80, "images/backgrounds/SAVED_TRACKS.png") into titleLogo.children
-      loadSavedTracks()
+      Platform.runLater(
+        Rendering.forInput(500, 80, "images/backgrounds/SAVED_TRACKS.png") into titleLogo.children
+      )
+      loadSavedTracks(tracks)
     }
 
-    def loadSavedTracks(): Unit =
-      for (_ <- 0 to 5) {
+    def loadSavedTracks(tracks: List[Track]): Unit =
+      for (i <- tracks.indices) {
         val btn = new ToggleButton("")
-
-        val backgroundImage: BackgroundImage = new BackgroundImage(
-          new Image("images/tracks/track.png"),
-          BackgroundRepeat.NoRepeat,
-          BackgroundRepeat.NoRepeat,
-          BackgroundPosition.Default,
-          BackgroundSize.Default
-        )
-        val background: Background = new Background(backgroundImage)
-
-        btn.setBackground(background)
+        val image: ImageView = new ImageView(new Image("images/tracks/track" + i + ".png"))
+        image.setFitWidth(Constants.Screen.width / 4.2)
+        image.setFitHeight(Constants.Screen.height / 3.2)
+        btn.setGraphic(image)
+        btn.styleClass += "savedTrackButton"
         Rendering.setLayout(btn, Constants.Screen.width / 4, Constants.Screen.height / 3)
-
-        flowPaneTracks.children += btn
+        Platform.runLater(flowPaneTracks.children += btn)
       }
   }
 }

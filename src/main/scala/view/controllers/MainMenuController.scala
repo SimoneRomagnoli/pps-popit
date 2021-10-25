@@ -1,7 +1,8 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ HighScoresPage, NewGame }
+import controller.Controller.ControllerMessages.{ NewGame, SavedTracksPage }
 import controller.Messages.{ Input, Message }
+import model.maps.Tracks.Track
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, HBox, VBox }
@@ -23,7 +24,7 @@ class MainMenuController(
     val titleLogo: HBox,
     val mainMenuButtons: VBox,
     val newGameBtn: ToggleButton,
-    val highScoresBtn: ToggleButton,
+    val savedTracksBtn: ToggleButton,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewMainMenuController {
@@ -49,7 +50,7 @@ class MainMenuController(
 
     def setupButtons(): Unit = {
       newGameBtn.onMouseClicked = _ => send(NewGame(None))
-      highScoresBtn.onMouseClicked = _ => send(HighScoresPage())
+      savedTracksBtn.onMouseClicked = _ => send(SavedTracksPage())
     }
   }
 }

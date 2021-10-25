@@ -21,7 +21,7 @@ import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import utils.Constants.Maps.outerCell
+import utils.Commons.Maps.outerCell
 import utils.Futures.retrieve
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }

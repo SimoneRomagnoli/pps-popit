@@ -7,6 +7,8 @@ import scala.language.{ implicitConversions, postfixOps }
 
 object Positions {
 
+  val defaultPosition: Vector2D = (0.0, 0.0)
+
   /**
    * A point in 2D with x and y coordinates. It can be used to represent either position and speed
    * of an [[Entity]].

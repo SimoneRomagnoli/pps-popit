@@ -4,7 +4,7 @@ import model.Positions.Vector2D
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ Direction, RIGHT }
-import utils.Constants
+import utils.Commons
 
 import scala.language.postfixOps
 
@@ -59,7 +59,7 @@ object Tracks {
   object Track {
 
     def apply(): Track =
-      TrackMap(Constants.Maps.basicTrack)
+      TrackMap(Commons.Maps.basicTrack)
 
     def apply(cells: Seq[Cell]): Track =
       TrackMap(cells)

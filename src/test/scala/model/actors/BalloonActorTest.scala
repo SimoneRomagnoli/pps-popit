@@ -7,13 +7,13 @@ import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopMessages._
 import controller.Messages.{ Input, Render, Update }
 import model.Model.ModelMessages.TickUpdate
+import model.Positions.defaultPosition
 import model.actors.BalloonActorTest.{ dummyModel, testBalloon }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.Entities.defaultPosition
 import view.View.ViewMessages._
 
 import scala.language.postfixOps

@@ -3,7 +3,7 @@ package model.maps
 import model.Positions.Vector2D
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
-import utils.Constants.Screen.cellSize
+import utils.Commons.Screen.cellSize
 
 import scala.language.postfixOps
 import scala.util.Random

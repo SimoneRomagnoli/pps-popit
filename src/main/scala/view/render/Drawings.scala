@@ -3,10 +3,10 @@ package view.render
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
+import model.entities.balloons.BalloonValues.balloonDefaultBoundary
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.Towers.BaseTower
-import utils.Constants.Entities.Balloons.balloonDefaultBoundary
 
 /**
  * Object that encapsulates all pre-loaded images of the game. It is useful as some view entities

@@ -6,14 +6,8 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.CannonBall
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import utils.Constants.Entities.Bullets.{
-  bulletDefaultBoundary,
-  bulletDefaultDamage,
-  bulletDefaultRadius,
-  bulletDefaultSpeed,
-  bulletFreezingTime
-}
-import utils.Constants.Entities.defaultPosition
+import model.Positions.defaultPosition
+import model.entities.bullets.BulletValues._
 
 import scala.language.postfixOps
 

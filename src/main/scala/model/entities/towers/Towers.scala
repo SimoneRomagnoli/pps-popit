@@ -1,13 +1,12 @@
 package model.entities.towers
 
-import model.Positions.Vector2D
+import model.Positions.{ defaultPosition, Vector2D }
 import model.entities.Entities.{ EnhancedSightAbility, Entity, ShotAbility, SightAbility }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Fire, Ice, IceBall }
 import model.entities.towers.TowerValues._
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-import utils.Constants.Entities.defaultPosition
-import utils.Constants.Screen.cellSize
+import utils.Commons.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 

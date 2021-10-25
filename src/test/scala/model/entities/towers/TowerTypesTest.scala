@@ -6,7 +6,7 @@ import model.entities.towers.TowerTypes.{ Arrow, Cannon, Ice }
 import model.entities.towers.TowerValues.{ shotRatios, sightRanges }
 import model.entities.towers.Towers.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.Entities.defaultPosition
+import model.Positions.defaultPosition
 
 import scala.language.postfixOps
 

@@ -7,7 +7,7 @@ import model.actors.BalloonMessages.{ BalloonKilled, Hit, Unfreeze }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Ice }
 import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
-import utils.Constants
+import utils.Commons
 
 import scala.concurrent.duration.DurationDouble
 
@@ -42,7 +42,7 @@ case class BalloonActor private (
   def default(): Behavior[Update] = Behaviors.receiveMessage {
     case UpdateEntity(elapsedTime, _, replyTo) =>
       balloon.position.x match {
-        case outOfBounds if outOfBounds >= Constants.View.gameBoardWidth =>
+        case outOfBounds if outOfBounds >= Commons.View.gameBoardWidth =>
           replyTo ! ExitedBalloon(balloon, ctx.self)
           Behaviors.stopped
         case _ =>

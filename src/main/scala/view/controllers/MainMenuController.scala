@@ -6,7 +6,7 @@ import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, HBox, VBox }
 import scalafxml.core.macros.sfxml
-import utils.Constants
+import utils.Commons
 import view.render.Drawings.{ Drawing, MenuDrawings, Title }
 import view.render.Rendering
 
@@ -38,7 +38,7 @@ class MainMenuController(
   private object MenuSetters {
 
     def setup(): Unit = {
-      Rendering.setLayout(mainMenuPane, Constants.Screen.width, Constants.Screen.height)
+      Rendering.setLayout(mainMenuPane, Commons.Screen.width, Commons.Screen.height)
       mainMenuButtons.setAlignment(Pos.Center)
 
       val logo = drawing the Title

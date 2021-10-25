@@ -8,8 +8,8 @@ import model.maps.Cells.Cell
 import model.maps.Tracks.{ Track, TrackMap }
 import org.scalatest.matchers.must.Matchers.be
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
-import utils.Constants.Entities.defaultPosition
+import model.Positions.defaultPosition
+import model.entities.balloons.BalloonValues._
 
 import scala.language.postfixOps
 

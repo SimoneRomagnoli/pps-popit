@@ -2,10 +2,11 @@ package model.entities.towers
 
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
+import model.entities.bullets.BulletValues.bulletDefaultDamage
 import model.entities.bullets.Bullets.{ Dart, IceBall }
 import model.entities.towers.PowerUpValues.{ boostedRatioFactor, boostedSightFactor }
 import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
-import model.entities.towers.TowerTypes.{ arrow, Arrow, Ice }
+import model.entities.towers.TowerTypes.{ Arrow, Ice }
 import model.entities.towers.TowerValues.{
   shotRatios,
   sightRanges,
@@ -15,8 +16,6 @@ import model.entities.towers.TowerValues.{
 import model.entities.towers.Towers.Tower
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import utils.Constants.Entities.Bullets.bulletDefaultDamage
-import utils.Constants.Screen.cellSize
 
 import scala.language.postfixOps
 

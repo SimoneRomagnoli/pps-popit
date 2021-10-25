@@ -6,12 +6,12 @@ import controller.Messages._
 import model.Positions.{ normalized, vector }
 import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.BulletValues.bulletSpeedFactor
 import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
 import model.managers.EntitiesMessages.{ EntitySpawned, EntityUpdated, UpdateEntity }
-import utils.Constants.Entities.Bullets.bulletSpeedFactor
 
 import scala.language.postfixOps
 

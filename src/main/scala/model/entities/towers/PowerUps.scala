@@ -1,11 +1,11 @@
 package model.entities.towers
 
 import model.entities.Entities.EnhancedSightAbility
+import model.entities.bullets.BulletValues.bulletDefaultDamage
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.PowerUpValues._
 import model.entities.towers.TowerValues.{ shotRatios, sightRanges }
 import model.entities.towers.Towers.{ BaseTower, Tower }
-import utils.Constants.Entities.Bullets.bulletDefaultDamage
 
 import scala.language.implicitConversions
 
@@ -46,6 +46,7 @@ object PowerUps {
         log(powerUp.factor, tower.sightRange / sightRanges(tower.bullet)).toInt + 1
       case powerUp @ Damage =>
         log(powerUp.factor, tower.bullet.damage / bulletDefaultDamage).toInt + 1
+      case _ => 0
     }
 
     private def log(base: Double, number: Double): Double =

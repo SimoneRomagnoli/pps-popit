@@ -3,7 +3,7 @@ package view.controllers
 import controller.Messages.{ Input, Message }
 import scalafx.scene.layout.{ BorderPane, StackPane }
 import scalafxml.core.macros.{ nested, sfxml }
-import utils.Constants
+import utils.Commons
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -51,7 +51,7 @@ class MainController(
   override def hide(): Unit = mainPane.visible = false
 
   private def setup(): Unit = {
-    Rendering.setLayout(mainPane, Constants.Screen.width, Constants.Screen.height)
+    Rendering.setLayout(mainPane, Commons.Screen.width, Commons.Screen.height)
     gameController.hide()
     menuController.show()
   }

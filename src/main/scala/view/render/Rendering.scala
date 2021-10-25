@@ -19,7 +19,7 @@ import scalafx.scene.effect.{ Blend, BlendMode }
 import scalafx.scene.layout.Region
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
-import utils.Constants.Screen.cellSize
+import utils.Commons.Screen.cellSize
 import view.render.Drawings._
 import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
 

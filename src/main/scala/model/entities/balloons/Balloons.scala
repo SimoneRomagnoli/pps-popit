@@ -1,11 +1,11 @@
 package model.entities.balloons
 
-import model.Positions.Vector2D
+import model.Positions.{ defaultPosition, Vector2D }
 import model.entities.Entities.{ Entity, Poppable, TrackFollowing }
+import model.entities.balloons.BalloonValues.{ balloonDefaultBoundary, balloonDefaultSpeed }
 import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks.Track
-import utils.Constants.Entities.Balloons.{ balloonDefaultBoundary, balloonDefaultSpeed }
-import utils.Constants.Entities.defaultPosition
+import utils.Commons.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -63,4 +63,9 @@ object Balloons {
 
   def simple(): Balloon = Simple()
   def complex(balloon: Balloon): Balloon = Complex(balloon).following(balloon)
+}
+
+object BalloonValues {
+  val balloonDefaultBoundary: (Double, Double) = (cellSize / 3, cellSize / 2)
+  val balloonDefaultSpeed: Vector2D = (1.0, 1.0)
 }

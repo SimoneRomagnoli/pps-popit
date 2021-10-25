@@ -1,12 +1,12 @@
 package model.entities.bullets
 
-import model.Positions.Vector2D
+import model.Positions.{ defaultPosition, Vector2D }
 import model.entities.Entities.{ Entity, MovementAbility }
 import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.BulletValues._
 import model.entities.towers.Towers.Tower
-import utils.Constants
-import utils.Constants.Entities.Bullets._
-import utils.Constants.Entities.defaultPosition
+import utils.Commons
+import utils.Commons.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -126,7 +126,7 @@ object Bullets {
         balloon.position.y + balloon.boundary._2 > bullet.position.y
 
     def exitedFromScreen(): Boolean =
-      bullet.position.x > Constants.Screen.width || bullet.position.x < 0 || bullet.position.y > Constants.Screen.height || bullet.position.y < 0
+      bullet.position.x > Commons.Screen.width || bullet.position.x < 0 || bullet.position.y > Commons.Screen.height || bullet.position.y < 0
   }
 
   def shoot: Bullet => Bullet = {
@@ -135,4 +135,13 @@ object Bullets {
     case _: CannonBall => CannonBall()
   }
 
+}
+
+object BulletValues {
+  val bulletDefaultBoundary: (Double, Double) = (cellSize / 4, cellSize / 4)
+  val bulletDefaultDamage: Double = 1.0
+  val bulletDefaultRadius: Double = cellSize / 4
+  val bulletFreezingTime: Double = 1.0
+  val bulletDefaultSpeed: Vector2D = (100.0, -100.0)
+  val bulletSpeedFactor: Double = 1000.0
 }

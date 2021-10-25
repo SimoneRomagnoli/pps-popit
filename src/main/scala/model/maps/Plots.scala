@@ -6,7 +6,7 @@ import model.maps.Tracks.Directions.{ Direction, LEFT, RIGHT }
 import model.maps.prolog.PrologUtils.Engines._
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.{ Solutions, Theories }
-import utils.Constants.Maps.gameGrid
+import utils.Commons.Maps.gameGrid
 
 import scala.language.postfixOps
 

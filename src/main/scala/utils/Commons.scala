@@ -1,19 +1,15 @@
 package utils
 
-import model.Positions.Vector2D
-import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
-import model.entities.towers.TowerTypes.{ Arrow, Cannon, Ice }
-import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
-import utils.Constants.Screen.{ cellSize, height, heightRatio, width, widthRatio }
-import utils.Constants.View.gameMenuWidthRatio
+import utils.Commons.Screen._
+import utils.Commons.View.gameMenuWidthRatio
 
 import java.awt.{ GraphicsEnvironment, Toolkit }
 import scala.language.postfixOps
 
-object Constants {
+object Commons {
 
   object Screen {
 
@@ -25,24 +21,6 @@ object Constants {
     val width: Double = screenWidth * 3 / 4
     val height: Double = width * heightRatio / widthRatio
     val cellSize: Double = width / widthRatio
-  }
-
-  object Entities {
-    val defaultPosition: Vector2D = (0.0, 0.0)
-
-    object Balloons {
-      val balloonDefaultBoundary: (Double, Double) = (cellSize / 3, cellSize / 2)
-      val balloonDefaultSpeed: Vector2D = (1.0, 1.0)
-    }
-
-    object Bullets {
-      val bulletDefaultBoundary: (Double, Double) = (cellSize / 4, cellSize / 4)
-      val bulletDefaultDamage: Double = 1.0
-      val bulletDefaultRadius: Double = cellSize / 4
-      val bulletFreezingTime: Double = 1.0
-      val bulletDefaultSpeed: Vector2D = (100.0, -100.0)
-      val bulletSpeedFactor: Double = 1000.0
-    }
   }
 
   object Maps {

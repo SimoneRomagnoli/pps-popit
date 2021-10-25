@@ -6,5 +6,5 @@
             xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.MainController" stylesheets="/css/style.css">
       <fx:include source="menu.fxml" fx:id="menu"/>
       <fx:include source="game.fxml" fx:id="game"/>
-      <fx:include source="podium.fxml" fx:id="podium"/>
+      <fx:include source="saved-tracks.fxml" fx:id="savedTracks"/>
 </StackPane>

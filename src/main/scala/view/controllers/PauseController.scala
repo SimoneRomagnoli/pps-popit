@@ -78,6 +78,7 @@ class PauseController(
 
       saveTrack.onMouseClicked = _ => {
         hide()
+        parent.hideGameEntities()
         send(SaveCurrentTrack(parent.getScenePosition.getX, parent.getScenePosition.getY))
       }
     }

@@ -40,6 +40,8 @@ trait ViewGameController extends ViewController {
   def gameMenuController: ViewGameMenuController
   def gameOverController: ViewGameOverController
   def getScenePosition: Bounds
+  def hideGameEntities(): Unit
+  def showGameEntities(): Unit
 }
 
 trait GameControllerChild extends ViewController {
@@ -224,4 +226,14 @@ class GameController(
 
   override def getScenePosition: (Bounds) =
     gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
+
+  override def hideGameEntities(): Unit = {
+    entitiesPane.visible = false
+    highlightPane.visible = false
+  }
+
+  override def showGameEntities(): Unit = {
+    entitiesPane.visible = true
+    highlightPane.visible = true
+  }
 }

@@ -142,20 +142,15 @@
 -fx-border-style: solid;
 }
 
-.trackButton {
+.savedTrackButton {
 -fx-background-image: url('/images/tracks/track.png');
 -fx-background-size: cover;
--fx-background-color: #FFE5D9;
 -fx-cursor: hand;
--fx-margin: 50 50 50 50;
--fx-padding: 50 50 50 50;
 -fx-border-color:#000000;
--fx-border-width: 5;
+-fx-border-width: 3;
 -fx-border-style: solid;
--fx-background-radius: 10;
--fx-font-size: 0px;
 -fx-background-size: cover;
 }
-.trackButton:hover{
+.savedTrackButton:hover{
 -fx-border-color:#FF0000;
 }

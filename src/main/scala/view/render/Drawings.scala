@@ -103,6 +103,6 @@ object Drawings {
   /** Class preloading all menu images. */
   case class MenuDrawings(
       title: ImagePattern = new ImagePattern(new Image("images/backgrounds/TITLE.png")),
-      highScores: ImagePattern = new ImagePattern(new Image("images/backgrounds/HIGHSCORES.png")))
+      highScores: ImagePattern = new ImagePattern(new Image("images/backgrounds/SAVED_TRACKS.png")))
       extends Drawings
 }

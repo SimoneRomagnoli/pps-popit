@@ -16,11 +16,10 @@ import model.stats.Stats.GameStats
 import utils.Constants.Maps.gameGrid
 import view.View.ViewMessages._
 import view.controllers.{
-  PodiumController,
   ViewGameController,
   ViewMainController,
   ViewMainMenuController,
-  ViewPodiumController
+  ViewSavedTracksController
 }
 
 import scala.language.{ existentials, reflectiveCalls }
@@ -62,7 +61,7 @@ object View {
 
         case HighScoresPage() =>
           menuController.hide()
-          inPodium(mainController.podiumController)
+          inPodium(mainController.savedTracksController)
 
         case _ => Behaviors.same
       }
@@ -87,6 +86,7 @@ object View {
           Behaviors.same
 
         case TrackSaved() =>
+          gameController.showGameEntities()
           gameController.pauseController.show()
           Behaviors.same
         case StartAnimation(entity) =>
@@ -109,8 +109,8 @@ object View {
       }
     }
 
-    def inPodium(podiumController: ViewPodiumController): Behavior[Render] = {
-      podiumController.show()
+    def inPodium(savedTrackController: ViewSavedTracksController): Behavior[Render] = {
+      savedTrackController.show()
       Behaviors.receiveMessage { case _ =>
         Behaviors.same
       }

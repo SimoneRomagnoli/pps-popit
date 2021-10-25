@@ -2,10 +2,10 @@ package model.entities.towers
 
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
+import model.entities.towers.PowerUpValues._
+import model.entities.towers.TowerValues.{ shotRatios, sightRanges }
 import model.entities.towers.Towers.{ BaseTower, Tower }
 import utils.Constants.Entities.Bullets.bulletDefaultDamage
-import utils.Constants.Entities.Towers.TowerPowerUps._
-import utils.Constants.Entities.Towers.{ towerDefaultShotRatio, towerDefaultSightRange }
 
 import scala.language.implicitConversions
 
@@ -41,9 +41,9 @@ object PowerUps {
 
     def levelOf: PowerUp => Int = {
       case powerUp @ Ratio =>
-        -log(powerUp.factor, tower.shotRatio / towerDefaultShotRatio).toInt + 1
+        -log(powerUp.factor, tower.shotRatio / shotRatios(tower.bullet)).toInt + 1
       case powerUp @ Sight =>
-        log(powerUp.factor, tower.sightRange / towerDefaultSightRange).toInt + 1
+        log(powerUp.factor, tower.sightRange / sightRanges(tower.bullet)).toInt + 1
       case powerUp @ Damage =>
         log(powerUp.factor, tower.bullet.damage / bulletDefaultDamage).toInt + 1
     }
@@ -51,4 +51,14 @@ object PowerUps {
     private def log(base: Double, number: Double): Double =
       Math.log(number) / Math.log(base)
   }
+}
+
+object PowerUpValues {
+  val boostedRatioCost: Int = 1000
+  val boostedRatioFactor: Double = 1.5
+  val boostedSightCost: Int = 300
+  val boostedSightFactor: Double = 1.3
+  val boostedDamageCost: Int = 500
+  val boostedDamageFactor: Double = 2.0
+  val boostedCamoCost: Int = 2000
 }

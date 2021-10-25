@@ -5,10 +5,10 @@ import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.bullets.Bullets.Dart
 import model.entities.towers.TowerTypes.Arrow
+import model.entities.towers.TowerValues.towerDefaultShotRatio
 import model.entities.towers.Towers.Tower
 import model.entities.towers.TowersTest._
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.Entities.Towers.towerDefaultShotRatio
 
 import scala.language.postfixOps
 

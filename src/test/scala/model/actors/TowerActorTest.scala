@@ -14,7 +14,6 @@ import model.actors.TestMessages.{ BalloonMoved, Step, UpdatePosition }
 import model.actors.TowerActorTest._
 import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.Entities.Towers.towerDefaultDirection
 
 import scala.language.postfixOps
 

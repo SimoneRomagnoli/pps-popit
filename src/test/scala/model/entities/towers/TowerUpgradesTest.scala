@@ -3,56 +3,63 @@ package model.entities.towers
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.{ Dart, IceBall }
+import model.entities.towers.PowerUpValues.{ boostedRatioFactor, boostedSightFactor }
 import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
-import model.entities.towers.TowerTypes.{ Arrow, Ice }
+import model.entities.towers.TowerTypes.{ arrow, Arrow, Ice }
+import model.entities.towers.TowerValues.{
+  shotRatios,
+  sightRanges,
+  towerDefaultShotRatio,
+  towerDefaultSightRange
+}
 import model.entities.towers.Towers.Tower
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import utils.Constants.Entities.Bullets.bulletDefaultDamage
+import utils.Constants.Screen.cellSize
 
 import scala.language.postfixOps
 
 class TowerUpgradesTest extends AnyWordSpec with Matchers {
 
-  val boostedSight: Double = 2.0
-  val boostedRatio: Double = 1.0
-  val sightRange: Double = 1.0
-  val shotRatio: Double = 2.0
+  val arrowTower: Tower[Dart] =
+    (Arrow tower) has values sight towerDefaultSightRange ratio towerDefaultShotRatio
+
   val defaultLevel: Int = 1
   val nextLevel: Int = defaultLevel + 1
 
   "According to the expected system behavior" when {
     "the tower ratio is boosted" should {
       "change the shooting frequency" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) has values sight sightRange ratio shotRatio
-        (arrowTower boost Ratio).shotRatio shouldBe boostedRatio
-        (arrowTower sightRange) shouldBe sightRange
+
+        (arrowTower boost Ratio).shotRatio shouldBe shotRatios(
+          arrowTower.bullet
+        ) * (1 / boostedRatioFactor)
+        (arrowTower sightRange) shouldBe sightRanges(arrowTower.bullet)
       }
     }
     "the tower sight is boosted" should {
       "change the sight range" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) has values sight sightRange ratio shotRatio
-        (arrowTower boost Sight).sightRange shouldBe boostedSight
-        (arrowTower shotRatio) shouldBe shotRatio
+        (arrowTower boost Sight).sightRange shouldBe sightRanges(
+          arrowTower.bullet
+        ) * boostedSightFactor
+        (arrowTower shotRatio) shouldBe shotRatios(arrowTower.bullet)
       }
     }
     "the tower is completely boosted" should {
       "have the boosted values of sight and ratio" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) has values sight sightRange ratio shotRatio
         val boostedTower: Tower[Dart] = arrowTower boost Sight boost Ratio
-        (boostedTower sightRange) shouldBe boostedSight
-        (boostedTower shotRatio) shouldBe boostedRatio
+        (boostedTower sightRange) shouldBe sightRanges(arrowTower.bullet) * boostedSightFactor
+        (boostedTower shotRatio) shouldBe shotRatios(arrowTower.bullet) * (1 / boostedRatioFactor)
       }
     }
     "the tower get the ratio boost" should {
       "detect a balloon that can't see before" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) has values sight sightRange ratio shotRatio
-
-        val balloon: Balloon = Simple(position = (1.5, 1.5), boundary = (1.0, 1.0))
+        val balloon: Balloon =
+          Simple(
+            position = (arrowTower.sightRange + 2, arrowTower.position.y),
+            boundary = (1.0, 1.0)
+          )
         (arrowTower canSee balloon) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Sight
         (boostedTower canSee balloon) shouldBe true
@@ -60,9 +67,6 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
     }
     "the tower get the damage boost" should {
       "increment the bullet damage value" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) has values sight sightRange ratio shotRatio
-
         arrowTower.bullet.damage shouldBe bulletDefaultDamage
         val boostedTower: Tower[Dart] = arrowTower boost Damage
         boostedTower.bullet.isInstanceOf[Dart] shouldBe true
@@ -71,9 +75,6 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
     }
     "a normal tower see a camo balloon" should {
       "not detect it, unless if is boosted" in {
-        val arrowTower: Tower[Dart] =
-          (Arrow tower) has values sight sightRange ratio shotRatio
-
         val camo: Balloon = CamoBalloon(Simple(position = (1.0, 1.0), boundary = (1.0, 1.0)))
         (arrowTower canSee camo) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Camo

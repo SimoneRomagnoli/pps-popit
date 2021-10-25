@@ -3,9 +3,9 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import model.entities.towers.TowerTypes.{ Arrow, Cannon, Ice }
+import model.entities.towers.TowerValues.{ shotRatios, sightRanges }
 import model.entities.towers.Towers.Tower
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Constants.Entities.Towers.{ towerDefaultShotRatio, towerDefaultSightRange }
 import utils.Constants.Entities.defaultPosition
 
 import scala.language.postfixOps
@@ -18,8 +18,8 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         val arrowTower: Tower[Dart] = Arrow tower
 
         (arrowTower position) shouldBe defaultPosition
-        (arrowTower sightRange) shouldBe towerDefaultSightRange
-        (arrowTower shotRatio) shouldBe towerDefaultShotRatio
+        (arrowTower sightRange) shouldBe sightRanges(Dart())
+        (arrowTower shotRatio) shouldBe shotRatios(Dart())
 
         arrowTower.isInstanceOf[Tower[Dart]] shouldBe true
 
@@ -31,8 +31,8 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         val cannonTower: Tower[CannonBall] = Cannon tower
 
         (cannonTower position) shouldBe defaultPosition
-        (cannonTower sightRange) shouldBe towerDefaultSightRange
-        (cannonTower shotRatio) shouldBe towerDefaultShotRatio
+        (cannonTower sightRange) shouldBe sightRanges(CannonBall())
+        (cannonTower shotRatio) shouldBe shotRatios(CannonBall())
 
         cannonTower.isInstanceOf[Tower[CannonBall]] shouldBe true
 
@@ -44,8 +44,8 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         val iceTower: Tower[IceBall] = Ice tower
 
         (iceTower position) shouldBe defaultPosition
-        (iceTower sightRange) shouldBe towerDefaultSightRange
-        (iceTower shotRatio) shouldBe towerDefaultShotRatio
+        (iceTower sightRange) shouldBe sightRanges(IceBall())
+        (iceTower shotRatio) shouldBe shotRatios(IceBall())
 
         iceTower.isInstanceOf[Tower[IceBall]] shouldBe true
 

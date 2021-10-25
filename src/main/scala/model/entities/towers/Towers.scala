@@ -2,12 +2,12 @@ package model.entities.towers
 
 import model.Positions.Vector2D
 import model.entities.Entities.{ EnhancedSightAbility, Entity, ShotAbility, SightAbility }
-import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall }
+import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Fire, Ice, IceBall }
+import model.entities.towers.TowerValues._
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-import utils.Constants.Entities.Towers.TowerTypes.towerDefaultCost
-import utils.Constants.Entities.Towers._
 import utils.Constants.Entities.defaultPosition
+import utils.Constants.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -54,7 +54,7 @@ object Towers {
   }
 
   def of[B <: Bullet](bullet: B)(implicit towerBuilder: TowerBuilder[B]): Tower[B] =
-    towerBuilder.build(bullet)
+    towerBuilder.build(bullet).sight(sightRanges(bullet)).ratio(shotRatios(bullet))
 
   /**
    * A [[BaseTower]] is a default tower instance
@@ -77,18 +77,18 @@ object Towers {
       override val bullet: B,
       override val boundary: (Double, Double) = towerDefaultBoundary,
       override val position: Vector2D = defaultPosition,
+      override val direction: Vector2D = towerDefaultDirection,
       override val sightRange: Double = towerDefaultSightRange,
-      override val shotRatio: Double = towerDefaultShotRatio,
-      override val direction: Vector2D = towerDefaultDirection)
+      override val shotRatio: Double = towerDefaultShotRatio)
       extends Tower[B] {
 
     def this(tower: Tower[B]) = this(
       tower.bullet,
       tower.boundary,
       tower.position,
+      tower.direction,
       tower.sightRange,
-      tower.shotRatio,
-      tower.direction
+      tower.shotRatio
     )
 
     override def in(pos: Vector2D): Tower[B] = enhanced(copy(position = pos))
@@ -135,7 +135,33 @@ object TowerTypes extends Enumeration {
     }
   }
 
-  val arrow: TowerType[Dart] = TowerType(Arrow tower, towerDefaultCost)
-  val cannon: TowerType[CannonBall] = TowerType(Cannon tower, towerDefaultCost)
-  val ice: TowerType[IceBall] = TowerType(Ice tower, towerDefaultCost)
+  val arrow: TowerType[Dart] = TowerType(Arrow tower, costs(Arrow.bullet))
+  val cannon: TowerType[CannonBall] = TowerType(Cannon tower, costs(Cannon.bullet))
+  val ice: TowerType[IceBall] = TowerType(Ice tower, costs(Ice.bullet))
+}
+
+object TowerValues {
+
+  val costs: Bullet => Int = {
+    case _: Ice  => 5000
+    case _: Fire => 2000
+    case _       => 200
+  }
+
+  val sightRanges: Bullet => Double = {
+    case _: Ice  => cellSize
+    case _: Fire => cellSize * 5 / 4
+    case _       => cellSize * 3 / 2
+  }
+
+  val shotRatios: Bullet => Double = {
+    case _: Ice  => 3.0
+    case _: Fire => 2.0
+    case _       => 0.5
+  }
+
+  val towerDefaultShotRatio: Double = 0.5
+  val towerDefaultSightRange: Double = cellSize * 3 / 2
+  val towerDefaultBoundary: (Double, Double) = (cellSize / 2, cellSize / 2)
+  val towerDefaultDirection: Vector2D = (0.0, 0.0)
 }

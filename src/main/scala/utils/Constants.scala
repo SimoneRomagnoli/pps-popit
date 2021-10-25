@@ -35,30 +35,6 @@ object Constants {
       val balloonDefaultSpeed: Vector2D = (1.0, 1.0)
     }
 
-    object Towers {
-      val towerDefaultSightRange: Double = cellSize * 3 / 2
-      val towerDefaultShotRatio: Double = 0.5
-      val towerDefaultBoundary: (Double, Double) = (cellSize / 2, cellSize / 2)
-      val towerDefaultDirection: Vector2D = (0.0, 0.0)
-
-      object TowerTypes {
-        val towerDefaultCost: Int = 200
-        val arrow: Tower[Dart] = Arrow tower
-        val cannon: Tower[CannonBall] = Cannon tower
-        val ice: Tower[IceBall] = Ice tower
-      }
-
-      object TowerPowerUps {
-        val boostedRatioCost: Int = 200
-        val boostedRatioFactor: Double = 2.0
-        val boostedSightCost: Int = 200
-        val boostedSightFactor: Double = 2.0
-        val boostedCamoCost: Int = 200
-        val boostedDamageCost: Int = 200
-        val boostedDamageFactor: Double = 2.0
-      }
-    }
-
     object Bullets {
       val bulletDefaultBoundary: (Double, Double) = (cellSize / 4, cellSize / 4)
       val bulletDefaultDamage: Double = 1.0

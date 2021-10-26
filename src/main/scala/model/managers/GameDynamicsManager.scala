@@ -60,7 +60,7 @@ case class DynamicsManager private (
     case NewMap(replyTo, withTrack) =>
       withTrack match {
         case Some(t) => track = t
-        case _       => track = Track(plotter.plot)
+        case _       => track = Track(plotter.plot(settings.difficulty))
       }
       replyTo ! MapCreated(track)
       model ! TrackChanged(track)

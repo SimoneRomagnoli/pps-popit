@@ -20,7 +20,7 @@ object Settings {
    * Wrapper for all settings values. The controller should have an instance of this class and
    * should pass it to the model when is created.
    */
-  case class Settings(difficulty: Difficulty = Normal) {
+  case class Settings(difficulty: Difficulty = Hard) {
     def changeDifficulty(d: Difficulty): Settings = Settings(d)
   }
 }

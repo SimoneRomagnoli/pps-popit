@@ -4,11 +4,15 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartAnimation }
 import Messages.{ Input, Render, Update }
+import controller.interaction.GameLoop.GameLoopMessages._
+import controller.interaction.GameLoop.Time._
 import model.Model.ModelMessages.TickUpdate
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import view.View.ViewMessages.{ RenderEntities, RenderGameOver, RenderStats }
+
+import scala.concurrent.duration.DurationDouble
 
 /**
  * Game Loop of the application; it represents the flow of a game. It sends [[Update]] messages to a

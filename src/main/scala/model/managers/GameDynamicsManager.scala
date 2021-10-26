@@ -3,8 +3,9 @@ package model.managers
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
-import controller.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
-import controller.Messages.{ GameDynamicsManagerMessage, Input, Update }
+import controller.interaction.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
+import controller.interaction.Messages.{ GameDynamicsManagerMessage, Input, Update }
+import controller.settings.Settings.Settings
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.managers.GameDynamicsMessages.{
   CurrentGameTrack,
@@ -37,15 +38,16 @@ object GameDynamicsMessages {
 
 object GameDynamicsManager {
 
-  def apply(model: ActorRef[Update]): Behavior[Update] =
+  def apply(model: ActorRef[Update], settings: Settings): Behavior[Update] =
     Behaviors.setup { ctx =>
-      DynamicsManager(ctx, model).default()
+      DynamicsManager(ctx, model, settings).default()
     }
 }
 
 case class DynamicsManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
+    settings: Settings,
     stats: GameStats = GameStats(),
     plotter: Plotter = PrologPlotter(),
     var track: Track = Track()) {
@@ -58,7 +60,7 @@ case class DynamicsManager private (
     case NewMap(replyTo, withTrack) =>
       withTrack match {
         case Some(t) => track = t
-        case _       => track = Track(plotter.plot)
+        case _       => track = Track(plotter.plot(settings.difficulty))
       }
       replyTo ! MapCreated(track)
       model ! TrackChanged(track)

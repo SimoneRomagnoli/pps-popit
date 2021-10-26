@@ -3,8 +3,8 @@ package model.managers
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
-import controller.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.Messages.{ Input, SpawnManagerMessage, Update, WithReplyTo }
+import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
+import controller.interaction.Messages.{ Input, SpawnManagerMessage, Update, WithReplyTo }
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon

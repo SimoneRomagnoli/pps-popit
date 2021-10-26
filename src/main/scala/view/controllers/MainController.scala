@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Messages.{ Input, Message }
+import controller.interaction.Messages.{ Input, Message }
 import scalafx.scene.layout.{ BorderPane, StackPane }
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Commons

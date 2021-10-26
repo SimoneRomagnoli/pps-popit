@@ -6,8 +6,7 @@ import controller.Controller.ControllerMessages.{
   ResumeGame,
   SaveCurrentTrack
 }
-import controller.Messages.{ Input, Message }
-import controller.TrackLoader.TrackLoaderMessages.SaveActualTrack
+import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ HBox, VBox }
@@ -64,6 +63,7 @@ class PauseController(
       //saveTrack.onMouseClicked = _ => hide()
       retryTrack.onMouseClicked = _ => {
         send(RestartGame())
+        parent.gameMenuController.clearTowerStatus()
         hide()
       }
       resume.onMouseClicked = _ => {

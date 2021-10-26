@@ -2,25 +2,15 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{
-  ExitGame,
-  NewGame,
-  SavedTracksPage,
-  StartAnimation
-}
-import controller.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.Messages.{ Input, Render }
+import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
+import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
+import controller.interaction.Messages.{ Input, Render }
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import utils.Commons.Maps.gameGrid
 import view.View.ViewMessages._
-import view.controllers.{
-  ViewGameController,
-  ViewMainController,
-  ViewMainMenuController,
-  ViewSavedTracksController
-}
+import view.controllers._
 
 import scala.language.{ existentials, reflectiveCalls }
 

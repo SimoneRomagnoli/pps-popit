@@ -1,7 +1,7 @@
 package utils
 
 import controller.Controller.ControllerMessages.ActorInteraction
-import controller.Messages.Message
+import controller.interaction.Messages.Message
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

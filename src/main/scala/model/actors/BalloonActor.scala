@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages.Update
+import controller.interaction.Messages.Update
 import model.actors.BalloonMessages.{ BalloonKilled, Hit, Unfreeze }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Ice }

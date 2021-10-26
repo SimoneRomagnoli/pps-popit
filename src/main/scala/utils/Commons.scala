@@ -36,4 +36,8 @@ object Commons {
     val gameBoardWidth: Double = width - gameMenuWidth
     val gameBoardHeight: Double = height
   }
+
+  object Game {
+    val balloonHitGain: Int = 10
+  }
 }

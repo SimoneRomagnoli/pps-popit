@@ -1,5 +1,6 @@
 package model.maps
 
+import controller.settings.Settings.Difficulty
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ Direction, LEFT, RIGHT }
@@ -23,7 +24,7 @@ object Plots {
     def startingFrom(newStart: Direction): Plotter
     def end: Direction
     def endingAt(newEnd: Direction): Plotter
-    def plot: Seq[Cell]
+    def plot(difficulty: Difficulty): Seq[Cell]
   }
 
   /**
@@ -48,9 +49,14 @@ object Plots {
 
     override def endingAt(newEnd: Direction): Plotter = PrologPlotter(grid, start, newEnd)
 
-    override def plot: Seq[Cell] = Solutions.trackFromPrologSolution(engine.solve(query).head)
+    override def plot(difficulty: Difficulty): Seq[Cell] =
+      Solutions.trackFromPrologSolution(engine.solve(query(difficulty)).head)
 
-    private def query: String =
-      PrologQuery(from = grid randomInBorder start, to = grid randomInBorder end)
+    private def query(difficulty: Difficulty): String =
+      PrologQuery(
+        from = grid randomInBorder start,
+        to = grid randomInBorder end,
+        difficulty = difficulty
+      )
   }
 }

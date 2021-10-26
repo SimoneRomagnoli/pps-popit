@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Messages.{ Input, Message }
+import controller.interaction.Messages.{ Input, Message }
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent

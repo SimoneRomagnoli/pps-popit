@@ -1,7 +1,7 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages.RetrieveAndLoadTrack
-import controller.Messages.{ Input, Message }
+import controller.interaction.Messages.{ Input, Message }
 import model.maps.Tracks.Track
 import scalafx.application.Platform
 import scalafx.scene.control.ToggleButton

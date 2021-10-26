@@ -1,14 +1,15 @@
 package model.actors
 
-import akka.actor.typed.{ActorRef, Behavior}
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import controller.Messages.{EntitiesManagerMessage, Update}
-import model.actors.BalloonMessages.{BalloonKilled, Hit, Unfreeze}
+import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import model.actors.BalloonMessages.{ BalloonKilled, Hit, Unfreeze }
+import controller.interaction.Messages.{ EntitiesManagerMessage, Update }
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{Bullet, Ice}
-import model.managers.EntitiesMessages.{EntityUpdated, ExitedBalloon, UpdateEntity}
+import model.entities.bullets.Bullets.{ Bullet, Ice }
+import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
 import model.managers.GameDynamicsMessages.Gain
 import utils.Commons
+import utils.Commons.Game.balloonHitGain
 
 import scala.concurrent.duration.DurationDouble
 
@@ -88,11 +89,11 @@ case class BalloonActor private (
       bulletHandler: PartialFunction[Bullet, Behavior[Update]]): Behavior[Update] =
     balloon.pop(bullet) match {
       case None =>
-        replyTo ! Gain(10)
+        replyTo ! Gain(balloonHitGain)
         replyTo ! BalloonKilled(ctx.self)
         Behaviors.stopped
       case Some(b) =>
-        if (b != balloon) replyTo ! Gain(10)
+        if (b != balloon) replyTo ! Gain(balloonHitGain)
         balloon = b
         bulletHandler(bullet)
     }

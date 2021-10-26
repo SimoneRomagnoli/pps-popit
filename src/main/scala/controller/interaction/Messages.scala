@@ -1,4 +1,4 @@
-package controller
+package controller.interaction
 
 import akka.actor.typed.ActorRef
 

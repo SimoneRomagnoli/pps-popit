@@ -1,6 +1,7 @@
 package model.maps.prolog
 
 import alice.tuprolog.{ Prolog, SolveInfo, Struct, Term, Theory }
+import controller.settings.Settings.Difficulty
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.RIGHT
@@ -120,16 +121,16 @@ object PrologUtils {
    */
   object Queries {
 
-    def prologCell(cell: Cell): String =
-      cell.toString.replace("GridCell", "c").replace(",NONE", "")
+    private def prologCell(cell: Cell): String =
+      "c(" + cell.x + "," + cell.y + ")"
 
-    def baseQuery(from: Cell, to: Cell): String =
-      "path(" + prologCell(from) + ", " + prologCell(to) + ", P)."
+    private def baseQuery(from: Cell, to: Cell, difficulty: Difficulty): String =
+      "path(" + prologCell(from) + ", " + prologCell(to) + ", " + difficulty.level + ", P)."
 
     object PrologQuery {
 
-      def apply(from: Cell, to: Cell): String =
-        baseQuery(from, to)
+      def apply(from: Cell, to: Cell, difficulty: Difficulty): String =
+        baseQuery(from, to, difficulty)
     }
   }
 

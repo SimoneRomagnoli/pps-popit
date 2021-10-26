@@ -3,7 +3,8 @@ package controller
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import alice.tuprolog.Term
 import controller.TrackSerializationTest.{ engine, listSize, query }
-import controller.files.FileCoder
+import controller.inout.FileCoder
+import controller.settings.Settings.Normal
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ LEFT, RIGHT }
 import model.maps.Tracks.Track
@@ -19,7 +20,9 @@ import scala.language.{ implicitConversions, postfixOps }
 object TrackSerializationTest {
   val grid: Grid = Grid(16, 8)
   val engine: Engine = Engine(Theories from grid)
-  val query: String = PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT)
+
+  val query: String =
+    PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT, Normal)
 
   val listSize: Int = 6
 

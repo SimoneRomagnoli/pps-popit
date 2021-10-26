@@ -5,6 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
 import controller.interaction.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
 import controller.interaction.Messages.{ GameDynamicsManagerMessage, Input, Update }
+import controller.settings.Settings.Settings
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.managers.GameDynamicsMessages.{
   CurrentGameTrack,
@@ -37,15 +38,16 @@ object GameDynamicsMessages {
 
 object GameDynamicsManager {
 
-  def apply(model: ActorRef[Update]): Behavior[Update] =
+  def apply(model: ActorRef[Update], settings: Settings): Behavior[Update] =
     Behaviors.setup { ctx =>
-      DynamicsManager(ctx, model).default()
+      DynamicsManager(ctx, model, settings).default()
     }
 }
 
 case class DynamicsManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
+    settings: Settings,
     stats: GameStats = GameStats(),
     plotter: Plotter = PrologPlotter(),
     var track: Track = Track()) {

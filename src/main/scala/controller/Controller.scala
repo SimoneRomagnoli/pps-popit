@@ -8,6 +8,7 @@ import controller.Controller.ControllerMessages._
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.interaction.Messages._
+import controller.settings.Settings.Settings
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower
@@ -70,6 +71,7 @@ object Controller {
   case class ControllerActor private (
       ctx: ActorContext[Input],
       view: ActorRef[Render],
+      var settings: Settings = Settings(),
       var model: Option[ActorRef[Update]] = None,
       var gameLoop: Option[ActorRef[Input]] = None) {
     implicit val timeout: Timeout = Timeout(1.seconds)
@@ -79,7 +81,7 @@ object Controller {
     def default(): Behavior[Input] = Behaviors.receiveMessage {
       case NewGame(withTrack) =>
         view ! NewGame(withTrack)
-        model = Some(ctx.spawnAnonymous(ModelActor()))
+        model = Some(ctx.spawnAnonymous(ModelActor(settings)))
         gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
         model.get ! NewMap(ctx.self, withTrack)
         gameLoop.get ! Start()

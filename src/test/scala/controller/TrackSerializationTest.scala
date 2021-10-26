@@ -16,6 +16,7 @@ import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 import model.maps.prolog.PrologUtils.Theories
 import org.scalatest.wordspec.AnyWordSpecLike
 
+import java.nio.file.{ Files, Paths }
 import scala.language.{ implicitConversions, postfixOps }
 
 object TrackSerializationTest {
@@ -37,6 +38,7 @@ class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecL
       )
 
   val coder: FileCoder = FileCoder()
+  val emptyList: List[Track] = List()
 
   "The controller" when {
     "it has to save a list of tracks on file" should {
@@ -61,15 +63,37 @@ class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecL
       }
     }
 
-    "the json file is empty" should {
-      "return empty list without any error" in {
-        coder.serialize(List())
+    "the json file contains an empty list of tracks" should {
+      "return an empty list" in {
+        coder.serialize(emptyList)
 
         val list: List[Track] = coder.deserialize()
 
         list.isEmpty shouldBe true
       }
     }
+
+    "try to save a track and the file does not exist" should {
+      "create a new file and save it without any error" in {
+        Files.deleteIfExists(Paths.get(coder.path))
+
+        coder.serialize(emptyList)
+
+        Files.exists(Paths.get(coder.path)) shouldBe true
+      }
+    }
+
+    "try to load the tracks list and the file does not exist" should {
+      "return an empty list of tracks" in {
+        Files.deleteIfExists(Paths.get(coder.path))
+
+        val list: List[Track] = coder.deserialize()
+
+        Files.exists(Paths.get(coder.path)) shouldBe true
+        list.isEmpty shouldBe true
+      }
+    }
+
   }
 
 }

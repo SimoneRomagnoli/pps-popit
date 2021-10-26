@@ -58,6 +58,7 @@ class PauseController(
       //saveTrack.onMouseClicked = _ => hide()
       retryTrack.onMouseClicked = _ => {
         send(RestartGame())
+        parent.gameMenuController.clearTowerStatus()
         hide()
       }
       resume.onMouseClicked = _ => {

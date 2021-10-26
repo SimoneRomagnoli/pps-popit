@@ -128,10 +128,11 @@ class GameMenuController(
 
   override def disableRoundButton(): Unit = startRound.disable = true
 
-  override def enableRoundButton(): Unit = {
-    roundOver = true
-    startRound.disable = false
-  }
+  override def enableRoundButton(): Unit =
+    if (!roundOver) {
+      roundOver = true
+      startRound.disable = false
+    }
 
   override def disableAllButtons(): Unit = {
     startRound.disable = true

@@ -203,8 +203,7 @@ case class EntityManager private (
 
     case BalloonHit(bullet, balloons) =>
       entities.filter(e => balloons.contains(e.entity)).foreach { balloon =>
-        model ! Gain(10)
-        balloon.actorRef ! Hit(bullet, ctx.self)
+        balloon.actorRef ! Hit(bullet, model)
       }
       Behaviors.same
 

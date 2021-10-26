@@ -3,7 +3,7 @@ package model.actors
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Messages._
+import controller.interaction.Messages._
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.TowerTypes.Arrow

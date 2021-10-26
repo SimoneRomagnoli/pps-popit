@@ -3,8 +3,8 @@ package model.managers
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
-import controller.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
-import controller.Messages.{ GameDynamicsManagerMessage, Input, Update }
+import controller.interaction.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
+import controller.interaction.Messages.{ GameDynamicsManagerMessage, Input, Update }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.managers.GameDynamicsMessages.{
   CurrentGameTrack,

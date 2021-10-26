@@ -3,9 +3,9 @@ package model.actors
 import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.GameLoop.GameLoopActor
-import controller.GameLoop.GameLoopMessages._
-import controller.Messages.{ Input, Render, Update }
+import controller.interaction.GameLoop.GameLoopActor
+import controller.interaction.GameLoop.GameLoopMessages._
+import controller.interaction.Messages.{ Input, Render, Update }
 import model.Model.ModelMessages.TickUpdate
 import model.Positions.defaultPosition
 import model.actors.BalloonActorTest.{ dummyModel, testBalloon }

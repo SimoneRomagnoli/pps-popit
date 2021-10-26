@@ -1,14 +1,8 @@
-package controller.files
+package controller.io
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.files.FileCoders.{
-  defaultPath,
-  trackDecoder,
-  trackEncoder,
-  CoderBuilder,
-  RichCoder
-}
+import controller.io.FileCoders.{ defaultPath, trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
 import model.maps.Tracks.Track

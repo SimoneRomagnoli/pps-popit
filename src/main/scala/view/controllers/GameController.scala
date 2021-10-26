@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Messages.{ Input, Message }
+import controller.interaction.Messages.{ Input, Message }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower

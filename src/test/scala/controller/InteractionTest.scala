@@ -1,13 +1,13 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
-import akka.actor.typed.scaladsl.AskPattern.{Askable, schedulerFromActorSystem}
+import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.typed.scaladsl.AskPattern.{ schedulerFromActorSystem, Askable }
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerActor
-import controller.Controller.ControllerMessages.{ActorInteraction, NewGame}
-import controller.GameLoop.GameLoopMessages.Start
-import controller.Messages.{Input, Render, Update, WithReplyTo}
+import controller.Controller.ControllerMessages.{ ActorInteraction, NewGame }
+import controller.interaction.GameLoop.GameLoopMessages.Start
+import controller.interaction.Messages.{ Input, Render, Update, WithReplyTo }
 import model.managers.GameDynamicsMessages.WalletQuantity
 import org.scalatest.wordspec.AnyWordSpecLike
 

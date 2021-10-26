@@ -3,7 +3,7 @@ package model.actors
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Messages.Update
+import controller.interaction.Messages.Update
 import model.actors.SpawnManagerTest.{ balloonsSpawned, dummyModel, waitSomeTime }
 import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives._

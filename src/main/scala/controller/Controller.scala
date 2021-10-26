@@ -5,9 +5,9 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages._
-import controller.GameLoop.GameLoopActor
-import controller.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
-import controller.Messages._
+import controller.interaction.GameLoop.GameLoopActor
+import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
+import controller.interaction.Messages._
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower

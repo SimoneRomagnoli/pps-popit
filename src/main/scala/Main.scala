@@ -4,7 +4,7 @@ import akka.actor.typed.{ ActorRef, ActorSystem, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
-import controller.Messages._
+import controller.interaction.Messages._
 import javafx.scene.layout.StackPane
 import scalafx.Includes._
 import scalafx.application.JFXApp3

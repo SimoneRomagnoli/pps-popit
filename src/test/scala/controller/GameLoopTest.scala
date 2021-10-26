@@ -5,10 +5,10 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
-import controller.GameLoop.GameLoopActor
-import controller.GameLoop.GameLoopMessages._
+import controller.interaction.GameLoop.GameLoopActor
+import controller.interaction.GameLoop.GameLoopMessages._
 import controller.GameLoopTest._
-import controller.Messages._
+import controller.interaction.Messages._
 import model.Model.ModelMessages.TickUpdate
 import model.maps.Tracks.Track
 import org.scalatest.wordspec.AnyWordSpecLike

@@ -5,8 +5,8 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
-import controller.GameLoop.GameLoopMessages.ModelUpdated
-import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
+import controller.interaction.GameLoop.GameLoopMessages.ModelUpdated
+import controller.interaction.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }

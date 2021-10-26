@@ -1,7 +1,7 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages.NewGame
-import controller.Messages.{ Input, Message }
+import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, HBox, VBox }

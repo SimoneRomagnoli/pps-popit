@@ -2,8 +2,8 @@ package model
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.GameLoop.GameLoopMessages.Stop
-import controller.Messages._
+import controller.interaction.GameLoop.GameLoopMessages.Stop
+import controller.interaction.Messages._
 import model.managers.{ EntitiesManager, GameDynamicsManager, SpawnManager }
 import model.maps.Tracks.Track
 import model.spawn.RoundsFactory

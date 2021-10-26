@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import controller.Messages._
+import controller.interaction.Messages._
 import model.Positions.{ normalized, vector }
 import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon

@@ -1,8 +1,8 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages._
-import controller.Messages
-import controller.Messages._
+import controller.interaction.Messages._
+import controller.interaction.Messages
 import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet

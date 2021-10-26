@@ -3,8 +3,8 @@ package view
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
-import controller.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.Messages.Render
+import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
+import controller.interaction.Messages.Render
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats

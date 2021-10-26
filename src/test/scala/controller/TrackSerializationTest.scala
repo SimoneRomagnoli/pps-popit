@@ -3,8 +3,8 @@ package controller
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import alice.tuprolog.Term
 import controller.TrackSerializationTest.{ engine, listSize, query }
-import controller.files.FileCoder
-import controller.files.FileCoders.{ trackDecoder, trackEncoder }
+import controller.io.FileCoder
+import controller.io.FileCoders.{ trackDecoder, trackEncoder }
 import io.circe.Json
 import io.circe.syntax.EncoderOps
 import model.maps.Grids.Grid

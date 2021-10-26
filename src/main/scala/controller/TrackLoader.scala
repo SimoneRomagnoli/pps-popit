@@ -5,9 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Messages.Input
 import controller.TrackLoader.TrackLoaderMessages.{
   RetrieveSavedTracks,
-  RetrieveTrack,
   SaveActualTrack,
-  SavedTrack,
   SavedTracks
 }
 import controller.files.FileCoder
@@ -23,9 +21,9 @@ object TrackLoader {
         extends Input
 
     case class RetrieveSavedTracks(replyTo: ActorRef[Input]) extends Input
-    case class RetrieveTrack(replyTo: ActorRef[Input]) extends Input
+    //case class RetrieveTrack(replyTo: ActorRef[Input]) extends Input
     case class SavedTracks(list: List[Track]) extends Input
-    case class SavedTrack(track: Track) extends Input
+    //case class SavedTrack(track: Track) extends Input
   }
 
   object TrackLoaderActor {
@@ -54,9 +52,9 @@ object TrackLoader {
         replyTo ! SavedTracks(savedTracks)
         Behaviors.same
 
-      case RetrieveTrack(replyTo) =>
-        replyTo ! SavedTrack(savedTracks(0))
-        Behaviors.same
+//      case RetrieveTrack(replyTo) =>
+//        replyTo ! SavedTrack(savedTracks(0))
+//        Behaviors.same
 
       case _ =>
         Behaviors.same

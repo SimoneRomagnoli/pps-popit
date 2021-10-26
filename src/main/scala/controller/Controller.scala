@@ -11,9 +11,7 @@ import controller.Messages._
 import controller.TrackLoader.TrackLoaderActor
 import controller.TrackLoader.TrackLoaderMessages.{
   RetrieveSavedTracks,
-  RetrieveTrack,
   SaveActualTrack,
-  SavedTrack,
   SavedTracks
 }
 import model.Model.ModelActor
@@ -108,8 +106,8 @@ object Controller {
           Behaviors.same
 
         case RetrieveAndLoadTrack(trackID) =>
-          retrieve(trackLoader.get ? RetrieveTrack) { case SavedTrack(track) =>
-            ctx.self ! NewGame(Some(track))
+          retrieve(trackLoader.get ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
+            ctx.self ! NewGame(Some(tracks(trackID)))
           }
           Behaviors.same
 

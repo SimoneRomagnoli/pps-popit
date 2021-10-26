@@ -16,6 +16,7 @@ object PodiumTest extends JFXApp3 {
     val savedTracksPane: BorderPane = loader.getRoot[BorderPane]
     val savedTrackController: ViewSavedTracksController =
       loader.getController[ViewSavedTracksController]()
+    savedTrackController.setup(List())
 
     stage = new PrimaryStage() {
       title = "Pop-It!"

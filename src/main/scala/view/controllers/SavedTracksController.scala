@@ -8,7 +8,7 @@ import scalafx.scene.control.ToggleButton
 import scalafx.scene.image.{ Image, ImageView }
 import scalafx.scene.layout._
 import scalafxml.core.macros.sfxml
-import utils.Constants
+import utils.Commons
 import view.render.Drawings.{ Drawing, MenuDrawings }
 import view.render.Rendering
 
@@ -44,10 +44,10 @@ class SavedTracksController(
 
     def setup(tracks: List[Track]): Unit = Platform runLater {
       reset()
-      Rendering.setLayout(savedTracksPane, Constants.Screen.width, Constants.Screen.height)
+      Rendering.setLayout(savedTracksPane, Commons.Screen.width, Commons.Screen.height)
       Rendering.forInput(
-        Constants.Screen.width * 1 / 2,
-        Constants.Screen.height / 8,
+        Commons.Screen.width * 1 / 2,
+        Commons.Screen.height / 8,
         "images/backgrounds/SAVED_TRACKS.png"
       ) into titleLogo.children
       loadSavedTracks(tracks)
@@ -57,14 +57,14 @@ class SavedTracksController(
       for (i <- tracks.indices) {
         val btn = new ToggleButton("")
         val image: ImageView = new ImageView(new Image("images/tracks/track" + i + ".png"))
-        image.setFitWidth(Constants.Screen.width / 4.2)
-        image.setFitHeight(Constants.Screen.height / 3.2)
+        image.setFitWidth(Commons.Screen.width / 4.2)
+        image.setFitHeight(Commons.Screen.height / 3.2)
         btn.setGraphic(image)
         btn.setId(i.toString)
         btn.onMouseClicked = _ => send(RetrieveAndLoadTrack(btn.getId.toInt))
 
         btn.styleClass += "savedTrackButton"
-        Rendering.setLayout(btn, Constants.Screen.width / 4, Constants.Screen.height / 3)
+        Rendering.setLayout(btn, Commons.Screen.width / 4, Commons.Screen.height / 3)
         flowPaneTracks.children += btn
       }
   }

@@ -1,7 +1,6 @@
 package utils
 
-import utils.Constants.View.{ gameBoardHeight, gameBoardWidth }
-
+import utils.Commons.View.{ gameBoardHeight, gameBoardWidth }
 import java.awt.{ Rectangle, Robot }
 import java.io.File
 import javax.imageio.ImageIO
@@ -13,12 +12,7 @@ object ScreenShooter {
 
   def takeScreen(x: Double, y: Double, index: Int): Unit = {
     val rectangle =
-      new Rectangle(
-        x.asInstanceOf[Int],
-        y.asInstanceOf[Int],
-        gameBoardWidth.asInstanceOf[Int],
-        gameBoardHeight.asInstanceOf[Int]
-      )
+      new Rectangle(x.toInt, y.toInt, gameBoardWidth.toInt, gameBoardHeight.toInt)
     val bufferedImage = (new Robot).createScreenCapture(rectangle)
     ImageIO.write(
       bufferedImage,

@@ -1,5 +1,6 @@
 package view.controllers
 
+import controller.Controller.ControllerMessages.{ NewGame, RetrieveAndLoadTrack }
 import controller.Messages.{ Input, Message }
 import javafx.scene.layout.Background
 import model.maps.Tracks.Track
@@ -48,10 +49,14 @@ class SavedTracksController(
     def loadSavedTracks(tracks: List[Track]): Unit =
       for (i <- tracks.indices) {
         val btn = new ToggleButton("")
+        println("Trying to load the " + i + "image")
         val image: ImageView = new ImageView(new Image("images/tracks/track" + i + ".png"))
         image.setFitWidth(Constants.Screen.width / 4.2)
         image.setFitHeight(Constants.Screen.height / 3.2)
         btn.setGraphic(image)
+        btn.setId(i.toString)
+        btn.onMouseClicked = _ => send(RetrieveAndLoadTrack(btn.getId.toInt))
+
         btn.styleClass += "savedTrackButton"
         Rendering.setLayout(btn, Constants.Screen.width / 4, Constants.Screen.height / 3)
         Platform.runLater(flowPaneTracks.children += btn)

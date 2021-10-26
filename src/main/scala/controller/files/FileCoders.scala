@@ -40,7 +40,7 @@ object FileCoders {
           )
         )
       )
-    Json.obj(("tracks", Json.fromValues(objects)))
+    Json.obj(("images/tracks", Json.fromValues(objects)))
   }
 
   /**
@@ -48,7 +48,7 @@ object FileCoders {
    */
   implicit val trackDecoder: Decoder[List[Track]] = (c: HCursor) => {
     val tracks = c
-      .downField("tracks")
+      .downField("images/tracks")
       .focus
       .flatMap(_.asArray)
       .getOrElse(Vector.empty)

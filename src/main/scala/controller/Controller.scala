@@ -2,7 +2,7 @@ package controller
 
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
+import akka.actor.typed.{ scaladsl, ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages._
 import controller.GameLoop.GameLoopActor
@@ -11,7 +11,9 @@ import controller.Messages._
 import controller.TrackLoader.TrackLoaderActor
 import controller.TrackLoader.TrackLoaderMessages.{
   RetrieveSavedTracks,
+  RetrieveTrack,
   SaveActualTrack,
+  SavedTrack,
   SavedTracks
 }
 import model.Model.ModelActor
@@ -34,6 +36,7 @@ object Controller {
 
   object ControllerMessages {
     case class NewGame(withTrack: Option[Track]) extends Input with Render
+    case class RetrieveAndLoadTrack(trackID: Int) extends Input
     case class ExitGame() extends Input with Render
     case class FinishGame() extends Input with Render
     case class SavedTracksPage() extends Input with Render
@@ -101,6 +104,12 @@ object Controller {
         case SavedTracksPage() =>
           retrieve(trackLoader.get ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
             view ! RenderSavedTracks(tracks)
+          }
+          Behaviors.same
+
+        case RetrieveAndLoadTrack(trackID) =>
+          retrieve(trackLoader.get ? RetrieveTrack) { case SavedTrack(track) =>
+            ctx.self ! NewGame(Some(track))
           }
           Behaviors.same
 

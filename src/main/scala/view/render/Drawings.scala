@@ -18,6 +18,7 @@ object Drawings {
   sealed trait Drawable
   case object Title extends Drawable
   case object Grass extends Drawable
+  case object HighScores extends Drawable
   case class Road(direction: String) extends Drawable
   case class Item(entity: Entity) extends Drawable
 
@@ -32,8 +33,9 @@ object Drawings {
     def the(drawable: Drawable): ImagePattern = images match {
       case drawing: MenuDrawings =>
         drawable match {
-          case Title => drawing.title
-          case _     => null
+          case Title      => drawing.title
+          case HighScores => drawing.highScores
+          case _          => null
         }
       case drawing: GameDrawings =>
         drawable match {
@@ -100,6 +102,9 @@ object Drawings {
 
   /** Class preloading all menu images. */
   case class MenuDrawings(
-      title: ImagePattern = new ImagePattern(new Image("images/backgrounds/TITLE.png")))
+      title: ImagePattern = new ImagePattern(new Image("images/backgrounds/TITLE.png")),
+      highScores: ImagePattern = new ImagePattern(
+        new Image("images/backgrounds/SAVED_TRACKS_RED.png")
+      ))
       extends Drawings
 }

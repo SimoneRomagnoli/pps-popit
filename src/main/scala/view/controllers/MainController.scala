@@ -22,6 +22,7 @@ trait ViewController {
 trait ViewMainController extends ViewController {
   def gameController: ViewGameController
   def menuController: ViewMainMenuController
+  def savedTracksController: ViewSavedTracksController
 }
 
 /**
@@ -32,19 +33,23 @@ class MainController(
     val mainPane: StackPane,
     val game: BorderPane,
     val menu: BorderPane,
+    val savedTracksPane: BorderPane,
     @nested[GameController] val gameController: ViewGameController,
-    @nested[MainMenuController] val menuController: ViewMainMenuController)
+    @nested[MainMenuController] val menuController: ViewMainMenuController,
+    @nested[SavedTracksController] val savedTracksController: ViewSavedTracksController)
     extends ViewMainController {
   setup()
 
   override def setSend(reference: Input => Unit): Unit = {
     menuController.setSend(reference)
     gameController.setSend(reference)
+    savedTracksController.setSend(reference)
   }
 
   override def setAsk(reference: Message => Future[Message]): Unit = {
     menuController.setAsk(reference)
     gameController.setAsk(reference)
+    savedTracksController.setAsk(reference)
   }
 
   override def show(): Unit = mainPane.visible = true
@@ -53,6 +58,7 @@ class MainController(
   private def setup(): Unit = {
     Rendering.setLayout(mainPane, Commons.Screen.width, Commons.Screen.height)
     gameController.hide()
+    savedTracksController.hide()
     menuController.show()
   }
 

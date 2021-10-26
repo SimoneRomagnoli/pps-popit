@@ -8,6 +8,8 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
+import scalafx.geometry.Point2D
+import javafx.geometry.{ Point2D => Bounds }
 import scalafx.scene.Cursor
 import scalafx.scene.layout._
 import scalafxml.core.macros.{ nested, sfxml }
@@ -37,6 +39,9 @@ trait ViewGameController extends ViewController {
   def pauseController: ViewPauseController
   def gameMenuController: ViewGameMenuController
   def gameOverController: ViewGameOverController
+  def getScenePosition: Bounds
+  def hideGameEntities(): Unit
+  def showGameEntities(): Unit
 }
 
 trait GameControllerChild extends ViewController {
@@ -217,5 +222,18 @@ class GameController(
       }
 
     private def towerSelected: Boolean = gameMenuController.anyTowerSelected()
+  }
+
+  override def getScenePosition: (Bounds) =
+    gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
+
+  override def hideGameEntities(): Unit = {
+    entitiesPane.visible = false
+    highlightPane.visible = false
+  }
+
+  override def showGameEntities(): Unit = {
+    entitiesPane.visible = true
+    highlightPane.visible = true
   }
 }

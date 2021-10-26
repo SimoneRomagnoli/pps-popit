@@ -2,13 +2,8 @@ package controller.files
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.files.FileCoders.{
-  defaultPath,
-  trackDecoder,
-  trackEncoder,
-  CoderBuilder,
-  RichCoder
-}
+import controller.files.FileCoders.CoderBuilder.filePath
+import controller.files.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
 import model.maps.Tracks.Track
@@ -20,30 +15,25 @@ import scala.language.{ implicitConversions, postfixOps }
 
 object FileCoders {
 
-  val defaultPath: String = "src/main/resources/json/tracks.json"
-
   /**
    * Implicit encoder to convert a list of [[Track]] s into a [[Json]] object
    */
   implicit val trackEncoder: Encoder[List[Track]] = (list: List[Track]) => {
-    val iterator = list.iterator
     var objects: List[Json] = List()
 
-    while (iterator.hasNext) {
-      val track: Track = iterator.next()
+    for (i <- list.indices)
       objects = objects.appended(
         Json.obj(
-          ("id", Json.fromString(list.indexOf(track).toString)),
+          ("id", Json.fromString(i.toString)),
           (
             "cells",
             Json.fromValues(
-              track.cells.map(cell => Json.fromString("c(" + cell.x + ", " + cell.y + ")"))
+              list(i).cells.map(cell => Json.fromString("c(" + cell.x + ", " + cell.y + ")"))
             )
           )
         )
       )
-    }
-    Json.obj(("tracks", Json.fromValues(objects)))
+    Json.obj(("images/tracks", Json.fromValues(objects)))
   }
 
   /**
@@ -51,7 +41,7 @@ object FileCoders {
    */
   implicit val trackDecoder: Decoder[List[Track]] = (c: HCursor) => {
     val tracks = c
-      .downField("tracks")
+      .downField("images/tracks")
       .focus
       .flatMap(_.asArray)
       .getOrElse(Vector.empty)
@@ -65,7 +55,25 @@ object FileCoders {
   }
 
   object CoderBuilder {
+
+    val filePath: String = "src/main/resources/json/tracks.json"
+    val fileDirPath: String = "src/main/resources/json/"
+    val imageDirPath: String = "src/main/resources/images/tracks/"
+
     var tracks: List[Track] = List()
+
+    /**
+     * Check if resource directories already exists, and if they not, create them
+     */
+    def setup(): Unit = (for {
+      cond <- for {
+        fileDir <- IO(Files.notExists(Paths.get(fileDirPath)))
+        imgDir <- IO(Files.notExists(Paths.get(imageDirPath)))
+      } yield fileDir && imgDir
+      _ <- IO(if (cond) Files.createDirectory(Paths.get(fileDirPath)))
+      _ <- IO(if (cond) Files.createDirectory(Paths.get(imageDirPath)))
+    } yield ()).unsafeRunSync()
+
   }
 
   implicit class RichCoder(io: IO[Unit]) {
@@ -89,13 +97,20 @@ trait Coder {
  * @param path
  *   path of the file resource
  */
-case class FileCoder(override val path: String = defaultPath) extends Coder {
+case class FileCoder(override val path: String = filePath) extends Coder {
+
+  CoderBuilder.setup()
 
   override def save(json: Json): Unit =
     Files.write(Paths.get(path), json.toString().getBytes(StandardCharsets.UTF_8))
 
-  override def load(): Json =
+  override def load(): Json = if (Files.exists(Paths.get(path))) {
     parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
+  } else {
+    val empty: List[Track] = List()
+    save(empty.asJson)
+    parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
+  }
 
   def serialize(list: List[Track]): Unit =
     (for {

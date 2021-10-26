@@ -2,17 +2,27 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
+import controller.Controller.ControllerMessages.{
+  ExitGame,
+  NewGame,
+  SavedTracksPage,
+  StartAnimation
+}
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.Messages.Render
+import controller.Messages.{ Input, Render }
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import utils.Commons.Maps.gameGrid
 import view.View.ViewMessages._
-import view.controllers.{ ViewGameController, ViewMainController, ViewMainMenuController }
+import view.controllers.{
+  ViewGameController,
+  ViewMainController,
+  ViewMainMenuController,
+  ViewSavedTracksController
+}
 
-import scala.language.reflectiveCalls
+import scala.language.{ existentials, reflectiveCalls }
 
 /**
  * View of the application, fundamental in the MVC pattern. It receives [[Render]] messages from the
@@ -25,6 +35,8 @@ object View {
     case class RenderGameOver() extends Render
     case class RenderEntities(entities: List[Entity]) extends Render
     case class RenderMap(track: Track) extends Render
+    case class RenderSavedTracks(tracks: List[Track]) extends Render
+    case class TrackSaved() extends Render with Input
   }
 
   object ViewActor {
@@ -46,7 +58,12 @@ object View {
       Behaviors.receiveMessage {
         case NewGame(_) =>
           menuController.hide()
+          mainController.savedTracksController.hide()
           inGame(mainController.gameController)
+
+        case RenderSavedTracks(tracks) =>
+          menuController.hide()
+          inSavedTracks(mainController.savedTracksController, tracks)
 
         case _ => Behaviors.same
       }
@@ -70,6 +87,11 @@ object View {
           gameController draw track
           Behaviors.same
 
+        case TrackSaved() =>
+          gameController.showGameEntities()
+          gameController.pauseController.show()
+          Behaviors.same
+
         case StartAnimation(entity) =>
           gameController animate entity
           Behaviors.same
@@ -88,6 +110,15 @@ object View {
 
         case _ => Behaviors.same
       }
+    }
+
+    def inSavedTracks(
+        savedTrackController: ViewSavedTracksController,
+        tracks: List[Track]): Behavior[Render] = {
+      savedTrackController.setup(tracks)
+      savedTrackController.show()
+
+      Behaviors.same
     }
   }
 

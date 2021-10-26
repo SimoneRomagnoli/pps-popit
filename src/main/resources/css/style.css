@@ -152,3 +152,27 @@
 -fx-border-width: 3;
 -fx-border-style: solid;
 }
+
+.savedTrackButton {
+-fx-cursor: hand;
+-fx-border-color:#000000;
+-fx-border-width: 3;
+-fx-border-style: solid;
+}
+.savedTrackButton:hover{
+-fx-border-color:#FF0000;
+}
+
+.savedTracksTitle{
+-fx-background-image: url('/images/backgrounds/STREET.png');
+-fx-padding: 25;
+
+}
+
+.savedTracksFlowPane{
+-fx-background-color: rgba(204, 255, 204, 0.7);
+}
+
+.matteo{
+-fx-margin: 50;
+}

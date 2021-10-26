@@ -1,8 +1,7 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ NewGame, RetrieveAndLoadTrack }
+import controller.Controller.ControllerMessages.RetrieveAndLoadTrack
 import controller.Messages.{ Input, Message }
-import javafx.scene.layout.Background
 import model.maps.Tracks.Track
 import scalafx.application.Platform
 import scalafx.scene.control.ToggleButton
@@ -34,22 +33,29 @@ class SavedTracksController(
   override def show(): Unit = savedTracksPane.visible = true
   override def hide(): Unit = savedTracksPane.visible = false
 
-  override def setup(tracks: List[Track]): Unit = savedTracksSettings.setup(tracks)
+  override def setup(tracks: List[Track]): Unit = SavedTracksSettings.setup(tracks)
 
-  private object savedTracksSettings {
+  private object SavedTracksSettings {
 
-    def setup(tracks: List[Track]): Unit = {
+    def reset(): Unit = {
+      flowPaneTracks.children.clear()
+      titleLogo.children.clear()
+    }
+
+    def setup(tracks: List[Track]): Unit = Platform runLater {
+      reset()
       Rendering.setLayout(savedTracksPane, Constants.Screen.width, Constants.Screen.height)
-      Platform.runLater(
-        Rendering.forInput(500, 80, "images/backgrounds/SAVED_TRACKS.png") into titleLogo.children
-      )
+      Rendering.forInput(
+        Constants.Screen.width * 1 / 2,
+        Constants.Screen.height / 8,
+        "images/backgrounds/SAVED_TRACKS.png"
+      ) into titleLogo.children
       loadSavedTracks(tracks)
     }
 
     def loadSavedTracks(tracks: List[Track]): Unit =
       for (i <- tracks.indices) {
         val btn = new ToggleButton("")
-        println("Trying to load the " + i + "image")
         val image: ImageView = new ImageView(new Image("images/tracks/track" + i + ".png"))
         image.setFitWidth(Constants.Screen.width / 4.2)
         image.setFitHeight(Constants.Screen.height / 3.2)
@@ -59,7 +65,7 @@ class SavedTracksController(
 
         btn.styleClass += "savedTrackButton"
         Rendering.setLayout(btn, Constants.Screen.width / 4, Constants.Screen.height / 3)
-        Platform.runLater(flowPaneTracks.children += btn)
+        flowPaneTracks.children += btn
       }
   }
 }

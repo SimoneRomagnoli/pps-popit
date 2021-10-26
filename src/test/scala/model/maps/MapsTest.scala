@@ -1,6 +1,7 @@
 package model.maps
 
 import alice.tuprolog.SolveInfo
+import controller.settings.Settings.Normal
 import model.Positions.Vector2D
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
@@ -42,7 +43,9 @@ object MapsTest {
 
   val grid: Grid = Grid(16, 8)
   val engine: Engine = Engine(Theories from grid)
-  val query: String = PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT)
+
+  val query: String =
+    PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT, Normal)
 
   val iterator: Iterator[SolveInfo] = engine.solve(query).iterator
 
@@ -119,7 +122,7 @@ class MapsTest extends AnyWordSpec with Matchers {
     "given a start and an end borders" should {
       "plot a track by forming a query" in {
         val plotter: Plotter = PrologPlotter() in grid startingFrom LEFT endingAt RIGHT
-        val track: Track = Track(plotter plot)
+        val track: Track = Track(plotter plot Normal)
         track.start.x shouldBe 0
         track.finish.x shouldBe (grid.width - 1)
       }

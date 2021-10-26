@@ -58,6 +58,7 @@ object View {
       Behaviors.receiveMessage {
         case NewGame(_) =>
           menuController.hide()
+          mainController.savedTracksController.hide()
           inGame(mainController.gameController)
 
         case RenderSavedTracks(tracks) =>

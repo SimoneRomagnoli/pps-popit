@@ -19,6 +19,7 @@ class SettingsController(
     val settings: BorderPane,
     val settingsButtons: VBox,
     val settingsLogo: HBox,
+    val difficultyBox: HBox,
     val easyButton: ToggleButton,
     val normalButton: ToggleButton,
     val hardButton: ToggleButton,
@@ -39,6 +40,7 @@ class SettingsController(
     def setup(): Unit = {
       Rendering.setLayout(settings, Commons.Screen.width, Commons.Screen.height)
       settingsButtons.setAlignment(Pos.Center)
+      difficultyBox.setAlignment(Pos.Center)
       setupButtons()
     }
 

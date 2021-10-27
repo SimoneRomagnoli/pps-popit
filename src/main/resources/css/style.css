@@ -46,21 +46,6 @@
 -fx-background-size: cover;
 }
 
-.playButton {
--fx-background-image: url('/images/inputs/PAUSE.png');
--fx-background-size: cover;
-}
-
-.playButton:selected {
--fx-background-image: url('/images/inputs/PLAY.png');
--fx-background-size: cover;
-}
-
-.exitButton {
--fx-background-image: url('/images/inputs/EXIT.png');
--fx-background-size: cover;
-}
-
 .towerDepotTitle {
 -fx-padding: 0;
 -fx-margin: 0;
@@ -173,6 +158,21 @@
 -fx-background-color: rgba(204, 255, 204, 0.7);
 }
 
-.matteo{
--fx-margin: 50;
+.settingsButtons {
+-fx-font-size: 13px;
+-fx-background-color: rgba(255, 229, 217, 0.7);
+-fx-padding: 10;
+-fx-spacing: 10;
+-fx-margin: 10;
+-fx-border-radius: 10;
+-fx-background-radius: 10;
+}
+
+.settingsButton {
+-fx-cursor: hand;
+-fx-border-color:#000000;
+-fx-border-width: 2;
+-fx-border-style: solid;
+-fx-border-radius: 10;
+-fx-background-radius: 10;
 }

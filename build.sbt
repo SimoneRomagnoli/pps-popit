@@ -13,7 +13,7 @@ val circeVersion = "0.14.1"
 
 resolvers += Resolver.jcenterRepo
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case "reference.conf"            => MergeStrategy.concat
   case PathList("META-INF", _ @_*) => MergeStrategy.discard
   case _                           => MergeStrategy.first

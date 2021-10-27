@@ -2,7 +2,12 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
+import controller.Controller.ControllerMessages.{
+  BackToMenu,
+  NewGame,
+  SettingsPage,
+  StartAnimation
+}
 import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.interaction.Messages.{ Input, Render }
 import model.entities.Entities.Entity
@@ -55,6 +60,10 @@ object View {
           menuController.hide()
           inSavedTracks(mainController.savedTracksController, tracks)
 
+        case SettingsPage() =>
+          menuController.hide()
+          inSettings(mainController.settingsController)
+
         case _ => Behaviors.same
       }
     }
@@ -94,7 +103,7 @@ object View {
           gameController.gameOverController.show()
           Behaviors.same
 
-        case ExitGame() =>
+        case BackToMenu() =>
           gameController.hide()
           inMenu(mainController.menuController)
 
@@ -110,6 +119,18 @@ object View {
 
       Behaviors.same
     }
+
+    def inSettings(settingsController: ViewSettingsController): Behavior[Render] = {
+      settingsController.show()
+      Behaviors.receiveMessage {
+        case BackToMenu() =>
+          settingsController.hide()
+          inMenu(mainController.menuController)
+
+        case _ => Behaviors.same
+      }
+    }
+
   }
 
 }

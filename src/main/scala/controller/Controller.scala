@@ -9,7 +9,7 @@ import controller.TrackLoader.TrackLoaderMessages._
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.interaction.Messages._
-import controller.settings.Settings.Settings
+import controller.settings.Settings.{ Difficulty, Settings }
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower
@@ -29,15 +29,19 @@ import scala.language.postfixOps
 object Controller {
 
   object ControllerMessages {
+    trait Navigation extends Input with Render
+
     case class NewGame(withTrack: Option[Track]) extends Input with Render
     case class RetrieveAndLoadTrack(trackID: Int) extends Input
-    case class ExitGame() extends Input with Render
+    case class BackToMenu() extends Navigation
     case class FinishGame() extends Input with Render
-    case class SavedTracksPage() extends Input with Render
+    case class SavedTracksPage() extends Navigation
+    case class SettingsPage() extends Navigation
     case class PauseGame() extends Input with SpawnManagerMessage
     case class ResumeGame() extends Input with SpawnManagerMessage
     case class RestartGame() extends Input
     case class NewTrack() extends Input
+    case class SetDifficulty(difficulty: Difficulty) extends Input
 
     case class StartNextRound()
         extends Input
@@ -97,12 +101,6 @@ object Controller {
         model.get ! NewMap(ctx.self, None)
         Behaviors.same
 
-      case SavedTracksPage() =>
-        retrieve(trackLoader.get ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
-          view ! RenderSavedTracks(tracks)
-        }
-        Behaviors.same
-
       case RetrieveAndLoadTrack(trackID) =>
         retrieve(trackLoader.get ? (self => RetrieveTrack(trackID, self))) {
           case SavedTrack(track) =>
@@ -128,33 +126,37 @@ object Controller {
       case RestartGame() =>
         retrieve(model.get ? CurrentGameTrack) {
           case CurrentTrack(track) =>
-            gameLoop.get ! Stop()
-            model.get ! Stop()
-            gameLoop = None
-            model = None
+            clearModelAndGameLoop()
             ctx.self ! NewGame(Some(track))
           case _ =>
         }
         Behaviors.same
 
-      case ExitGame() =>
-        view ! ExitGame()
-        model.get ! Stop()
-        gameLoop.get ! Stop()
-        gameLoop = None
-        model = None
+      case StartNextRound() =>
+        model.get ! StartNextRound()
         Behaviors.same
 
       case ActorInteraction(replyTo, message) =>
         model.get ! WithReplyTo(message.asInstanceOf[Update], ctx.self)
         interacting(replyTo)
 
-      case StartNextRound() =>
-        model.get ! StartNextRound()
-        Behaviors.same
-
       case PlaceTower(cell, towerType) =>
         model.get ! WithReplyTo(PlaceTower(cell, towerType), ctx.self)
+        Behaviors.same
+
+      case SetDifficulty(difficulty) =>
+        settings = settings.changeDifficulty(difficulty)
+        Behaviors.same
+
+      case SavedTracksPage() =>
+        retrieve(trackLoader.get ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
+          view ! RenderSavedTracks(tracks)
+        }
+        Behaviors.same
+
+      case navigation: Navigation =>
+        view ! navigation
+        clearModelAndGameLoop()
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>
@@ -169,6 +171,13 @@ object Controller {
       message =>
         replyTo ! message
         default()
+    }
+
+    private def clearModelAndGameLoop(): Unit = if (gameLoop.isDefined || model.isDefined) {
+      model.get ! Stop()
+      gameLoop.get ! Stop()
+      gameLoop = None
+      model = None
     }
   }
 }

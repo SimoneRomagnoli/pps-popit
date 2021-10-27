@@ -20,7 +20,7 @@ trait ViewSavedTracksController extends ViewController {
 
 @sfxml
 class SavedTracksController(
-    val savedTracksPane: BorderPane,
+    val savedTracks: BorderPane,
     val flowPaneTracks: FlowPane,
     val titleLogo: HBox,
     var send: Input => Unit,
@@ -30,8 +30,8 @@ class SavedTracksController(
 
   override def setSend(reference: Input => Unit): Unit = send = reference
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
-  override def show(): Unit = savedTracksPane.visible = true
-  override def hide(): Unit = savedTracksPane.visible = false
+  override def show(): Unit = savedTracks.visible = true
+  override def hide(): Unit = savedTracks.visible = false
 
   override def setup(tracks: List[Track]): Unit = SavedTracksSettings.setup(tracks)
 
@@ -44,7 +44,7 @@ class SavedTracksController(
 
     def setup(tracks: List[Track]): Unit = Platform runLater {
       reset()
-      Rendering.setLayout(savedTracksPane, Commons.Screen.width, Commons.Screen.height)
+      Rendering.setLayout(savedTracks, Commons.Screen.width, Commons.Screen.height)
       Rendering.forInput(
         Commons.Screen.width * 1 / 2,
         Commons.Screen.height / 8,

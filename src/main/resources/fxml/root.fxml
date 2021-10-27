@@ -7,4 +7,5 @@
       <fx:include source="menu.fxml" fx:id="menu"/>
       <fx:include source="game.fxml" fx:id="game"/>
       <fx:include source="saved-tracks.fxml" fx:id="savedTracks"/>
+      <fx:include source="settings.fxml" fx:id="settings"/>
 </StackPane>

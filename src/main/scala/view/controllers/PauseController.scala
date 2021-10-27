@@ -1,7 +1,7 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages.{
-  ExitGame,
+  BackToMenu,
   RestartGame,
   ResumeGame,
   SaveCurrentTrack
@@ -72,7 +72,7 @@ class PauseController(
         hide()
       }
       quit.onMouseClicked = _ => {
-        send(ExitGame())
+        send(BackToMenu())
         hide()
       }
 

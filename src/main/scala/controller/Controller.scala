@@ -9,7 +9,7 @@ import controller.TrackLoader.TrackLoaderMessages._
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.interaction.Messages._
-import controller.settings.Settings.Settings
+import controller.settings.Settings.{ Difficulty, Settings }
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower
@@ -31,13 +31,14 @@ object Controller {
   object ControllerMessages {
     case class NewGame(withTrack: Option[Track]) extends Input with Render
     case class RetrieveAndLoadTrack(trackID: Int) extends Input
-    case class ExitGame() extends Input with Render
+    case class BackToMenu() extends Input with Render
     case class FinishGame() extends Input with Render
     case class SavedTracksPage() extends Input with Render
     case class PauseGame() extends Input with SpawnManagerMessage
     case class ResumeGame() extends Input with SpawnManagerMessage
     case class RestartGame() extends Input
     case class NewTrack() extends Input
+    case class SetDifficulty(difficulty: Difficulty) extends Input
 
     case class StartNextRound()
         extends Input
@@ -137,8 +138,8 @@ object Controller {
         }
         Behaviors.same
 
-      case ExitGame() =>
-        view ! ExitGame()
+      case BackToMenu() =>
+        view ! BackToMenu()
         model.get ! Stop()
         gameLoop.get ! Stop()
         gameLoop = None
@@ -155,6 +156,10 @@ object Controller {
 
       case PlaceTower(cell, towerType) =>
         model.get ! WithReplyTo(PlaceTower(cell, towerType), ctx.self)
+        Behaviors.same
+
+      case SetDifficulty(difficulty) =>
+        settings.changeDifficulty(difficulty)
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>

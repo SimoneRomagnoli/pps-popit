@@ -2,7 +2,7 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
+import controller.Controller.ControllerMessages.{ BackToMenu, NewGame, StartAnimation }
 import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.interaction.Messages.{ Input, Render }
 import model.entities.Entities.Entity
@@ -94,7 +94,7 @@ object View {
           gameController.gameOverController.show()
           Behaviors.same
 
-        case ExitGame() =>
+        case BackToMenu() =>
           gameController.hide()
           inMenu(mainController.menuController)
 

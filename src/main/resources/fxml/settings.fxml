@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            BorderPane.alignment="CENTER"
+            fx:id="settings"
+            styleClass="mainMenu"
+            fx:controller="view.controllers.SettingsController"
+            prefHeight="400.0" prefWidth="600.0">
+    <center>
+        <HBox>
+            <VBox HBox.hgrow="ALWAYS"/>
+            <VBox fx:id="settingsButtons" styleClass="settingsButtons">
+                <HBox fx:id="settingsLogo" styleClass="settingsLogo"/>
+                <HBox>
+                    <Label text="Difficulty"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <ToggleButton text="Easy" fx:id="easyButton" styleClass="settingsButton"/>
+                    <ToggleButton text="Normal" fx:id="normalButton" styleClass="settingsButton"/>
+                    <ToggleButton text="Hard" fx:id="hardButton" styleClass="settingsButton"/>
+                </HBox>
+                <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="settingsButton"/>
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS"/>
+        </HBox>
+    </center>
+</BorderPane>

@@ -24,6 +24,7 @@ class MainMenuController(
     val mainMenuButtons: VBox,
     val newGameBtn: ToggleButton,
     val savedTracksBtn: ToggleButton,
+    val settingsBtn: ToggleButton,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewMainMenuController {
@@ -50,6 +51,7 @@ class MainMenuController(
     def setupButtons(): Unit = {
       newGameBtn.onMouseClicked = _ => send(NewGame(None))
       savedTracksBtn.onMouseClicked = _ => send(SavedTracksPage())
+      //settingsBtn.onMouseClicked = _ => send(OpenSettings())
     }
   }
 }

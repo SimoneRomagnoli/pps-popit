@@ -34,9 +34,11 @@ class MainController(
     val game: BorderPane,
     val menu: BorderPane,
     val savedTracksPane: BorderPane,
+    val settings: BorderPane,
     @nested[GameController] val gameController: ViewGameController,
     @nested[MainMenuController] val menuController: ViewMainMenuController,
-    @nested[SavedTracksController] val savedTracksController: ViewSavedTracksController)
+    @nested[SavedTracksController] val savedTracksController: ViewSavedTracksController,
+    @nested[SettingsController] val settingsController: ViewSettingsController)
     extends ViewMainController {
   setup()
 
@@ -44,12 +46,14 @@ class MainController(
     menuController.setSend(reference)
     gameController.setSend(reference)
     savedTracksController.setSend(reference)
+    settingsController.setSend(reference)
   }
 
   override def setAsk(reference: Message => Future[Message]): Unit = {
     menuController.setAsk(reference)
     gameController.setAsk(reference)
     savedTracksController.setAsk(reference)
+    settingsController.setAsk(reference)
   }
 
   override def show(): Unit = mainPane.visible = true
@@ -59,6 +63,7 @@ class MainController(
     Rendering.setLayout(mainPane, Commons.Screen.width, Commons.Screen.height)
     gameController.hide()
     savedTracksController.hide()
+    settingsController.hide()
     menuController.show()
   }
 

@@ -2,12 +2,7 @@ package view
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Controller.ControllerMessages.{
-  ExitGame,
-  NewGame,
-  SavedTracksPage,
-  StartAnimation
-}
+import controller.Controller.ControllerMessages.{ ExitGame, NewGame, StartAnimation }
 import controller.GameLoop.GameLoopMessages.CanStartNextRound
 import controller.Messages.{ Input, Render }
 import model.entities.Entities.Entity
@@ -49,7 +44,8 @@ object View {
   /**
    * Thew view actor has two behaviors:
    *   - inGame, in which updates a [[ViewGameController]];
-   *   - inMenu, in which updates another controller.
+   *   - inMenu, in which updates another controller;
+   *   - inSavedTracks, in which updates a [[ViewSavedTracksController]].
    */
   class ViewActor private (mainController: ViewMainController) {
 
@@ -117,7 +113,6 @@ object View {
         tracks: List[Track]): Behavior[Render] = {
       savedTrackController.setup(tracks)
       savedTrackController.show()
-
       Behaviors.same
     }
   }

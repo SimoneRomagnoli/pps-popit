@@ -6,7 +6,7 @@ import java.io.File
 import javax.imageio.ImageIO
 
 /**
- * Utils object that takes a screenshot of the boardGame.
+ * Utils object that takes a screenshot of the boardGame to create the SavedTracksPage.
  */
 object ScreenShooter {
 

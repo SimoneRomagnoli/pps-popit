@@ -63,7 +63,7 @@ object Bullets {
     def toString: String
   }
 
-  /** An [[Explosion]] is a decorator for the bullet */
+  /** A [[Explosion]] is a decorator for the bullet */
   trait Explosion extends Bullet {
 
     /** Represents the area of the explosion */

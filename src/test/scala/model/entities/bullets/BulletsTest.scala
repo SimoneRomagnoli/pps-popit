@@ -13,38 +13,30 @@ import model.entities.bullets.BulletValues._
 import scala.language.postfixOps
 
 class BulletsTest extends AnyFlatSpec with Matchers {
-  val position: Vector2D = defaultPosition
-  val speed: Vector2D = bulletDefaultSpeed
-  val damage: Double = bulletDefaultDamage
-  val radius: Double = bulletDefaultRadius
-  val freezingTime: Double = bulletFreezingTime
-  val boundary: (Double, Double) = bulletDefaultBoundary
-
-  val iceBall: IceBall = IceBall(radius, freezingTime)
-
+  val iceBall: IceBall = IceBall(bulletDefaultRadius, bulletFreezingTime)
   val dart: Dart = Dart()
-  val cannonBall: CannonBall = CannonBall(radius)
+  val cannonBall: CannonBall = CannonBall(bulletDefaultRadius)
   val balloon: Balloon = (Red balloon) in (100.0, 100.0)
 
   "A Dart" should "have default position, speed and damage" in {
-    dart.position shouldBe position
-    dart.speed shouldBe speed
-    dart.damage shouldBe damage
+    dart.position shouldBe defaultPosition
+    dart.speed shouldBe bulletDefaultSpeed
+    dart.damage shouldBe bulletDefaultDamage
   }
 
   "A CannonBall" should "be a Dart with also a radius for the explosion" in {
-    cannonBall.position shouldBe position
-    cannonBall.speed shouldBe speed
-    cannonBall.damage shouldBe damage
-    cannonBall.radius shouldBe radius
+    cannonBall.position shouldBe defaultPosition
+    cannonBall.speed shouldBe bulletDefaultSpeed
+    cannonBall.damage shouldBe bulletDefaultDamage
+    cannonBall.radius shouldBe bulletDefaultRadius
   }
 
   "An IceBall" should "be a cannonBall with also a freezingTime" in {
-    iceBall.position shouldBe position
-    iceBall.speed shouldBe speed
-    iceBall.damage shouldBe damage
-    iceBall.radius shouldBe radius
-    iceBall.freezingTime shouldBe freezingTime
+    iceBall.position shouldBe defaultPosition
+    iceBall.speed shouldBe bulletDefaultSpeed
+    iceBall.damage shouldBe bulletDefaultDamage
+    iceBall.radius shouldBe bulletDefaultRadius
+    iceBall.freezingTime shouldBe bulletFreezingTime
   }
 
   "A Dart" should "be able to move" in {

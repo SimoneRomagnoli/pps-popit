@@ -16,6 +16,9 @@ object BulletMessages {
   case class StartExplosion(bullet: Bullet) extends Update
 }
 
+/**
+ * The actor encapsulating a [[Bullet]].
+ */
 object BulletActor {
 
   def apply(bullet: Bullet): Behavior[Update] = Behaviors.setup { ctx =>
@@ -23,6 +26,13 @@ object BulletActor {
   }
 }
 
+/**
+ * The [[BulletActor]] related class, conforming to a common Akka pattern.
+ * @param ctx
+ *   The actor's context.
+ * @param bullet
+ *   The encapsulated [[Bullet]].
+ */
 case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
@@ -47,7 +57,7 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
   }
 
   /**
-   * Behaviour that the bulletActor assume when the bullet hits a balloon.
+   * Behaviour that the bulletActor assumes when the bullet hits a balloon.
    * @param balloons
    *   all the balloons in the game
    * @param bullet
@@ -55,7 +65,7 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
    * @param replyTo
    *   model
    * @return
-   *   Stop the behaviour and kill the actor
+   *   Stop the behavior and kill the actor
    */
 
   private def exploding(

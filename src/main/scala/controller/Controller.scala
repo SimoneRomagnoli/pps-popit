@@ -5,6 +5,7 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages._
+import controller.TrackLoader.TrackLoaderActor
 import controller.TrackLoader.TrackLoaderMessages._
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
@@ -67,7 +68,7 @@ object Controller {
   object ControllerActor {
 
     def apply(view: ActorRef[Render]): Behavior[Input] = Behaviors.setup { ctx =>
-      ControllerActor(ctx, view).default()
+      ControllerActor(ctx, view, ctx.spawnAnonymous(TrackLoaderActor())).default()
     }
   }
 
@@ -80,10 +81,10 @@ object Controller {
   case class ControllerActor private (
       ctx: ActorContext[Input],
       view: ActorRef[Render],
+      trackLoader: ActorRef[Input],
       var settings: Settings = Settings(),
       var model: Option[ActorRef[Update]] = None,
-      var gameLoop: Option[ActorRef[Input]] = None,
-      var trackLoader: Option[ActorRef[Input]] = None) {
+      var gameLoop: Option[ActorRef[Input]] = None) {
     implicit val timeout: Timeout = Timeout(1.seconds)
     implicit val scheduler: Scheduler = ctx.system.scheduler
     implicit val ec: ExecutionContextExecutor = ctx.system.executionContext
@@ -102,7 +103,7 @@ object Controller {
         Behaviors.same
 
       case RetrieveAndLoadTrack(trackID) =>
-        retrieve(trackLoader.get ? (self => RetrieveTrack(trackID, self))) {
+        retrieve(trackLoader ? (self => RetrieveTrack(trackID, self))) {
           case SavedTrack(track) =>
             ctx.self ! NewGame(Some(track))
           case _ =>
@@ -111,7 +112,7 @@ object Controller {
 
       case SaveCurrentTrack((posX, posY)) =>
         retrieve(model.get ? CurrentGameTrack) { case CurrentTrack(track) =>
-          trackLoader.get ! SaveActualTrack(track, posX, posY, ctx.self)
+          trackLoader ! SaveActualTrack(track, posX, posY, ctx.self)
         }
         Behaviors.same
 
@@ -149,7 +150,7 @@ object Controller {
         Behaviors.same
 
       case SavedTracksPage() =>
-        retrieve(trackLoader.get ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
+        retrieve(trackLoader ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
           view ! RenderSavedTracks(tracks)
         }
         Behaviors.same

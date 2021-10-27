@@ -24,7 +24,7 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val gameLoop: TestProbe[Input] = testKit.createTestProbe[Input]()
 
   val controllerActor: Behavior[Input] = Behaviors.setup { ctx =>
-    ControllerActor(ctx, view.ref, Settings(), Some(model.ref), Some(gameLoop.ref)).default()
+    ControllerActor(ctx, view.ref, null, Settings(), Some(model.ref), Some(gameLoop.ref)).default()
   }
 
   val controller: ActorRef[Input] = testKit spawn controllerActor

@@ -1,6 +1,7 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages.RetrieveAndLoadTrack
+import controller.inout.FileCoders.CoderBuilder.trackURL
 import controller.interaction.Messages.{ Input, Message }
 import model.maps.Tracks.Track
 import scalafx.application.Platform
@@ -56,7 +57,7 @@ class SavedTracksController(
     def loadSavedTracks(tracks: List[Track]): Unit =
       for (i <- tracks.indices) {
         val btn = new ToggleButton("")
-        val image: ImageView = new ImageView(new Image("images/tracks/track" + i + ".png"))
+        val image: ImageView = new ImageView(new Image(trackURL(i)))
         image.setFitWidth(Commons.Screen.width / 4.2)
         image.setFitHeight(Commons.Screen.height / 3.2)
         btn.setGraphic(image)

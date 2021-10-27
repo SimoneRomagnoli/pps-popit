@@ -22,5 +22,6 @@ object LeadBalloons {
     }
   }
 
-  def lead(balloon: Balloon): LeadBalloon = LeadBalloon(balloon)
+  def lead(balloon: Balloon): LeadBalloon =
+    LeadBalloon(balloon).following(balloon).asInstanceOf[LeadBalloon]
 }

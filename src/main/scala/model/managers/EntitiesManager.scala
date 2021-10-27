@@ -176,6 +176,7 @@ case class EntityManager private (
         case full if full.size == entities.size =>
           val (balloons, others): (List[Entity], List[Entity]) =
             full.map(_.entity).partition(_.isInstanceOf[Balloon])
+
           replyTo ! ModelUpdated(
             others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
             animations

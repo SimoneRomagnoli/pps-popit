@@ -16,6 +16,7 @@ object CamoBalloons {
     override def instance(balloon: Balloon): BalloonDecoration = camo(balloon)
   }
 
-  def camo(balloon: Balloon): CamoBalloon = CamoBalloon(balloon)
+  def camo(balloon: Balloon): CamoBalloon =
+    CamoBalloon(balloon).following(balloon).asInstanceOf[CamoBalloon]
 
 }

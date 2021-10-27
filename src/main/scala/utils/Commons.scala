@@ -38,6 +38,6 @@ object Commons {
   }
 
   object Game {
-    val balloonHitGain: Int = 10
+    val balloonHitGain: Int = 30
   }
 }

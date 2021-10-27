@@ -18,6 +18,9 @@ trait ViewSavedTracksController extends ViewController {
   def setup(tracks: List[Track]): Unit
 }
 
+/**
+ * Controller class bound to the saved tracks menu.
+ */
 @sfxml
 class SavedTracksController(
     val savedTracksPane: BorderPane,
@@ -53,6 +56,12 @@ class SavedTracksController(
       loadSavedTracks(tracks)
     }
 
+    /**
+     * Method for loading from file the previously saved tracks and showing them on the
+     * correspondent page.
+     * @param tracks
+     *   the list of previously saved tracks
+     */
     def loadSavedTracks(tracks: List[Track]): Unit =
       for (i <- tracks.indices) {
         val btn = new ToggleButton("")

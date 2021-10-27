@@ -2,7 +2,7 @@ package controller
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Messages.Input
+import controller.Messages.{ Input, Render, Update }
 import controller.TrackLoader.TrackLoaderMessages.{
   RetrieveSavedTracks,
   RetrieveTrack,
@@ -15,6 +15,10 @@ import model.maps.Tracks.Track
 import utils.ScreenShooter
 import view.View.ViewMessages.TrackSaved
 
+/**
+ * The Track Loader is the component that interacts with the [[Controller]] and the [[FileCoder]].
+ * It is responsible for retrieving from a file the previously saved tracks and saving newer ones.
+ */
 object TrackLoader {
 
   object TrackLoaderMessages {

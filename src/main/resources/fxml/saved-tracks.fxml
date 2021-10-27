@@ -16,6 +16,7 @@
                     <FlowPane fx:id="flowPaneTracks" hgap="50" vgap="50" alignment="CENTER" styleClass="savedTracksFlowPane" >
                     </FlowPane>
                 </ScrollPane>
+                <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="settingsButton"/>
             </VBox>
     </center>
 </BorderPane>

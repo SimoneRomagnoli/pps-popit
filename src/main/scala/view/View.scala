@@ -53,7 +53,6 @@ object View {
       Behaviors.receiveMessage {
         case NewGame(_) =>
           menuController.hide()
-          mainController.savedTracksController.hide()
           inGame(mainController.gameController)
 
         case RenderSavedTracks(tracks) =>
@@ -116,8 +115,17 @@ object View {
         tracks: List[Track]): Behavior[Render] = {
       savedTrackController.setup(tracks)
       savedTrackController.show()
+      Behaviors.receiveMessage {
+        case NewGame(_) =>
+          savedTrackController.hide()
+          inGame(mainController.gameController)
 
-      Behaviors.same
+        case BackToMenu() =>
+          savedTrackController.hide()
+          inMenu(mainController.menuController)
+
+        case _ => Behaviors.same
+      }
     }
 
     def inSettings(settingsController: ViewSettingsController): Behavior[Render] = {

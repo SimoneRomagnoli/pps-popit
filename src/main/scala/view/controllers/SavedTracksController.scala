@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.RetrieveAndLoadTrack
+import controller.Controller.ControllerMessages.{ BackToMenu, RetrieveAndLoadTrack }
 import controller.inout.FileCoders.CoderBuilder.trackURL
 import controller.interaction.Messages.{ Input, Message }
 import model.maps.Tracks.Track
@@ -23,6 +23,7 @@ trait ViewSavedTracksController extends ViewController {
 class SavedTracksController(
     val savedTracks: BorderPane,
     val flowPaneTracks: FlowPane,
+    val backToMenu: ToggleButton,
     val titleLogo: HBox,
     var send: Input => Unit,
     var ask: Message => Future[Message])
@@ -52,6 +53,7 @@ class SavedTracksController(
         "images/backgrounds/SAVED_TRACKS.png"
       ) into titleLogo.children
       loadSavedTracks(tracks)
+      backToMenu.onMouseClicked = _ => send(BackToMenu())
     }
 
     def loadSavedTracks(tracks: List[Track]): Unit =

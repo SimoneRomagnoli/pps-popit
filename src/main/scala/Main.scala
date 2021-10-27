@@ -7,7 +7,7 @@ import controller.Controller.ControllerMessages._
 import controller.interaction.Messages._
 import javafx.scene.layout.StackPane
 import scalafx.Includes._
-import scalafx.application.JFXApp3
+import scalafx.application.{ JFXApp3, Platform }
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
 import scalafxml.core.{ FXMLLoader, NoDependencyResolver }
@@ -26,11 +26,16 @@ object Main extends JFXApp3 {
     stage = new PrimaryStage() {
       title = "Pop-It!"
       scene = new Scene(root)
+      resizable = false
+      onCloseRequest = _ => {
+        Platform.exit()
+        System.exit(0)
+      }
     }
 
-    implicit val timeout: Timeout = 3.seconds
     ActorSystem[Message](
       Behaviors.setup[Message] { ctx =>
+        implicit val timeout: Timeout = 3.seconds
         implicit val scheduler: Scheduler = ctx.system.scheduler
         val view: ActorRef[Render] = ctx.spawn(ViewActor(mainController), "view")
         val controller: ActorRef[Input] = ctx.spawn(ControllerActor(view), "controller")

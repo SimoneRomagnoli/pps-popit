@@ -156,6 +156,8 @@ class GameMenuController(
       roundOver = true
       roundLabel.text = "0"
       disableRoundButton()
+      moneyLabel.text = "200$"
+      lifeLabel.text = "100"
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
     }

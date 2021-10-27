@@ -79,7 +79,7 @@ case class DynamicsManager private (
       Behaviors.same
 
     case Gain(amount) =>
-      stats gain (amount * settings.difficulty.level)
+      stats gain (amount / settings.difficulty.level)
       Behaviors.same
 
     case Lose(amount) =>

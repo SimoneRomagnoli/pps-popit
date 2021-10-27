@@ -23,6 +23,7 @@ trait ViewMainController extends ViewController {
   def gameController: ViewGameController
   def menuController: ViewMainMenuController
   def savedTracksController: ViewSavedTracksController
+  def settingsController: ViewSettingsController
 }
 
 /**
@@ -33,7 +34,7 @@ class MainController(
     val mainPane: StackPane,
     val game: BorderPane,
     val menu: BorderPane,
-    val savedTracksPane: BorderPane,
+    val savedTracks: BorderPane,
     val settings: BorderPane,
     @nested[GameController] val gameController: ViewGameController,
     @nested[MainMenuController] val menuController: ViewMainMenuController,

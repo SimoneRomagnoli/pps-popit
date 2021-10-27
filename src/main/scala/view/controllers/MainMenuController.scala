@@ -1,6 +1,6 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ NewGame, SavedTracksPage }
+import controller.Controller.ControllerMessages.{ NewGame, SavedTracksPage, SettingsPage }
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
@@ -51,7 +51,7 @@ class MainMenuController(
     def setupButtons(): Unit = {
       newGameBtn.onMouseClicked = _ => send(NewGame(None))
       savedTracksBtn.onMouseClicked = _ => send(SavedTracksPage())
-      //settingsBtn.onMouseClicked = _ => send(OpenSettings())
+      settingsBtn.onMouseClicked = _ => send(SettingsPage())
     }
   }
 }

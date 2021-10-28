@@ -4,7 +4,7 @@ import controller.Controller.ControllerMessages.{ NewGame, SavedTracksPage, Sett
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
-import scalafx.scene.layout.{ BorderPane, HBox, VBox }
+import scalafx.scene.layout.{ BorderPane, VBox }
 import scalafxml.core.macros.sfxml
 import utils.Commons
 import view.render.Drawings.{ Drawing, MenuDrawings, Title }

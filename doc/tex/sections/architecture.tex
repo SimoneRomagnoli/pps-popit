@@ -25,9 +25,18 @@ incapsula al suo interno un flusso di controllo basato su \textit{event loop} e 
 esclusivamente attraverso scambio di messaggi, non è necessario gestire meccanismi di sincronizzazione.
 
 Inoltre, abbiamo ritenuto il modello ad attori particolarmente adeguato per la realizzazione dell'applicazione
-in quanto essi incapsulano un \textit{comportamento}, il quale ben si adatta a descrivere l'effettivo comportamento
+in quanto essi incapsulano un \textbf{comportamento}, il quale ben si adatta a descrivere l'effettivo comportamento
 delle entità all'interno del modello. Tale scelta ci ha quindi garantito un livello di astrazione ed un'espressività
 che ha positivamente influenzato anche le fasi successive di design ed implementazione.
 
-Analogamente, anche il pattern MVC adottato ha risentito dell'adozione di tale paradigma. Di fatto,
-i componenti \texttt{Model}, \texttt{View} e \texttt{Controller} sono stati modellati come attori.
+\subsubsection{Vantaggi del Paradigma ad Attori}
+Di seguito si elencano i vantaggi riscontrati a fronte dell'utilizzo del framework \textit{Akka}:
+\begin{itemize}
+    \item Espressività del codice relativo al comportamento delle entità di gioco.
+    \item Migliore incapsulamento dei task di ogni componente.
+    \item Maggior modularità del codice.
+    \item Evitata la gestione della sincronizzazione mediante meccanismi quali semafori o monitor.
+\end{itemize}
+
+
+

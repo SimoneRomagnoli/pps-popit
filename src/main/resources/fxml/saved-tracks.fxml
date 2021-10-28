@@ -6,17 +6,27 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="savedTracks"
+            styleClass="mainMenu"
             BorderPane.alignment="CENTER"
             fx:controller="view.controllers.SavedTracksController"
             prefHeight="400.0" prefWidth="600.0">
     <center>
+        <HBox>
+            <VBox HBox.hgrow="ALWAYS"/>
             <VBox>
-                <HBox fx:id="titleLogo" alignment="CENTER" styleClass="savedTracksTitle"/>
-                <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" fitToHeight="true" fitToWidth="true" >
-                    <FlowPane fx:id="flowPaneTracks" hgap="50" vgap="50" alignment="CENTER" styleClass="savedTracksFlowPane" >
-                    </FlowPane>
-                </ScrollPane>
-                <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="settingsButton"/>
+                <VBox VBox.vgrow="ALWAYS"/>
+                <VBox styleClass="savedTracksButtons" alignment="CENTER">
+                    <!--<HBox fx:id="titleLogo" alignment="CENTER" styleClass="savedTracksTitle"/>-->
+                    <Label text="Saved Tracks"/>
+                    <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" fitToHeight="true" fitToWidth="true" >
+                        <FlowPane fx:id="flowPaneTracks" hgap="50" vgap="50" alignment="CENTER" styleClass="savedTracksFlowPane" >
+                        </FlowPane>
+                    </ScrollPane>
+                    <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="savedTracksButton"/>
+                </VBox>
+                <VBox VBox.vgrow="ALWAYS"/>
             </VBox>
+            <VBox HBox.hgrow="ALWAYS"/>
+        </HBox>
     </center>
 </BorderPane>

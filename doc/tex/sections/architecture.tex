@@ -46,5 +46,21 @@ Nonostante l'effettiva potenza ed efficacia del paradigma, quest'ultimo comporta
     \item All'aumentare delle dimensioni del sistema, il numero dei diversi messaggi che ogni attore deve gestire aumenta notevolmente.
 \end{itemize}
 
-
+\subsection{Architettura Complessiva}
+Come conseguenza dell'adozione del modello ad attori, anche il pattern MVC adottato ha risentito dell'adozione di tale
+paradigma. Di fatto, i componenti \texttt{Model}, \texttt{View} e \texttt{Controller} sono stati modellati come attori.
+Ciascuno di essi gestisce messaggi di tipo diverso:
+\begin{itemize}
+    \item \texttt{Input} - è il tipo di messaggio accettato dal \texttt{Controller}. Questo genere di messaggi serve a mediare l'interazione tra \texttt{View} e \texttt{Model}; in particolare, comprende tutte le interazioni dell'utente con l'applicazione ma anche tutti gli aggiornamenti del \texttt{Model} per l'interfaccia grafica.
+    \item \texttt{Render} - è il tipo di messaggio accettato dalla \texttt{View}. Dal momento che rappresentano un aggiornamento dell'interfaccia, questi messaggi sono esclusivamente inviati dal \texttt{Controller} o dal \texttt{GameLoop}.
+    \item \texttt{Update} - è il tipo di messaggio accettato dal \texttt{Model}. Qualsiasi messaggio di \texttt{Update} rappresenta, per ogni attore del modello, una notifica di cambiamento all'interno del ciclo di aggiornamento del programma.
+\end{itemize}
+Nonostante la netta separazione dei task tra i principali componenti individuati, alcuni di questi risultavano
+eccessivamente complessi, violando il \textit{Single Responsibility Principle}, pertanto, si è ritenuto opportuno
+modularizzarli ulteriormente. Nello specifico, il componente più affetto da tale problema è stato il \texttt{Model};
+infatti, senza un'adeguata suddivisione esso avrebbe dovuto comprendere diverse logiche (gestione delle entitá, delle
+dinamiche di gioco, eccetera), accettando per ognuna di queste un elevato numero di messaggi. La soluzione è stata
+quindi quella di introdurre un \textit{manager} per ogni logica, in modo che il \texttt{Model} effettui solo un
+forward dei messaggi, ricevuti dal \texttt{Controller}, verso i \textit{manager} più opportuni: tale pattern di
+delegazione è molto comune all'interno del paradigma ad attori.
 

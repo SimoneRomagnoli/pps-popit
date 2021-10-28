@@ -128,34 +128,36 @@
 -fx-border-style: solid;
 }
 
+.submenuTitle {
+-fx-font-size: 20px;
+}
+
 .savedTrackButton {
 -fx-cursor: hand;
 -fx-border-color:#000000;
 -fx-border-width: 3;
 -fx-border-style: solid;
 }
-.savedTrackButton:hover{
+
+.savedTrackButton:hover {
 -fx-border-color:#FF0000;
 }
 
-.savedTracksTitle{
--fx-background-image: url('/images/backgrounds/STREET.png');
--fx-padding: 25;
-
-}
-
-.savedTracksFlowPane{
--fx-background-color: rgba(204, 255, 204, 0.7);
+.savedTracksFlowPane {
+-fx-background-color: rgba(255, 229, 217, 0.5);
 }
 
 .settingsButtons, .savedTracksButtons {
 -fx-font-size: 13px;
--fx-background-color: rgba(255, 229, 217, 0.7);
+-fx-background-color: rgba(255, 229, 217, 1.0);
 -fx-padding: 10;
 -fx-spacing: 10;
 -fx-margin: 10;
 -fx-border-radius: 10;
 -fx-background-radius: 10;
+-fx-border-color: #582F0E;
+-fx-border-width: 3;
+-fx-border-style: solid;
 }
 
 .settingsButton, .menuButton, .savedTracksButton {
@@ -181,4 +183,7 @@
 -fx-margin: 10;
 -fx-border-radius: 10;
 -fx-background-radius: 10;
+-fx-border-color: #582F0E;
+-fx-border-width: 3;
+-fx-border-style: solid;
 }

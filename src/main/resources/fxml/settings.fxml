@@ -15,7 +15,7 @@
             <VBox>
                 <VBox VBox.vgrow="ALWAYS"/>
                 <VBox fx:id="settingsButtons" styleClass="settingsButtons">
-                    <HBox fx:id="settingsLogo" styleClass="settingsLogo"/>
+                    <Label text="Settings" styleClass="submenuTitle"/>
                     <HBox fx:id="difficultyBox">
                         <Label text="Difficulty"/>
                         <HBox HBox.hgrow="ALWAYS"/>

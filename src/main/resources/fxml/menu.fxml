@@ -16,11 +16,11 @@
         <HBox>
             <VBox HBox.hgrow="ALWAYS"/>
             <VBox>
-                <VBox fx:id="titleLogo" styleClass="titleLogo" VBox.vgrow="ALWAYS"/>
+                <VBox fx:id="titleLogo" styleClass="titleLogo" VBox.vgrow="ALWAYS" alignment="CENTER"/>
                 <VBox fx:id="mainMenuButtons" styleClass="mainMenuButtons">
-                    <ToggleButton text="NEW GAME" fx:id="newGameBtn" styleClass="menuButton"/>
-                    <ToggleButton text="SAVED TRACKS" fx:id="savedTracksBtn" styleClass="menuButton"/>
-                    <ToggleButton text="SETTINGS" fx:id="settingsBtn" styleClass="menuButton"/>
+                    <ToggleButton text="New Game" fx:id="newGameBtn" styleClass="menuButton"/>
+                    <ToggleButton text="Saved Tracks" fx:id="savedTracksBtn" styleClass="menuButton"/>
+                    <ToggleButton text="Settings" fx:id="settingsBtn" styleClass="menuButton"/>
                 </VBox>
                 <VBox VBox.vgrow="ALWAYS"/>
             </VBox>

@@ -61,6 +61,7 @@ modularizzarli ulteriormente. Nello specifico, il componente più affetto da tal
 infatti, senza un'adeguata suddivisione esso avrebbe dovuto comprendere diverse logiche (gestione delle entitá, delle
 dinamiche di gioco, eccetera), accettando per ognuna di queste un elevato numero di messaggi. La soluzione è stata
 quindi quella di introdurre un \textit{manager} per ogni logica, in modo che il \texttt{Model} effettui solo un
-forward dei messaggi, ricevuti dal \texttt{Controller}, verso i \textit{manager} più opportuni: tale pattern di
-delegazione è molto comune all'interno del paradigma ad attori.
+ridirezionamento dei messaggi, ricevuti da \texttt{Controller} e \texttt{GameLoop}, verso i \textit{manager} più
+opportuni: tale pattern di delegazione è molto comune all'interno del paradigma ad attori e rende efficace la
+suddivisione dei task all'interno del sistema.
 

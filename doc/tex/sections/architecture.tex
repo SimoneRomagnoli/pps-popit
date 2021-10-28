@@ -38,5 +38,13 @@ Di seguito si elencano i vantaggi riscontrati a fronte dell'utilizzo del framewo
     \item Evitata la gestione della sincronizzazione mediante meccanismi quali semafori o monitor.
 \end{itemize}
 
+\subsection{Svantaggi del Paradigma ad Attori}
+Nonostante l'effettiva potenza ed efficacia del paradigma, quest'ultimo comporta anche alcuni svantaggi:
+\begin{itemize}
+    \item Le uniche interazioni possibili tra componenti avvengono mediante scambio di messaggi.
+    \item Possibilità di \textit{bottleneck} dovuta al message passing (in questo caso tale pericolo è ridotto in quanto il sistema sviluppato non è distribuito).
+    \item All'aumentare delle dimensioni del sistema, il numero dei diversi messaggi che ogni attore deve gestire aumenta notevolmente.
+\end{itemize}
+
 
 

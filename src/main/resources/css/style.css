@@ -3,16 +3,6 @@
 -fx-font-size: 25px;
 }
 
-.mainMenu {
--fx-font-weight: bold;
--fx-font-size: 30px;
-}
-
-.mainMenuButtons {
--fx-spacing: 10;
--fx-padding: 10;
-}
-
 .gameMenu {
 -fx-font-weight: bold;
 -fx-font-size: 13px;
@@ -138,41 +128,62 @@
 -fx-border-style: solid;
 }
 
+.submenuTitle {
+-fx-font-size: 20px;
+}
+
 .savedTrackButton {
 -fx-cursor: hand;
 -fx-border-color:#000000;
 -fx-border-width: 3;
 -fx-border-style: solid;
 }
-.savedTrackButton:hover{
+
+.savedTrackButton:hover {
 -fx-border-color:#FF0000;
 }
 
-.savedTracksTitle{
--fx-background-image: url('/images/backgrounds/STREET.png');
--fx-padding: 25;
-
+.savedTracksFlowPane {
+-fx-background-color: rgba(255, 229, 217, 0.5);
 }
 
-.savedTracksFlowPane{
--fx-background-color: rgba(204, 255, 204, 0.7);
-}
-
-.settingsButtons {
+.settingsButtons, .savedTracksButtons {
 -fx-font-size: 13px;
--fx-background-color: rgba(255, 229, 217, 0.7);
+-fx-background-color: rgba(255, 229, 217, 1.0);
 -fx-padding: 10;
 -fx-spacing: 10;
 -fx-margin: 10;
 -fx-border-radius: 10;
 -fx-background-radius: 10;
+-fx-border-color: #582F0E;
+-fx-border-width: 3;
+-fx-border-style: solid;
 }
 
-.settingsButton {
+.settingsButton, .menuButton, .savedTracksButton {
 -fx-cursor: hand;
 -fx-border-color:#000000;
 -fx-border-width: 2;
 -fx-border-style: solid;
 -fx-border-radius: 10;
 -fx-background-radius: 10;
+}
+
+.mainMenu {
+-fx-font-weight: bold;
+-fx-font-size: 30px;
+-fx-background-image: url('/images/backgrounds/SUNSET.png');
+-fx-background-size: cover;
+}
+
+.mainMenuButtons {
+-fx-background-color: rgba(255, 229, 217, 1.0);
+-fx-padding: 10;
+-fx-spacing: 10;
+-fx-margin: 10;
+-fx-border-radius: 10;
+-fx-background-radius: 10;
+-fx-border-color: #582F0E;
+-fx-border-width: 3;
+-fx-border-style: solid;
 }

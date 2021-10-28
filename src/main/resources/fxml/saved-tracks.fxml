@@ -3,20 +3,23 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:id="savedTracks"
-            BorderPane.alignment="CENTER"
-            fx:controller="view.controllers.SavedTracksController"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane fx:id="savedTracks" prefHeight="400.0" prefWidth="600.0" styleClass="mainMenu" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SavedTracksController">
     <center>
+        <HBox>
+            <VBox HBox.hgrow="ALWAYS" />
             <VBox>
-                <HBox fx:id="titleLogo" alignment="CENTER" styleClass="savedTracksTitle"/>
-                <ScrollPane hbarPolicy="NEVER" vbarPolicy="ALWAYS" fitToHeight="true" fitToWidth="true" >
-                    <FlowPane fx:id="flowPaneTracks" hgap="50" vgap="50" alignment="CENTER" styleClass="savedTracksFlowPane" >
-                    </FlowPane>
-                </ScrollPane>
-                <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="settingsButton"/>
+                <VBox VBox.vgrow="ALWAYS" />
+                <VBox alignment="CENTER" styleClass="savedTracksButtons">
+                    <Label text="Saved Tracks" styleClass="submenuTitle"/>
+                    <ScrollPane fx:id="scrollPaneTracks" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+                        <FlowPane fx:id="flowPaneTracks" alignment="CENTER" hgap="50" styleClass="savedTracksFlowPane" vgap="50">
+                        </FlowPane>
+                    </ScrollPane>
+                    <ToggleButton fx:id="backToMenu" styleClass="savedTracksButton" text="Return to menu" />
+                </VBox>
+                <VBox VBox.vgrow="ALWAYS" />
             </VBox>
+            <VBox HBox.hgrow="ALWAYS" />
+        </HBox>
     </center>
 </BorderPane>

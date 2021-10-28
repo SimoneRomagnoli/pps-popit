@@ -31,6 +31,7 @@ object Commons {
 
   object View {
     val gameMenuWidthRatio: Int = 3
+    val gameBoardWidthRatio: Int = widthRatio - gameMenuWidthRatio
     val gameMenuWidth: Double = cellSize * gameMenuWidthRatio
     val gameMenuHeight: Double = height
     val gameBoardWidth: Double = width - gameMenuWidth

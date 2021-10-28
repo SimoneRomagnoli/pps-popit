@@ -114,7 +114,7 @@ object View {
     def inSavedTracks(
         savedTrackController: ViewSavedTracksController,
         tracks: List[Track]): Behavior[Render] = {
-      savedTrackController.setup(tracks)
+      savedTrackController.setup(tracks.size)
       savedTrackController.show()
       Behaviors.receiveMessage {
         case NewGame(_) =>

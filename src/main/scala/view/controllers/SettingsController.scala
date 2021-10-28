@@ -18,7 +18,6 @@ trait ViewSettingsController extends ViewController {}
 class SettingsController(
     val settings: BorderPane,
     val settingsButtons: VBox,
-    val settingsLogo: HBox,
     val difficultyBox: HBox,
     val easyButton: ToggleButton,
     val normalButton: ToggleButton,

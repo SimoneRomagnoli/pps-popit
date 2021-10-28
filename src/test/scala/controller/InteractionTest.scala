@@ -1,13 +1,13 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
-import akka.actor.typed.scaladsl.AskPattern.{Askable, schedulerFromActorSystem}
+import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.typed.scaladsl.AskPattern.{ schedulerFromActorSystem, Askable }
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerActor
-import controller.Controller.ControllerMessages.{ActorInteraction, NewGame}
-import controller.GameLoop.GameLoopMessages.Start
-import controller.Messages.{Input, Render, Update, WithReplyTo}
+import controller.Controller.ControllerMessages.ActorInteraction
+import controller.interaction.Messages.{ Input, Render, Update, WithReplyTo }
+import controller.settings.Settings.Settings
 import model.managers.GameDynamicsMessages.WalletQuantity
 import org.scalatest.wordspec.AnyWordSpecLike
 
@@ -24,7 +24,7 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val gameLoop: TestProbe[Input] = testKit.createTestProbe[Input]()
 
   val controllerActor: Behavior[Input] = Behaviors.setup { ctx =>
-    ControllerActor(ctx, view.ref, Some(model.ref), Some(gameLoop.ref)).default()
+    ControllerActor(ctx, view.ref, null, Settings(), Some(model.ref), Some(gameLoop.ref)).default()
   }
 
   val controller: ActorRef[Input] = testKit spawn controllerActor

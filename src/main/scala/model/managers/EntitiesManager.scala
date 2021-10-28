@@ -5,8 +5,8 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
-import controller.GameLoop.GameLoopMessages.ModelUpdated
-import controller.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
+import controller.interaction.GameLoop.GameLoopMessages.ModelUpdated
+import controller.interaction.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
@@ -176,6 +176,7 @@ case class EntityManager private (
         case full if full.size == entities.size =>
           val (balloons, others): (List[Entity], List[Entity]) =
             full.map(_.entity).partition(_.isInstanceOf[Balloon])
+
           replyTo ! ModelUpdated(
             others.appendedAll(balloons.asInstanceOf[List[Balloon]].sorted),
             animations
@@ -203,8 +204,7 @@ case class EntityManager private (
 
     case BalloonHit(bullet, balloons) =>
       entities.filter(e => balloons.contains(e.entity)).foreach { balloon =>
-        model ! Gain(10)
-        balloon.actorRef ! Hit(bullet, ctx.self)
+        balloon.actorRef ! Hit(bullet, model)
       }
       Behaviors.same
 

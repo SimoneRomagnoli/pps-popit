@@ -1,16 +1,10 @@
 package controller
 
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Messages.{ Input, Render, Update }
-import controller.TrackLoader.TrackLoaderMessages.{
-  RetrieveSavedTracks,
-  RetrieveTrack,
-  SaveActualTrack,
-  SavedTrack,
-  SavedTracks
-}
-import controller.files.FileCoder
+import controller.TrackLoader.TrackLoaderMessages._
+import controller.inout.FileCoder
+import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
 import utils.ScreenShooter
 import view.View.ViewMessages.TrackSaved
@@ -35,11 +29,11 @@ object TrackLoader {
   object TrackLoaderActor {
 
     def apply(): Behavior[Input] = Behaviors.setup { ctx =>
-      new TrackLoaderActor().default()
+      new TrackLoaderActor(ctx).default()
     }
   }
 
-  case class TrackLoaderActor(coder: FileCoder = FileCoder()) {
+  case class TrackLoaderActor(ctx: ActorContext[Input], coder: FileCoder = FileCoder()) {
 
     var savedTracks: List[Track] = List()
     var actualTrack: Track = Track()

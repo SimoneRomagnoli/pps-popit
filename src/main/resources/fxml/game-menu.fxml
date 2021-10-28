@@ -13,7 +13,7 @@
             </HBox>
             <HBox fx:id="statusLowerBox">
                 <Label text="Money: "/>
-                <Label fx:id="moneyLabel" text="500$"/>
+                <Label fx:id="moneyLabel" text="200$"/>
                 <Pane HBox.hgrow="ALWAYS" />
             </HBox>
         </VBox>

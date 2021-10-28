@@ -1,13 +1,13 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages.{
-  ExitGame,
+  BackToMenu,
   RestartGame,
   ResumeGame,
   SaveCurrentTrack
 }
-import controller.Messages.{ Input, Message }
-import controller.TrackLoader.TrackLoaderMessages.SaveActualTrack
+import controller.interaction.Messages.{ Input, Message }
+import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ HBox, VBox }
@@ -61,9 +61,9 @@ class PauseController(
   private object Setters {
 
     def setup(): Unit = {
-      //saveTrack.onMouseClicked = _ => hide()
       retryTrack.onMouseClicked = _ => {
         send(RestartGame())
+        parent.gameMenuController.clearTowerStatus()
         hide()
       }
       resume.onMouseClicked = _ => {
@@ -72,14 +72,15 @@ class PauseController(
         hide()
       }
       quit.onMouseClicked = _ => {
-        send(ExitGame())
+        send(BackToMenu())
         hide()
       }
-
       saveTrack.onMouseClicked = _ => {
         hide()
         parent.hideGameEntities()
-        send(SaveCurrentTrack(parent.getScenePosition.getX, parent.getScenePosition.getY))
+        Platform.runLater(
+          send(SaveCurrentTrack(parent.getScenePosition.getX, parent.getScenePosition.getY))
+        )
       }
     }
   }

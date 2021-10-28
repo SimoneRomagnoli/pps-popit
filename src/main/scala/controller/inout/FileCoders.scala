@@ -1,9 +1,9 @@
-package controller.files
+package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.files.FileCoders.CoderBuilder.filePath
-import controller.files.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
+import controller.inout.FileCoders.CoderBuilder.jsonPath
+import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
 import model.maps.Tracks.Track
@@ -33,7 +33,7 @@ object FileCoders {
           )
         )
       )
-    Json.obj(("images/tracks", Json.fromValues(objects)))
+    Json.obj(("tracks", Json.fromValues(objects)))
   }
 
   /**
@@ -41,7 +41,7 @@ object FileCoders {
    */
   implicit val trackDecoder: Decoder[List[Track]] = (c: HCursor) => {
     val tracks = c
-      .downField("images/tracks")
+      .downField("tracks")
       .focus
       .flatMap(_.asArray)
       .getOrElse(Vector.empty)
@@ -56,9 +56,16 @@ object FileCoders {
 
   object CoderBuilder {
 
-    val filePath: String = "src/main/resources/json/tracks.json"
-    val fileDirPath: String = "src/main/resources/json/"
-    val imageDirPath: String = "src/main/resources/images/tracks/"
+    val userHome: String = System.getProperty("user.home")
+    val separator: String = System.getProperty("file.separator")
+
+    val appDir: String = userHome + separator + ".popit"
+
+    val filesDir: String = appDir + separator + "files" + separator + "json"
+    val jsonPath: String = filesDir + separator + "tracks.json"
+    val imagesDir: String = appDir + separator + "images" + separator + "tracks"
+
+    def trackURL(index: Int): String = "file:///" + imagesDir + separator + "track" + index + ".png"
 
     var tracks: List[Track] = List()
 
@@ -67,11 +74,11 @@ object FileCoders {
      */
     def setup(): Unit = (for {
       cond <- for {
-        fileDir <- IO(Files.notExists(Paths.get(fileDirPath)))
-        imgDir <- IO(Files.notExists(Paths.get(imageDirPath)))
+        fileDir <- IO(Files.notExists(Paths.get(filesDir)))
+        imgDir <- IO(Files.notExists(Paths.get(imagesDir)))
       } yield fileDir && imgDir
-      _ <- IO(if (cond) Files.createDirectory(Paths.get(fileDirPath)))
-      _ <- IO(if (cond) Files.createDirectory(Paths.get(imageDirPath)))
+      _ <- IO(if (cond) Files.createDirectories(Paths.get(filesDir)))
+      _ <- IO(if (cond) Files.createDirectories(Paths.get(imagesDir)))
     } yield ()).unsafeRunSync()
 
   }
@@ -97,7 +104,7 @@ trait Coder {
  * @param path
  *   path of the file resource
  */
-case class FileCoder(override val path: String = filePath) extends Coder {
+case class FileCoder(override val path: String = jsonPath) extends Coder {
 
   CoderBuilder.setup()
 

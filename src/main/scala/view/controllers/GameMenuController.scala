@@ -1,8 +1,8 @@
 package view.controllers
 
 import controller.Controller.ControllerMessages._
-import controller.Messages
-import controller.Messages._
+import controller.interaction.Messages._
+import controller.interaction.Messages
 import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
@@ -128,10 +128,11 @@ class GameMenuController(
 
   override def disableRoundButton(): Unit = startRound.disable = true
 
-  override def enableRoundButton(): Unit = {
-    roundOver = true
-    startRound.disable = false
-  }
+  override def enableRoundButton(): Unit =
+    if (!roundOver) {
+      roundOver = true
+      startRound.disable = false
+    }
 
   override def disableAllButtons(): Unit = {
     startRound.disable = true
@@ -155,6 +156,8 @@ class GameMenuController(
       roundOver = true
       roundLabel.text = "0"
       disableRoundButton()
+      moneyLabel.text = "200$"
+      lifeLabel.text = "100"
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
     }

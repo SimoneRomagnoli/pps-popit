@@ -5,8 +5,8 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            stylesheets="/css/style.css"
-            fx:id="savedTracksPane"
+            fx:id="savedTracks"
+            BorderPane.alignment="CENTER"
             fx:controller="view.controllers.SavedTracksController"
             prefHeight="400.0" prefWidth="600.0">
     <center>
@@ -16,6 +16,7 @@
                     <FlowPane fx:id="flowPaneTracks" hgap="50" vgap="50" alignment="CENTER" styleClass="savedTracksFlowPane" >
                     </FlowPane>
                 </ScrollPane>
+                <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="settingsButton"/>
             </VBox>
     </center>
 </BorderPane>

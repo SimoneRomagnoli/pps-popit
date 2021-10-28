@@ -51,9 +51,9 @@ jobs:
       - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "0.2.0"
+          automatic_release_tag: "0.3.0"
           prerelease: true
-          title: "Scrum Sprint 2 - Release"
+          title: "Scrum Sprint 3 - Release"
           files: |
             pps-popit-windows-latest/*.jar
             pps-popit-macos-latest/*.jar

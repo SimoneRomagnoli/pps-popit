@@ -3,13 +3,13 @@ package model.actors
 import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.GameLoop.GameLoopActor
-import controller.GameLoop.GameLoopMessages.{ ModelUpdated, Start }
-import controller.Messages.{ Input, Render, Update }
+import controller.interaction.GameLoop.GameLoopActor
+import controller.interaction.GameLoop.GameLoopMessages.{ ModelUpdated, Start }
+import controller.interaction.Messages.{ Input, Render, Update }
 import model.Model.ModelMessages.TickUpdate
 import model.Positions.defaultPosition
-import model.actors.BulletActorTest.{ balloon, dart, dummyModel }
-import model.entities.balloons.BalloonLives.{ Blue, Red }
+import model.actors.BulletActorTest.{ dart, dummyModel }
+import model.entities.balloons.BalloonLives.Blue
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
@@ -22,7 +22,6 @@ import scala.language.postfixOps
 object BulletActorTest {
   var gameLoop: Option[ActorRef[Input]] = None
   var dart: Bullet = Dart() in (100.0, 100.0)
-  //var explosion: Explosion = CannonBall(bulletDefaultRadius)
   var balloon: Balloon = (Blue balloon) in (0.0, 0.0)
 
   val dummyModel: ActorRef[Update] => Behavior[Update] = b =>
@@ -62,29 +61,4 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
       }
     }
   }
-
-//  "The bullet actor" when {
-//    "a balloon exits from the screen" should {
-//      "send to the model a message before die" in {
-//        //dart.update(-1, -1)
-//        model
-//      }
-//    }
-//  }
-
-//  "The bullet actor" when {
-//    "the dart touch a balloon" should {
-//      "reply to the model which should contact the view" in {
-//        println(balloon position)
-//        gameLoop ! Start()
-//      }
-//      "hit the balloon" in {
-//        println(dart position)
-//        println(balloon position)
-//        (dart hit balloon) shouldBe true
-//        model expectMessage
-//      }
-//    }
-//  }
-
 }

@@ -3,7 +3,7 @@ package view.render
 import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.{ CannonBall, Explosion, IceBall }
+import model.entities.bullets.Bullets.{ CannonBall, IceBall }
 import scalafx.Includes.{ at, double2DurationHelper, _ }
 import scalafx.animation.Timeline
 import scalafx.scene.shape.Shape

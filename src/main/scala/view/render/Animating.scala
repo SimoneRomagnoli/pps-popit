@@ -2,7 +2,7 @@ package view.render
 
 import javafx.scene.Node
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.{ CannonBall, Explosion, IceBall }
+import model.entities.bullets.Bullets.{ CannonBall, IceBall }
 import scalafx.animation.Timeline
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.shape.{ Rectangle, Shape }

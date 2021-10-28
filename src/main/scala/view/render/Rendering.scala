@@ -1,7 +1,6 @@
 package view.render
 
 import javafx.scene.effect.ImageInput
-import javafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
@@ -104,13 +103,6 @@ object Rendering {
   def a(image: ImagePattern): ToBeRendered = Rendered {
     val rectangle: Rectangle = Rectangle(defaultWidth, defaultHeight)
     rectangle.setFill(image)
-    rectangle
-  }
-
-  /** Utility method for generating a [[Rectangle]] with the specified picture path. */
-  def forInput(width: Double, height: Double, path: String): ToBeRendered = Rendered {
-    val rectangle: Rectangle = Rectangle(width, height)
-    rectangle.setFill(new ImagePattern(new Image(path)))
     rectangle
   }
 

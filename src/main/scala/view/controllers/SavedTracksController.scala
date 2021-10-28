@@ -24,7 +24,6 @@ class SavedTracksController(
     val savedTracks: BorderPane,
     val flowPaneTracks: FlowPane,
     val backToMenu: ToggleButton,
-    val titleLogo: HBox,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewSavedTracksController {
@@ -39,19 +38,12 @@ class SavedTracksController(
 
   private object SavedTracksSettings {
 
-    def reset(): Unit = {
+    def reset(): Unit =
       flowPaneTracks.children.clear()
-      titleLogo.children.clear()
-    }
 
     def setup(tracks: List[Track]): Unit = Platform runLater {
       reset()
       Rendering.setLayout(savedTracks, Commons.Screen.width, Commons.Screen.height)
-      Rendering.forInput(
-        Commons.Screen.width * 1 / 2,
-        Commons.Screen.height / 8,
-        "images/backgrounds/SAVED_TRACKS.png"
-      ) into titleLogo.children
       loadSavedTracks(tracks)
       backToMenu.onMouseClicked = _ => send(BackToMenu())
     }

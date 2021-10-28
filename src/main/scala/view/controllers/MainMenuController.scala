@@ -20,7 +20,7 @@ trait ViewMainMenuController extends ViewController {}
 @sfxml
 class MainMenuController(
     val mainMenuPane: BorderPane,
-    val titleLogo: HBox,
+    val titleLogo: VBox,
     val mainMenuButtons: VBox,
     val newGameBtn: ToggleButton,
     val savedTracksBtn: ToggleButton,

@@ -10,6 +10,7 @@ import controller.TrackLoader.TrackLoaderMessages._
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.interaction.Messages._
+import controller.settings.Settings.Time.TimeSettings
 import controller.settings.Settings.{ Difficulty, Settings }
 import model.Model.ModelActor
 import model.entities.Entities.Entity
@@ -31,6 +32,7 @@ object Controller {
 
   object ControllerMessages {
     trait Navigation extends Input with Render
+    trait SettingsMessage extends Input
 
     case class NewGame(withTrack: Option[Track]) extends Input with Render
     case class RetrieveAndLoadTrack(trackID: Int) extends Input
@@ -42,7 +44,9 @@ object Controller {
     case class ResumeGame() extends Input with SpawnManagerMessage
     case class RestartGame() extends Input
     case class NewTrack() extends Input
-    case class SetDifficulty(difficulty: Difficulty) extends Input
+    case class SetDifficulty(difficulty: Difficulty) extends SettingsMessage
+    case class SetTimeRatio(timeRatio: Double) extends SettingsMessage
+    case class SetFrameRate(frameRate: Double) extends SettingsMessage
 
     case class StartNextRound()
         extends Input
@@ -93,7 +97,7 @@ object Controller {
       case NewGame(withTrack) =>
         view ! NewGame(withTrack)
         model = Some(ctx.spawnAnonymous(ModelActor(settings)))
-        gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view)))
+        gameLoop = Some(ctx.spawnAnonymous(GameLoopActor(model.get, view, settings.timeSettings)))
         model.get ! NewMap(ctx.self, withTrack)
         gameLoop.get ! Start()
         Behaviors.same
@@ -145,10 +149,6 @@ object Controller {
         model.get ! WithReplyTo(PlaceTower(cell, towerType), ctx.self)
         Behaviors.same
 
-      case SetDifficulty(difficulty) =>
-        settings = settings.changeDifficulty(difficulty)
-        Behaviors.same
-
       case SavedTracksPage() =>
         retrieve(trackLoader ? RetrieveSavedTracks) { case SavedTracks(tracks) =>
           view ! RenderSavedTracks(tracks)
@@ -158,6 +158,23 @@ object Controller {
       case navigation: Navigation =>
         view ! navigation
         clearModelAndGameLoop()
+        Behaviors.same
+
+      case settingsMessage: SettingsMessage =>
+        settingsMessage match {
+          case SetDifficulty(difficulty) =>
+            settings = Settings(difficulty, settings.timeSettings)
+          case SetTimeRatio(timeRatio) =>
+            settings = Settings(
+              settings.difficulty,
+              TimeSettings(settings.timeSettings.frameRate, timeRatio)
+            )
+          case SetFrameRate(frameRate) =>
+            settings = Settings(
+              settings.difficulty,
+              TimeSettings(frameRate, settings.timeSettings.timeRatio)
+            )
+        }
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>

@@ -1,16 +1,16 @@
 package controller.interaction
 
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorRef, Behavior}
-import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartAnimation}
-import Messages.{Input, Render, Update}
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartAnimation }
+import Messages.{ Input, Render, Update }
 import controller.interaction.GameLoop.GameLoopMessages._
-import controller.settings.Settings.Time.{TimeSettings, delay, elapsedTime, frameRate, timeRatio}
+import controller.settings.Settings.Time.{ delay, elapsedTime, frameRate, timeRatio, TimeSettings }
 import model.Model.ModelMessages.TickUpdate
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
-import view.View.ViewMessages.{RenderEntities, RenderGameOver, RenderStats}
+import view.View.ViewMessages.{ RenderEntities, RenderGameOver, RenderStats }
 
 import scala.concurrent.duration.DurationDouble
 
@@ -37,16 +37,18 @@ object GameLoop {
    */
   object GameLoopActor {
 
-    def apply(model: ActorRef[Update], view: ActorRef[Render], timeSettings: TimeSettings): Behavior[Input] = Behaviors.setup {
-      ctx =>
-        Behaviors.receiveMessage {
-          case Start() =>
-            Behaviors.withTimers { timers =>
-              timers.startTimerWithFixedDelay(Tick, delay(frameRate).seconds)
-              GameLoopActor(ctx, model, view, timeSettings).running()
-            }
-          case _ => Behaviors.same
-        }
+    def apply(
+        model: ActorRef[Update],
+        view: ActorRef[Render],
+        timeSettings: TimeSettings): Behavior[Input] = Behaviors.setup { ctx =>
+      Behaviors.receiveMessage {
+        case Start() =>
+          Behaviors.withTimers { timers =>
+            timers.startTimerWithFixedDelay(Tick, delay(frameRate).seconds)
+            GameLoopActor(ctx, model, view, timeSettings).running()
+          }
+        case _ => Behaviors.same
+      }
     }
   }
 

@@ -1,189 +1,194 @@
 .gameBoard {
--fx-font-weight: bold;
--fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-font-size: 25px;
 }
 
 .gameMenu {
--fx-font-weight: bold;
--fx-font-size: 13px;
--fx-background-color: #582F0E;
--fx-padding: 10;
--fx-margin: 0;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-color: #582F0E;
+    -fx-padding: 10;
+    -fx-margin: 0;
 }
 
 .inputBox {
--fx-background-color: #FEC89A;
--fx-padding: 10;
--fx-margin: 10;
--fx-border-color:#000000;
--fx-border-width: 1;
--fx-border-style: solid;
--fx-border-radius: 10;
--fx-background-radius: 10;
+    -fx-background-color: #FEC89A;
+    -fx-padding: 10;
+    -fx-margin: 10;
+    -fx-border-color: #000000;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 .inputButton {
--fx-background-color: #FFE5D9;
--fx-cursor: hand;
--fx-margin: 10;
--fx-padding: 0 10;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 10;
--fx-background-radius: 10;
--fx-font-size: 0px;
--fx-background-size: cover;
+    -fx-background-color: #FFE5D9;
+    -fx-cursor: hand;
+    -fx-margin: 10;
+    -fx-padding: 0 10;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-font-size: 0px;
+    -fx-background-size: cover;
 }
 
 .towerDepotTitle {
--fx-padding: 0;
--fx-margin: 0;
+    -fx-padding: 0;
+    -fx-margin: 0;
 }
 
 .towerBox {
--fx-background-color: #FFE5D9;
--fx-padding: 10;
--fx-spacing: 10;
--fx-margin: 10;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 10;
--fx-background-radius: 10;
+    -fx-background-color: #FFE5D9;
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-margin: 10;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 .towerStatusBox {
--fx-padding: 5 0;
--fx-margin: 10 0;
+    -fx-padding: 5 0;
+    -fx-margin: 10 0;
 }
 
 .towerStatusImage {
--fx-padding: 10;
--fx-margin: 10;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 10;
+    -fx-padding: 10;
+    -fx-margin: 10;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
 }
 
 .powerUpButton {
--fx-padding: 0;
--fx-margin: 0;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 10;
+    -fx-padding: 0;
+    -fx-margin: 0;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
 }
 
 .startRound, .pauseRound {
--fx-padding: 5 10;
+    -fx-padding: 5 10;
 }
 
 .roundCounter {
--fx-font-weight: bold;
--fx-font-size: 20px;
--fx-padding: 0 20;
--fx-margin: 0;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 5;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-padding: 0 20;
+    -fx-margin: 0;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 5;
 }
 
 .trackChoiceContainer, .gameOverContainer, .pauseContainer {
--fx-font-size: 13px;
--fx-background-color: rgba(255, 229, 217, 0.7);
--fx-padding: 10;
--fx-spacing: 10;
--fx-margin: 10;
--fx-border-radius: 10;
--fx-background-radius: 10;
+    -fx-font-size: 13px;
+    -fx-background-color: rgba(255, 229, 217, 0.7);
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-margin: 10;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 .trackButtons, .gameOverButtons, .pauseMenuButtons {
--fx-cursor: hand;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 10;
--fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 .selected {
--fx-border-color:#2BD011;
--fx-border-width: 2;
--fx-border-style: solid;
+    -fx-border-color: #2BD011;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
 }
 
 .selectable {
--fx-border-color:#2BD011;
--fx-border-width: 3;
--fx-border-style: solid;
+    -fx-border-color: #2BD011;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
 }
 
 .unselectable {
--fx-border-color:#FF0000;
--fx-border-width: 3;
--fx-border-style: solid;
+    -fx-border-color: #FF0000;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
 }
 
 .submenuTitle {
--fx-font-size: 20px;
+    -fx-font-size: 20px;
 }
 
 .savedTrackButton {
--fx-cursor: hand;
--fx-border-color:#000000;
--fx-border-width: 3;
--fx-border-style: solid;
+    -fx-cursor: hand;
+    -fx-border-color: #000000;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
 }
 
 .savedTrackButton:hover {
--fx-border-color:#FF0000;
+    -fx-border-color: #FF0000;
 }
 
 .savedTracksFlowPane {
--fx-background-color: rgba(255, 229, 217, 0.5);
+    -fx-background-color: rgba(255, 229, 217, 0.5);
 }
 
 .settingsButtons, .savedTracksButtons {
--fx-font-size: 13px;
--fx-background-color: rgba(255, 229, 217, 1.0);
--fx-padding: 10;
--fx-spacing: 10;
--fx-margin: 10;
--fx-border-radius: 10;
--fx-background-radius: 10;
--fx-border-color: #582F0E;
--fx-border-width: 3;
--fx-border-style: solid;
+    -fx-font-size: 13px;
+    -fx-background-color: rgba(255, 229, 217, 1.0);
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-margin: 10;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: #582F0E;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
 }
 
 .settingsButton, .menuButton, .savedTracksButton {
--fx-cursor: hand;
--fx-border-color:#000000;
--fx-border-width: 2;
--fx-border-style: solid;
--fx-border-radius: 10;
--fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 .mainMenu {
--fx-font-weight: bold;
--fx-font-size: 30px;
--fx-background-image: url('/images/backgrounds/SUNSET.png');
--fx-background-size: cover;
+    -fx-font-weight: bold;
+    -fx-font-size: 30px;
+    -fx-background-image: url('/images/backgrounds/SUNSET.png');
+    -fx-background-size: cover;
 }
 
 .mainMenuButtons {
--fx-background-color: rgba(255, 229, 217, 1.0);
--fx-padding: 10;
--fx-spacing: 10;
--fx-margin: 10;
--fx-border-radius: 10;
--fx-background-radius: 10;
--fx-border-color: #582F0E;
--fx-border-width: 3;
--fx-border-style: solid;
+    -fx-background-color: rgba(255, 229, 217, 1.0);
+    -fx-padding: 10;
+    -fx-spacing: 10;
+    -fx-margin: 10;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: #582F0E;
+    -fx-border-width: 3;
+    -fx-border-style: solid;
+}
+
+.everyMenuButtons {
+    -fx-padding: 10;
+    -fx-spacing: 10;
 }

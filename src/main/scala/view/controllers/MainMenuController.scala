@@ -21,7 +21,6 @@ trait ViewMainMenuController extends ViewController {}
 class MainMenuController(
     val mainMenuPane: BorderPane,
     val titleLogo: VBox,
-    val mainMenuButtons: VBox,
     val newGameBtn: ToggleButton,
     val savedTracksBtn: ToggleButton,
     val settingsBtn: ToggleButton,
@@ -41,11 +40,18 @@ class MainMenuController(
 
     def setup(): Unit = {
       Rendering.setLayout(mainMenuPane, Commons.Screen.width, Commons.Screen.height)
-      mainMenuButtons.setAlignment(Pos.Center)
 
       val logo = drawing the Title
       Rendering a logo into titleLogo.children
+      //adjustWidth()
       setupButtons()
+    }
+
+    def adjustWidth(): Unit = {
+      newGameBtn.minWidth = savedTracksBtn.width.value
+      settingsBtn.minWidth = savedTracksBtn.width.value
+      newGameBtn.maxWidth = savedTracksBtn.width.value
+      settingsBtn.maxWidth = savedTracksBtn.width.value
     }
 
     def setupButtons(): Unit = {

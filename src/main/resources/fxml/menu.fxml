@@ -17,11 +17,15 @@
             <VBox HBox.hgrow="ALWAYS"/>
             <VBox>
                 <VBox fx:id="titleLogo" styleClass="titleLogo" VBox.vgrow="ALWAYS" alignment="CENTER"/>
-                <VBox fx:id="mainMenuButtons" styleClass="mainMenuButtons">
-                    <ToggleButton text="New Game" fx:id="newGameBtn" styleClass="menuButton"/>
-                    <ToggleButton text="Saved Tracks" fx:id="savedTracksBtn" styleClass="menuButton"/>
-                    <ToggleButton text="Settings" fx:id="settingsBtn" styleClass="menuButton"/>
-                </VBox>
+                <HBox styleClass="mainMenuButtons" alignment="CENTER">
+                    <VBox HBox.hgrow="ALWAYS"/>
+                    <VBox styleClass="everyMenuButtons">
+                        <ToggleButton text="New Game" fx:id="newGameBtn" styleClass="menuButton" maxWidth="Infinity"/>
+                        <ToggleButton text="Saved Tracks" fx:id="savedTracksBtn" styleClass="menuButton" maxWidth="Infinity"/>
+                        <ToggleButton text="Settings" fx:id="settingsBtn" styleClass="menuButton" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS"/>
+                </HBox>
                 <VBox VBox.vgrow="ALWAYS"/>
             </VBox>
             <VBox HBox.hgrow="ALWAYS"/>

@@ -76,8 +76,22 @@
 -fx-border-radius: 10;
 }
 
-.startRound, .pauseRound {
--fx-padding: 5 10;
+.startRound{
+-fx-padding: 7 10;
+-fx-background-image: url('/images/inputs/PLAY.png');
+}
+
+
+.pauseRound {
+-fx-padding: 7 10;
+-fx-background-image: url('/images/inputs/PAUSE.png');
+-fx-background-size: cover;
+}
+
+.forwardButton{
+-fx-padding: 7 10;
+-fx-background-image: url('/images/inputs/forward.png');
+-fx-background-size: cover;
 }
 
 .roundCounter {

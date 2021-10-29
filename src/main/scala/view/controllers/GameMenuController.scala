@@ -29,6 +29,8 @@ import view.render.Renders.{ single, toSingle }
 import scala.concurrent.Future
 
 trait ViewGameMenuController extends GameControllerChild {
+  def launchNewRound(): Unit
+  def isForwardPressed(): Boolean
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def renderStats(stats: GameStats): Unit
@@ -60,6 +62,8 @@ class GameMenuController(
     val startRoundContainer: VBox,
     val startRound: ToggleButton,
     val pauseRound: ToggleButton,
+    val forwardRounds: ToggleButton,
+    var automaticRounds: Boolean,
     var currentCell: Cell = outerCell,
     var roundOver: Boolean = true,
     var parent: ViewGameController,
@@ -137,11 +141,13 @@ class GameMenuController(
   override def disableAllButtons(): Unit = {
     startRound.disable = true
     pauseRound.disable = true
+    forwardRounds.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
     pauseRound.disable = false
+    forwardRounds.disable = false
     towerDepot.disable = false
     if (roundOver) startRound.disable = false
   }
@@ -182,6 +188,15 @@ class GameMenuController(
         roundOver = false
         disableRoundButton()
       }
+      forwardRounds.onMouseClicked = _ =>
+        if (isForwardPressed()) {
+          startRound.disable = false
+          automaticRounds = false
+        } else {
+          startRound.disable = true
+          automaticRounds = true;
+        }
+
     }
 
     def setupTowerDepot[B <: Bullet](): Unit =
@@ -248,4 +263,8 @@ class GameMenuController(
       towerStatus.children += box
     }
   }
+
+  override def launchNewRound(): Unit = send(StartNextRound())
+
+  override def isForwardPressed(): Boolean = automaticRounds
 }

@@ -5,7 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartAnimation }
 import Messages.{ Input, Render, Update }
 import controller.interaction.GameLoop.GameLoopMessages._
-import controller.settings.Settings.Time.{ delay, elapsedTime, frameRate, timeRatio, TimeSettings }
+import controller.settings.Settings.Time.{ delay, elapsedTime, TimeSettings }
 import model.Model.ModelMessages.TickUpdate
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
@@ -44,7 +44,7 @@ object GameLoop {
       Behaviors.receiveMessage {
         case Start() =>
           Behaviors.withTimers { timers =>
-            timers.startTimerWithFixedDelay(Tick, delay(frameRate).seconds)
+            timers.startTimerWithFixedDelay(Tick, delay(timeSettings.frameRate).seconds)
             GameLoopActor(ctx, model, view, timeSettings).running()
           }
         case _ => Behaviors.same

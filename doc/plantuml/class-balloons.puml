@@ -1,11 +1,11 @@
 @startuml
-'https://plantuml.com/sequence-diagram
 
-autonumber
+interface Balloon
+class Simple
+class Complex
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+Balloon <|.. Simple
+Balloon <|.. Complex
+Complex *-- Balloon
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
 @enduml

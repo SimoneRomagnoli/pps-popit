@@ -1,11 +1,11 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{ BackToMenu, SetDifficulty }
+import controller.Controller.ControllerMessages.{BackToMenu, SetDifficulty, SetFrameRate, SetTimeRatio}
 import controller.interaction.Messages._
-import controller.settings.Settings.{ Easy, Hard, Normal }
-import scalafx.geometry.Pos
+import controller.settings.Settings.Time.Constants._
+import controller.settings.Settings.{Easy, Hard, Normal}
 import scalafx.scene.control.ToggleButton
-import scalafx.scene.layout.{ BorderPane, HBox, VBox }
+import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.sfxml
 import utils.Commons
 import view.render.Rendering
@@ -17,11 +17,14 @@ trait ViewSettingsController extends ViewController {}
 @sfxml
 class SettingsController(
     val settings: BorderPane,
-    val settingsButtons: VBox,
-    val difficultyBox: HBox,
     val easyButton: ToggleButton,
     val normalButton: ToggleButton,
     val hardButton: ToggleButton,
+    val normalSpeedButton: ToggleButton,
+    val doubleSpeedButton: ToggleButton,
+    val lowFrameRateButton: ToggleButton,
+    val mediumFrameRateButton: ToggleButton,
+    val highFrameRateButton: ToggleButton,
     val backToMenu: ToggleButton,
     var send: Input => Unit,
     var ask: Message => Future[Message])
@@ -38,8 +41,6 @@ class SettingsController(
 
     def setup(): Unit = {
       Rendering.setLayout(settings, Commons.Screen.width, Commons.Screen.height)
-      settingsButtons.setAlignment(Pos.Center)
-      difficultyBox.setAlignment(Pos.Center)
       setupButtons()
     }
 
@@ -48,6 +49,11 @@ class SettingsController(
       normalButton.onMouseClicked = _ => send(SetDifficulty(Normal))
       hardButton.onMouseClicked = _ => send(SetDifficulty(Hard))
       backToMenu.onMouseClicked = _ => send(BackToMenu())
+      normalSpeedButton.onMouseClicked = _ => send(SetTimeRatio(normalTimeRatio))
+      doubleSpeedButton.onMouseClicked = _ => send(SetTimeRatio(doubleTimeRatio))
+      lowFrameRateButton.onMouseClicked = _ => send(SetFrameRate(lowFrameRate))
+      mediumFrameRateButton.onMouseClicked = _ => send(SetFrameRate(mediumFrameRate))
+      highFrameRateButton.onMouseClicked = _ => send(SetFrameRate(highFrameRate))
     }
   }
 }

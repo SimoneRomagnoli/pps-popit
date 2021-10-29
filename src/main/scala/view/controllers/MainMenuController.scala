@@ -2,7 +2,6 @@ package view.controllers
 
 import controller.Controller.ControllerMessages.{ NewGame, SavedTracksPage, SettingsPage }
 import controller.interaction.Messages.{ Input, Message }
-import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, VBox }
 import scalafxml.core.macros.sfxml

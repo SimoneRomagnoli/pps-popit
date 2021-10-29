@@ -12,31 +12,41 @@
     <center>
         <HBox>
             <VBox HBox.hgrow="ALWAYS"/>
-            <VBox>
+            <VBox alignment="CENTER">
                 <VBox VBox.vgrow="ALWAYS"/>
-                <VBox alignment="CENTER" styleClass="settingsButtons">
+                <VBox styleClass="settingsButtons" alignment="CENTER">
                     <Label text="Settings" styleClass="submenuTitle"/>
-                    <HBox alignment="CENTER">
-                        <Label text="Difficulty"/>
-                        <HBox HBox.hgrow="ALWAYS"/>
-                        <ToggleButton text="Easy" fx:id="easyButton" styleClass="settingsButton"/>
-                        <ToggleButton text="Normal" fx:id="normalButton" styleClass="settingsButton"/>
-                        <ToggleButton text="Hard" fx:id="hardButton" styleClass="settingsButton"/>
+                    <HBox>
+                        <VBox styleClass="everyMenuButtons" alignment="CENTER">
+                            <Label styleClass="everyMenuButtons" text="Difficulty"/>
+                            <Label styleClass="everyMenuButtons" text="Game Speed"/>
+                            <Label styleClass="everyMenuButtons" text="Frame Rate"/>
+                        </VBox>
+                        <VBox alignment="CENTER">
+                            <HBox styleClass="everyMenuButtons">
+                                <ToggleButton text="Easy" fx:id="easyButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <ToggleButton text="Normal" fx:id="normalButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <ToggleButton text="Hard" fx:id="hardButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                            </HBox>
+                            <HBox styleClass="everyMenuButtons">
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <ToggleButton text="Normal" fx:id="normalSpeedButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <ToggleButton text="Double" fx:id="doubleSpeedButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                            <HBox styleClass="everyMenuButtons">
+                                <ToggleButton text="20" fx:id="lowFrameRateButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <ToggleButton text="30" fx:id="mediumFrameRateButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                                <HBox HBox.hgrow="ALWAYS"/>
+                                <ToggleButton text="60" fx:id="highFrameRateButton" styleClass="settingsButton" maxWidth="Infinity"/>
+                            </HBox>
+                        </VBox>
                     </HBox>
-                    <HBox alignment="CENTER">
-                        <Label text="Game Speed"/>
-                        <HBox HBox.hgrow="ALWAYS"/>
-                        <ToggleButton text="Normal" fx:id="normalSpeedButton" styleClass="settingsButton"/>
-                        <ToggleButton text="Double" fx:id="doubleSpeedButton" styleClass="settingsButton"/>
-                    </HBox>
-                    <HBox alignment="CENTER">
-                        <Label text="Frame Rate"/>
-                        <HBox HBox.hgrow="ALWAYS"/>
-                        <ToggleButton text="20" fx:id="lowFrameRateButton" styleClass="settingsButton"/>
-                        <ToggleButton text="30" fx:id="mediumFrameRateButton" styleClass="settingsButton"/>
-                        <ToggleButton text="60" fx:id="highFrameRateButton" styleClass="settingsButton"/>
-                    </HBox>
-                    <ToggleButton text="Return to menu" fx:id="backToMenu" styleClass="settingsButton"/>
+                    <ToggleButton fx:id="backToMenu" styleClass="settingsButton" text="Return to menu" />
                 </VBox>
                 <VBox VBox.vgrow="ALWAYS"/>
             </VBox>

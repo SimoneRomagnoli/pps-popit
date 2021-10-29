@@ -1,5 +1,6 @@
 package controller.settings
 
+import controller.settings.Settings.Time.Constants.{highFrameRate, normalTimeRatio}
 import controller.settings.Settings.Time.TimeSettings
 
 /**
@@ -19,9 +20,17 @@ object Settings {
   case object Hard extends DifficultyLevel(3)
 
   object Time {
-    case class TimeSettings(frameRate: Double = frameRate, timeRatio: Double = timeRatio)
-    val frameRate: Double = 60.0
-    val timeRatio: Double = 1.0
+
+    object Constants {
+      val lowFrameRate: Double = 20.0
+      val mediumFrameRate: Double = 30.0
+      val highFrameRate: Double = 60.0
+      val normalTimeRatio: Double = 1.0
+      val doubleTimeRatio: Double = 2.0
+    }
+
+    case class TimeSettings(frameRate: Double = highFrameRate, timeRatio: Double = normalTimeRatio)
+
     val truncate: Double => Double = n => (n * 1000).round / 1000.toDouble
     val delay: Double => Double = n => truncate(1.0 / n)
 

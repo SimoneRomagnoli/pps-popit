@@ -1,14 +1,15 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.{ActorRef, Behavior}
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages._
 import controller.GameLoopTest._
 import controller.interaction.Messages._
+import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TickUpdate
 import model.maps.Tracks.Track
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -39,8 +40,8 @@ class GameLoopTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val model: ActorRef[Update] = testKit.spawn(dummyModel(counter))
   val fastModel: ActorRef[Update] = testKit.spawn(dummyModel(fastCounter))
   val view: TestProbe[Render] = testKit.createTestProbe[Render]()
-  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref))
-  val fastGameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(fastModel, view.ref))
+  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref, TimeSettings()))
+  val fastGameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(fastModel, view.ref, TimeSettings()))
   val mapView: TestProbe[Render] = testKit.createTestProbe[Render]()
   val mapController: ActorRef[Input] = testKit.spawn(ControllerActor(mapView.ref))
 

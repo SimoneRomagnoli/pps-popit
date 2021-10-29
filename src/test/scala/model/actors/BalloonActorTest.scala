@@ -1,17 +1,18 @@
 package model.actors
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.{ActorRef, Behavior}
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages._
-import controller.interaction.Messages.{ Input, Render, Update }
+import controller.interaction.Messages.{Input, Render, Update}
+import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TickUpdate
 import model.Positions.defaultPosition
-import model.actors.BalloonActorTest.{ dummyModel, testBalloon }
+import model.actors.BalloonActorTest.{dummyModel, testBalloon}
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
+import model.managers.EntitiesMessages.{EntityUpdated, UpdateEntity}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages._
@@ -44,7 +45,7 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
   val model: ActorRef[Update] =
     testKit.spawn(dummyModel(balloonActor))
   val view: TestProbe[Render] = testKit.createTestProbe[Render]()
-  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref))
+  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref, TimeSettings()))
 
   "The balloon actor" when {
     "asked to update" should {

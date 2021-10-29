@@ -1,18 +1,19 @@
 package model.actors
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.{ActorRef, Behavior}
 import controller.interaction.GameLoop.GameLoopActor
-import controller.interaction.GameLoop.GameLoopMessages.{ ModelUpdated, Start }
-import controller.interaction.Messages.{ Input, Render, Update }
+import controller.interaction.GameLoop.GameLoopMessages.{ModelUpdated, Start}
+import controller.interaction.Messages.{Input, Render, Update}
+import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TickUpdate
 import model.Positions.defaultPosition
-import model.actors.BulletActorTest.{ dart, dummyModel }
+import model.actors.BulletActorTest.{dart, dummyModel}
 import model.entities.balloons.BalloonLives.Blue
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ Bullet, Dart }
-import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
+import model.entities.bullets.Bullets.{Bullet, Dart}
+import model.managers.EntitiesMessages.{EntityUpdated, UpdateEntity}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages.RenderEntities
@@ -48,7 +49,7 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
     testKit.spawn(dummyModel(bulletActor))
 
   val view: TestProbe[Render] = testKit.createTestProbe[Render]()
-  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref))
+  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref, TimeSettings()))
 
   "The bullet actor" when {
     "asked to update" should {

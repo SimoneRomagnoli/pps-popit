@@ -65,3 +65,19 @@ ridirezionamento dei messaggi, ricevuti da \texttt{Controller} e \texttt{GameLoo
 opportuni: tale pattern di delegazione è molto comune all'interno del paradigma ad attori e rende efficace la
 suddivisione dei task all'interno del sistema.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{img/global-architecture}
+    \caption{UML package diagram of the global MVC architecture.}
+    \label{fig:global-architecture}
+\end{figure}
+
+La figura \ref{fig:global-architecture} mostra l'architettura appena descritta. Per modellare i principali attori del
+sistema è stato utilizzato il formalismo UML; tuttavia, sono state adottate alcune convenzioni per facilitarne la
+raffigurazione: in particolare, gli attori sono stati rappresentati come classi i cui metodi corrispondono ai loro
+comportamenti. Tale scelta è stata motivata dall'effettiva implementazione degli attori che si rifà ad un pattern
+consigliato da \textit{Akka}.
+Inoltre, le relazioni tra package mostrate in figura potrebbero suggerire che il pattern MVC non venga pienamente
+rispettato; tuttavia, queste ultime rappresentano in realtà il flusso dei messaggi. Infatti, i componenti del
+\texttt{Model} non iniziano mai un'interazione verso il \texttt{Controller}, bensì si limitano a rispondere ai messaggi
+di \texttt{Update}.

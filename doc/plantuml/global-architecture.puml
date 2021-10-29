@@ -1,0 +1,67 @@
+@startuml global-architecture
+
+package view {
+    class ViewActor {
+        +inMenu(menuController: MainMenuController): Behavior[Render]
+        +inGame(gameController: GameController): Behavior[Render]
+        +inSettings(settingsController: SettingsController): Behavior[Render]
+        +inSavedTracks(savedTracksController: SavedTracksController): Behavior[Render]
+    }
+
+    ViewActor -down-> MainMenuController
+    ViewActor -down-> GameController
+    ViewActor -down-> SettingsController
+    ViewActor -down-> SavedTracksController
+}
+
+package controller {
+    class ControllerActor {
+        +default(): Behavior[Input]
+        +interacting(): Behavior[Input]
+    }
+
+    class GameLoopActor {
+        +init(settings: Settings): Behavior[Input]
+        +running(): Behavior[Input]
+        +paused(): Behavior[Input]
+    }
+
+    ControllerActor --> GameLoopActor
+    ControllerActor -down--> ViewActor
+    GameLoopActor -down--> ViewActor
+}
+
+package model {
+    class ModelActor {
+        +default(): Behavior[Update]
+    }
+
+
+    GameLoopActor --> ModelActor
+    ControllerActor -right--> ModelActor
+
+    class EntitiesManager {
+        +running(): Behavior[Update]
+        +updating(): Behavior[Update]
+    }
+
+    class SpawnManager {
+        +waiting(): Behavior[Update]
+        +spawningRound(): Behavior[Update]
+        +spawningStreak(): Behavior[Update]
+        +paused(): Behavior[Update]
+    }
+
+    class GameDynamicsManager {
+        +default(): Behavior[Update]
+    }
+
+    ModelActor -down-> EntitiesManager
+    ModelActor -right-> SpawnManager
+    ModelActor -down--> GameDynamicsManager
+    EntitiesManager -> GameLoopActor
+    GameDynamicsManager -> GameLoopActor
+
+}
+
+@enduml

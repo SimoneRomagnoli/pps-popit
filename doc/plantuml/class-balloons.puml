@@ -1,0 +1,11 @@
+@startuml
+
+interface Balloon
+class Simple
+class Complex
+
+Balloon <|.. Simple
+Balloon <|.. Complex
+Complex *-- Balloon
+
+@enduml

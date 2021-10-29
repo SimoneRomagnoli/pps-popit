@@ -1,9 +1,14 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{BackToMenu, SetDifficulty, SetFrameRate, SetTimeRatio}
+import controller.Controller.ControllerMessages.{
+  BackToMenu,
+  SetDifficulty,
+  SetFrameRate,
+  SetTimeRatio
+}
 import controller.interaction.Messages._
 import controller.settings.Settings.Time.Constants._
-import controller.settings.Settings.{Easy, Hard, Normal}
+import controller.settings.Settings.{ Easy, Hard, Normal }
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.sfxml

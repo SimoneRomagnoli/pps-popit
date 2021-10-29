@@ -1,6 +1,6 @@
 package controller.settings
 
-import controller.settings.Settings.Time.Constants.{highFrameRate, normalTimeRatio}
+import controller.settings.Settings.Time.Constants.{ highFrameRate, normalTimeRatio }
 import controller.settings.Settings.Time.TimeSettings
 
 /**

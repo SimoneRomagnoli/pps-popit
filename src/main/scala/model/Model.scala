@@ -46,7 +46,7 @@ object Model {
       var handlers: List[(ActorRef[Update], MessageType)] = List()) {
 
     def init(settings: Settings): Behavior[Update] = {
-      handlers = (ctx.spawnAnonymous(SpawnManager(ctx.self)), SpawnMessage) :: handlers
+      handlers = (ctx.spawnAnonymous(SpawnManager(ctx.self, settings.timeSettings)), SpawnMessage) :: handlers
       handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
       handlers = (
         ctx.spawnAnonymous(GameDynamicsManager(ctx.self, settings)),

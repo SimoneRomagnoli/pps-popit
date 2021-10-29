@@ -1,20 +1,22 @@
 package model.managers
 
-import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartNextRound}
 import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.interaction.Messages.{ Input, SpawnManagerMessage, Update, WithReplyTo }
+import controller.interaction.Messages.{Input, SpawnManagerMessage, Update, WithReplyTo}
+import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
-import model.managers.EntitiesMessages.{ DoneSpawning, EntitySpawned }
-import model.managers.SpawnerMessages.{ IsRoundOver, RoundOver, RoundStatus, SpawnTick, StartRound }
+import model.managers.EntitiesMessages.{DoneSpawning, EntitySpawned}
+import model.managers.SpawnerMessages.{IsRoundOver, RoundOver, RoundStatus, SpawnTick, StartRound}
 import model.maps.Tracks.Track
-import model.spawn.Rounds.{ Round, Streak }
+import model.spawn.Rounds.{Round, Streak}
 import model.spawn.RoundsFactory
 
+import scala.concurrent.duration.DurationLong
 import scala.language.postfixOps
 
 object SpawnerMessages {
@@ -30,9 +32,9 @@ object SpawnerMessages {
  */
 object SpawnManager {
 
-  def apply(model: ActorRef[Update]): Behavior[Update] = Behaviors.setup { ctx =>
+  def apply(model: ActorRef[Update], timeSettings: TimeSettings): Behavior[Update] = Behaviors.setup { ctx =>
     RoundsFactory.startGame()
-    Spawner(ctx, model).waiting()
+    Spawner(ctx, model, timeSettings).waiting()
   }
 }
 
@@ -49,6 +51,7 @@ object SpawnManager {
 case class Spawner private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
+    timeSettings: TimeSettings,
     var track: Track = Track()) {
 
   def waiting(): Behavior[Update] = Behaviors.receiveMessage {
@@ -87,7 +90,7 @@ case class Spawner private (
   private def spawningRound(streaks: Seq[Streak]): Behavior[Update] = streaks match {
     case h :: t =>
       Behaviors.withTimers { timers =>
-        timers.startTimerWithFixedDelay(SpawnTick, h.interval)
+        timers.startTimerWithFixedDelay(SpawnTick, h.interval / timeSettings.timeRatio.toLong)
         spawningStreak(
           LazyList
             .iterate((h.balloonInfo.balloonLife balloon) adding h.balloonInfo.balloonTypes)(b => b)

@@ -43,15 +43,7 @@ class MainMenuController(
 
       val logo = drawing the Title
       Rendering a logo into titleLogo.children
-      //adjustWidth()
       setupButtons()
-    }
-
-    def adjustWidth(): Unit = {
-      newGameBtn.minWidth = savedTracksBtn.width.value
-      settingsBtn.minWidth = savedTracksBtn.width.value
-      newGameBtn.maxWidth = savedTracksBtn.width.value
-      settingsBtn.maxWidth = savedTracksBtn.width.value
     }
 
     def setupButtons(): Unit = {

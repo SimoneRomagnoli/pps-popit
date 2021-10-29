@@ -1,0 +1,25 @@
+@startuml
+
+state Waiting {
+}
+
+state Spawning {
+    [*] --> SpawningRound
+    state SpawningRound {
+    }
+    state SpawningStreak {
+    }
+    state c <<choice>>
+    state d <<choice>>
+}
+
+[*] --> Waiting
+Waiting --> Spawning : StartRound
+SpawningRound --> c
+c --> Waiting : [RoundOver]
+c --> SpawningStreak : [!RoundOver]\n/startTimer(SpawnTick)
+SpawningStreak --> d : SpawnTick
+d --> SpawningStreak : [!StreakOver]\n/spawnBalloon
+d --> SpawningRound : [StreakOver]\n/stopTimer(SpawnTick)
+
+@enduml

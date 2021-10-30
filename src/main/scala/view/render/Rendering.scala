@@ -29,7 +29,7 @@ import scala.language.{ implicitConversions, reflectiveCalls }
  * Object that simulates a DSL for rendering logic entities as shapes for a scalafx pane.
  */
 object Rendering {
-  import view.render.Rendering.RenderingUtilities._
+  import view.render.Rendering.RenderingPatterns._
   val drawing: Drawing = Drawing(GameDrawings())
   val defaultWidth: Double = 400.0
   val defaultHeight: Double = 200.0
@@ -106,6 +106,7 @@ object Rendering {
     rectangle
   }
 
+  /** Sets the layout of the specified region with the specified width and height. */
   def setLayout(region: Region, width: Double, height: Double): Unit = {
     region.maxWidth = width
     region.minWidth = width
@@ -113,8 +114,20 @@ object Rendering {
     region.minHeight = height
   }
 
-  private object RenderingUtilities {
+  /** Contains methods for blending balloon patterns. */
+  private object RenderingPatterns {
 
+    /**
+     * Given a [[Balloon]], returns a sequence of [[BalloonPattern]] that represent the balloon
+     * types that it inherits.
+     *
+     * @param balloon,
+     *   the balloon instance.
+     * @param patterns,
+     *   an accumulator for the patterns allowing tail recursion.
+     * @return
+     *   the sequence of [[BalloonPattern]] inherited by the balloon.
+     */
     @tailrec
     def patternsOf(balloon: Balloon, patterns: Seq[BalloonPattern] = Seq()): Seq[BalloonPattern] =
       balloon match {
@@ -127,6 +140,16 @@ object Rendering {
         case _ => patterns
       }
 
+    /**
+     * Transforms a [[BalloonPattern]] into a [[Blend]] effect. It needs a [[Rectangle]] to resize
+     * the effect at its size; it is set as implicit so the method can be used in a more functional
+     * way.
+     *
+     * @param rectangle,
+     *   the shape that represents the size of the effect.
+     * @return
+     *   the blend effect of the balloon pattern.
+     */
     def toBlend(implicit rectangle: Rectangle): BalloonPattern => Blend = { pattern =>
       val image: ImagePattern = drawing the pattern
       val blend: Blend = new Blend()

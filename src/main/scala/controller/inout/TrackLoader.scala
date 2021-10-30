@@ -1,9 +1,8 @@
-package controller
+package controller.inout
 
-import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import akka.actor.typed.{ ActorRef, Behavior }
-import controller.TrackLoader.TrackLoaderMessages._
-import controller.inout.FileCoder
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.Controller
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
 import utils.ScreenShooter

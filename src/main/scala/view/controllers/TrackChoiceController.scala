@@ -11,6 +11,10 @@ import view.render.Rendering
 
 import scala.concurrent.Future
 
+/**
+ * Controller of the track choice popup. This controller contains the buttons of the popup that is
+ * shown when a track can be changed or kept; moreover, sets the event handlers of the buttons.
+ */
 trait ViewTrackChoiceController extends GameControllerChild
 
 /**

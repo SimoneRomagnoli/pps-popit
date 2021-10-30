@@ -11,6 +11,10 @@ import view.render.Rendering
 
 import scala.concurrent.Future
 
+/**
+ * Controller of the main menu. This controller contains the buttons of the main menu and sets their
+ * event handlers.
+ */
 trait ViewMainMenuController extends ViewController {}
 
 /**
@@ -39,7 +43,6 @@ class MainMenuController(
 
     def setup(): Unit = {
       Rendering.setLayout(mainMenuPane, Commons.Screen.width, Commons.Screen.height)
-
       val logo = drawing the Title
       Rendering a logo into titleLogo.children
       setupButtons()

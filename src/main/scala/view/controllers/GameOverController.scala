@@ -1,5 +1,6 @@
 package view.controllers
 
+import controller.Controller.ControllerMessages.{ BackToMenu, RestartGame }
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
@@ -10,6 +11,9 @@ import view.render.Rendering
 
 import scala.concurrent.Future
 
+/**
+ * Controller of the game over popup.
+ */
 trait ViewGameOverController extends GameControllerChild
 
 /**
@@ -49,12 +53,20 @@ class GameOverController(
 
   override def reset(): Unit = {}
 
+  /** Private verbose methods. */
   private object Setters {
 
-    def setup(): Unit =
-      //retryTrack.onMouseClicked = _ => send(Retry())
-      //saveTrack.onMouseClicked = _ => send(SaveTrack())
-      retryTrack.onMouseClicked = _ => hide()
+    def setup(): Unit = {
+      retryTrack.onMouseClicked = _ => {
+        send(RestartGame())
+        parent.gameMenuController.clearTowerStatus()
+        hide()
+      }
+      quit.onMouseClicked = _ => {
+        send(BackToMenu())
+        hide()
+      }
+    }
   }
 
 }

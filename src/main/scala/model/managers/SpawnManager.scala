@@ -67,17 +67,6 @@ case class Spawner private (
       track = newTrack
       Behaviors.same
 
-    case RoundOver(actorRef) =>
-      actorRef ! CanStartNextRound()
-      Behaviors.same
-
-    case WithReplyTo(msg, replyTo) =>
-      msg match {
-        case IsRoundOver() =>
-          replyTo ! RoundStatus(true)
-      }
-      Behaviors.same
-
     case _ => Behaviors.same
   }
 
@@ -120,13 +109,6 @@ case class Spawner private (
               spawningRound(later)
             }
         }
-
-      case WithReplyTo(msg, replyTo) =>
-        msg match {
-          case IsRoundOver() =>
-            replyTo ! RoundStatus(false)
-        }
-        Behaviors.same
 
       case PauseGame() =>
         paused(streak, later)

@@ -45,6 +45,12 @@ object RegeneratingBalloons {
 
   }
 
+  /**
+   * Wraps a [[Balloon]] with the [[Regenerating]]
+   * [[model.entities.balloons.BalloonDecorations.BalloonType]].
+   * @param balloon
+   *   The [[Balloon]] wrapped.
+   */
   case class RegeneratingBalloon(override val balloon: Balloon)
       extends BalloonDecoration(balloon)
       with Regenerating {

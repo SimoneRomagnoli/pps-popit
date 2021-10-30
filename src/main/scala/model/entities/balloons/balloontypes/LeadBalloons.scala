@@ -11,6 +11,12 @@ object LeadBalloons {
    */
   trait Lead extends Balloon { balloon: Balloon => }
 
+  /**
+   * Wraps a [[Balloon]] with the [[Lead]]
+   * [[model.entities.balloons.BalloonDecorations.BalloonType]].
+   * @param balloon
+   *   The [[Balloon]] wrapped.
+   */
   case class LeadBalloon(override val balloon: Balloon)
       extends BalloonDecoration(balloon)
       with Lead {

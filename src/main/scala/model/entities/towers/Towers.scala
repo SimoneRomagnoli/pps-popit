@@ -19,7 +19,7 @@ object Towers {
    * shoot it with a specific [[Bullet]] wrt its shot ratio
    *
    * @tparam B
-   *   is the type of the [[Bullet]] it can shoot
+   *   is the type of the bullet it can shoot
    */
   trait Tower[+B <: Bullet] extends Entity with SightAbility with ShotAbility {
     type Boundary = (Double, Double)
@@ -61,7 +61,7 @@ object Towers {
   /**
    * A [[BaseTower]] is a default tower instance
    * @param bullet
-   *   is the type of the [[Bullet]] it can shoot when it detects a balloon
+   *   is the type of the bullet it can shoot when it detects a balloon
    * @param boundary
    *   is the boundary of the rendered object in the grid
    * @param position
@@ -73,7 +73,7 @@ object Towers {
    * @param direction
    *   is the aim of the tower
    * @tparam B
-   *   is a generic to specify the type of the [[Bullet]]
+   *   is a generic to specify the type of the bullet
    */
   case class BaseTower[B <: Bullet](
       override val bullet: B,

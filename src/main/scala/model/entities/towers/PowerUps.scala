@@ -16,6 +16,13 @@ object PowerUps {
     def factor: Double
   }
 
+  /**
+   * It represents a [[PowerUp]] which a [[Tower]] can obtain
+   * @param cost
+   *   the cost of the power up
+   * @param factor
+   *   the factor of which the tower value are boosted
+   */
   sealed class TowerPowerUp(override val cost: Int, override val factor: Double = 0.0)
       extends PowerUp
 
@@ -24,6 +31,13 @@ object PowerUps {
   case object Damage extends TowerPowerUp(boostedDamageCost, boostedDamageFactor)
   case object Camo extends TowerPowerUp(boostedCamoCost)
 
+  /**
+   * Provides an enriched functionality of the [[Tower]] which it can be boosted
+   * @param tower
+   *   the tower to boost
+   * @tparam B
+   *   the type of the bullet of the tower
+   */
   implicit class BoostedTower[B <: Bullet](tower: Tower[B]) {
 
     def boost(powerUp: TowerPowerUp): Tower[B] =

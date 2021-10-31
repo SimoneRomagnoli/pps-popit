@@ -16,7 +16,7 @@ object Towers {
 
   /**
    * A [[Tower]] is an [[Entity]] with the ability of detect a balloon within its sight range and
-   * shoot it with a specific [[Bullet]]
+   * shoot it with a specific [[Bullet]] wrt its shot ratio
    *
    * @tparam B
    *   is the type of the [[Bullet]] it can shoot
@@ -45,6 +45,9 @@ object Towers {
     def build(bullet: B): Tower[B]
   }
 
+  /**
+   * Tower instance builder which spawn a specific [[BaseTower]] specified by its [[Bullet]] type
+   */
   object TowerBuilders {
     implicit def genericTowerBuilder[B <: Bullet]: TowerBuilder[B] = BaseTower[B](_)
     implicit val dartTowerBuilder: TowerBuilder[Dart] = BaseTower[Dart](_)

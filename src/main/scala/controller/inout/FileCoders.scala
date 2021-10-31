@@ -54,6 +54,9 @@ object FileCoders {
     Right(tracks)
   }
 
+  /**
+   * Builder to setup I/O path destinations
+   */
   object CoderBuilder {
 
     val userHome: String = System.getProperty("user.home")
@@ -83,6 +86,11 @@ object FileCoders {
 
   }
 
+  /**
+   * Implicit coder to retrieve the result after a sequence of I/O operations
+   * @param io
+   *   the I/O operation
+   */
   implicit class RichCoder(io: IO[Unit]) {
 
     def retrieve: List[Track] = {
@@ -101,6 +109,8 @@ trait Coder {
 }
 
 /**
+ * Customized file coder to handle I/O on local json file. Permits to serialize, deserialize, save
+ * and load the json file containing the list of saved [[Track]] s
  * @param path
  *   path of the file resource
  */

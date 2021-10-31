@@ -33,6 +33,13 @@ object TrackLoader {
     }
   }
 
+  /**
+   * It represents the track loader behavior
+   * @param ctx
+   *   the actors system context
+   * @param coder
+   *   the [[FileCoder]] used to handle save and load operation on the json file
+   */
   case class TrackLoaderActor(ctx: ActorContext[Input], coder: FileCoder = FileCoder()) {
 
     var savedTracks: List[Track] = List()

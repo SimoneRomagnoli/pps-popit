@@ -11,6 +11,9 @@ import utils.Commons.Maps.gameGrid
 
 import scala.language.postfixOps
 
+/**
+ * This object contains the logic of track plotting.
+ */
 object Plots {
 
   /**

@@ -104,13 +104,15 @@ object Tracks {
       case outOfBounds if outOfBounds >= track.cells.size =>
         track.cells.last.nextOnTrack.centralPosition
       case intPosition =>
+        implicit val previousDirection: Direction = intPosition match {
+          case 0                                              => Right
+          case outOfBounds if outOfBounds >= track.cells.size => Right
+          case _ => track.cells(intPosition - 1).direction
+        }
+        val percentage: Double = linearPosition - intPosition
         track
           .cells(intPosition)
-          .vectorialPosition(intPosition match {
-            case 0                                              => Right
-            case outOfBounds if outOfBounds >= track.cells.size => Right
-            case _ => track.cells(intPosition - 1).direction
-          })(linearPosition - intPosition)
+          .positionFromCrossed(percentage)
     }
   }
 }

@@ -17,6 +17,7 @@ project/project/
 project/target/
 target/
 out/
+auxil/
 
 # eclipse
 build/

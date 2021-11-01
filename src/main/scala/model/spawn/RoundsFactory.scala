@@ -9,6 +9,7 @@ import model.spawn.Rounds.{ Round, Streak }
 
 import scala.concurrent.duration.DurationInt
 
+/** Game rounds logic: a suitable round is built according to the current progress. */
 object RoundsFactory {
   private var round: Int = 0
 

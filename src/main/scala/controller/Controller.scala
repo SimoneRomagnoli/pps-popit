@@ -1,24 +1,30 @@
 package controller
 
 import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorRef, Behavior, Scheduler}
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages._
 import controller.inout.TrackLoader.TrackLoaderActor
-import controller.inout.TrackLoader.TrackLoaderMessages.{RetrieveSavedTracks, RetrieveTrack, SaveActualTrack, SavedTrack, SavedTracks}
+import controller.inout.TrackLoader.TrackLoaderMessages.{
+  RetrieveSavedTracks,
+  RetrieveTrack,
+  SaveActualTrack,
+  SavedTrack,
+  SavedTracks
+}
 import controller.interaction.GameLoop.GameLoopActor
-import controller.interaction.GameLoop.GameLoopMessages.{MapCreated, Start, Stop}
+import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.interaction.Messages._
 import controller.settings.Settings.Time.TimeSettings
-import controller.settings.Settings.{Difficulty, Settings}
+import controller.settings.Settings.{ Difficulty, Settings }
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower
-import model.managers.GameDynamicsMessages.{CurrentGameTrack, CurrentTrack, NewMap}
+import model.managers.GameDynamicsMessages.{ CurrentGameTrack, CurrentTrack, NewMap }
 import model.maps.Tracks.Track
 import utils.Futures.retrieve
-import view.View.ViewMessages.{RenderMap, RenderSavedTracks, TrackSaved}
+import view.View.ViewMessages.{ RenderMap, RenderSavedTracks, TrackSaved }
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt

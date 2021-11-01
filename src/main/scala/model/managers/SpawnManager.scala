@@ -1,18 +1,18 @@
 package model.managers
 
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorRef, Behavior}
-import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartNextRound}
-import controller.interaction.Messages.{Input, SpawnManagerMessage, Update}
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
+import controller.interaction.Messages.{ Input, SpawnManagerMessage, Update }
 import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
-import model.managers.EntitiesMessages.{DoneSpawning, EntitySpawned}
-import model.managers.SpawnerMessages.{SpawnTick, StartRound}
+import model.managers.EntitiesMessages.{ DoneSpawning, EntitySpawned }
+import model.managers.SpawnerMessages.{ SpawnTick, StartRound }
 import model.maps.Tracks.Track
-import model.spawn.Rounds.{Round, Streak}
+import model.spawn.Rounds.{ Round, Streak }
 import model.spawn.RoundsFactory
 
 import scala.language.postfixOps

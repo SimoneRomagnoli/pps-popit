@@ -1,17 +1,17 @@
 package model.managers
 
 import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorRef, Behavior, Scheduler}
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
-import controller.Controller.ControllerMessages.{CurrentWallet, StartNextRound}
-import controller.interaction.GameLoop.GameLoopMessages.{CanStartNextRound, ModelUpdated}
-import controller.interaction.Messages.{EntitiesManagerMessage, Input, Update, WithReplyTo}
-import model.Model.ModelMessages.{TickUpdate, TrackChanged}
-import model.actors.BalloonMessages.{BalloonKilled, Hit}
-import model.actors.BulletMessages.{BalloonHit, BulletKilled, StartExplosion}
+import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
+import controller.interaction.GameLoop.GameLoopMessages.{ CanStartNextRound, ModelUpdated }
+import controller.interaction.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
+import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
+import model.actors.BalloonMessages.{ BalloonKilled, Hit }
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.actors.TowerMessages.Boost
-import model.actors.{BalloonActor, BulletActor, TowerActor}
+import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
@@ -19,7 +19,7 @@ import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
-import model.managers.GameDynamicsMessages.{Lose, Pay, WalletQuantity}
+import model.managers.GameDynamicsMessages.{ Lose, Pay, WalletQuantity }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 import utils.Futures.retrieve

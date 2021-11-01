@@ -1,9 +1,9 @@
 package model.spawn
 
 import model.entities.balloons.BalloonDecorations.BalloonType
-import model.entities.balloons.BalloonLives.{BalloonLife, Red}
+import model.entities.balloons.BalloonLives.{ BalloonLife, Red }
 
-import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import scala.concurrent.duration.{ DurationInt, FiniteDuration }
 
 /**
  * Definition of the game rounds and of the DSL to define them: a round is made up of multiple

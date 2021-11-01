@@ -7,7 +7,6 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.Right
 
 import java.util.Scanner
-import scala.collection.SeqView
 import scala.io.Source
 import scala.language.implicitConversions
 
@@ -62,11 +61,10 @@ object PrologUtils {
   object Engines {
 
     trait Engine {
-      def solve: Term => SeqView[SolveInfo]
+      def solve: Term => LazyList[SolveInfo]
     }
 
     implicit def stringToTerm(s: String): Term = Term.createTerm(s)
-    //implicit def seqToTerm[T](s: Seq[T]): Term = s.mkString("[", ",", "]")
 
     /**
      * A Prolog engine that solves queries.
@@ -78,34 +76,8 @@ object PrologUtils {
       val engine: Prolog = new Prolog
       engine.setTheory(theory)
 
-      override def solve: Term => SeqView[SolveInfo] = term =>
-        new SeqView[SolveInfo] {
-
-          /** Get the i-indexed solution. */
-          override def apply(i: Int): SolveInfo = {
-            for (_ <- 0 until i if iterator.hasNext) iterator.next()
-            iterator.next()
-          }
-
-          /**
-           * As randomness is involved in the main theory, the number of possible tracks should be
-           * infinite.
-           */
-          override def length: Int = Int.MaxValue
-
-          /** Defines how to iterate over solutions. */
-          override def iterator: Iterator[SolveInfo] = new Iterator[SolveInfo] {
-            var solution: Option[SolveInfo] = Some(engine.solve(term))
-
-            override def hasNext: Boolean = solution.isDefined &&
-              (solution.get.isSuccess || solution.get.hasOpenAlternatives)
-
-            override def next(): SolveInfo =
-              try solution.get
-              finally solution =
-                if (solution.get.hasOpenAlternatives) Some(engine.solveNext()) else None
-          }
-        }
+      override def solve: Term => LazyList[SolveInfo] = term =>
+        LazyList.continually(engine solve term)
 
     }
 

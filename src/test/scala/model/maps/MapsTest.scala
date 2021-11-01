@@ -47,7 +47,7 @@ object MapsTest {
   val query: String =
     PrologQuery(from = grid randomInBorder Left, to = grid randomInBorder Right, Normal)
 
-  val iterator: Iterator[SolveInfo] = engine.solve(query).iterator
+  val supplyTrack: () => SolveInfo = () => engine.solve(query).head
 
 }
 
@@ -132,19 +132,18 @@ class MapsTest extends AnyWordSpec with Matchers {
   "The Tracks" when {
     "created with prolog" should {
       "return a track" in {
-        engine.solve(query).length shouldBe Int.MaxValue
         Solutions
-          .trackFromPrologSolution(engine.solve(query)(1))
+          .trackFromPrologSolution(engine.solve(query).head)
           .isInstanceOf[Seq[Cell]] shouldBe true
       }
       "be long enough" in {
-        Solutions.trackFromPrologSolution(iterator.next()).size should be >= grid.width
+        Solutions.trackFromPrologSolution(supplyTrack()).size should be >= grid.width
       }
       "have directions" in {
-        Solutions.trackFromPrologSolution(iterator.next()).forall(_.direction != None) shouldBe true
+        Solutions.trackFromPrologSolution(supplyTrack()).forall(_.direction != None) shouldBe true
       }
       "not repeat" in {
-        val track: Seq[Cell] = Solutions.trackFromPrologSolution(iterator.next())
+        val track: Seq[Cell] = Solutions.trackFromPrologSolution(supplyTrack())
         track.foreach { cell =>
           track.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
         }

@@ -50,6 +50,10 @@ object RoundsFactory {
   private def incrementRound(): IO[Unit] = IO(round += 1)
 }
 
+/**
+ * The quantity of balloons to spawn is calculated through piecewise-defined functions based on the
+ * current round.
+ */
 object BalloonsFunctions {
   val easyRoundLimit: Int = 15
   val regeneratingRoundLimit: Int = 20

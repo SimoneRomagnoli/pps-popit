@@ -43,7 +43,9 @@ class SpawnManagerTest
   val model: ActorRef[Update] = testKit.spawn(dummyModel)
   val spawner: ActorRef[Update] = testKit.spawn(SpawnManager(model, TimeSettings()))
   val nBalloons: Int = 5
-  val simpleRound: Round = Round(Seq(Streak(nBalloons)))
+  val simpleRound: Round = Round.of(
+    Streak(nBalloons),
+  )
 
   val simpleRoundBalloons: List[Balloon] =
     LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList

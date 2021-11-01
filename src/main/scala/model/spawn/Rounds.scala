@@ -50,6 +50,10 @@ object Rounds {
   /** A round of the game that is made up of a [[Seq]] of [[Streak]]. */
   case class Round(streaks: Seq[Streak])
 
+  object Round {
+    def of(streaks: Streak*): Round = Round(streaks.toList)
+  }
+
   implicit class RichStreak(s: Streak) {
 
     def :-(balloonInfo: BalloonInfo): Streak = s match {

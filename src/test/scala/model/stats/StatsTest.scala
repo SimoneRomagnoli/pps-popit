@@ -1,8 +1,7 @@
-package model.maps
+package model.stats
 
-import model.maps.StatsTest.{ amount, stats }
-import model.stats.Stats
 import model.stats.Stats.GameStats
+import model.stats.StatsTest._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

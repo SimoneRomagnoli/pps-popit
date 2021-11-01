@@ -2,16 +2,19 @@ package model.maps
 
 import model.Positions.Vector2D
 import model.maps.Cells.{ Cell, GridCell }
-import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
+import model.maps.Tracks.Directions.{ Direction, Down, Left, Right, Up }
 import utils.Commons.Screen.cellSize
 
 import scala.language.postfixOps
 import scala.util.Random
 
+/**
+ * This objects contains the definition of a grid beneath the game.
+ */
 object Grids {
 
   /**
-   * Represents the logical structure of the game beneath the map.
+   * Represents the logical structure of the map beneath the game.
    */
   trait Grid {
 
@@ -45,31 +48,53 @@ object Grids {
 
     def apply(width: Int, height: Int): Grid =
       GridMap(width, height)
+  }
+
+  /**
+   * Pimps a [[Grid]] with useful methods.
+   *
+   * @param grid,
+   *   the pimped grid.
+   */
+  implicit class RichGrid(grid: Grid) {
 
     /**
-     * Represents the DSL of the grid.
+     * Returns a border of the grid as a sequence of cells.
      *
-     * @param grid,
-     *   the base grid on which it relies on
+     * @param direction,
+     *   one of the four directions.
+     * @return
+     *   the sequence of [[Cell]] s on the border of the specified [[Direction]].
      */
-    implicit class RichGrid(grid: Grid) {
-
-      def border(direction: Direction): Seq[Cell] = direction match {
-        case LEFT  => grid.cells.filter(_.x == 0)
-        case UP    => grid.cells.filter(_.y == 0)
-        case RIGHT => grid.cells.filter(_.x == grid.width - 1)
-        case DOWN  => grid.cells.filter(_.y == grid.height - 1)
-        case _     => grid cells
-      }
-
-      def randomInBorder(direction: Direction): Cell =
-        (Random shuffle grid.border(direction)) head
-
-      def specificCell(position: Vector2D): Cell =
-        GridCell(position.x / cellSize, position.y / cellSize)
-
-      implicit private def toInt: Double => Int = _.toInt
+    def border(direction: Direction): Seq[Cell] = direction match {
+      case Left  => grid.cells.filter(_.x == 0)
+      case Up    => grid.cells.filter(_.y == 0)
+      case Right => grid.cells.filter(_.x == grid.width - 1)
+      case Down  => grid.cells.filter(_.y == grid.height - 1)
+      case _     => grid cells
     }
+
+    /**
+     * Returns a random cell on the border of the specified direction.
+     *
+     * @param direction,
+     *   one of the four directions.
+     * @return
+     *   a random [[Cell]] on the specified border.
+     */
+    def randomInBorder(direction: Direction): Cell =
+      (Random shuffle grid.border(direction)) head
+
+    /**
+     * Returns a cell containing the specified position.
+     *
+     * @param position,
+     *   the exact position of the game as a [[Vector2D]].
+     * @return
+     *   the [[Cell]] containing the specified position.
+     */
+    def specificCell(position: Vector2D): Cell =
+      GridCell((position.x / cellSize).toInt, (position.y / cellSize).toInt)
   }
 
 }

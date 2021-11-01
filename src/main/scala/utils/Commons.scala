@@ -2,7 +2,7 @@ package utils
 
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.RIGHT
+import model.maps.Tracks.Directions.Right
 import utils.Commons.Screen._
 import utils.Commons.View.gameMenuWidthRatio
 
@@ -25,7 +25,7 @@ object Commons {
 
   object Maps {
     val outerCell: Cell = GridCell(-1, -1)
-    val basicTrack: Seq[Cell] = for (x <- 0 until Screen.widthRatio) yield GridCell(x, 0, RIGHT)
+    val basicTrack: Seq[Cell] = for (x <- 0 until Screen.widthRatio) yield GridCell(x, 0, Right)
     val gameGrid: Grid = Grid(widthRatio - gameMenuWidthRatio, heightRatio)
   }
 

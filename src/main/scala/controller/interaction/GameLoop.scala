@@ -83,7 +83,6 @@ object GameLoop {
       case GameOver() =>
         view ! RenderGameOver()
         ctx.self ! Stop()
-        model ! Stop()
         Behaviors.same
 
       case Stop() =>

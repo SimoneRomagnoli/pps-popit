@@ -4,10 +4,9 @@ import alice.tuprolog.{ Prolog, SolveInfo, Struct, Term, Theory }
 import controller.settings.Settings.Difficulty
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.RIGHT
+import model.maps.Tracks.Directions.Right
 
 import java.util.Scanner
-import scala.collection.SeqView
 import scala.io.Source
 import scala.language.implicitConversions
 
@@ -62,11 +61,10 @@ object PrologUtils {
   object Engines {
 
     trait Engine {
-      def solve: Term => SeqView[SolveInfo]
+      def solve: Term => LazyList[SolveInfo]
     }
 
     implicit def stringToTerm(s: String): Term = Term.createTerm(s)
-    //implicit def seqToTerm[T](s: Seq[T]): Term = s.mkString("[", ",", "]")
 
     /**
      * A Prolog engine that solves queries.
@@ -78,34 +76,8 @@ object PrologUtils {
       val engine: Prolog = new Prolog
       engine.setTheory(theory)
 
-      override def solve: Term => SeqView[SolveInfo] = term =>
-        new SeqView[SolveInfo] {
-
-          /** Get the i-indexed solution. */
-          override def apply(i: Int): SolveInfo = {
-            for (_ <- 0 until i if iterator.hasNext) iterator.next()
-            iterator.next()
-          }
-
-          /**
-           * As randomness is involved in the main theory, the number of possible tracks should be
-           * infinite.
-           */
-          override def length: Int = Int.MaxValue
-
-          /** Defines how to iterate over solutions. */
-          override def iterator: Iterator[SolveInfo] = new Iterator[SolveInfo] {
-            var solution: Option[SolveInfo] = Some(engine.solve(term))
-
-            override def hasNext: Boolean = solution.isDefined &&
-              (solution.get.isSuccess || solution.get.hasOpenAlternatives)
-
-            override def next(): SolveInfo =
-              try solution.get
-              finally solution =
-                if (solution.get.hasOpenAlternatives) Some(engine.solveNext()) else None
-          }
-        }
+      override def solve: Term => LazyList[SolveInfo] = term =>
+        LazyList.continually(engine solve term)
 
     }
 
@@ -139,24 +111,8 @@ object PrologUtils {
    */
   object Solutions {
 
-    def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] = {
-      val track: Seq[Cell] = prologInfo
-        .getTerm("P")
-        .castTo(classOf[Struct])
-        .listStream()
-        .map { e =>
-          val scanner: Scanner = new Scanner(e.toString).useDelimiter("\\D+")
-          GridCell(scanner.nextInt(), scanner.nextInt())
-        }
-        .toArray
-        .toList
-        .map(_.asInstanceOf[Cell])
-
-      track.zipWithIndex.map {
-        case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)
-        case (cell, i)                        => cell.directTowards(track(i + 1))
-      }
-    }
+    def trackFromPrologSolution(prologInfo: SolveInfo): Seq[Cell] =
+      trackFromTerm(prologInfo.getTerm("P"))
 
     def trackFromTerm(term: Term): Seq[Cell] = {
       val track: Seq[Cell] = term
@@ -171,7 +127,7 @@ object PrologUtils {
         .map(_.asInstanceOf[Cell])
 
       track.zipWithIndex.map {
-        case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)
+        case (cell, i) if i == track.size - 1 => cell.direct(Right)
         case (cell, i)                        => cell.directTowards(track(i + 1))
       }
     }

@@ -28,6 +28,10 @@ import view.render.Renders.{ single, toSingle }
 
 import scala.concurrent.Future
 
+/**
+ * Controller of the game menu. This controller loads the lateral right-menu of the game and
+ * contains elements with the actual status of the game.
+ */
 trait ViewGameMenuController extends GameControllerChild {
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
@@ -149,7 +153,7 @@ class GameMenuController(
   override def clearTowerStatus(): Unit =
     towerStatus.children.clear()
 
-  /** Private methods for setting the controller. */
+  /** Private verbose methods for setting the controller. */
   private object MenuSetters {
 
     def resetMenu(): Unit = {
@@ -194,11 +198,12 @@ class GameMenuController(
         towerBox.setCursor(Cursor.Hand)
         towerBox.onMousePressed = _ =>
           if (!parent.pauseController.isPaused) {
-            unselectDepot()
-            towerBox.setCursor(Cursor.ClosedHand)
             if (!towerBox.styleClass.contains("selected")) {
+              unselectDepot()
               towerBox.styleClass += "selected"
               selectedTowerType = towerType
+            } else {
+              unselectDepot()
             }
           }
         towerBox.onMouseReleased = _ => towerBox.setCursor(Cursor.Hand)

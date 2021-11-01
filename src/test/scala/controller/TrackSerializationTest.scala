@@ -6,7 +6,7 @@ import controller.TrackSerializationTest.{ engine, listSize, query }
 import controller.inout.FileCoder
 import controller.settings.Settings.Normal
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.{ LEFT, RIGHT }
+import model.maps.Tracks.Directions.{ Left, Right }
 import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Engines.Engine
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
@@ -22,7 +22,7 @@ object TrackSerializationTest {
   val engine: Engine = Engine(Theories from grid)
 
   val query: String =
-    PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT, Normal)
+    PrologQuery(from = grid randomInBorder Left, to = grid randomInBorder Right, Normal)
 
   val listSize: Int = 6
 

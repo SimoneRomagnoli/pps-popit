@@ -19,6 +19,9 @@ import scala.concurrent.Future
 
 trait ViewSettingsController extends ViewController {}
 
+/**
+ * Controller class bound to the settings fxml.
+ */
 @sfxml
 class SettingsController(
     val settings: BorderPane,
@@ -42,6 +45,7 @@ class SettingsController(
   override def show(): Unit = settings.visible = true
   override def hide(): Unit = settings.visible = false
 
+  /** Private verbose methods. */
   private object Setters {
 
     def setup(): Unit = {

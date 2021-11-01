@@ -1,7 +1,8 @@
 package model.stats
 
 /**
- * Wrapper of game policies. It contains the life points and money won by popping balloons.
+ * Wrapper of game policies. It contains the round number, life points and money won by popping
+ * balloons.
  */
 object Stats {
 

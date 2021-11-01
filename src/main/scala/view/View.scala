@@ -44,7 +44,8 @@ object View {
   /**
    * Thew view actor has two behaviors:
    *   - inGame, in which updates a [[ViewGameController]];
-   *   - inMenu, in which updates another controller;
+   *   - inMenu, in which updates a [[ViewMainMenuController]];
+   *   - inSettings, in which updates a [[ViewSettingsController]];
    *   - inSavedTracks, in which updates a [[ViewSavedTracksController]].
    */
   class ViewActor private (mainController: ViewMainController) {

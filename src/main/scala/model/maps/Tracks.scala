@@ -13,10 +13,11 @@ import scala.language.postfixOps
 object Tracks {
 
   /**
-   * Represents the possible directions of a [[Cell]].
+   * Contains the possible directions of a [[Cell]].
    */
   object Directions {
 
+    /** A [[Cell]] can have one of the four directions in the two dimensions. */
     sealed trait Direction {
 
       def opposite: Direction = this match {
@@ -64,18 +65,41 @@ object Tracks {
 
   object Track {
 
-    def apply(): Track =
-      TrackMap(Commons.Maps.basicTrack)
-
-    def apply(cells: Seq[Cell]): Track =
+    def apply(cells: Seq[Cell] = Commons.Maps.basicTrack): Track =
       TrackMap(cells)
   }
 
+  /**
+   * Pimps a [[Track]] with useful methods related to linear positions in the grid-dependent track.
+   *
+   * @param track,
+   *   the pimped track.
+   */
   implicit class RichTrack(track: Track) {
 
+    /**
+     * Given a linear position, it returns the direction of the cell relative to the linear
+     * position.
+     *
+     * @param linearPosition,
+     *   double representing the position in the track.
+     * @return
+     *   the [[Direction]] of the [[Cell]] in the specified linear position.
+     */
     def directionIn(linearPosition: Double): Direction =
       track.cells(linearPosition.toInt).direction
 
+    /**
+     * Given a linear position, it returns the exact position in the game grid relative to the
+     * linear position in the track. The linear position is a double, in which the integer part of
+     * it represents the index of the cell in the sequence of the track, while the decimal part of
+     * it represents the passed percentage of the current cell depending on its direction.
+     *
+     * @param linearPosition,
+     *   double representing the position in the [[Track]].
+     * @return
+     *   the exact position as a [[Vector2D]] in the entire game grid.
+     */
     def exactPositionFrom(linearPosition: Double): Vector2D = linearPosition.toInt match {
       case outOfBounds if outOfBounds >= track.cells.size =>
         track.cells.last.nextOnTrack.centralPosition

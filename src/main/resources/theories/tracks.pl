@@ -1,4 +1,3 @@
-
 % notMember(?Element, ?List)
 % Succeeds if Element does not unify with a member of the list List.
 notMember(E, L) :-
@@ -31,7 +30,7 @@ enoughConsecutive(Cons, Cons2, Max) :-
 % each of the remaining predicates, determines a movement towards one of the four directions.
 
 % Start the algorithm adding an empty accumulator,
-the counter for consecutive X movements set to 1 and the counter for consecutive Y movements set to 0.
+% the counter for consecutive X movements set to 1 and the counter for consecutive Y movements set to 0.
 path(c(X0, Y0), c(XF, YF), D, P) :-
     path(c(X0, Y0), c(XF, YF), D, P, [], 1, 0).
 

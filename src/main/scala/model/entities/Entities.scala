@@ -6,7 +6,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.CamoBalloons.CamoBalloon
 import model.entities.bullets.Bullets.Bullet
-import model.maps.Tracks.Directions.{ DOWN, UP }
+import model.maps.Tracks.Directions.{ Down, Up }
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -73,7 +73,7 @@ object Entities {
 
     override protected def move(dt: Double): Entity = {
       linearPosition += (track directionIn linearPosition match {
-        case UP | DOWN => speed.y
+        case Up | Down => speed.y
         case _         => speed.x
       }) * dt
       this

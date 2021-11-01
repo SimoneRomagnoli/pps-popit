@@ -4,7 +4,7 @@ import alice.tuprolog.{ Prolog, SolveInfo, Struct, Term, Theory }
 import controller.settings.Settings.Difficulty
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.RIGHT
+import model.maps.Tracks.Directions.Right
 
 import java.util.Scanner
 import scala.collection.SeqView
@@ -153,7 +153,7 @@ object PrologUtils {
         .map(_.asInstanceOf[Cell])
 
       track.zipWithIndex.map {
-        case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)
+        case (cell, i) if i == track.size - 1 => cell.direct(Right)
         case (cell, i)                        => cell.directTowards(track(i + 1))
       }
     }
@@ -171,7 +171,7 @@ object PrologUtils {
         .map(_.asInstanceOf[Cell])
 
       track.zipWithIndex.map {
-        case (cell, i) if i == track.size - 1 => cell.direct(RIGHT)
+        case (cell, i) if i == track.size - 1 => cell.direct(Right)
         case (cell, i)                        => cell.directTowards(track(i + 1))
       }
     }

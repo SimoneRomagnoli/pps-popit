@@ -2,7 +2,7 @@ package model.maps
 
 import model.Positions.Vector2D
 import model.maps.Cells.{ Cell, GridCell }
-import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, RIGHT, UP }
+import model.maps.Tracks.Directions.{ Direction, Down, Left, Right, Up }
 import utils.Commons.Screen.cellSize
 
 import scala.language.postfixOps
@@ -55,10 +55,10 @@ object Grids {
     implicit class RichGrid(grid: Grid) {
 
       def border(direction: Direction): Seq[Cell] = direction match {
-        case LEFT  => grid.cells.filter(_.x == 0)
-        case UP    => grid.cells.filter(_.y == 0)
-        case RIGHT => grid.cells.filter(_.x == grid.width - 1)
-        case DOWN  => grid.cells.filter(_.y == grid.height - 1)
+        case Left  => grid.cells.filter(_.x == 0)
+        case Up    => grid.cells.filter(_.y == 0)
+        case Right => grid.cells.filter(_.x == grid.width - 1)
+        case Down  => grid.cells.filter(_.y == grid.height - 1)
         case _     => grid cells
       }
 

@@ -12,7 +12,7 @@ import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.Towers.Tower
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.RIGHT
+import model.maps.Tracks.Directions.Right
 import model.maps.Tracks.Track
 import scalafx.scene.effect.{ Blend, BlendMode }
 import scalafx.scene.layout.Region
@@ -87,7 +87,7 @@ object Rendering {
   /** Renders a [[Track]] as a sequence of road drawings. */
   def a(track: Track): ToBeRendered = Rendered {
     track.cells
-      .prepended(GridCell(-1, 0, RIGHT))
+      .prepended(GridCell(-1, 0, Right))
       .sliding(2)
       .map { couple =>
         val dir: String = couple.head.direction.toString + "-" + couple.last.direction.toString

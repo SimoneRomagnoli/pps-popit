@@ -2,7 +2,7 @@ package model.maps
 
 import model.Positions._
 import model.Positions.Vector2D
-import model.maps.Tracks.Directions.{ Direction, DOWN, LEFT, NONE, RIGHT, UP }
+import model.maps.Tracks.Directions.{ Direction, Down, Left, None, Right, Up }
 import model.maps.Tracks.Track
 import utils.Commons.Screen.cellSize
 
@@ -45,7 +45,7 @@ object Cells {
   case class GridCell(
       override val x: Int,
       override val y: Int,
-      override val direction: Direction = NONE)
+      override val direction: Direction = None)
       extends Cell {
     override def direct(dir: Direction): Cell = GridCell(x, y, dir)
   }
@@ -67,19 +67,19 @@ object Cells {
     def nextOnTrack: Cell = cell match {
       case GridCell(x, y, dir) =>
         dir match {
-          case UP    => GridCell(x, y - 1)
-          case DOWN  => GridCell(x, y + 1)
-          case LEFT  => GridCell(x - 1, y)
-          case RIGHT => GridCell(x + 1, y)
+          case Up    => GridCell(x, y - 1)
+          case Down  => GridCell(x, y + 1)
+          case Left  => GridCell(x - 1, y)
+          case Right => GridCell(x + 1, y)
           case _     => cell
         }
     }
 
     def directTowards(other: Cell): Cell = other match {
-      case GridCell(x, _, _) if x == cell.x + 1 => cell direct RIGHT
-      case GridCell(x, _, _) if x == cell.x - 1 => cell direct LEFT
-      case GridCell(_, y, _) if y == cell.y + 1 => cell direct DOWN
-      case GridCell(_, y, _) if y == cell.y - 1 => cell direct UP
+      case GridCell(x, _, _) if x == cell.x + 1 => cell direct Right
+      case GridCell(x, _, _) if x == cell.x - 1 => cell direct Left
+      case GridCell(_, y, _) if y == cell.y + 1 => cell direct Down
+      case GridCell(_, y, _) if y == cell.y - 1 => cell direct Up
       case _                                    => cell
     }
 
@@ -101,10 +101,10 @@ object Cells {
     }
 
     def cellOnTrackPosition(direction: Direction)(percentage: Double): Vector2D = direction match {
-      case UP    => cell.topLeftPosition + (cellSize / 2, cellSize * (1 - percentage))
-      case DOWN  => cell.topLeftPosition + (cellSize / 2, cellSize * percentage)
-      case LEFT  => cell.topLeftPosition + (cellSize * (1 - percentage), cellSize / 2)
-      case RIGHT => cell.topLeftPosition + (cellSize * percentage, cellSize / 2)
+      case Up    => cell.topLeftPosition + (cellSize / 2, cellSize * (1 - percentage))
+      case Down  => cell.topLeftPosition + (cellSize / 2, cellSize * percentage)
+      case Left  => cell.topLeftPosition + (cellSize * (1 - percentage), cellSize / 2)
+      case Right => cell.topLeftPosition + (cellSize * percentage, cellSize / 2)
       case _     => cell.topLeftPosition + (cellSize / 2, cellSize / 2)
     }
 

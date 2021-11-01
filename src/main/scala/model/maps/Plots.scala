@@ -3,7 +3,7 @@ package model.maps
 import controller.settings.Settings.Difficulty
 import model.maps.Cells.Cell
 import model.maps.Grids.Grid
-import model.maps.Tracks.Directions.{ Direction, LEFT, RIGHT }
+import model.maps.Tracks.Directions.{ Direction, Left, Right }
 import model.maps.prolog.PrologUtils.Engines._
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.{ Solutions, Theories }
@@ -15,7 +15,7 @@ object Plots {
 
   /**
    * Trait of a plotter that decides the path on the map. It wraps a logic of plotting a track as a
-   * sequence of [[Cell]] and delegates the policy of the track via template method.
+   * sequence of [[Cell]] and delegates the policy of the track to the implementation class.
    */
   trait Plotter {
     def grid: Grid
@@ -32,7 +32,7 @@ object Plots {
    */
   object PrologPlotter {
 
-    def apply(grid: Grid = gameGrid, start: Direction = LEFT, end: Direction = RIGHT): Plotter =
+    def apply(grid: Grid = gameGrid, start: Direction = Left, end: Direction = Right): Plotter =
       TuPrologPlotter(grid, start, end)
   }
 

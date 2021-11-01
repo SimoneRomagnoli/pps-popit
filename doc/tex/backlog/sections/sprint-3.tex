@@ -1,0 +1,50 @@
+\section{Sprint 3}
+\subsection{Sprint Planning - 13/10/2021}
+Il team si è incontrato via Teams per definire il terzo sprint.
+
+\subsubsection{Obiettivi}
+Gli obiettivi impostati per il terzo sprint sono:
+\begin{itemize}
+    \item Avere una partita giocabile dall'inizio alla fine.
+    \item Versione semplificata di un menù che dà la possibilità di navigare tra diverse pagine.
+    \item Dare la possibilità di scegliere una mappa piuttosto che accettare quella data dal motore.
+    \item Salvare nel file system le mappe giocate per poterle ri-giocare.
+    \item Rifattorizzare il model, introducendo dei manager di messaggi per ogni logica interna al modello.
+    \item Inserire animazioni per le esplosioni.
+    \item Definire parametri di gioco come costo delle torri o dei power up.
+    \item Implementazione della pagina delle tracce salvate e delle impostazioni di gioco.
+\end{itemize}
+
+\subsubsection{Suddivisione del lavoro}
+In linea di massima, i task sono stati assegnati come segue:
+\begin{itemize}
+    \item Alessandro - Refactor Model, Spawner Manager, Entities Manager, Difficulty Levels
+    \item Simone - Main Menu, Settings Page, Plot Different Tracks, Game Dynamics Manager, Balloon Patterns Blending
+    \item Matteo - Animations, Saved Tracks Page, Freeze Balloons
+    \item Tommaso - Track Serialization, Track Deserialization, Fix Game Parameters
+\end{itemize}
+
+\subsubsection{Report}
+Un ulteriore obiettivo per questo sprint è aumentare la contribuzione alla relazione di progetto: l'idea è quella di
+dover scrivere solamente le retrospettive nel quarto ed ultimo sprint; tuttavia, la quantità di obiettivi dello sprint
+in procinto di iniziare è alta, quindi si considera tale obiettivo come opzionale.
+
+\subsection{Sprint Revision - 29/10/2021}
+Il team si è incontrato via Teams per commentare l'andamento dello sprint e discutere sulle modalità di lavoro adottate.
+
+\subsubsection{Risultati}
+Gli obiettivi impostati durante il secondo sprint planning sono stati raggiunti; si evidenziano alcune particolarità:
+\begin{itemize}
+    \item il refactor del model è stato talmente efficace che adesso esegue un semplice ridirezionamento dei messaggi ai manager interessati;
+    \item per migliorare l'usabilità della pagina delle tracce salvate è stato introdotto uno screen shot delle tracce salvate;
+    \item il salvataggio delle tracce viene fatto in dei file json all'interno di una cartella ".popit" nella home dell'utente;
+    \item le parti del modello integrate con le difficoltà di gioco sono il plotter prolog delle tracce, lo spawner e la quantità di soldi guadagnati dallo scoppio dei palloncini;
+    \item è stata studiata una sequenza incrementale di combinazioni di palloncini fino al round 50 delle partite;
+    \item il gioco è stato reso "infinito", con combinazioni incrementali di tutti i tipi di palloncini oltre al round 50;
+\end{itemize}
+
+\subsubsection{Commenti}
+Per via degli impegni personali e per la specificità dei task di ciascun membro del team, è stato più difficile del
+solito coordinarsi; tuttavia, il gruppo è riuscito a mantenere una determinata frequenza per gli stand-up meeting e a
+integrare le proprie parti del codice con quelle degli altri. Il pair programming è rimasta la modalità di lavoro
+preferita del gruppo. Ci si ritiene molto soddisfatti dei raggiungimenti di questo terzo sprint.

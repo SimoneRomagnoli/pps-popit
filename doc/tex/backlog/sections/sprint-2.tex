@@ -1,0 +1,66 @@
+\section{Sprint 2}
+\subsection{Sprint Planning - 26/09/2021}
+Il team si è incontrato via Teams per definire il secondo sprint.
+
+\subsubsection{Obiettivi}
+Gli obiettivi impostati per il secondo sprint sono:
+\begin{itemize}
+    \item Definizione di un'interfaccia grafica completa e funzionante in cui tutte le entità vengono mostrate e riescono a interagire tra di loro.
+    \item Implementazione di un menù laterale contentente le torri che possono essere selezionate e piazzate sulla mappa.
+    \item Revisione dell'implementazione di torri e palloncini.
+    \item Implementazione dei power up delle torri.
+    \item Implementazione dello spawner tramite una DSL che faciliti la scrittura dello spawn dei palloncini.
+    \item Gestione della collision detection tra proiettili e palloncini.
+    \item Terminare l'implementazione di tutti i tipi di entità di gioco.
+\end{itemize}
+
+\subsubsection{Suddivisione del lavoro}
+In linea di massima, i task sono stati assegnati come segue:
+\begin{itemize}
+    \item Alessandro - Balloon Types, Spawner DSL
+    \item Simone - ScalaFX and fxml, Lateral Menu, Rendering DSL
+    \item Matteo - Bullet Types, Bullet Actor Death Policy, Collision Detection
+    \item Tommaso - Tower Revision, Tower Types, Tower Power Ups
+\end{itemize}
+
+\subsubsection{Continuous Delivery}
+Durante questa fase sarà inoltre necessario definire un workflow di continuous delivery per riuscire a produrre un
+jar eseguibile per ogni sistema operativo vista la dipendenza da ScalaFX; tale necessità è fuoriuscita durante la
+scorsa sprint review, quando è stata fatta la prima release del sistema: si ritiene che tale tool di automazione
+semplifichi la procedura di deployment e risparmi tempo al team.
+
+\subsubsection{Product Backlog}
+All'inizio del secondo sprint verrà compilato un product backlog da ogni membro del gruppo, nel quale si indicheranno
+i task svolti e l'impegno impiegato durante ciascuno. Tale documento verrà aggiornato continuamente anche nel corso
+dei successivi sprint.
+
+\subsubsection{Coverage}
+Il committente ha richiesto di aumentare la coverage del sistema con dei test, per cui sarà necessario
+inserire nel progetto Scoverage ed utilizzarlo per testare al meglio il software prodotto.
+
+\subsubsection{Linter}
+Il committente ha richiesto che il codice prodotto venisse trattato con un linter a piacere, per cui sarà necessario
+introdurre nel progetto scalafmt per formattare il codice secondo una configurazione standard e comune a tutti i membri
+del gruppo.
+
+\subsection{Sprint Revision - 13/10/2021}
+Il team si è incontrato via Teams per commentare l'andamento dello sprint e discutere sulle modalità di lavoro adottate.
+
+\subsubsection{Risultati}
+Gli obiettivi impostati durante il secondo sprint planning sono stati raggiunti; si evidenziano alcune particolarità:
+\begin{itemize}
+    \item è stato necessario cambiare il metodo di disegnamento delle immagini a interfaccia in quanto l'eccessiva attività di input/output ha causato rallentamenti notevoli del gioco;
+    \item il paradigma ad attori si sta rivelando estremamente potente nel sistema, tuttavia stanno aumentando a dismisura i messaggi all'interno del modello;
+    \item le torri sono state implementate come generiche sul proiettile in quanto dipendono esclusivamente da esso;
+    \item siccome ci si sta concentrando maggiormente sul modello del gioco, si sta pensando di terminare la logica delle partite durante il terzo sprint e utilizzare il quarto per definire elementi meno fondamentali come la navigazione tra menù o lo stile.
+\end{itemize}
+
+\subsubsection{Commenti}
+Durante questo sprint è stato più facile coordinarsi rispetto a quello precedente, vista l'esperienza acquisita durante
+lo stesso. La suddivisione del lavoro non è stata rispettata a pieno: alcuni task non sono stati interamente portati a
+termine dallo sviluppatore designato, ma comunque il pair programming rimane la modalità di lavoro preferita dal gruppo:
+per la maggior parte dei task, ci si è riuniti e si è ragionato su quale fosse il metodo migliore per portarli a
+termine, discutendo aspetti di design e di implementazione insieme per poi passare alla stesura di codice e test. Uno
+degli obiettivi impliciti dello sprint (per ciascuno) era provare a rispettare il più possibile il test driven
+development: per alcuni è risultato più facile che per altri. Il gruppo è complessivamente soddisfatto dei risultati
+raggiunti finora e delle modalità di sviluppo.

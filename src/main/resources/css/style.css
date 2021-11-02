@@ -90,7 +90,7 @@
 
 .forwardButton{
 -fx-padding: 7 10;
--fx-background-image: url('/images/inputs/forward.png');
+-fx-background-image: url('/images/inputs/FORWARD.png');
 -fx-background-size: cover;
 }
 
@@ -124,7 +124,7 @@
 -fx-background-radius: 10;
 }
 
-.selected {
+.selected, .forwardOn {
 -fx-border-color:#2BD011;
 -fx-border-width: 2;
 -fx-border-style: solid;

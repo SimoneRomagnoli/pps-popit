@@ -96,9 +96,7 @@ object View {
           Behaviors.same
 
         case CanStartNextRound() =>
-          if (!gameController.gameMenuController.isForwardPressed())
-            gameController.gameMenuController.enableRoundButton()
-          else gameController.gameMenuController.launchNewRound()
+          gameController.nextRound()
           Behaviors.same
 
         case RenderGameOver() =>

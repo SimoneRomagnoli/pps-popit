@@ -29,8 +29,8 @@ import view.render.Renders.{ single, toSingle }
 import scala.concurrent.Future
 
 trait ViewGameMenuController extends GameControllerChild {
-  def launchNewRound(): Unit
-  def isForwardPressed(): Boolean
+  def clearForwardStatus(): Unit
+  def nextRound(): Unit
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def renderStats(stats: GameStats): Unit
@@ -149,7 +149,16 @@ class GameMenuController(
     pauseRound.disable = false
     forwardRounds.disable = false
     towerDepot.disable = false
-    if (roundOver) startRound.disable = false
+    if (roundOver && !automaticRounds) startRound.disable = false
+  }
+
+  override def nextRound(): Unit =
+    if (!automaticRounds) enableRoundButton()
+    else send(StartNextRound())
+
+  override def clearForwardStatus(): Unit = {
+    automaticRounds = false
+    forwardRounds.styleClass -= "forwardOn"
   }
 
   override def clearTowerStatus(): Unit =
@@ -160,6 +169,7 @@ class GameMenuController(
 
     def resetMenu(): Unit = {
       roundOver = true
+      automaticRounds = false
       roundLabel.text = "0"
       disableRoundButton()
       moneyLabel.text = "200$"
@@ -188,15 +198,13 @@ class GameMenuController(
         roundOver = false
         disableRoundButton()
       }
-      forwardRounds.onMouseClicked = _ =>
-        if (isForwardPressed()) {
-          startRound.disable = false
-          automaticRounds = false
-        } else {
-          startRound.disable = true
-          automaticRounds = true;
-        }
-
+      forwardRounds.onMouseClicked = _ => {
+        startRound.disable = true
+        roundOver = false
+        if (automaticRounds) forwardRounds.styleClass -= "forwardOn"
+        else forwardRounds.styleClass += "forwardOn"
+        automaticRounds = !automaticRounds
+      }
     }
 
     def setupTowerDepot[B <: Bullet](): Unit =
@@ -263,8 +271,4 @@ class GameMenuController(
       towerStatus.children += box
     }
   }
-
-  override def launchNewRound(): Unit = send(StartNextRound())
-
-  override def isForwardPressed(): Boolean = automaticRounds
 }

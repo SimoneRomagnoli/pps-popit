@@ -34,6 +34,8 @@ import scala.concurrent.Future
  * contains elements with the actual status of the game.
  */
 trait ViewGameMenuController extends GameControllerChild {
+  def clearForwardStatus(): Unit
+  def nextRound(): Unit
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def renderStats(stats: GameStats): Unit
@@ -65,6 +67,8 @@ class GameMenuController(
     val startRoundContainer: VBox,
     val startRound: ToggleButton,
     val pauseRound: ToggleButton,
+    val forwardRounds: ToggleButton,
+    var automaticRounds: Boolean,
     var currentCell: Cell = outerCell,
     var roundOver: Boolean = true,
     var parent: ViewGameController,
@@ -138,13 +142,24 @@ class GameMenuController(
   override def disableAllButtons(): Unit = {
     startRound.disable = true
     pauseRound.disable = true
+    forwardRounds.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
     pauseRound.disable = false
+    forwardRounds.disable = false
     towerDepot.disable = false
-    if (roundOver) startRound.disable = false
+    if (roundOver && !automaticRounds) startRound.disable = false
+  }
+
+  override def nextRound(): Unit =
+    if (!automaticRounds) enableRoundButton()
+    else send(StartNextRound())
+
+  override def clearForwardStatus(): Unit = {
+    automaticRounds = false
+    forwardRounds.styleClass -= "forwardOn"
   }
 
   override def clearTowerStatus(): Unit =
@@ -161,6 +176,7 @@ class GameMenuController(
       lifeLabel.text = "100"
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
+      clearForwardStatus()
     }
 
     def setSpacing(): Unit = {
@@ -182,6 +198,13 @@ class GameMenuController(
         send(StartNextRound())
         roundOver = false
         disableRoundButton()
+      }
+      forwardRounds.onMouseClicked = _ => {
+        startRound.disable = true
+        roundOver = false
+        if (automaticRounds) forwardRounds.styleClass -= "forwardOn"
+        else forwardRounds.styleClass += "forwardOn"
+        automaticRounds = !automaticRounds
       }
     }
 

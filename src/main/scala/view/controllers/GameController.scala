@@ -33,6 +33,7 @@ trait ViewGameController extends ViewController {
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
   def animate(entity: Entity): Unit
+  def nextRound(): Unit
   def pauseController: ViewPauseController
   def gameMenuController: ViewGameMenuController
   def gameOverController: ViewGameOverController
@@ -141,6 +142,21 @@ class GameController(
     Rendering a gameGrid into trackPane.children
   }
 
+  override def getScenePosition: Bounds =
+    gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
+
+  override def hideGameEntities(): Unit = {
+    entitiesPane.visible = false
+    highlightPane.visible = false
+  }
+
+  override def showGameEntities(): Unit = {
+    entitiesPane.visible = true
+    highlightPane.visible = true
+  }
+
+  override def nextRound(): Unit = gameMenuController.nextRound()
+
   private def setChildren(): Unit = {
     trackChoiceController.setParent(this)
     pauseController.setParent(this)
@@ -221,18 +237,5 @@ class GameController(
       }
 
     private def towerSelected: Boolean = gameMenuController.anyTowerSelected()
-  }
-
-  override def getScenePosition: Bounds =
-    gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
-
-  override def hideGameEntities(): Unit = {
-    entitiesPane.visible = false
-    highlightPane.visible = false
-  }
-
-  override def showGameEntities(): Unit = {
-    entitiesPane.visible = true
-    highlightPane.visible = true
   }
 }

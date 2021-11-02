@@ -15,8 +15,9 @@ import view.View.ViewMessages.{ RenderEntities, RenderGameOver, RenderStats }
 import scala.concurrent.duration.DurationDouble
 
 /**
- * Game Loop of the application; it represents the flow of a game. It sends [[Update]] messages to a
- * model and [[Render]] messages to a view, performing a fundamental duty in the MVC pattern.
+ * Game Loop of the application; it represents the control flow of a game. It sends [[Update]]
+ * messages to the model and [[Render]] messages to the view, performing a fundamental duty in the
+ * MVC pattern.
  */
 object GameLoop {
 
@@ -53,10 +54,7 @@ object GameLoop {
   }
 
   /**
-   * The game loop actor has two behaviors:
-   *   - running, in which it simply waits for a [[Tick]] message to update the model and waits for
-   *     its response to render the view;
-   *   - paused, in which it waits for the game to be resumed.
+   * The game loop actor.
    */
   case class GameLoopActor private (
       ctx: ActorContext[Input],
@@ -64,6 +62,11 @@ object GameLoop {
       view: ActorRef[Render],
       timeSettings: TimeSettings) {
 
+    /**
+     * Here the [[GameLoop]] waits for a [[Tick]] message in order to update the model and then
+     * waits for its response to render the view. It also receives notifications about updated
+     * [[GameStats]].
+     */
     private def running(): Behavior[Input] = Behaviors.receiveMessagePartial {
       case Tick =>
         model ! TickUpdate(elapsedTime(timeSettings.frameRate)(timeSettings.timeRatio), ctx.self)
@@ -98,6 +101,10 @@ object GameLoop {
         Behaviors.same
     }
 
+    /**
+     * The model and the view are not updated anymore, the [[GameLoop]] is waiting for a message to
+     * resume the game.
+     */
     private def paused(): Behavior[Input] = Behaviors.receiveMessage {
       case ResumeGame() =>
         model ! ResumeGame()

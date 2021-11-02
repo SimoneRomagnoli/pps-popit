@@ -10,6 +10,12 @@ object CamoBalloons {
    */
   trait Camo extends Balloon { balloon: Balloon => }
 
+  /**
+   * Wraps a [[Balloon]] with the [[Camo]]
+   * [[model.entities.balloons.BalloonDecorations.BalloonType]].
+   * @param balloon
+   *   The [[Balloon]] wrapped.
+   */
   case class CamoBalloon(override val balloon: Balloon)
       extends BalloonDecoration(balloon)
       with Camo {

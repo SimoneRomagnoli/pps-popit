@@ -12,8 +12,8 @@ import scala.language.{ implicitConversions, postfixOps }
 object Balloons {
 
   /**
-   * A [[Balloon]] is an [[Entity]] with the ability to move on a [[Track]] thanks to
-   * [[TrackFollowing]] and to be popped thanks to [[Poppable]].
+   * A [[Balloon]] is the main [[Entity]] of the game which has the ability to move on a [[Track]]
+   * thanks to [[TrackFollowing]] and to be popped thanks to [[Poppable]].
    */
   trait Balloon extends Entity with TrackFollowing with Poppable {
     type Boundary = (Double, Double)

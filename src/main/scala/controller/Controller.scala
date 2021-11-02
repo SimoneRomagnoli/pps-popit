@@ -5,8 +5,14 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages._
-import controller.TrackLoader.TrackLoaderActor
-import controller.TrackLoader.TrackLoaderMessages._
+import controller.inout.TrackLoader.TrackLoaderActor
+import controller.inout.TrackLoader.TrackLoaderMessages.{
+  RetrieveSavedTracks,
+  RetrieveTrack,
+  SaveActualTrack,
+  SavedTrack,
+  SavedTracks
+}
 import controller.interaction.GameLoop.GameLoopActor
 import controller.interaction.GameLoop.GameLoopMessages.{ MapCreated, Start, Stop }
 import controller.interaction.Messages._

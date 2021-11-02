@@ -2,12 +2,6 @@ package model.entities.balloons.balloontypes
 
 import model.Positions
 import model.entities.balloons.Balloons.Balloon
-import model.entities.balloons.balloontypes.CamoBalloons.{ camo, CamoBalloon }
-import model.entities.balloons.balloontypes.LeadBalloons.{ lead, LeadBalloon }
-import model.entities.balloons.balloontypes.RegeneratingBalloons.{
-  regenerating,
-  RegeneratingBalloon
-}
 import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks
 
@@ -18,8 +12,8 @@ object BalloonDecorations {
   }
 
   /**
-   * There are different [[model.entities.balloons.BalloonDecorations.BalloonType]] s, each of which
-   * can be seen as a decoration of a normal balloon.
+   * A generic wrapper for the [[Balloon]] that allows to add the behavior for a
+   * [[model.entities.balloons.BalloonDecorations.BalloonType]].
    */
   abstract class BalloonDecoration(override val balloon: Balloon) extends Balloon with Decoration {
     override protected[balloons] def retrieve[T](f: Balloon => T): T = balloon.retrieve(f)
@@ -32,19 +26,20 @@ object BalloonDecorations {
     override def on(t: Tracks.Track): BalloonDecoration = instance(balloon.on(t))
     override def update(dt: Double): Balloon = instance(balloon.update(dt).asInstanceOf[Balloon])
 
+    /**
+     * @param balloon
+     *   The [[Balloon]] to be wrapped with a
+     *   [[model.entities.balloons.BalloonDecorations.BalloonType]].
+     * @return
+     *   The wrapped [[Balloon]].
+     */
     def instance(balloon: Balloon): BalloonDecoration
   }
 
   object BalloonDecoration {
 
-    def unapply(d: BalloonDecoration): Option[(Balloon, Balloon => Balloon)] = Some(
-      d.balloon,
-      d match {
-        case _: RegeneratingBalloon => regenerating
-        case _: CamoBalloon         => camo
-        case _: LeadBalloon         => lead
-      }
-    )
+    def unapply(d: BalloonDecoration): Option[(Balloon, Balloon => Balloon)] =
+      Some(d.balloon, d.instance)
   }
 
 }

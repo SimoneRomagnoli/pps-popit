@@ -38,8 +38,7 @@ object BalloonActor {
  */
 case class BalloonActor private (
     ctx: ActorContext[Update],
-    var balloon: Balloon,
-    var hit: Boolean = false) {
+    var balloon: Balloon) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case UpdateEntity(elapsedTime, _, replyTo) =>

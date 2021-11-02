@@ -19,6 +19,7 @@ object Settings {
   case object Normal extends DifficultyLevel(2)
   case object Hard extends DifficultyLevel(3)
 
+  /** Definition of time-related settings. */
   object Time {
 
     object Constants {

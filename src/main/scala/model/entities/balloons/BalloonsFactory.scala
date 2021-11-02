@@ -13,6 +13,12 @@ object BalloonsFactory {
 
   implicit class RichBalloon(b: Balloon) {
 
+    /**
+     * @param balloonTypes
+     *   The [[List]] of [[BalloonType]] s that are gonna wrap the plain [[Balloon]].
+     * @return
+     *   The [[Balloon]] wrapped by all the [[BalloonType]] s given.
+     */
     def adding(balloonTypes: List[BalloonType]): Balloon = balloonTypes.distinct match {
       case h :: t => h.decorate(b) adding t
       case _      => b
@@ -21,6 +27,9 @@ object BalloonsFactory {
 
 }
 
+/**
+ * Definition of the different balloon types that are gonna be used by the balloon's DSL.
+ */
 object BalloonDecorations {
 
   sealed trait BalloonDecorator[T <: Balloon] extends Balloon {
@@ -44,6 +53,9 @@ object BalloonDecorations {
 
 }
 
+/**
+ * Definition of the different balloon lives that are gonna be used by the balloon's DSL.
+ */
 object BalloonLives {
 
   trait Life {
@@ -61,12 +73,23 @@ object BalloonLives {
 
   implicit class RichBalloonLife(l: BalloonLife) {
 
+    /**
+     * @return
+     *   A [[Balloon]] from his life.
+     */
     def balloon: Balloon = l match {
       case BalloonLife(n) if n > 1 =>
         complex(BalloonLife(n - 1) balloon) at (simple().speed * (n / 1.5))
       case _ => simple()
     }
 
+    /**
+     * @param t
+     *   The [[List]] of [[BalloonType]] s that are gonna wrap the [[Balloon]].
+     * @return
+     *   The complete [[BalloonInfo]] for the [[Balloon]], including [[BalloonLife]] and all the
+     *   [[BalloonType]] s.
+     */
     def &(t: List[BalloonType]): BalloonInfo = BalloonInfo(t, l)
   }
 

@@ -17,10 +17,17 @@ import view.render.Rendering
 
 import scala.concurrent.Future
 
+/**
+ * Controller of the pause. This controller contains the pause buttons and sets their event
+ * handlers.
+ */
 trait ViewPauseController extends GameControllerChild {
   def isPaused: Boolean
 }
 
+/**
+ * Controller class bound to the pause fxml.
+ */
 @sfxml
 class PauseController(
     val pause: HBox,
@@ -34,7 +41,6 @@ class PauseController(
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewPauseController {
-  import Setters._
   setup()
 
   override def setLayout(): Unit = {
@@ -58,30 +64,28 @@ class PauseController(
 
   override def isPaused: Boolean = pause.visible.value
 
-  private object Setters {
-
-    def setup(): Unit = {
-      retryTrack.onMouseClicked = _ => {
-        send(RestartGame())
-        parent.gameMenuController.clearTowerStatus()
-        hide()
-      }
-      resume.onMouseClicked = _ => {
-        send(ResumeGame())
-        parent.gameMenuController.enableAllButtons()
-        hide()
-      }
-      quit.onMouseClicked = _ => {
-        send(BackToMenu())
-        hide()
-      }
-      saveTrack.onMouseClicked = _ => {
-        hide()
-        parent.hideGameEntities()
-        Platform.runLater(
-          send(SaveCurrentTrack(parent.getScenePosition.getX, parent.getScenePosition.getY))
-        )
-      }
+  private def setup(): Unit = {
+    retryTrack.onMouseClicked = _ => {
+      send(RestartGame())
+      parent.gameMenuController.clearTowerStatus()
+      hide()
+    }
+    resume.onMouseClicked = _ => {
+      send(ResumeGame())
+      parent.gameMenuController.enableAllButtons()
+      hide()
+    }
+    quit.onMouseClicked = _ => {
+      send(BackToMenu())
+      hide()
+    }
+    saveTrack.onMouseClicked = _ => {
+      hide()
+      parent.hideGameEntities()
+      Platform.runLater(
+        send(SaveCurrentTrack(parent.getScenePosition.getX, parent.getScenePosition.getY))
+      )
     }
   }
+
 }

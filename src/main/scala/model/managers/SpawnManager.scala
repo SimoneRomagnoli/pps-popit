@@ -3,20 +3,18 @@ package model.managers
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
-import controller.interaction.GameLoop.GameLoopMessages.CanStartNextRound
-import controller.interaction.Messages.{ Input, SpawnManagerMessage, Update, WithReplyTo }
+import controller.interaction.Messages.{ Input, SpawnManagerMessage, Update }
 import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.managers.EntitiesMessages.{ DoneSpawning, EntitySpawned }
-import model.managers.SpawnerMessages.{ IsRoundOver, RoundOver, RoundStatus, SpawnTick, StartRound }
+import model.managers.SpawnerMessages.{ SpawnTick, StartRound }
 import model.maps.Tracks.Track
 import model.spawn.Rounds.{ Round, Streak }
 import model.spawn.RoundsFactory
 
-import scala.concurrent.duration.DurationLong
 import scala.language.postfixOps
 
 object SpawnerMessages {
@@ -55,7 +53,7 @@ case class Spawner private (
     timeSettings: TimeSettings,
     var track: Track = Track()) {
 
-  def waiting(): Behavior[Update] = Behaviors.receiveMessage {
+  def waiting(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case StartNextRound() =>
       ctx.self ! StartRound(RoundsFactory.nextRound())
       Behaviors.same
@@ -66,19 +64,6 @@ case class Spawner private (
     case TrackChanged(newTrack) =>
       track = newTrack
       Behaviors.same
-
-    case RoundOver(actorRef) =>
-      actorRef ! CanStartNextRound()
-      Behaviors.same
-
-    case WithReplyTo(msg, replyTo) =>
-      msg match {
-        case IsRoundOver() =>
-          replyTo ! RoundStatus(true)
-      }
-      Behaviors.same
-
-    case _ => Behaviors.same
   }
 
   /**
@@ -108,7 +93,7 @@ case class Spawner private (
 
   /** Spawns a new streak. */
   private def spawningStreak(streak: LazyList[Balloon], later: Seq[Streak]): Behavior[Update] =
-    Behaviors.receiveMessage {
+    Behaviors.receiveMessagePartial {
       case SpawnTick =>
         streak match {
           case h #:: t =>
@@ -121,23 +106,12 @@ case class Spawner private (
             }
         }
 
-      case WithReplyTo(msg, replyTo) =>
-        msg match {
-          case IsRoundOver() =>
-            replyTo ! RoundStatus(false)
-        }
-        Behaviors.same
-
       case PauseGame() =>
         paused(streak, later)
-
-      case _ => Behaviors.same
     }
 
   def paused(streak: LazyList[Balloon], later: Seq[Streak]): Behavior[Update] =
-    Behaviors.receiveMessage {
-      case ResumeGame() =>
-        spawningStreak(streak, later)
-      case _ => Behaviors.same
+    Behaviors.receiveMessagePartial { case ResumeGame() =>
+      spawningStreak(streak, later)
     }
 }

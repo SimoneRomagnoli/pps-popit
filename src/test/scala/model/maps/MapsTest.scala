@@ -18,11 +18,11 @@ import org.scalatest.wordspec.AnyWordSpec
 import scala.language.postfixOps
 
 object MapsTest {
-  val cell: Cell = GridCell(1, 1, NONE)
-  val upCell: Cell = GridCell(1, 0, NONE)
-  val downCell: Cell = GridCell(1, 2, NONE)
-  val leftCell: Cell = GridCell(0, 1, NONE)
-  val rightCell: Cell = GridCell(2, 1, NONE)
+  val cell: Cell = GridCell(1, 1, None)
+  val upCell: Cell = GridCell(1, 0, None)
+  val downCell: Cell = GridCell(1, 2, None)
+  val leftCell: Cell = GridCell(0, 1, None)
+  val rightCell: Cell = GridCell(2, 1, None)
 
   val topPosition: Vector2D = (0.0, 0.0)
 
@@ -45,9 +45,9 @@ object MapsTest {
   val engine: Engine = Engine(Theories from grid)
 
   val query: String =
-    PrologQuery(from = grid randomInBorder LEFT, to = grid randomInBorder RIGHT, Normal)
+    PrologQuery(from = grid randomInBorder Left, to = grid randomInBorder Right, Normal)
 
-  val iterator: Iterator[SolveInfo] = engine.solve(query).iterator
+  val supplyTrack: () => SolveInfo = () => engine.solve(query).head
 
 }
 
@@ -59,14 +59,14 @@ class MapsTest extends AnyWordSpec with Matchers {
         (cell nextOnTrack) shouldBe cell
       }
       "have neighbors" in {
-        (cell direct UP nextOnTrack) shouldBe upCell
-        (cell direct DOWN nextOnTrack) shouldBe downCell
-        (cell direct LEFT nextOnTrack) shouldBe leftCell
-        (cell direct RIGHT nextOnTrack) shouldBe rightCell
+        (cell direct Up nextOnTrack) shouldBe upCell
+        (cell direct Down nextOnTrack) shouldBe downCell
+        (cell direct Left nextOnTrack) shouldBe leftCell
+        (cell direct Right nextOnTrack) shouldBe rightCell
       }
       "change direction" in {
-        (cell direct UP).turnLeft().direction shouldBe LEFT
-        (cell direct UP).turnRight().direction shouldBe RIGHT
+        (cell direct Up).turnLeft().direction shouldBe Left
+        (cell direct Up).turnRight().direction shouldBe Right
       }
     }
   }
@@ -74,25 +74,25 @@ class MapsTest extends AnyWordSpec with Matchers {
   "The Directions" when {
     "created" should {
       "have opposites" in {
-        (UP opposite) shouldBe DOWN
-        (DOWN opposite) shouldBe UP
-        (RIGHT opposite) shouldBe LEFT
-        (LEFT opposite) shouldBe RIGHT
-        (NONE opposite) shouldBe NONE
+        (Up opposite) shouldBe Down
+        (Down opposite) shouldBe Up
+        (Right opposite) shouldBe Left
+        (Left opposite) shouldBe Right
+        (None opposite) shouldBe None
       }
       "turn left" in {
-        (UP turnLeft) shouldBe LEFT
-        (DOWN turnLeft) shouldBe RIGHT
-        (RIGHT turnLeft) shouldBe UP
-        (LEFT turnLeft) shouldBe DOWN
-        (NONE turnLeft) shouldBe NONE
+        (Up turnLeft) shouldBe Left
+        (Down turnLeft) shouldBe Right
+        (Right turnLeft) shouldBe Up
+        (Left turnLeft) shouldBe Down
+        (None turnLeft) shouldBe None
       }
       "turn right" in {
-        (UP turnRight) shouldBe RIGHT
-        (DOWN turnRight) shouldBe LEFT
-        (RIGHT turnRight) shouldBe DOWN
-        (LEFT turnRight) shouldBe UP
-        (NONE turnRight) shouldBe NONE
+        (Up turnRight) shouldBe Right
+        (Down turnRight) shouldBe Left
+        (Right turnRight) shouldBe Down
+        (Left turnRight) shouldBe Up
+        (None turnRight) shouldBe None
       }
     }
   }
@@ -105,15 +105,15 @@ class MapsTest extends AnyWordSpec with Matchers {
         Grid(3, 3).cells.size shouldBe threeForThreeArea
       }
       "have no directions" in {
-        Grid(3, 3).cells.forall(_.direction == NONE) shouldBe true
+        Grid(3, 3).cells.forall(_.direction == None) shouldBe true
       }
       "have borders" in {
         val grid: Grid = Grid(2, 2)
-        grid.border(UP) shouldBe Seq(Cell(0, 0), Cell(1, 0))
-        grid.border(LEFT) shouldBe Seq(Cell(0, 0), Cell(0, 1))
-        grid.border(RIGHT) shouldBe Seq(Cell(1, 0), Cell(1, 1))
-        grid.border(DOWN) shouldBe Seq(Cell(0, 1), Cell(1, 1))
-        grid.border(NONE) shouldBe grid.cells
+        grid.border(Up) shouldBe Seq(Cell(0, 0), Cell(1, 0))
+        grid.border(Left) shouldBe Seq(Cell(0, 0), Cell(0, 1))
+        grid.border(Right) shouldBe Seq(Cell(1, 0), Cell(1, 1))
+        grid.border(Down) shouldBe Seq(Cell(0, 1), Cell(1, 1))
+        grid.border(None) shouldBe grid.cells
       }
     }
   }
@@ -121,7 +121,7 @@ class MapsTest extends AnyWordSpec with Matchers {
   "The Plotter" when {
     "given a start and an end borders" should {
       "plot a track by forming a query" in {
-        val plotter: Plotter = PrologPlotter() in grid startingFrom LEFT endingAt RIGHT
+        val plotter: Plotter = PrologPlotter() in grid startingFrom Left endingAt Right
         val track: Track = Track(plotter plot Normal)
         track.start.x shouldBe 0
         track.finish.x shouldBe (grid.width - 1)
@@ -132,19 +132,18 @@ class MapsTest extends AnyWordSpec with Matchers {
   "The Tracks" when {
     "created with prolog" should {
       "return a track" in {
-        engine.solve(query).length shouldBe Int.MaxValue
         Solutions
-          .trackFromPrologSolution(engine.solve(query)(1))
+          .trackFromPrologSolution(engine.solve(query).head)
           .isInstanceOf[Seq[Cell]] shouldBe true
       }
       "be long enough" in {
-        Solutions.trackFromPrologSolution(iterator.next()).size should be >= grid.width
+        Solutions.trackFromPrologSolution(supplyTrack()).size should be >= grid.width
       }
       "have directions" in {
-        Solutions.trackFromPrologSolution(iterator.next()).forall(_.direction != NONE) shouldBe true
+        Solutions.trackFromPrologSolution(supplyTrack()).forall(_.direction != None) shouldBe true
       }
       "not repeat" in {
-        val track: Seq[Cell] = Solutions.trackFromPrologSolution(iterator.next())
+        val track: Seq[Cell] = Solutions.trackFromPrologSolution(supplyTrack())
         track.foreach { cell =>
           track.count(c => c.x == cell.x && c.y == cell.y) shouldBe 1
         }

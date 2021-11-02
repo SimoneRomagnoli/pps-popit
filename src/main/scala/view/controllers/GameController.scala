@@ -1,6 +1,7 @@
 package view.controllers
 
 import controller.interaction.Messages.{ Input, Message }
+import javafx.geometry.{ Point2D => Bounds }
 import javafx.scene.input.MouseEvent
 import model.entities.Entities.Entity
 import model.entities.towers.Towers.Tower
@@ -8,16 +9,12 @@ import model.maps.Grids.Grid
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import scalafx.application.Platform
-import scalafx.geometry.Point2D
-import javafx.geometry.{ Point2D => Bounds }
 import scalafx.scene.Cursor
 import scalafx.scene.layout._
 import scalafxml.core.macros.{ nested, sfxml }
 import utils.Commons
 import utils.Commons.Maps.gameGrid
 import utils.Commons.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
-import view.render.Animations.Animations
-import view.render.Drawings.{ Drawing, GameDrawings }
 import view.render.{ Animating, Rendering }
 
 import scala.concurrent.Future
@@ -44,6 +41,10 @@ trait ViewGameController extends ViewController {
   def showGameEntities(): Unit
 }
 
+/**
+ * Common controller interface for nested controllers of the game controller. This is useful for
+ * them to have a reference to the parent game controller.
+ */
 trait GameControllerChild extends ViewController {
   def setParent(controller: ViewGameController): Unit
   def setLayout(): Unit
@@ -76,8 +77,6 @@ class GameController(
 
   import GameUtilities._
   import MouseEvents._
-  val images: Animations = Animations()
-  val drawing: Drawing = Drawing(GameDrawings())
   setup()
 
   override def setup(): Unit = Platform runLater {
@@ -197,7 +196,7 @@ class GameController(
 
   /** Mouse events handlers. */
   private object MouseEvents {
-    import ViewControllerUtilities._
+    import ViewControllerEventHandlers._
 
     def setMouseHandlers(): Unit = {
       trackPane.onMouseExited = _ => removeEffects()
@@ -224,7 +223,7 @@ class GameController(
     private def towerSelected: Boolean = gameMenuController.anyTowerSelected()
   }
 
-  override def getScenePosition: (Bounds) =
+  override def getScenePosition: Bounds =
     gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
 
   override def hideGameEntities(): Unit = {

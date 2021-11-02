@@ -1,0 +1,59 @@
+\section{Sprint 1}
+\subsection{Sprint Planning - 13/09/2021}
+Il team si è incontrato via Teams per rivedere le specifiche e definire il primo sprint organizzativo.
+
+\subsubsection{Obiettivi}
+Gli obiettivi impostati per il primo sprint sono:
+\begin{itemize}
+    \item Realizzazione di una partita contenente tutte le entità di gioco, eventualmente rappresentate da delle forme geometriche; nonostante non abbiano una controparte visivamente identificabile, le entità riescono ad interagire tra di loro.
+    \item Definizione di un modello MVC a scambio di messaggi.
+    \item Creare un game loop basato su paradigma ad attori in grado di essere velocizzato, rallentato e stoppato e ripreso.
+    \item Definizione di una mappa sulla quale giocare la partita.
+    \item Implementazione di ogni entità (torri, palloncini e proiettili) e del corrispondente attore.
+\end{itemize}
+In questa fase sarà inoltre necessario riprendere consapevolezza degli strumenti di continuous integration visti a
+lezione per poter seguire un flusso Git adeguato. Alla fine di questo sprint organizzativo si avrà quindi pronto lo
+scheletro del progetto, il repository Git (già avviato per la continuous integration) e saranno stati decisi i
+dettagli del processo di sviluppo.
+
+\subsubsection{Suddivisione del lavoro}
+In linea di massima, i task sono stati assegnati come segue:
+\begin{itemize}
+    \item Alessandro - GameLoop, Balloons, Balloon Types, Balloon Actor
+    \item Simone - Model Actor, View Actor, Controller Actor, Maps
+    \item Matteo - Entities, Bullet, Bullet Actor
+    \item Tommaso - Towers, Tower Actor
+\end{itemize}
+
+\subsubsection{Continuous Integration}
+Il team ha creato un repository privato su cui eseguire delle GitHub Actions includendo test banali, ma utilizzando le
+principali librerie pensate in fase di progettazione per l'architettura del sistema. In particolare, sono stati
+inclusi ScalaFX e Akka. Il lavoro è stato utile al team per accordarsi su come procedere durante lo sviluppo del
+sistema e ha fornito un mezzo al committente per controllare l'usabilità del prodotto: per quanto riguarda la qualità
+del codice, non è stato ancora inserito un controllo sui warning nè un linter all'interno del workflow, tuttavia sarà
+uno degli obiettivi immediati dei successivi Daily Scrums.
+
+\subsubsection{Repository GitHub}
+Il team ha creato il repository del sistema e ha cominciato a lavorare sullo scheletro architetturale dell'applicativo,
+in modo da poter iniziare a lavorare individualmente in maniera autonoma.
+
+\subsection{Sprint Revision - 26/09/2021}
+Il team si è incontrato via Teams per commentare l'andamento dello sprint e discutere sulle modalità di lavoro adottate.
+
+\subsubsection{Risultati}
+Gli obiettivi impostati durante il primo sprint planning sono stati raggiunti; si evidenziano alcune particolarità:
+\begin{itemize}
+    \item le tracce di gioco sono state implementate con un generatore prolog casuale;
+    \item è stata trovata una gerarchia di interfacce e classi che accomuna tutte le entità (uso intelligente dei mixin);
+    \item è stato possibile testare il comportamento degli attori grazie a \texttt{ScalaTestWithActorTestKit};
+    \item l'implementazione di Balloon e Tower richiederà dei cambiamenti per la complessità di queste ultime entità.
+\end{itemize}
+
+\subsubsection{Commenti}
+Il gruppo è riuscito a collaborare senza problemi nonostante la distanza fisica e l'impossibilità di incontrarsi
+quotidianamente ad orari fissi. Il lavoro dei singolo è stato integrato facilmente e con l'attenzione di tutti durante
+i meeting organizzati. Si è notata una disparità del lavoro svolto, tuttavia la maggior parte del codice prodotto è
+stato sviluppato in modalità pair programming, quindi tutti i membri del gruppo si ritengono soddisfatti per quanto
+riguarda la suddivisione dei task. Il processo di sviluppo adottato sembra essere efficiente, ma ancora migliorabile.
+
+\newpage

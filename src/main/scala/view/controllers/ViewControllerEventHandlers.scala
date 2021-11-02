@@ -23,7 +23,7 @@ import scala.language.implicitConversions
  * Contains utility methods in order to make a more readable sequence of actions in ViewControllers
  * as handlers to input events.
  */
-object ViewControllerUtilities {
+object ViewControllerEventHandlers {
 
   /** Get target [[Node]] of a [[MouseEvent]]. */
   implicit def asNode(t: EventTarget): Node = t.asInstanceOf[Node]

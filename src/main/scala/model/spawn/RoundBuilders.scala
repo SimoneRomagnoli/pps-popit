@@ -5,6 +5,7 @@ import model.spawn.Rounds.{ Round, Streak }
 
 import scala.language.implicitConversions
 
+/** Providing a monadic way to define rounds. */
 object RoundBuilders {
 
   object RoundBuilder {
@@ -15,6 +16,7 @@ object RoundBuilders {
     def get: Round = Round(round.reverse)
   }
 
+  /** Adds a [[Streak]] to the current [[Round]]. */
   def add(streak: Streak): IO[Unit] =
     RoundBuilder.round = streak +: RoundBuilder.round
 
@@ -22,6 +24,7 @@ object RoundBuilders {
 
   implicit class RichIO(io: IO[Unit]) {
 
+    /** Returns the [[Round]] built. */
     def get: Round = {
       io.unsafeRunSync()
       val r: Round = RoundBuilder.get

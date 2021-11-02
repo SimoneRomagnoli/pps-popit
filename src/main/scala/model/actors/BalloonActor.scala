@@ -41,7 +41,7 @@ case class BalloonActor private (
     var balloon: Balloon,
     var hit: Boolean = false) {
 
-  def default(): Behavior[Update] = Behaviors.receiveMessage {
+  def default(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case UpdateEntity(elapsedTime, _, replyTo) =>
       balloon.position.x match {
         case outOfBounds if outOfBounds >= Commons.View.gameBoardWidth =>
@@ -67,7 +67,7 @@ case class BalloonActor private (
   }
 
   def frozen(): Behavior[Update] = Behaviors.withTimers { timers =>
-    Behaviors.receiveMessage {
+    Behaviors.receiveMessagePartial {
       case Unfreeze =>
         timers.cancel(Unfreeze)
         default()
@@ -80,8 +80,6 @@ case class BalloonActor private (
       case UpdateEntity(_, _, replyTo) =>
         replyTo ! EntityUpdated(balloon, ctx.self)
         Behaviors.same
-
-      case _ => Behaviors.same
     }
   }
 

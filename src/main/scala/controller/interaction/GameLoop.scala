@@ -64,7 +64,7 @@ object GameLoop {
       view: ActorRef[Render],
       timeSettings: TimeSettings) {
 
-    private def running(): Behavior[Input] = Behaviors.receiveMessage {
+    private def running(): Behavior[Input] = Behaviors.receiveMessagePartial {
       case Tick =>
         model ! TickUpdate(elapsedTime(timeSettings.frameRate)(timeSettings.timeRatio), ctx.self)
         Behaviors.same
@@ -96,8 +96,6 @@ object GameLoop {
       case CanStartNextRound() =>
         view ! CanStartNextRound()
         Behaviors.same
-
-      case _ => Behaviors.same
     }
 
     private def paused(): Behavior[Input] = Behaviors.receiveMessage {

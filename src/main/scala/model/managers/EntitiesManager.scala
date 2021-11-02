@@ -22,7 +22,7 @@ import model.managers.EntitiesMessages._
 import model.managers.GameDynamicsMessages.{ Lose, Pay, WalletQuantity }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
-import utils.Futures.retrieve
+import commons.Futures.retrieve
 
 import scala.concurrent.duration.DurationInt
 

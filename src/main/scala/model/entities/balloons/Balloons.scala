@@ -5,7 +5,7 @@ import model.entities.Entities.{ Entity, Poppable, TrackFollowing }
 import model.entities.balloons.BalloonValues.{ balloonDefaultBoundary, balloonDefaultSpeed }
 import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks.Track
-import utils.Commons.Screen.cellSize
+import commons.CommonValues.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 

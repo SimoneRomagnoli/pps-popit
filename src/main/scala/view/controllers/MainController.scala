@@ -3,7 +3,7 @@ package view.controllers
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.scene.layout.{ BorderPane, StackPane }
 import scalafxml.core.macros.{ nested, sfxml }
-import utils.Commons
+import commons.CommonValues
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -61,7 +61,7 @@ class MainController(
   override def hide(): Unit = mainPane.visible = false
 
   private def setup(): Unit = {
-    Rendering.setLayout(mainPane, Commons.Screen.width, Commons.Screen.height)
+    Rendering.setLayout(mainPane, CommonValues.Screen.width, CommonValues.Screen.height)
     gameController.hide()
     savedTracksController.hide()
     settingsController.hide()

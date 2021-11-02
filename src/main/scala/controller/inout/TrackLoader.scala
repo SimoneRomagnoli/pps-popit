@@ -12,7 +12,6 @@ import controller.inout.TrackLoader.TrackLoaderMessages.{
 }
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
-import utils.ScreenShooter
 import view.View.ViewMessages.TrackSaved
 
 /**

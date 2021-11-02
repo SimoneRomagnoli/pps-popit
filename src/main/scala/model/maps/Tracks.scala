@@ -3,7 +3,7 @@ package model.maps
 import model.Positions.Vector2D
 import model.maps.Cells.Cell
 import model.maps.Tracks.Directions.{ Direction, Right }
-import utils.Commons
+import commons.CommonValues
 
 import scala.language.postfixOps
 
@@ -65,7 +65,7 @@ object Tracks {
 
   object Track {
 
-    def apply(cells: Seq[Cell] = Commons.Maps.basicTrack): Track =
+    def apply(cells: Seq[Cell] = CommonValues.Maps.basicTrack): Track =
       TrackMap(cells)
   }
 

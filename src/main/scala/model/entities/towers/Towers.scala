@@ -6,7 +6,7 @@ import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Fire, Ice, Ice
 import model.entities.towers.TowerValues._
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-import utils.Commons.Screen.cellSize
+import commons.CommonValues.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 

@@ -8,7 +8,7 @@ import scalafx.scene.control.{ ScrollPane, ToggleButton }
 import scalafx.scene.image.{ Image, ImageView }
 import scalafx.scene.layout._
 import scalafxml.core.macros.sfxml
-import utils.Commons
+import commons.CommonValues
 import view.render.Drawings.{ Drawing, MenuDrawings }
 import view.render.Rendering
 
@@ -45,11 +45,11 @@ class SavedTracksController(
 
     def setup(numberOfTracks: Int): Unit = Platform runLater {
       reset()
-      Rendering.setLayout(savedTracks, Commons.Screen.width, Commons.Screen.height)
+      Rendering.setLayout(savedTracks, CommonValues.Screen.width, CommonValues.Screen.height)
       Rendering.setLayout(
         scrollPaneTracks,
-        Commons.Screen.width * 3 / 4,
-        Commons.Screen.height * 3 / 4
+        CommonValues.Screen.width * 3 / 4,
+        CommonValues.Screen.height * 3 / 4
       )
       backToMenu.onMouseClicked = _ => send(BackToMenu())
       loadSavedTracks(numberOfTracks)
@@ -65,9 +65,9 @@ class SavedTracksController(
       for (i <- 0 until numberOfTracks) {
         val btn = new ToggleButton("")
         val image: ImageView = new ImageView(new Image(trackURL(i)))
-        val btnWidth: Double = Commons.Screen.width / 5
+        val btnWidth: Double = CommonValues.Screen.width / 5
         val btnHeight: Double =
-          btnWidth * Commons.Screen.heightRatio / Commons.View.gameBoardWidthRatio
+          btnWidth * CommonValues.Screen.heightRatio / CommonValues.View.gameBoardWidthRatio
         image.setFitWidth(btnWidth * 0.98)
         image.setFitHeight(btnHeight * 0.98)
         btn.setGraphic(image)

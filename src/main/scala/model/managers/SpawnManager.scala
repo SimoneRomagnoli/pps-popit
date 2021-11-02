@@ -53,7 +53,7 @@ case class Spawner private (
     timeSettings: TimeSettings,
     var track: Track = Track()) {
 
-  def waiting(): Behavior[Update] = Behaviors.receiveMessage {
+  def waiting(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case StartNextRound() =>
       ctx.self ! StartRound(RoundsFactory.nextRound())
       Behaviors.same
@@ -64,8 +64,6 @@ case class Spawner private (
     case TrackChanged(newTrack) =>
       track = newTrack
       Behaviors.same
-
-    case _ => Behaviors.same
   }
 
   /**
@@ -95,7 +93,7 @@ case class Spawner private (
 
   /** Spawns a new streak. */
   private def spawningStreak(streak: LazyList[Balloon], later: Seq[Streak]): Behavior[Update] =
-    Behaviors.receiveMessage {
+    Behaviors.receiveMessagePartial {
       case SpawnTick =>
         streak match {
           case h #:: t =>
@@ -110,14 +108,10 @@ case class Spawner private (
 
       case PauseGame() =>
         paused(streak, later)
-
-      case _ => Behaviors.same
     }
 
   def paused(streak: LazyList[Balloon], later: Seq[Streak]): Behavior[Update] =
-    Behaviors.receiveMessage {
-      case ResumeGame() =>
-        spawningStreak(streak, later)
-      case _ => Behaviors.same
+    Behaviors.receiveMessagePartial { case ResumeGame() =>
+      spawningStreak(streak, later)
     }
 }

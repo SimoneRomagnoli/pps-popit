@@ -42,13 +42,12 @@ object GameLoop {
         model: ActorRef[Update],
         view: ActorRef[Render],
         timeSettings: TimeSettings): Behavior[Input] = Behaviors.setup { ctx =>
-      Behaviors.receiveMessage {
+      Behaviors.receiveMessagePartial {
         case Start() =>
           Behaviors.withTimers { timers =>
             timers.startTimerWithFixedDelay(Tick, delay(timeSettings.frameRate).seconds)
             GameLoopActor(ctx, model, view, timeSettings).running()
           }
-        case _ => Behaviors.same
       }
     }
   }
@@ -105,11 +104,10 @@ object GameLoop {
      * The model and the view are not updated anymore, the [[GameLoop]] is waiting for a message to
      * resume the game.
      */
-    private def paused(): Behavior[Input] = Behaviors.receiveMessage {
+    private def paused(): Behavior[Input] = Behaviors.receiveMessagePartial {
       case ResumeGame() =>
         model ! ResumeGame()
         running()
-      case _ => Behaviors.same
     }
   }
 }

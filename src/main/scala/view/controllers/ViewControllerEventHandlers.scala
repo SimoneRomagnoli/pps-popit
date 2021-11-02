@@ -13,8 +13,8 @@ import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.Pane
-import utils.Commons
-import utils.Futures.retrieve
+import commons.CommonValues
+import commons.Futures.retrieve
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -34,7 +34,7 @@ object ViewControllerEventHandlers {
 
   /** When hovering a cell to be selected. */
   def hoverCell(e: MouseEvent, ask: Message => Future[Message], pane: Pane): Unit = {
-    val cell: Cell = Commons.Maps.gameGrid.specificCell(e.getX, e.getY)
+    val cell: Cell = CommonValues.Maps.gameGrid.specificCell(e.getX, e.getY)
     val effect: ColorAdjust = new ColorAdjust()
     retrieve(ask(Selectable(cell))) {
       case Selected(selectable) =>
@@ -58,7 +58,7 @@ object ViewControllerEventHandlers {
       e: MouseEvent,
       ask: Message => Future[Message],
       fillStatus: (Tower[Bullet], Cell) => Unit): Unit = {
-    val cell: Cell = Commons.Maps.gameGrid.specificCell(e.getX, e.getY)
+    val cell: Cell = CommonValues.Maps.gameGrid.specificCell(e.getX, e.getY)
     retrieve(ask(TowerIn(cell))) {
       case TowerOption(tower) =>
         if (tower.isDefined) Platform runLater fillStatus(tower.get, cell)
@@ -72,7 +72,7 @@ object ViewControllerEventHandlers {
       ask: Message => Future[Message],
       send: Input => Unit,
       towerType: TowerType[B]): Unit = {
-    val cell: Cell = Commons.Maps.gameGrid.specificCell(e.getX, e.getY)
+    val cell: Cell = CommonValues.Maps.gameGrid.specificCell(e.getX, e.getY)
     retrieve(ask(Selectable(cell))) {
       case Selected(selectable) =>
         if (selectable) {

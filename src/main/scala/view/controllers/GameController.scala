@@ -12,9 +12,9 @@ import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.layout._
 import scalafxml.core.macros.{ nested, sfxml }
-import utils.Commons
-import utils.Commons.Maps.gameGrid
-import utils.Commons.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import commons.CommonValues
+import commons.CommonValues.Maps.gameGrid
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 import view.render.{ Animating, Rendering }
 
 import scala.concurrent.Future
@@ -118,7 +118,7 @@ class GameController(
     gameMenuController renderStats stats
   }
 
-  override def draw(grid: Grid = Commons.Maps.gameGrid): Unit = Platform runLater {
+  override def draw(grid: Grid = CommonValues.Maps.gameGrid): Unit = Platform runLater {
     Rendering a grid into trackPane.children
   }
 

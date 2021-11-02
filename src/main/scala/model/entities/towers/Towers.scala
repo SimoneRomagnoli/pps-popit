@@ -6,7 +6,7 @@ import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Fire, Ice, Ice
 import model.entities.towers.TowerValues._
 import model.entities.towers.Towers.Tower
 import model.entities.towers.Towers.TowerBuilders.genericTowerBuilder
-import utils.Commons.Screen.cellSize
+import commons.CommonValues.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -166,4 +166,5 @@ object TowerValues {
   val towerDefaultSightRange: Double = cellSize * 3 / 2
   val towerDefaultBoundary: (Double, Double) = (cellSize / 2, cellSize / 2)
   val towerDefaultDirection: Vector2D = (0.0, 0.0)
+  val maxLevel: Int = 3
 }

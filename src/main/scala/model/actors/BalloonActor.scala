@@ -8,8 +8,8 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Ice }
 import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
 import model.managers.GameDynamicsMessages.Gain
-import utils.Commons
-import utils.Commons.Game.balloonHitGain
+import commons.CommonValues
+import commons.CommonValues.Game.balloonHitGain
 
 import scala.concurrent.duration.DurationDouble
 
@@ -45,7 +45,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
   def default(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case UpdateEntity(elapsedTime, _, replyTo) =>
       balloon.position.x match {
-        case outOfBounds if outOfBounds >= Commons.View.gameBoardWidth =>
+        case outOfBounds if outOfBounds >= CommonValues.View.gameBoardWidth =>
           replyTo ! ExitedBalloon(balloon, ctx.self)
           Behaviors.stopped
         case _ =>

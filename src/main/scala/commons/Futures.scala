@@ -1,4 +1,4 @@
-package utils
+package commons
 
 import controller.Controller.ControllerMessages.ActorInteraction
 import controller.interaction.Messages.Message

@@ -5,8 +5,8 @@ import model.entities.Entities.{ Entity, MovementAbility }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletValues._
 import model.entities.towers.Towers.Tower
-import utils.Commons
-import utils.Commons.Screen.cellSize
+import commons.CommonValues
+import commons.CommonValues.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 
@@ -126,7 +126,7 @@ object Bullets {
         balloon.position.y + balloon.boundary._2 > bullet.position.y
 
     def exitedFromScreen(): Boolean =
-      bullet.position.x > Commons.Screen.width || bullet.position.x < 0 || bullet.position.y > Commons.Screen.height || bullet.position.y < 0
+      bullet.position.x > CommonValues.Screen.width || bullet.position.x < 0 || bullet.position.y > CommonValues.Screen.height || bullet.position.y < 0
   }
 
   def shoot: Bullet => Bullet = {

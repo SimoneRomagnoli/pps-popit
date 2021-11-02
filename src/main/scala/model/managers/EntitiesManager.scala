@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior, Scheduler }
 import akka.util.Timeout
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
-import controller.interaction.GameLoop.GameLoopMessages.ModelUpdated
+import controller.interaction.GameLoop.GameLoopMessages.{ CanStartNextRound, ModelUpdated }
 import controller.interaction.Messages.{ EntitiesManagerMessage, Input, Update, WithReplyTo }
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.actors.BalloonMessages.{ BalloonKilled, Hit }
@@ -19,8 +19,7 @@ import model.entities.towers.PowerUps.TowerPowerUp
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
-import model.managers.GameDynamicsMessages.{ Gain, Lose, Pay, WalletQuantity }
-import model.managers.SpawnerMessages.RoundOver
+import model.managers.GameDynamicsMessages.{ Lose, Pay, WalletQuantity }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 import utils.Futures.retrieve
@@ -247,7 +246,7 @@ case class EntityManager private (
     if (entities.collect { case EntityActor(_, b: Balloon) =>
         b
       }.isEmpty && !spawning)
-      model ! RoundOver(replyTo)
+      replyTo ! CanStartNextRound()
 
   def enqueue(msg: Update): Behavior[Update] = {
     if (!msg.isInstanceOf[TickUpdate]) {

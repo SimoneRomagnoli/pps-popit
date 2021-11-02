@@ -36,12 +36,13 @@ object BalloonActor {
  * @param balloon
  *   The encapsulated [[Balloon]].
  */
-case class BalloonActor private (
-    ctx: ActorContext[Update],
-    var balloon: Balloon,
-    var hit: Boolean = false) {
+case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon) {
 
-  def default(): Behavior[Update] = Behaviors.receiveMessage {
+  /**
+   * Default behavior of the [[BalloonActor]]: it waits for an [[UpdateEntity]] message to update
+   * itself and can be hit by a [[Bullet]].
+   */
+  def default(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case UpdateEntity(elapsedTime, _, replyTo) =>
       balloon.position.x match {
         case outOfBounds if outOfBounds >= Commons.View.gameBoardWidth =>
@@ -61,13 +62,21 @@ case class BalloonActor private (
 
   }
 
+  /**
+   * When hit by an [[Ice]] [[Bullet]], the [[BalloonActor]] starts a timer which represent how long
+   * it's gonna be frozen for.
+   */
   def freeze(freezingTime: Double): Behavior[Update] = Behaviors.withTimers { timers =>
     timers.startTimerWithFixedDelay(Unfreeze, freezingTime.seconds)
     frozen()
   }
 
+  /**
+   * The [[BalloonActor]] is not gonna move while frozen, but can still be hit. It waits for an
+   * [[Unfreeze]] message to keep on moving.
+   */
   def frozen(): Behavior[Update] = Behaviors.withTimers { timers =>
-    Behaviors.receiveMessage {
+    Behaviors.receiveMessagePartial {
       case Unfreeze =>
         timers.cancel(Unfreeze)
         default()
@@ -80,8 +89,6 @@ case class BalloonActor private (
       case UpdateEntity(_, _, replyTo) =>
         replyTo ! EntityUpdated(balloon, ctx.self)
         Behaviors.same
-
-      case _ => Behaviors.same
     }
   }
 

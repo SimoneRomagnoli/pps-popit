@@ -9,6 +9,7 @@ import model.spawn.Rounds.{ Round, Streak }
 
 import scala.concurrent.duration.DurationInt
 
+/** Game rounds logic: a suitable round is built according to the current progress. */
 object RoundsFactory {
   private var round: Int = 0
 
@@ -49,6 +50,10 @@ object RoundsFactory {
   private def incrementRound(): IO[Unit] = IO(round += 1)
 }
 
+/**
+ * The quantity of balloons to spawn is calculated through piecewise-defined functions based on the
+ * current round.
+ */
 object BalloonsFunctions {
   val easyRoundLimit: Int = 15
   val regeneratingRoundLimit: Int = 20

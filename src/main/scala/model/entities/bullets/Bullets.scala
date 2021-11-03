@@ -129,11 +129,13 @@ object Bullets {
       bullet.position.x > Commons.Screen.width || bullet.position.x < 0 || bullet.position.y > Commons.Screen.height || bullet.position.y < 0
   }
 
-  def shoot: Bullet => Bullet = {
-    case _: Dart       => Dart()
-    case _: IceBall    => IceBall()
-    case _: CannonBall => CannonBall()
-  }
+  def shoot(bullet: Bullet): Bullet = {
+    bullet match {
+      case _: Dart       => Dart()
+      case _: IceBall    => IceBall()
+      case _: CannonBall => CannonBall()
+    }
+  }.hurt(bullet.damage)
 
 }
 

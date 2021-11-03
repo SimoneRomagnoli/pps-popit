@@ -1,18 +1,12 @@
 package model.entities.balloons
 
-import model.entities.balloons.BalloonLives.{ Green, Red }
-import model.entities.balloons.BalloonTypeTest.{
-  testChangeValues,
-  testDefaultValues,
-  testMovement,
-  testPoppingByAllBullets,
-  testSameStructure
-}
-import model.entities.balloons.Balloons.{ complex, simple, Balloon }
+import model.entities.balloons.BalloonLives.{Green, Red}
+import model.entities.balloons.BalloonTypeTest.{testChangeValues, testDefaultValues, testMovement, testMultipleDamage, testPoppingByAllBullets, testSameStructure}
+import model.entities.balloons.Balloons.{Balloon, complex, simple}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.language.{ implicitConversions, postfixOps }
+import scala.language.{implicitConversions, postfixOps}
 
 class BalloonsTest extends AnyWordSpec with Matchers {
   val instance: Balloon => Balloon = b => b
@@ -46,6 +40,9 @@ class BalloonsTest extends AnyWordSpec with Matchers {
     "popped" should {
       "pop his outer layer" in {
         testPoppingByAllBullets(instance)
+      }
+      "pop according to the bullet's damage" in {
+        testMultipleDamage(instance)
       }
     }
   }

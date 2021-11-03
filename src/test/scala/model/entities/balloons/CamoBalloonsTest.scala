@@ -1,18 +1,12 @@
 package model.entities.balloons
 
 import model.entities.Entities.EnhancedSightAbility
-import model.entities.balloons.BalloonLives.{ Blue, Red }
-import model.entities.balloons.BalloonTypeTest.{
-  testChangeValues,
-  testDefaultValues,
-  testMovement,
-  testPoppingByAllBullets,
-  testSameStructure
-}
+import model.entities.balloons.BalloonLives.{Blue, Red}
+import model.entities.balloons.BalloonTypeTest.{testChangeValues, testDefaultValues, testMovement, testMultipleDamage, testPoppingByAllBullets, testSameStructure}
 import model.entities.balloons.Balloons.Balloon
-import model.entities.balloons.balloontypes.CamoBalloons.{ camo, CamoBalloon }
-import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
-import model.entities.towers.Towers.{ BaseTower, Tower }
+import model.entities.balloons.balloontypes.CamoBalloons.{CamoBalloon, camo}
+import model.entities.bullets.Bullets.{CannonBall, Dart, IceBall}
+import model.entities.towers.Towers.{BaseTower, Tower}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -37,6 +31,7 @@ class CamoBalloonsTest extends AnyFlatSpec with Matchers {
 
   it should "be popped by all the bullets" in {
     testPoppingByAllBullets(instance)
+    testMultipleDamage(instance)
   }
 
   it should "be able to be double wrap a balloon" in {

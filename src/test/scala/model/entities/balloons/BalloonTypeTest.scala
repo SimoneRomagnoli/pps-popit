@@ -1,11 +1,11 @@
 package model.entities.balloons
 
 import model.Positions.Vector2D
-import model.entities.balloons.BalloonLives.{ Blue, Red }
+import model.entities.balloons.BalloonLives.{Blue, Green, Red}
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
+import model.entities.bullets.Bullets.{CannonBall, Dart, IceBall}
 import model.maps.Cells.Cell
-import model.maps.Tracks.{ Track, TrackMap }
+import model.maps.Tracks.{Track, TrackMap}
 import org.scalatest.matchers.must.Matchers.be
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import model.Positions.defaultPosition
@@ -59,6 +59,12 @@ object BalloonTypeTest {
     instance(Red balloon).pop(Dart()) shouldBe None
     instance(Red balloon).pop(IceBall()) shouldBe None
     instance(Red balloon).pop(CannonBall()) shouldBe None
+  }
+
+  def testMultipleDamage(instance: Balloon => Balloon): Unit = {
+    instance(Red balloon).pop(Dart() hurt 2.0) shouldBe None
+    instance(Blue balloon).pop(Dart() hurt 2.0) shouldBe None
+    instance(Green balloon).pop(Dart() hurt 2.0).get shouldBe instance((Red balloon) at (Green balloon).speed)
   }
 
 }

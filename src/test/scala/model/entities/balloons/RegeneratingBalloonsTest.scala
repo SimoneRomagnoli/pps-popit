@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.entities.balloons.BalloonLives._
-import model.entities.balloons.BalloonTypeTest.{testChangeValues, testDefaultValues, testMovement, testPoppingByAllBullets, testSameStructure, zeroVector}
+import model.entities.balloons.BalloonTypeTest.{testChangeValues, testDefaultValues, testMovement, testMultipleDamage, testPoppingByAllBullets, testSameStructure, zeroVector}
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.balloontypes.BalloonDecorations.BalloonDecoration
 import model.entities.balloons.balloontypes.RegeneratingBalloons.{RegeneratingBalloon, regenerating, regenerationTime}
@@ -30,6 +30,7 @@ class RegeneratingBalloonsTest extends AnyFlatSpec with Matchers {
 
   it should "be popped by all the bullets" in {
     testPoppingByAllBullets(instance)
+    testMultipleDamage(instance)
   }
 
   it should "regenerate its life" in {

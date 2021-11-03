@@ -1,56 +1,40 @@
 package model.entities.bullets
 
-import javafx.scene.image.Image
-import javafx.scene.paint.ImagePattern
-import org.scalatest.Ignore
-import scalafx.Includes.{ at, double2DurationHelper, _ }
-import scalafx.animation.Timeline
-import scalafx.application.JFXApp3
-import scalafx.application.JFXApp3.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.scene.layout.Pane
-import scalafx.scene.shape.{ Rectangle, Shape }
+import model.entities.balloons.BalloonLives.Red
+import model.entities.balloons.Balloons.Balloon
+import model.entities.bullets.BulletValues._
+import model.entities.bullets.Bullets.{ CannonBall, IceBall }
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.language.postfixOps
 
-@Ignore
-object ExplosionTest extends JFXApp3 {
+class ExplosionTest extends AnyFlatSpec with Matchers {
+  val cannonBall: CannonBall = CannonBall(bulletDefaultRadius)
+  val iceBall: IceBall = IceBall(bulletDefaultRadius, bulletFreezingTime)
+  val balloon1: Balloon = (Red balloon) in (100.0, 100.0)
+  val balloon2: Balloon = (Red balloon) in (102.0, 102.0)
+  val balloon3: Balloon = (Red balloon) in (98.0, 98.0)
 
-  override def start(): Unit = {
+  "A cannonBall explosion" should "include all the balloons in his damage area " +
+    "and not the ones outside its radius" in {
 
-    val pane: Pane = new Pane()
-
-    stage = new PrimaryStage() {
-
-      scene = new Scene(pane)
+      cannonBall in (0.0, 0.0)
+      cannonBall include balloon1 shouldBe false
+      cannonBall in (100.0, 100.0)
+      cannonBall include balloon1 shouldBe true
+      cannonBall include balloon2 shouldBe true
+      cannonBall include balloon3 shouldBe true
     }
 
-    val rec1: Shape = Rectangle(100, 100, 100, 100)
+  "An iceBall explosion" should "include all the balloons in his damage area " +
+    "and not the ones outside its radius" in {
 
-    val exp_1: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_1.png"))
-    val exp_2: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_2.png"))
-    val exp_3: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_3.png"))
-    val exp_4: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_4.png"))
-    val exp_5: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_5.png"))
-    val exp_6: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_6.png"))
-    val exp_7: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_7.png"))
-    val exp_8: ImagePattern = new ImagePattern(new Image("images/bullets/EXPLOSION_8.png"))
-
-    val timeline: Timeline = new Timeline {
-      autoReverse = false
-      cycleCount = Timeline.Indefinite
-      keyFrames = Seq(
-        at(0.0 s)(rec1.fill -> exp_1),
-        at(0.1 s)(rec1.fill -> exp_2),
-        at(0.2 s)(rec1.fill -> exp_3),
-        at(0.3 s)(rec1.fill -> exp_4),
-        at(0.4 s)(rec1.fill -> exp_5),
-        at(0.5 s)(rec1.fill -> exp_6),
-        at(0.6 s)(rec1.fill -> exp_7),
-        at(0.7 s)(rec1.fill -> exp_8)
-      )
+      iceBall in (0.0, 0.0)
+      iceBall include balloon1 shouldBe false
+      iceBall in (100.0, 100.0)
+      iceBall include balloon1 shouldBe true
+      iceBall include balloon2 shouldBe true
+      iceBall include balloon3 shouldBe true
     }
-    pane.children += rec1
-    timeline.play()
-  }
 }

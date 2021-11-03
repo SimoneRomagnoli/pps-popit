@@ -8,7 +8,7 @@ import commons.Futures.retrieve
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.InteractionTest.buildExpectFlow
-import controller.interaction.GameLoop.GameLoopMessages.Stop
+import controller.interaction.GameLoop.GameLoopMessages.{ CanStartNextRound, Stop }
 import controller.interaction.Messages.{ Input, Render, Update, WithReplyTo }
 import controller.settings.Settings.Time.Constants._
 import controller.settings.Settings.Time.TimeSettings
@@ -96,6 +96,7 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         view shouldReceive None
       }
       "update settings" in {
+        view afterMessage UpdateSettings() shouldReceive Some(RenderSettings(Settings()))
         view afterMessage SetDifficulty(Hard) shouldReceive Some(RenderSettings(Settings(Hard)))
         view afterMessage SetTimeRatio(doubleTimeRatio) shouldReceive Some(
           RenderSettings(Settings(Hard, TimeSettings(timeRatio = doubleTimeRatio)))
@@ -123,6 +124,9 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         view afterMessage NewGame(None) shouldReceive Some(NewGame(None))
         model shouldReceive Some(Stop())
         gameLoop shouldReceive Some(Stop())
+        view afterMessage RestartGame() shouldReceive Some(CanStartNextRound())
+        model shouldReceive None
+        gameLoop shouldReceive None
       }
       "respect the interaction pattern" in {
         controller = testKit spawn controllerActor

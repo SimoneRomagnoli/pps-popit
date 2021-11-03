@@ -54,6 +54,7 @@ class SettingsController(
           case Easy   => easyButton.styleClass += "difficultySelected"
           case Normal => normalButton.styleClass += "difficultySelected"
           case Hard   => hardButton.styleClass += "difficultySelected"
+          case _      =>
         }
         frameRate match {
           case _ if frameRate == lowFrameRate =>

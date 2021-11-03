@@ -1,20 +1,20 @@
 package model.actors
 
-import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
+import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
 import akka.actor.typed.ActorRef
-import controller.interaction.Messages.{Input, Update}
+import controller.interaction.Messages.{ Input, Update }
 import model.Positions.defaultPosition
-import model.actors.BalloonActorTest.{outOfBounds, testBalloon}
-import model.actors.BalloonMessages.{BalloonKilled, Hit, Unfreeze}
-import model.entities.balloons.BalloonLives.{Blue, Green, Red}
+import model.actors.BalloonActorTest.{ outOfBounds, testBalloon }
+import model.actors.BalloonMessages.{ BalloonKilled, Hit, Unfreeze }
+import model.entities.balloons.BalloonLives.{ Blue, Green, Red }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletValues.bulletFreezingTime
-import model.entities.bullets.Bullets.{Dart, IceBall}
-import model.managers.EntitiesMessages.{EntityUpdated, ExitedBalloon, UpdateEntity}
+import model.entities.bullets.Bullets.{ Dart, IceBall }
+import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
 import model.managers.GameDynamicsMessages.Gain
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import utils.Commons.Game.balloonHitGain
+import commons.CommonValues.Game.balloonHitGain
 
 import scala.language.postfixOps
 
@@ -70,7 +70,10 @@ class BalloonActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wi
       "when the balloon is frozen can be unfrozen" in {
         moreComplexActor ! Unfreeze
         moreComplexActor ! UpdateEntity(1.0, List(), model.ref)
-        model expectMessage EntityUpdated(((Red balloon) at (Green balloon).speed) update 1.0, moreComplexActor)
+        model expectMessage EntityUpdated(
+          ((Red balloon) at (Green balloon).speed) update 1.0,
+          moreComplexActor
+        )
       }
     }
   }

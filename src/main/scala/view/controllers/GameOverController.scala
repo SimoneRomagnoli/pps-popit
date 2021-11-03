@@ -6,7 +6,7 @@ import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafxml.core.macros.sfxml
-import utils.Commons.View.{ gameBoardHeight, gameBoardWidth }
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import view.render.Rendering
 
 import scala.concurrent.Future

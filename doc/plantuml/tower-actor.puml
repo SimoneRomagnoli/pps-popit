@@ -1,0 +1,26 @@
+@startuml
+
+title "TowerActor"
+
+control "TowerActor" as tower
+control "Model" as model
+control "BulletActor" as bullet
+
+model -> tower: update(entities)
+
+group detecting
+    tower -> tower: check balloon
+    alt balloon detected
+        activate tower #FFBBBB
+        tower -> tower: rotateDirection
+        alt can shoot
+            tower -> bullet: spawn
+            activate bullet
+            tower -> model: entitySpawned(bullet)
+            deactivate tower
+        end
+    end
+    tower -> tower: updateShootTime
+    tower -> model: entitiesUpdated(tower)
+end
+@enduml

@@ -3,7 +3,7 @@ package model.entities.towers
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import model.Positions.Vector2D
 import model.entities.balloons.Balloons.{ Balloon, Simple }
-import model.entities.bullets.Bullets.Dart
+import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.TowerValues.towerDefaultShotRatio
 import model.entities.towers.Towers.Tower
@@ -34,6 +34,10 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         (tower position) shouldBe towerPosition
         (balloon position) shouldBe balloonPosition
         tower canSee balloon shouldBe false
+
+        val arrow: Tower[Bullet] = TowerTypes.arrow spawn
+
+        arrow.bullet.isInstanceOf[Dart] shouldBe true
       }
     }
     "the balloon goes near the tower, it" should {

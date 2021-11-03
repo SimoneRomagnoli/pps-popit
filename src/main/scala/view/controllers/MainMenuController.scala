@@ -5,7 +5,7 @@ import controller.interaction.Messages.{ Input, Message }
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ BorderPane, VBox }
 import scalafxml.core.macros.sfxml
-import utils.Commons
+import commons.CommonValues
 import view.render.Drawings.{ Drawing, MenuDrawings, Title }
 import view.render.Rendering
 
@@ -42,7 +42,7 @@ class MainMenuController(
   private object MenuSetters {
 
     def setup(): Unit = {
-      Rendering.setLayout(mainMenuPane, Commons.Screen.width, Commons.Screen.height)
+      Rendering.setLayout(mainMenuPane, CommonValues.Screen.width, CommonValues.Screen.height)
       val logo = drawing the Title
       Rendering a logo into titleLogo.children
       setupButtons()

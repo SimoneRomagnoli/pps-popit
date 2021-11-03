@@ -15,14 +15,15 @@ import model.actors.{ BalloonActor, BulletActor, TowerActor }
 import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.Bullet
-import model.entities.towers.PowerUps.TowerPowerUp
+import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
 import model.managers.GameDynamicsMessages.{ Lose, Pay, WalletQuantity }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
-import utils.Futures.retrieve
+import commons.Futures.retrieve
+import model.entities.towers.TowerValues.maxLevel
 
 import scala.concurrent.duration.DurationInt
 
@@ -150,14 +151,17 @@ case class EntityManager private (
           replyTo ! TowerOption(tower)
 
         case BoostTowerIn(cell, powerUp) =>
-          retrieve(model ? WalletQuantity) {
-            case CurrentWallet(amount) if amount - powerUp.cost > 0 =>
-              model ! Pay(powerUp.cost)
-              entities.collect {
-                case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
-                  actorRef
-              }.head ! Boost(powerUp, replyTo)
-            case _ =>
+          val (towerActor, towerInstance) = entities.collect {
+            case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
+              (actorRef, entity.asInstanceOf[Tower[Bullet]])
+          }.head
+          if ((towerInstance levelOf powerUp) != maxLevel) {
+            retrieve(model ? WalletQuantity) {
+              case CurrentWallet(amount) if amount - powerUp.cost > 0 =>
+                model ! Pay(powerUp.cost)
+                towerActor ! Boost(powerUp, replyTo)
+              case _ =>
+            }
           }
 
       }

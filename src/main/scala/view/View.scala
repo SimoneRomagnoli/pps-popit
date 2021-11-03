@@ -13,7 +13,7 @@ import controller.interaction.Messages.{ Input, Render }
 import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
-import utils.Commons.Maps.gameGrid
+import commons.CommonValues.Maps.gameGrid
 import view.View.ViewMessages._
 import view.controllers._
 
@@ -97,7 +97,7 @@ object View {
           Behaviors.same
 
         case CanStartNextRound() =>
-          gameController.gameMenuController.enableRoundButton()
+          gameController.nextRound()
           Behaviors.same
 
         case RenderGameOver() =>

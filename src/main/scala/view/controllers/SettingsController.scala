@@ -12,7 +12,7 @@ import controller.settings.Settings.{ Easy, Hard, Normal }
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.sfxml
-import utils.Commons
+import commons.CommonValues
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -49,7 +49,7 @@ class SettingsController(
   private object Setters {
 
     def setup(): Unit = {
-      Rendering.setLayout(settings, Commons.Screen.width, Commons.Screen.height)
+      Rendering.setLayout(settings, CommonValues.Screen.width, CommonValues.Screen.height)
       setupButtons()
     }
 

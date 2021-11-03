@@ -1,15 +1,15 @@
-package utils
+package commons
 
 import model.maps.Cells.{ Cell, GridCell }
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.Right
-import utils.Commons.Screen._
-import utils.Commons.View.gameMenuWidthRatio
+import commons.CommonValues.Screen._
+import commons.CommonValues.View.gameMenuWidthRatio
 
 import java.awt.{ GraphicsEnvironment, Toolkit }
 import scala.language.postfixOps
 
-object Commons {
+object CommonValues {
 
   object Screen {
 

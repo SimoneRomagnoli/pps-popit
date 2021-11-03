@@ -12,7 +12,7 @@ import scalafx.geometry.Pos
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafxml.core.macros.sfxml
-import utils.Commons.View.{ gameBoardHeight, gameBoardWidth }
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -68,6 +68,7 @@ class PauseController(
     retryTrack.onMouseClicked = _ => {
       send(RestartGame())
       parent.gameMenuController.clearTowerStatus()
+      parent.gameMenuController.clearForwardStatus()
       hide()
     }
     resume.onMouseClicked = _ => {
@@ -87,5 +88,4 @@ class PauseController(
       )
     }
   }
-
 }

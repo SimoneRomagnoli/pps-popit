@@ -4,7 +4,7 @@ import model.Positions._
 import model.Positions.Vector2D
 import model.maps.Tracks.Directions.{ Direction, Down, Left, None, Right, Up }
 import model.maps.Tracks.Track
-import utils.Commons.Screen.cellSize
+import commons.CommonValues.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 

@@ -1,7 +1,7 @@
-package utils
+package controller.inout
 
-import controller.inout.FileCoders.CoderBuilder.{ imagesDir, separator }
-import utils.Commons.View.{ gameBoardHeight, gameBoardWidth }
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
+import controller.inout.FileCoders.CoderBuilder._
 
 import java.awt.{ Rectangle, Robot }
 import java.io.File

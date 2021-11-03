@@ -6,7 +6,7 @@ import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import utils.Commons
+import commons.CommonValues
 import model.Positions.defaultPosition
 import model.entities.bullets.BulletValues._
 
@@ -54,9 +54,9 @@ class BulletsTest extends AnyFlatSpec with Matchers {
   "A Dart" should "recognize when it exit from the screen" in {
     dart in (0.0, 0.0)
     dart.exitedFromScreen() shouldBe false
-    dart in (Commons.Screen.width + 1, 0.0)
+    dart in (CommonValues.Screen.width + 1, 0.0)
     dart.exitedFromScreen() shouldBe true
-    dart in (0.0, Commons.Screen.height + 1)
+    dart in (0.0, CommonValues.Screen.height + 1)
     dart.exitedFromScreen() shouldBe true
     dart in (-1.0, 0.0)
     dart.exitedFromScreen() shouldBe true

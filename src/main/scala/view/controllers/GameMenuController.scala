@@ -1,14 +1,17 @@
 package view.controllers
 
+import commons.CommonValues.Maps.outerCell
+import commons.Futures.retrieve
 import controller.Controller.ControllerMessages._
-import controller.interaction.Messages._
 import controller.interaction.Messages
+import controller.interaction.Messages._
 import model.actors.TowerMessages.TowerBoosted
 import model.entities.Entities.EnhancedSightAbility
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight, TowerPowerUp }
 import model.entities.towers.TowerTypes
 import model.entities.towers.TowerTypes.TowerType
+import model.entities.towers.TowerValues.maxLevel
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.BoostTowerIn
 import model.maps.Cells.Cell
@@ -21,8 +24,6 @@ import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
-import utils.Commons.Maps.outerCell
-import utils.Futures.retrieve
 import view.render.Rendering
 import view.render.Renders.{ single, toSingle }
 
@@ -33,6 +34,8 @@ import scala.concurrent.Future
  * contains elements with the actual status of the game.
  */
 trait ViewGameMenuController extends GameControllerChild {
+  def clearForwardStatus(): Unit
+  def nextRound(): Unit
   def setup(): Unit
   def setHighlightingTower(reference: Option[Tower[_]] => Unit): Unit
   def renderStats(stats: GameStats): Unit
@@ -64,6 +67,8 @@ class GameMenuController(
     val startRoundContainer: VBox,
     val startRound: ToggleButton,
     val pauseRound: ToggleButton,
+    val forwardRounds: ToggleButton,
+    var automaticRounds: Boolean,
     var currentCell: Cell = outerCell,
     var roundOver: Boolean = true,
     var parent: ViewGameController,
@@ -121,11 +126,7 @@ class GameMenuController(
       addToTowerStatus("Sight Range", tower levelOf Sight, Sight)
       addToTowerStatus("Bullet Damage", tower levelOf Damage, Damage)
       addToTowerStatus("Shot Ratio", tower levelOf Ratio, Ratio)
-      addToTowerStatus(
-        "Camo Vision",
-        if (tower.isInstanceOf[EnhancedSightAbility]) "Yes" else "No",
-        Camo
-      )
+      addToTowerStatus("Camo Vision", tower.isInstanceOf[EnhancedSightAbility], Camo)
       highlight(Some(tower))
     }
   }
@@ -141,13 +142,24 @@ class GameMenuController(
   override def disableAllButtons(): Unit = {
     startRound.disable = true
     pauseRound.disable = true
+    forwardRounds.disable = true
     towerDepot.disable = true
   }
 
   override def enableAllButtons(): Unit = {
     pauseRound.disable = false
+    forwardRounds.disable = false
     towerDepot.disable = false
-    if (roundOver) startRound.disable = false
+    if (roundOver && !automaticRounds) startRound.disable = false
+  }
+
+  override def nextRound(): Unit =
+    if (!automaticRounds) enableRoundButton()
+    else send(StartNextRound())
+
+  override def clearForwardStatus(): Unit = {
+    automaticRounds = false
+    forwardRounds.styleClass -= "forwardOn"
   }
 
   override def clearTowerStatus(): Unit =
@@ -164,6 +176,7 @@ class GameMenuController(
       lifeLabel.text = "100"
       towerDepot.children.removeRange(1, towerDepot.children.size)
       towerStatus.children.clear()
+      clearForwardStatus()
     }
 
     def setSpacing(): Unit = {
@@ -185,6 +198,13 @@ class GameMenuController(
         send(StartNextRound())
         roundOver = false
         disableRoundButton()
+      }
+      forwardRounds.onMouseClicked = _ => {
+        startRound.disable = true
+        roundOver = false
+        if (automaticRounds) forwardRounds.styleClass -= "forwardOn"
+        else forwardRounds.styleClass += "forwardOn"
+        automaticRounds = !automaticRounds
       }
     }
 
@@ -233,7 +253,10 @@ class GameMenuController(
     def addToTowerStatus[T](title: String, argument: T, powerUp: TowerPowerUp): Unit = {
       val box: HBox = new HBox()
       val key: Label = Label(title + ": ")
-      val value: Label = Label(argument.toString)
+      val value: Label = argument match {
+        case bool: Boolean => if (bool) Label("Yes") else Label("No")
+        case _             => Label(argument.toString)
+      }
       val emptyBox: HBox = new HBox()
       emptyBox.hgrow = Always
       val button: ToggleButton = new ToggleButton(powerUp.cost.toString + "$")
@@ -243,6 +266,11 @@ class GameMenuController(
             refreshTowerStatus(tower)
           case _ =>
         }
+      argument match {
+        case int: Int if int == maxLevel => button.disable = true
+        case bool: Boolean if bool       => button.disable = true
+        case _                           =>
+      }
       button.styleClass += "inputButton"
       box.children += key
       box.children += value

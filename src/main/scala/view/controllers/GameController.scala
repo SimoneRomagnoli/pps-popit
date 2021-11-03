@@ -12,9 +12,9 @@ import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.layout._
 import scalafxml.core.macros.{ nested, sfxml }
-import utils.Commons
-import utils.Commons.Maps.gameGrid
-import utils.Commons.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import commons.CommonValues
+import commons.CommonValues.Maps.gameGrid
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
 import view.render.{ Animating, Rendering }
 
 import scala.concurrent.Future
@@ -33,6 +33,7 @@ trait ViewGameController extends ViewController {
   def draw(track: Track): Unit
   def draw(entities: List[Entity]): Unit
   def animate(entity: Entity): Unit
+  def nextRound(): Unit
   def pauseController: ViewPauseController
   def gameMenuController: ViewGameMenuController
   def gameOverController: ViewGameOverController
@@ -118,7 +119,7 @@ class GameController(
     gameMenuController renderStats stats
   }
 
-  override def draw(grid: Grid = Commons.Maps.gameGrid): Unit = Platform runLater {
+  override def draw(grid: Grid = CommonValues.Maps.gameGrid): Unit = Platform runLater {
     Rendering a grid into trackPane.children
   }
 
@@ -140,6 +141,21 @@ class GameController(
     trackPane.children.clear()
     Rendering a gameGrid into trackPane.children
   }
+
+  override def getScenePosition: Bounds =
+    gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
+
+  override def hideGameEntities(): Unit = {
+    entitiesPane.visible = false
+    highlightPane.visible = false
+  }
+
+  override def showGameEntities(): Unit = {
+    entitiesPane.visible = true
+    highlightPane.visible = true
+  }
+
+  override def nextRound(): Unit = gameMenuController.nextRound()
 
   private def setChildren(): Unit = {
     trackChoiceController.setParent(this)
@@ -221,18 +237,5 @@ class GameController(
       }
 
     private def towerSelected: Boolean = gameMenuController.anyTowerSelected()
-  }
-
-  override def getScenePosition: Bounds =
-    gameBoard.localToScreen(gameBoard.getLayoutX, gameBoard.getLayoutY)
-
-  override def hideGameEntities(): Unit = {
-    entitiesPane.visible = false
-    highlightPane.visible = false
-  }
-
-  override def showGameEntities(): Unit = {
-    entitiesPane.visible = true
-    highlightPane.visible = true
   }
 }

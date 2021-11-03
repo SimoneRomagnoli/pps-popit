@@ -13,7 +13,7 @@ alt  bullet in screen
         activate BullAct #FFBBBB
         alt bullet instance of explosion
             BullAct -> M : StartExplosion(bullet)
-            BullAct -> M : BalloonHit(ballons in explodin area)
+            BullAct -> M : BalloonHit(hittedBalloons))
         else normal bullet
             BullAct -> M : BalloonHit(ballon)
         end

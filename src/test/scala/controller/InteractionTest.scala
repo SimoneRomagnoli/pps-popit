@@ -7,7 +7,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import commons.Futures.retrieve
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
-import controller.InteractionTest.buildExpectFlow
+import controller.InteractionTest.buildControllerProbes
 import controller.interaction.GameLoop.GameLoopMessages.{ CanStartNextRound, Stop }
 import controller.interaction.Messages.{ Input, Render, Update, WithReplyTo }
 import controller.settings.Settings.Time.Constants._
@@ -64,8 +64,10 @@ object InteractionTest {
   }
 
   /**
+   * Needed for better test syntax: the probes will directly call the [[InteractingTestProbe]] 's
+   * methods.
    */
-  implicit def buildExpectFlow[P](probe: TestProbe[P])(implicit
+  implicit def buildControllerProbes[P](probe: TestProbe[P])(implicit
       controller: ActorRef[Input]): ControllerProbes[P] =
     ControllerProbes(probe, controller)
 }

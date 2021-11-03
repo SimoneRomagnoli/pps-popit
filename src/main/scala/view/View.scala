@@ -99,7 +99,7 @@ object View {
           Behaviors.same
 
         case CanStartNextRound() =>
-          gameController.gameMenuController.enableRoundButton()
+          gameController.nextRound()
           Behaviors.same
 
         case RenderGameOver() =>

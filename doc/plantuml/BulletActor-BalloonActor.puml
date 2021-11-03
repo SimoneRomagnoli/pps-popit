@@ -1,0 +1,30 @@
+@startuml
+control "Bullet Actor" as BullAct
+control "Model" as M
+control "Balloon Actor" as BallAct
+
+M -> BullAct : update(entities)
+BullAct -> BullAct : update bullet position
+
+alt  bullet in screen
+    BullAct -> BullAct : check for collision bullet-balloon
+    alt collision detected
+        BullAct -> BullAct: exploding(hittedBalloons)
+        activate BullAct #FFBBBB
+        alt bullet instance of explosion
+            BullAct -> M : StartExplosion(bullet)
+            BullAct -> M : BalloonHit(ballons in explodin area)
+        else normal bullet
+            BullAct -> M : BalloonHit(ballon)
+        end
+        BullAct -> M: BulletKilled
+        deactivate BullAct
+        M -> BallAct : hit(bullet)
+    else no collision
+        BullAct -> M : entitiesUpdated(bullet)
+    end
+else bullet out of screen
+    BullAct -> M: BulletKilled
+end
+@enduml
+

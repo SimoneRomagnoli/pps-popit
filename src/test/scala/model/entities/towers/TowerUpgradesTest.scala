@@ -8,6 +8,7 @@ import model.entities.towers.PowerUpValues.{ boostedRatioFactor, boostedSightFac
 import model.entities.towers.PowerUps.{ BoostedTower, Camo, Damage, Ratio, Sight }
 import model.entities.towers.TowerTypes.{ Arrow, Ice }
 import model.entities.towers.TowerValues.{
+  maxLevel,
   shotRatios,
   sightRanges,
   towerDefaultShotRatio,
@@ -115,6 +116,16 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         boostedTower levelOf Ratio shouldBe nextLevel
         boostedTower levelOf Sight shouldBe nextLevel
         boostedTower levelOf Damage shouldBe nextLevel
+      }
+    }
+    "a tower is max boosted, it" should {
+      "has been reached max level" in {
+        var tower: Tower[Dart] = Arrow tower
+
+        tower = tower boost Ratio
+        tower = tower boost Ratio
+
+        tower levelOf Ratio shouldBe maxLevel
       }
     }
   }

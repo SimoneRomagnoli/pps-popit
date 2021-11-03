@@ -15,8 +15,8 @@
     <VBox fx:id="gameOverVerticalContainer">
         <VBox fx:id="gameOverContainer" styleClass="gameOverContainer">
             <Label text="Game Over"/>
-            <ToggleButton text="Retry-it!" fx:id="retryTrack" styleClass="gameOverButtons" maxWidth="Infinity"/>
-            <ToggleButton text="Quit-it!" fx:id="quit" styleClass="gameOverButtons" maxWidth="Infinity"/>
+            <Button text="Retry-it!" fx:id="retryTrack" styleClass="gameOverButtons" maxWidth="Infinity"/>
+            <Button text="Quit-it!" fx:id="quit" styleClass="gameOverButtons" maxWidth="Infinity"/>
         </VBox>
     </VBox>
     <VBox HBox.hgrow="ALWAYS"/>

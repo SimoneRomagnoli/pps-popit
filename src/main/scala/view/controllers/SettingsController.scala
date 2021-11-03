@@ -20,6 +20,7 @@ import view.render.Rendering
 import scala.concurrent.Future
 
 trait ViewSettingsController extends ViewController {
+  def update(): Unit
   def update(settings: Settings): Unit
 }
 
@@ -48,6 +49,8 @@ class SettingsController(
   override def setAsk(reference: Message => Future[Message]): Unit = ask = reference
   override def show(): Unit = settings.visible = true
   override def hide(): Unit = settings.visible = false
+
+  override def update(): Unit = send(UpdateSettings())
 
   override def update(settings: Settings): Unit = {
     clearStyle()
@@ -82,18 +85,16 @@ class SettingsController(
     }
 
     def setupButtons(): Unit = {
-      easyButton.onMouseClicked = _ => send(SetDifficulty(Easy)); update()
-      normalButton.onMouseClicked = _ => send(SetDifficulty(Normal)); update()
-      hardButton.onMouseClicked = _ => send(SetDifficulty(Hard)); update()
-      backToMenu.onMouseClicked = _ => send(BackToMenu()); update()
-      normalSpeedButton.onMouseClicked = _ => send(SetTimeRatio(normalTimeRatio)); update()
-      doubleSpeedButton.onMouseClicked = _ => send(SetTimeRatio(doubleTimeRatio)); update()
-      lowFrameRateButton.onMouseClicked = _ => send(SetFrameRate(lowFrameRate)); update()
-      mediumFrameRateButton.onMouseClicked = _ => send(SetFrameRate(mediumFrameRate)); update()
-      highFrameRateButton.onMouseClicked = _ => send(SetFrameRate(highFrameRate)); update()
+      easyButton.onMouseClicked = _ => send(SetDifficulty(Easy))
+      normalButton.onMouseClicked = _ => send(SetDifficulty(Normal))
+      hardButton.onMouseClicked = _ => send(SetDifficulty(Hard))
+      backToMenu.onMouseClicked = _ => send(BackToMenu())
+      normalSpeedButton.onMouseClicked = _ => send(SetTimeRatio(normalTimeRatio))
+      doubleSpeedButton.onMouseClicked = _ => send(SetTimeRatio(doubleTimeRatio))
+      lowFrameRateButton.onMouseClicked = _ => send(SetFrameRate(lowFrameRate))
+      mediumFrameRateButton.onMouseClicked = _ => send(SetFrameRate(mediumFrameRate))
+      highFrameRateButton.onMouseClicked = _ => send(SetFrameRate(highFrameRate))
     }
-
-    def update(): Unit = send(UpdateSettings())
 
     def clearStyle(): Unit = {
       easyButton.styleClass -= "difficultySelected"

@@ -133,6 +133,7 @@ object View {
     }
 
     def inSettings(settingsController: ViewSettingsController): Behavior[Render] = {
+      settingsController.update()
       settingsController.show()
       Behaviors.receiveMessage {
         case BackToMenu() =>

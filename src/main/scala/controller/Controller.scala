@@ -169,8 +169,6 @@ object Controller {
 
       case settingsMessage: SettingsMessage =>
         settingsMessage match {
-          case UpdateSettings() =>
-            view ! RenderSettings(settings)
           case SetDifficulty(difficulty) =>
             settings = Settings(difficulty, settings.timeSettings)
           case SetTimeRatio(timeRatio) =>
@@ -183,7 +181,9 @@ object Controller {
               settings.difficulty,
               TimeSettings(frameRate, settings.timeSettings.timeRatio)
             )
+          case UpdateSettings() =>
         }
+        view ! RenderSettings(settings)
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>

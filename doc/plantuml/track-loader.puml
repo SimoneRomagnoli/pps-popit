@@ -1,0 +1,45 @@
+@startuml
+
+title "TrackLoader"
+
+control "TrackLoader" as loader
+control "FileCoder" as coder
+control "Controller" as controller
+control "ScreenShoter" as shoter
+
+group save
+    controller -> loader: save(track)
+    alt tracks list is empty
+        loader -> coder: request
+        activate coder
+        coder -> coder: deserialize
+        coder --> loader: return
+        deactivate coder
+    end
+    loader -> loader: append(track)
+    loader -> shoter: takeScreen
+    activate shoter
+    shoter -> shoter: screenshot
+    shoter --> loader: screenshotSaved
+    deactivate shoter
+    loader -> coder: request
+    activate coder
+    coder -> coder: serialize
+    coder --> loader: return
+    deactivate coder
+    loader -> controller: trackSaved
+end
+
+group load
+    controller -> loader: load(tracks)
+    alt tracks list is empty
+        loader -> coder: request
+        activate coder
+        coder -> coder: deserialize
+        coder --> loader: return
+        deactivate coder
+    end
+    loader -> controller: tracksLoaded
+end
+
+@enduml

@@ -4,20 +4,24 @@ import controller.Controller.ControllerMessages.{
   BackToMenu,
   SetDifficulty,
   SetFrameRate,
-  SetTimeRatio
+  SetTimeRatio,
+  UpdateSettings
 }
 import controller.interaction.Messages._
 import controller.settings.Settings.Time.Constants._
-import controller.settings.Settings.{ Easy, Hard, Normal }
+import controller.settings.Settings.{ Easy, Hard, Normal, Settings }
 import scalafx.scene.control.ToggleButton
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.sfxml
 import commons.CommonValues
+import controller.settings.Settings.Time.TimeSettings
 import view.render.Rendering
 
 import scala.concurrent.Future
 
-trait ViewSettingsController extends ViewController {}
+trait ViewSettingsController extends ViewController {
+  def update(settings: Settings): Unit
+}
 
 /**
  * Controller class bound to the settings fxml.
@@ -45,6 +49,30 @@ class SettingsController(
   override def show(): Unit = settings.visible = true
   override def hide(): Unit = settings.visible = false
 
+  override def update(settings: Settings): Unit = {
+    clearStyle()
+    settings match {
+      case Settings(difficulty, TimeSettings(frameRate, timeRatio)) =>
+        difficulty match {
+          case Easy   => easyButton.styleClass += "difficultySelected"
+          case Normal => normalButton.styleClass += "difficultySelected"
+          case Hard   => hardButton.styleClass += "difficultySelected"
+        }
+        frameRate match {
+          case _ if frameRate == lowFrameRate =>
+            lowFrameRateButton.styleClass += "frameRateSelected"
+          case _ if frameRate == mediumFrameRate =>
+            mediumFrameRateButton.styleClass += "frameRateSelected"
+          case _ => highFrameRateButton.styleClass += "frameRateSelected"
+        }
+        timeRatio match {
+          case _ if timeRatio == doubleTimeRatio =>
+            doubleSpeedButton.styleClass += "timeRatioSelected"
+          case _ => normalSpeedButton.styleClass += "timeRatioSelected"
+        }
+    }
+  }
+
   /** Private verbose methods. */
   private object Setters {
 
@@ -54,15 +82,28 @@ class SettingsController(
     }
 
     def setupButtons(): Unit = {
-      easyButton.onMouseClicked = _ => send(SetDifficulty(Easy))
-      normalButton.onMouseClicked = _ => send(SetDifficulty(Normal))
-      hardButton.onMouseClicked = _ => send(SetDifficulty(Hard))
-      backToMenu.onMouseClicked = _ => send(BackToMenu())
-      normalSpeedButton.onMouseClicked = _ => send(SetTimeRatio(normalTimeRatio))
-      doubleSpeedButton.onMouseClicked = _ => send(SetTimeRatio(doubleTimeRatio))
-      lowFrameRateButton.onMouseClicked = _ => send(SetFrameRate(lowFrameRate))
-      mediumFrameRateButton.onMouseClicked = _ => send(SetFrameRate(mediumFrameRate))
-      highFrameRateButton.onMouseClicked = _ => send(SetFrameRate(highFrameRate))
+      easyButton.onMouseClicked = _ => send(SetDifficulty(Easy)); update()
+      normalButton.onMouseClicked = _ => send(SetDifficulty(Normal)); update()
+      hardButton.onMouseClicked = _ => send(SetDifficulty(Hard)); update()
+      backToMenu.onMouseClicked = _ => send(BackToMenu()); update()
+      normalSpeedButton.onMouseClicked = _ => send(SetTimeRatio(normalTimeRatio)); update()
+      doubleSpeedButton.onMouseClicked = _ => send(SetTimeRatio(doubleTimeRatio)); update()
+      lowFrameRateButton.onMouseClicked = _ => send(SetFrameRate(lowFrameRate)); update()
+      mediumFrameRateButton.onMouseClicked = _ => send(SetFrameRate(mediumFrameRate)); update()
+      highFrameRateButton.onMouseClicked = _ => send(SetFrameRate(highFrameRate)); update()
+    }
+
+    def update(): Unit = send(UpdateSettings())
+
+    def clearStyle(): Unit = {
+      easyButton.styleClass -= "difficultySelected"
+      normalButton.styleClass -= "difficultySelected"
+      hardButton.styleClass -= "difficultySelected"
+      lowFrameRateButton.styleClass -= "frameRateSelected"
+      mediumFrameRateButton.styleClass -= "frameRateSelected"
+      highFrameRateButton.styleClass -= "frameRateSelected"
+      doubleSpeedButton.styleClass -= "timeRatioSelected"
+      normalSpeedButton.styleClass -= "timeRatioSelected"
     }
   }
 }

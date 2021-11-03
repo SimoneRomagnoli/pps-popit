@@ -1,5 +1,6 @@
 package view.controllers
 
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import controller.Controller.ControllerMessages.{
   BackToMenu,
   RestartGame,
@@ -9,10 +10,9 @@ import controller.Controller.ControllerMessages.{
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.application.Platform
 import scalafx.geometry.Pos
-import scalafx.scene.control.ToggleButton
+import scalafx.scene.control.Button
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafxml.core.macros.sfxml
-import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -33,10 +33,10 @@ class PauseController(
     val pause: HBox,
     val pauseVerticalContainer: VBox,
     val pauseContainer: VBox,
-    val resume: ToggleButton,
-    val saveTrack: ToggleButton,
-    val retryTrack: ToggleButton,
-    val quit: ToggleButton,
+    val resume: Button,
+    val saveTrack: Button,
+    val retryTrack: Button,
+    val quit: Button,
     var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message])

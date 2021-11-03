@@ -1,20 +1,14 @@
 package view.controllers
 
-import controller.Controller.ControllerMessages.{
-  BackToMenu,
-  SetDifficulty,
-  SetFrameRate,
-  SetTimeRatio,
-  UpdateSettings
-}
+import commons.CommonValues
+import controller.Controller.ControllerMessages._
 import controller.interaction.Messages._
 import controller.settings.Settings.Time.Constants._
+import controller.settings.Settings.Time.TimeSettings
 import controller.settings.Settings.{ Easy, Hard, Normal, Settings }
-import scalafx.scene.control.ToggleButton
+import scalafx.scene.control.Button
 import scalafx.scene.layout.BorderPane
 import scalafxml.core.macros.sfxml
-import commons.CommonValues
-import controller.settings.Settings.Time.TimeSettings
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -30,15 +24,15 @@ trait ViewSettingsController extends ViewController {
 @sfxml
 class SettingsController(
     val settings: BorderPane,
-    val easyButton: ToggleButton,
-    val normalButton: ToggleButton,
-    val hardButton: ToggleButton,
-    val normalSpeedButton: ToggleButton,
-    val doubleSpeedButton: ToggleButton,
-    val lowFrameRateButton: ToggleButton,
-    val mediumFrameRateButton: ToggleButton,
-    val highFrameRateButton: ToggleButton,
-    val backToMenu: ToggleButton,
+    val easyButton: Button,
+    val normalButton: Button,
+    val hardButton: Button,
+    val normalSpeedButton: Button,
+    val doubleSpeedButton: Button,
+    val lowFrameRateButton: Button,
+    val mediumFrameRateButton: Button,
+    val highFrameRateButton: Button,
+    val backToMenu: Button,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewSettingsController {

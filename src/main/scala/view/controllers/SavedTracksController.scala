@@ -1,14 +1,14 @@
 package view.controllers
 
+import commons.CommonValues
 import controller.Controller.ControllerMessages.{ BackToMenu, RetrieveAndLoadTrack }
 import controller.inout.FileCoders.CoderBuilder.trackURL
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.application.Platform
-import scalafx.scene.control.{ ScrollPane, ToggleButton }
+import scalafx.scene.control.{ Button, ScrollPane }
 import scalafx.scene.image.{ Image, ImageView }
 import scalafx.scene.layout._
 import scalafxml.core.macros.sfxml
-import commons.CommonValues
 import view.render.Drawings.{ Drawing, MenuDrawings }
 import view.render.Rendering
 
@@ -26,7 +26,7 @@ class SavedTracksController(
     val savedTracks: BorderPane,
     val scrollPaneTracks: ScrollPane,
     val flowPaneTracks: FlowPane,
-    val backToMenu: ToggleButton,
+    val backToMenu: Button,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewSavedTracksController {
@@ -63,7 +63,7 @@ class SavedTracksController(
      */
     def loadSavedTracks(numberOfTracks: Int): Unit =
       for (i <- 0 until numberOfTracks) {
-        val btn = new ToggleButton("")
+        val btn = new Button("")
         val image: ImageView = new ImageView(new Image(trackURL(i)))
         val btnWidth: Double = CommonValues.Screen.width / 5
         val btnHeight: Double =

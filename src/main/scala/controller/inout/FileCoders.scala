@@ -131,6 +131,12 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
     parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
   }
 
+  override def clean(): Unit = {
+    val path: Path = Path(appDir)
+    path.deleteRecursively()
+    CoderBuilder.setup()
+  }
+
   def serialize(list: List[Track]): Unit =
     (for {
       json <- IO(list.asJson)
@@ -144,9 +150,4 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
       _ <- IO(CoderBuilder.tracks = tracks.getOrElse(List()))
     } yield ()).retrieve
 
-  override def clean(): Unit = {
-    val path: Path = Path(appDir)
-    path.deleteRecursively()
-    CoderBuilder.setup()
-  }
 }

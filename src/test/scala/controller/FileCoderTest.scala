@@ -2,9 +2,12 @@ package controller
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import alice.tuprolog.Term
-import controller.TrackSerializationTest.{ engine, listSize, query }
+import controller.FileCoderTest.{ engine, listSize, query }
 import controller.inout.FileCoder
+import controller.inout.FileCoders.{ trackEncoder, CoderBuilder }
+import controller.inout.FileCoders.CoderBuilder.{ appDir, filesDir, imagesDir, jsonPath }
 import controller.settings.Settings.Normal
+import io.circe.syntax.EncoderOps
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ Left, Right }
 import model.maps.Tracks.Track
@@ -17,7 +20,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import java.nio.file.{ Files, Paths }
 import scala.language.{ implicitConversions, postfixOps }
 
-object TrackSerializationTest {
+object FileCoderTest {
   val grid: Grid = Grid(16, 8)
   val engine: Engine = Engine(Theories from grid)
 
@@ -28,7 +31,7 @@ object TrackSerializationTest {
 
 }
 
-class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val trackList: List[Track] =
     List
@@ -49,6 +52,16 @@ class TrackSerializationTest extends ScalaTestWithActorTestKit with AnyWordSpecL
 
         for (i <- trackList.indices)
           trackList(i).equals(list(i)) shouldBe true
+      }
+
+      "be able to clean the directories filepath" in {
+        coder.clean()
+        coder.save(trackList.asJson)
+        Files.exists(Paths.get(filesDir)) shouldBe true
+        coder.clean()
+        Files.exists(Paths.get(filesDir)) shouldBe true
+        Files.notExists(Paths.get(jsonPath)) shouldBe true
+        Files.list(Paths.get(imagesDir)).findFirst().isEmpty shouldBe true
       }
     }
 

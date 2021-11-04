@@ -10,22 +10,22 @@ import model.entities.towers.TowerTypes.Arrow
 import model.entities.towers.values
 import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.Positions.Vector2D
-import model.actors.TestMessages.{ BalloonMoved, Step, UpdatePosition }
+import model.actors.TowerActorTest.TestMessages.{ BalloonMoved, Step, UpdatePosition }
 import model.actors.TowerActorTest._
 import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import scala.language.postfixOps
 
-object TestMessages {
-  case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
-
-  case class Step(replyTo: ActorRef[Update]) extends Update
-
-  case class BalloonMoved(balloon: Balloon) extends Update
-}
-
 object TowerActorTest {
+
+  object TestMessages {
+    case class UpdatePosition(replyTo: ActorRef[Update]) extends Update
+
+    case class Step(replyTo: ActorRef[Update]) extends Update
+
+    case class BalloonMoved(balloon: Balloon) extends Update
+  }
 
   val balloonPosition: Vector2D = (6.0, 6.0)
   val balloonBoundary: (Double, Double) = (1.0, 1.0)

@@ -2,7 +2,7 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.jsonPath
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup }
 import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
@@ -12,6 +12,7 @@ import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 import java.nio.charset.StandardCharsets
 import java.nio.file.{ Files, Paths }
 import scala.language.{ implicitConversions, postfixOps }
+import scala.reflect.io.Path
 
 object FileCoders {
 
@@ -106,6 +107,7 @@ trait Coder {
 
   def save(json: Json): Unit
   def load(): Json
+  def clean(): Unit
 }
 
 /**
@@ -142,4 +144,9 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
       _ <- IO(CoderBuilder.tracks = tracks.getOrElse(List()))
     } yield ()).retrieve
 
+  override def clean(): Unit = {
+    val path: Path = Path(appDir)
+    path.deleteRecursively()
+    CoderBuilder.setup()
+  }
 }

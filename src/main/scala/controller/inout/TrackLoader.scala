@@ -2,17 +2,17 @@ package controller.inout
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import controller.Controller
-import controller.inout.TrackLoader.TrackLoaderMessages.{
-  RetrieveSavedTracks,
-  RetrieveTrack,
-  SaveActualTrack,
-  SavedTrack,
-  SavedTracks
-}
+import controller.inout.FileCoders.CoderBuilder.imagesDir
+import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
 import view.View.ViewMessages.TrackSaved
+import java.awt.{ Rectangle, Robot }
+import java.io.File
+import javax.imageio.ImageIO
+import controller.inout.FileCoders.CoderBuilder.separator
 
 /**
  * The Track Loader is the component that interacts with the [[Controller]] and the [[FileCoder]].
@@ -29,6 +29,7 @@ object TrackLoader {
     case class RetrieveTrack(trackID: Int, replyTo: ActorRef[Input]) extends Input
     case class SavedTracks(list: List[Track]) extends Input
     case class SavedTrack(track: Track) extends Input
+    case class CleanSavedTracks() extends Input
   }
 
   object TrackLoaderActor {
@@ -51,6 +52,11 @@ object TrackLoader {
     var actualTrack: Track = Track()
 
     def default(): Behavior[Input] = Behaviors.receiveMessage {
+
+      case CleanSavedTracks() =>
+        coder.clean()
+        Behaviors.same
+
       case SaveActualTrack(track, x, y, replyTo) =>
         if (savedTracks.isEmpty) savedTracks = coder.deserialize()
         savedTracks = savedTracks.appended(track)
@@ -73,4 +79,20 @@ object TrackLoader {
     }
   }
 
+  /**
+   * Utils object that takes a screenshot of the boardGame to create the SavedTracksPage.
+   */
+  object ScreenShooter {
+
+    def takeScreen(x: Double, y: Double, index: Int): Unit = {
+      val rectangle =
+        new Rectangle(x.toInt, y.toInt, gameBoardWidth.toInt, gameBoardHeight.toInt)
+      val bufferedImage = (new Robot).createScreenCapture(rectangle)
+      ImageIO.write(
+        bufferedImage,
+        "png",
+        new File(imagesDir + separator + "track" + index + ".png")
+      )
+    }
+  }
 }

@@ -155,5 +155,4 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
       tracks <- IO(json.as[List[Track]])
       _ <- IO(CoderBuilder.tracks = tracks.getOrElse(List()))
     } yield ()).retrieve
-
 }

@@ -1,64 +1,76 @@
 package model.actors
 
-import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
-import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
-import controller.interaction.GameLoop.GameLoopActor
-import controller.interaction.GameLoop.GameLoopMessages.{ModelUpdated, Start}
-import controller.interaction.Messages.{Input, Render, Update}
-import controller.settings.Settings.Time.TimeSettings
-import model.Model.ModelMessages.TickUpdate
-import model.Positions.defaultPosition
-import model.actors.BulletActorTest.{dart, dummyModel}
-import model.entities.balloons.BalloonLives.Blue
+import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.typed.ActorRef
+import controller.interaction.Messages.Update
+import model.actors.BulletActorTest._
+import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
+import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.Bullets.{Bullet, Dart}
-import model.managers.EntitiesMessages.{EntityUpdated, UpdateEntity}
+import model.entities.bullets.BulletValues.bulletDefaultRadius
+import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Explosion }
+import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import view.View.ViewMessages.RenderEntities
 
 import scala.language.postfixOps
 
 object BulletActorTest {
-  var gameLoop: Option[ActorRef[Input]] = None
-  var dart: Bullet = Dart() in (100.0, 100.0)
-  var balloon: Balloon = (Blue balloon) in (0.0, 0.0)
+  var outsideDart: Bullet = Dart() in (Double.MaxValue, 0.0)
+  var dart: Bullet = Dart()
+  var cannonBall: Explosion = CannonBall(bulletDefaultRadius)
+  var balloon: Balloon = Red balloon
+  var balloon2: Balloon = Red balloon
+  var collisionPosition: (Double, Double) = (100.0, 100.0)
 
-  val dummyModel: ActorRef[Update] => Behavior[Update] = b =>
-    Behaviors.setup { ctx =>
-      Behaviors.receiveMessage {
-        case TickUpdate(elapsedTime, replyTo) =>
-          gameLoop = Some(replyTo)
-          b ! UpdateEntity(elapsedTime, List(dart, balloon), ctx.self)
-          Behaviors.same
-        case EntityUpdated(entity, _) =>
-          dart = entity.asInstanceOf[Dart]
-          gameLoop.get ! ModelUpdated(List(), List())
-          Behaviors.same
-        case _ => Behaviors.same
-      }
-    }
 }
 
 class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike with Matchers {
-  val instance: Balloon => Balloon = b => b
-  val bulletActor: ActorRef[Update] = testKit.spawn(BulletActor(dart))
-
-  val model: ActorRef[Update] =
-    testKit.spawn(dummyModel(bulletActor))
-
-  val view: TestProbe[Render] = testKit.createTestProbe[Render]()
-  val gameLoop: ActorRef[Input] = testKit.spawn(GameLoopActor(model, view.ref, TimeSettings()))
+  val dartOutsideActor: ActorRef[Update] = testKit.spawn(BulletActor(outsideDart))
+  val dartActor: ActorRef[Update] = testKit.spawn(BulletActor(dart))
+  val cannonBallActor: ActorRef[Update] = testKit.spawn(BulletActor(cannonBall))
+  val model: TestProbe[Update] = testKit.createTestProbe[Update]()
 
   "The bullet actor" when {
     "asked to update" should {
-      "reply to the model which should contact the view" in {
-        gameLoop ! Start()
-        view expectMessage RenderEntities(List())
-      }
       "update the position of its bullet" in {
-        (dart position) should be !== defaultPosition
+        dartActor ! UpdateEntity(0.0, List(dart), model.ref)
+        model expectMessage EntityUpdated(dart, dartActor)
+      }
+    }
+
+    "a bullet touch a balloon" should {
+      "hit it" in {
+        dart in collisionPosition
+        balloon = balloon in collisionPosition
+        dartActor ! UpdateEntity(0.0, List(dart, balloon), model.ref)
+        model expectMessage BalloonHit(dart, List(balloon))
+      }
+      "kill the bullet" in {
+        model expectMessage BulletKilled(dartActor)
+      }
+    }
+
+    "a bullet exited the screen" should {
+      "kill the bullet" in {
+        dartOutsideActor ! UpdateEntity(0.0, List(dart), model.ref)
+        model expectMessage BulletKilled(dartOutsideActor)
+      }
+    }
+
+    "an explosion bullet touch a ballon" should {
+      "start an explosion " in {
+        cannonBall in collisionPosition
+        balloon = balloon in collisionPosition
+        balloon2 = balloon2 in collisionPosition
+        cannonBallActor ! UpdateEntity(0.0, List(cannonBall, balloon, balloon2), model.ref)
+        model expectMessage StartExplosion(cannonBall)
+      }
+      "hit all the ballons in the area" in {
+        model expectMessage BalloonHit(cannonBall, List(balloon, balloon2))
+      }
+      "kill the bullet" in {
+        model expectMessage BulletKilled(cannonBallActor)
       }
     }
   }

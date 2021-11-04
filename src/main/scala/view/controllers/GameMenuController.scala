@@ -19,7 +19,7 @@ import model.stats.Stats.GameStats
 import scalafx.application.Platform
 import scalafx.geometry.Pos
 import scalafx.scene.Cursor
-import scalafx.scene.control.{ Label, ToggleButton }
+import scalafx.scene.control.{ Button, Label }
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
@@ -65,9 +65,9 @@ class GameMenuController(
     val towerDepot: VBox,
     val towerStatus: VBox,
     val startRoundContainer: VBox,
-    val startRound: ToggleButton,
-    val pauseRound: ToggleButton,
-    val forwardRounds: ToggleButton,
+    val startRound: Button,
+    val pauseRound: Button,
+    val forwardRounds: Button,
     var automaticRounds: Boolean,
     var currentCell: Cell = outerCell,
     var roundOver: Boolean = true,
@@ -259,7 +259,7 @@ class GameMenuController(
       }
       val emptyBox: HBox = new HBox()
       emptyBox.hgrow = Always
-      val button: ToggleButton = new ToggleButton(powerUp.cost.toString + "$")
+      val button: Button = new Button(powerUp.cost.toString + "$")
       button.onMouseClicked = _ =>
         retrieve(ask(BoostTowerIn(currentCell, powerUp))) {
           case TowerBoosted(tower, _) =>

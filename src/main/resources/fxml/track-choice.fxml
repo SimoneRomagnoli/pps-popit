@@ -16,9 +16,9 @@
         <VBox fx:id="trackChoiceContainer" styleClass="trackChoiceContainer">
             <Label text="Do you want to change this track?"/>
             <HBox>
-                <ToggleButton text="Keep-it!" fx:id="keepTrack" styleClass="trackButtons"/>
+                <Button text="Keep-it!" fx:id="keepTrack" styleClass="trackButtons"/>
                 <HBox HBox.hgrow="ALWAYS"/>
-                <ToggleButton text="Change-it!" fx:id="changeTrack" styleClass="trackButtons"/>
+                <Button text="Change-it!" fx:id="changeTrack" styleClass="trackButtons"/>
             </HBox>
         </VBox>
     </VBox>

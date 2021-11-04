@@ -1,12 +1,12 @@
 package view.controllers
 
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import controller.Controller.ControllerMessages.NewTrack
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
-import scalafx.scene.control.ToggleButton
+import scalafx.scene.control.Button
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafxml.core.macros.sfxml
-import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -25,8 +25,8 @@ class TrackChoiceController(
     val trackChoice: HBox,
     val trackChoiceVerticalContainer: VBox,
     val trackChoiceContainer: VBox,
-    val keepTrack: ToggleButton,
-    val changeTrack: ToggleButton,
+    val keepTrack: Button,
+    val changeTrack: Button,
     var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message])

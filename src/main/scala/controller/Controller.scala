@@ -24,7 +24,7 @@ import model.managers.EntitiesMessages.PlaceTower
 import model.managers.GameDynamicsMessages.{ CurrentGameTrack, CurrentTrack, NewMap }
 import model.maps.Tracks.Track
 import commons.Futures.retrieve
-import view.View.ViewMessages.{ RenderMap, RenderSavedTracks, TrackSaved }
+import view.View.ViewMessages.{ RenderMap, RenderSavedTracks, RenderSettings, TrackSaved }
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration.DurationInt
@@ -53,6 +53,7 @@ object Controller {
     case class SetDifficulty(difficulty: Difficulty) extends SettingsMessage
     case class SetTimeRatio(timeRatio: Double) extends SettingsMessage
     case class SetFrameRate(frameRate: Double) extends SettingsMessage
+    case class UpdateSettings() extends SettingsMessage
 
     case class StartNextRound()
         extends Input
@@ -180,7 +181,9 @@ object Controller {
               settings.difficulty,
               TimeSettings(frameRate, settings.timeSettings.timeRatio)
             )
+          case UpdateSettings() =>
         }
+        view ! RenderSettings(settings)
         Behaviors.same
 
       case input: Input if input.isInstanceOf[PauseGame] || input.isInstanceOf[ResumeGame] =>

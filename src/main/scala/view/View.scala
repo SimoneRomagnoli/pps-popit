@@ -14,6 +14,7 @@ import model.entities.Entities.Entity
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 import commons.CommonValues.Maps.gameGrid
+import controller.settings.Settings.Settings
 import view.View.ViewMessages._
 import view.controllers._
 
@@ -31,6 +32,7 @@ object View {
     case class RenderEntities(entities: List[Entity]) extends Render
     case class RenderMap(track: Track) extends Render
     case class RenderSavedTracks(tracks: List[Track]) extends Render
+    case class RenderSettings(settings: Settings) extends Render
     case class TrackSaved() extends Render with Input
   }
 
@@ -131,11 +133,16 @@ object View {
     }
 
     def inSettings(settingsController: ViewSettingsController): Behavior[Render] = {
+      settingsController.update()
       settingsController.show()
       Behaviors.receiveMessage {
         case BackToMenu() =>
           settingsController.hide()
           inMenu(mainController.menuController)
+
+        case RenderSettings(settings) =>
+          settingsController.update(settings)
+          Behaviors.same
 
         case _ => Behaviors.same
       }

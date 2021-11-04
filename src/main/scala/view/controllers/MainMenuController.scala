@@ -1,11 +1,11 @@
 package view.controllers
 
+import commons.CommonValues
 import controller.Controller.ControllerMessages.{ NewGame, SavedTracksPage, SettingsPage }
 import controller.interaction.Messages.{ Input, Message }
-import scalafx.scene.control.ToggleButton
+import scalafx.scene.control.Button
 import scalafx.scene.layout.{ BorderPane, VBox }
 import scalafxml.core.macros.sfxml
-import commons.CommonValues
 import view.render.Drawings.{ Drawing, MenuDrawings, Title }
 import view.render.Rendering
 
@@ -24,9 +24,9 @@ trait ViewMainMenuController extends ViewController {}
 class MainMenuController(
     val mainMenuPane: BorderPane,
     val titleLogo: VBox,
-    val newGameBtn: ToggleButton,
-    val savedTracksBtn: ToggleButton,
-    val settingsBtn: ToggleButton,
+    val newGameBtn: Button,
+    val savedTracksBtn: Button,
+    val settingsBtn: Button,
     var send: Input => Unit,
     var ask: Message => Future[Message])
     extends ViewMainMenuController {

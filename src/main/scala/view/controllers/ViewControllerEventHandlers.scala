@@ -15,6 +15,7 @@ import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.Pane
 import commons.CommonValues
 import commons.Futures.retrieve
+import scalafx.scene.shape.Rectangle
 
 import scala.concurrent.Future
 import scala.language.implicitConversions
@@ -40,13 +41,14 @@ object ViewControllerEventHandlers {
       case Selected(selectable) =>
         Platform runLater {
           removeEffectsIn(pane)
-          if (selectable) {
+          val target: EventTarget = e.getTarget
+          if (selectable && !target.getStyleClass.contains("gameBoard")) {
             effect.hue = 0.12
             effect.brightness = 0.2
-            e.getTarget.setCursor(Cursor.Hand)
-            e.getTarget.setEffect(effect)
+            target.setCursor(Cursor.Hand)
+            target.setEffect(effect)
           } else {
-            e.getTarget.setCursor(Cursor.Default)
+            target.setCursor(Cursor.Default)
           }
         }
       case _ =>

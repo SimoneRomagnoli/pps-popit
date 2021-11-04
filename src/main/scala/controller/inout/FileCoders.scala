@@ -2,7 +2,7 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath }
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup }
 import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
@@ -147,5 +147,6 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
   override def clean(): Unit = {
     val path: Path = Path(appDir)
     path.deleteRecursively()
+    CoderBuilder.setup()
   }
 }

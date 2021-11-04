@@ -9,11 +9,10 @@ import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
 import view.View.ViewMessages.TrackSaved
-
 import java.awt.{ Rectangle, Robot }
 import java.io.File
 import javax.imageio.ImageIO
-import scala.reflect.io.File.separator
+import controller.inout.FileCoders.CoderBuilder.separator
 
 /**
  * The Track Loader is the component that interacts with the [[Controller]] and the [[FileCoder]].
@@ -30,6 +29,7 @@ object TrackLoader {
     case class RetrieveTrack(trackID: Int, replyTo: ActorRef[Input]) extends Input
     case class SavedTracks(list: List[Track]) extends Input
     case class SavedTrack(track: Track) extends Input
+    case class CleanSavedTracks() extends Input
   }
 
   object TrackLoaderActor {
@@ -37,8 +37,6 @@ object TrackLoader {
     def apply(): Behavior[Input] = Behaviors.setup { ctx =>
       new TrackLoaderActor(ctx).default()
     }
-
-    def cleanTracks(): Unit = {}
   }
 
   /**
@@ -54,6 +52,11 @@ object TrackLoader {
     var actualTrack: Track = Track()
 
     def default(): Behavior[Input] = Behaviors.receiveMessage {
+
+      case CleanSavedTracks() =>
+        coder.clean()
+        Behaviors.same
+
       case SaveActualTrack(track, x, y, replyTo) =>
         if (savedTracks.isEmpty) savedTracks = coder.deserialize()
         savedTracks = savedTracks.appended(track)

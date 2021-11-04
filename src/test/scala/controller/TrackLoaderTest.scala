@@ -22,7 +22,7 @@ class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   "the trackLoader" should {
 
     "be able to save a new track" in {
-      TrackLoaderActor.cleanTracks()
+      trackLoader ! CleanSavedTracks()
       trackLoader ! SaveActualTrack(Track(), 0, 0, controllerTest.ref)
       controllerTest expectMessage TrackSaved()
     }
@@ -41,7 +41,7 @@ class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           tracks.isEmpty shouldBe false
         case _ => fail("A track was present but has not been retrieved")
       }
-      TrackLoaderActor.cleanTracks()
+      trackLoader ! CleanSavedTracks()
     }
   }
 }

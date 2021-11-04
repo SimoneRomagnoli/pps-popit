@@ -5,13 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import controller.Controller
 import controller.inout.FileCoders.CoderBuilder.imagesDir
-import controller.inout.TrackLoader.TrackLoaderMessages.{
-  RetrieveSavedTracks,
-  RetrieveTrack,
-  SaveActualTrack,
-  SavedTrack,
-  SavedTracks
-}
+import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
 import view.View.ViewMessages.TrackSaved
@@ -43,6 +37,8 @@ object TrackLoader {
     def apply(): Behavior[Input] = Behaviors.setup { ctx =>
       new TrackLoaderActor(ctx).default()
     }
+
+    def cleanTracks(): Unit = {}
   }
 
   /**

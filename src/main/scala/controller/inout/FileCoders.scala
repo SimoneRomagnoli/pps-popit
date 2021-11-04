@@ -9,6 +9,7 @@ import io.circe.syntax.EncoderOps
 import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 
+import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file
 import java.nio.file.{ Files, Paths }
@@ -77,7 +78,6 @@ object FileCoders {
     /**
      * Check if resource directories already exists, and if they not, create them
      */
-
     implicit class FileMonad(path: String) {
       def check: Option[String] = if (Files.notExists(Paths.get(path))) Some(path) else None
 
@@ -139,7 +139,7 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
   }
 
   override def clean(): Unit = {
-    Path(appDir).deleteRecursively()
+    if (!Path(appDir).deleteRecursively()) throw new IOException()
     CoderBuilder.setup()
   }
 

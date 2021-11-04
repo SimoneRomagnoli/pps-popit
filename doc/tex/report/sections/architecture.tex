@@ -126,5 +126,13 @@ applicato al pattern \textbf{MVC}.
     \caption{Rilevazione dei tempi di scambio messaggi del \texttt{GameLoop}}
 \end{figure}
 
-In figura \ref{plot:performance-evaluation}, vengono mostrati i tempi
+Per ottenere i risultati mostrati in figura \ref{plot:performance-evaluation}, sono state effettuate diverse misurazioni
+e ne è stata calcolata la media. In particolare, vengono mostrati i tempi di aggiornamento della \texttt{View} e il
+tempo che impiega un messaggio di \texttt{Update} a partire dal \texttt{GameLoop}, aggiornare il \texttt{Model} e
+tornare al mittente. Come ci si aspettava, la frequenza di aggiornamento della \texttt{View} resta pressochè la stessa
+(all'incirca 30 millisecondi), mentre il \textit{round trip time} di un \texttt{Update} cresce notevolmente con
+l'aumentare del numero di attori: questo potrebbe risultare in effettivi rallentamenti nel caso in cui superi il tempo
+di aggiornamento della \texttt{View}; tuttavia, all'interno del sistema sviluppato, il numero degli attori raggiunge a
+fatica l'ordine delle centinaia, e, pertanto, il modello ad attori (nel concentrato) è stato valutato positivamente per
+questo progetto.
 

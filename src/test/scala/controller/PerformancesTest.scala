@@ -19,6 +19,7 @@ import model.entities.Entities.Entity
 import model.entities.balloons.Balloons.{ simple, Balloon }
 import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
 import model.maps.Tracks.Track
+import org.scalatest.Ignore
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.util.concurrent.TimeUnit
@@ -164,13 +165,14 @@ object PerformancesTest {
   }
 }
 
+@Ignore
 class PerformancesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val view: TestProbe[Render] = testKit.createTestProbe[Render]()
   val trackLoader: TestProbe[Input] = testKit.createTestProbe[Input]()
   val performancesStopper: TestProbe[Input] = testKit.createTestProbe[Input]()
   val track: Track = Track()
 
-  val numberOfActors: Int = 500
+  val numberOfActors: Int = 1000
 
   val entities: List[Balloon] =
     LazyList.continually(simple() on track in track.start).take(numberOfActors).toList

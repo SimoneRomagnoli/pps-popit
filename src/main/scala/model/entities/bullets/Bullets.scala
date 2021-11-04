@@ -68,18 +68,12 @@ object Bullets {
 
     /** Represents the area of the explosion */
     def radius: Double
-
-    def expand(rad: Double): Explosion = this match {
-      case CannonBall(_)    => CannonBall(rad)
-      case IceBall(_, time) => IceBall(rad, time)
-    }
   }
 
   trait Fire extends Explosion
 
   trait Ice extends Explosion {
     def freezingTime: Double
-    def freeze(time: Double): Explosion
   }
 
   case class Dart() extends BasicBullet {
@@ -89,11 +83,6 @@ object Bullets {
   case class CannonBall(var radius: Double = bulletDefaultRadius) extends BasicBullet with Fire {
 
     override def toString: String = "CANNON-BALL"
-
-    override def expand(rad: Double): Explosion = {
-      radius = rad
-      this
-    }
   }
 
   case class IceBall(
@@ -103,12 +92,6 @@ object Bullets {
       with Ice {
 
     override def toString: String = "ICE-BALL"
-
-    override def freeze(time: Double): Explosion = {
-      freezingTime = time
-      this
-    }
-
   }
 
   implicit class RichExplosion(explosion: Explosion) {

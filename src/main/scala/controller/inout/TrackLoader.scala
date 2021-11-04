@@ -51,7 +51,7 @@ object TrackLoader {
     var savedTracks: List[Track] = List()
     var actualTrack: Track = Track()
 
-    def default(): Behavior[Input] = Behaviors.receiveMessage {
+    def default(): Behavior[Input] = Behaviors.receiveMessagePartial {
 
       case CleanSavedTracks() =>
         coder.clean()
@@ -72,9 +72,6 @@ object TrackLoader {
 
       case RetrieveTrack(trackID, replyTo) =>
         replyTo ! SavedTrack(savedTracks(trackID))
-        Behaviors.same
-
-      case _ =>
         Behaviors.same
     }
   }

@@ -2,7 +2,7 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup }
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath }
 import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
@@ -10,6 +10,7 @@ import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 
 import java.nio.charset.StandardCharsets
+import java.nio.file
 import java.nio.file.{ Files, Paths }
 import scala.language.{ implicitConversions, postfixOps }
 import scala.reflect.io.Path
@@ -76,14 +77,20 @@ object FileCoders {
     /**
      * Check if resource directories already exists, and if they not, create them
      */
-    def setup(): Unit = (for {
-      cond <- for {
-        fileDir <- IO(Files.notExists(Paths.get(filesDir)))
-        imgDir <- IO(Files.notExists(Paths.get(imagesDir)))
-      } yield fileDir && imgDir
-      _ <- IO(if (cond) Files.createDirectories(Paths.get(filesDir)))
-      _ <- IO(if (cond) Files.createDirectories(Paths.get(imagesDir)))
-    } yield ()).unsafeRunSync()
+
+    implicit class FileMonad(path: String) {
+      def check: Option[String] = if (Files.notExists(Paths.get(path))) Some(path) else None
+
+      def create: Option[file.Path] =
+        if (check.isDefined) Some(Files.createDirectories(Paths.get(check.get))) else None
+    }
+
+    def setup(): Unit = for {
+      checkFiles <- filesDir.check
+      checkImages <- imagesDir.check
+      _ <- checkFiles.create
+      _ <- checkImages.create
+    } yield ()
 
   }
 
@@ -132,8 +139,7 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
   }
 
   override def clean(): Unit = {
-    val path: Path = Path(appDir)
-    path.deleteRecursively()
+    Path(appDir).deleteRecursively()
     CoderBuilder.setup()
   }
 

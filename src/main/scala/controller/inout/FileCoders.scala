@@ -146,7 +146,12 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
 
   override def clean(): Unit = {
     val path: Path = Path(appDir)
-    path.deleteRecursively()
-    CoderBuilder.setup()
+    try {
+      path.deleteRecursively()
+      CoderBuilder.setup()
+    } catch {
+      case _: Exception =>
+        println("File not found.")
+    }
   }
 }

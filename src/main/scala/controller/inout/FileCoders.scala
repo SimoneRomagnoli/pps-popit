@@ -2,8 +2,8 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.{appDir, jsonPath}
-import controller.inout.FileCoders.{CoderBuilder, RichCoder, trackDecoder, trackEncoder}
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath }
+import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
 import model.maps.Tracks.Track
@@ -11,8 +11,8 @@ import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 
 import java.nio.charset.StandardCharsets
 import java.nio.file
-import java.nio.file.{Files, Paths}
-import scala.language.{implicitConversions, postfixOps}
+import java.nio.file.{ Files, Paths }
+import scala.language.{ implicitConversions, postfixOps }
 import scala.reflect.io.Path
 
 object FileCoders {

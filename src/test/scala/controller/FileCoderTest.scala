@@ -15,6 +15,7 @@ import model.maps.prolog.PrologUtils.Engines.Engine
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 import model.maps.prolog.PrologUtils.Theories
+import org.scalatest.DoNotDiscover
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.nio.file.{ Files, Paths }
@@ -32,6 +33,7 @@ object FileCoderTest {
 
 }
 
+@DoNotDiscover
 class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val trackList: List[Track] =

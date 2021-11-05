@@ -9,14 +9,14 @@ import controller.inout.TrackLoader.TrackLoaderActor
 import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
-import org.scalatest.{ DoNotDiscover, Suites }
+import org.scalatest.{ DoNotDiscover, Ignore, Sequential, Suites }
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages.TrackSaved
 
 import scala.language.postfixOps
 import scala.reflect.io.Path
 
-class CompleteTrackLoaderTest extends Suites(new FileCoderTest, new TrackLoaderTest)
+class CompleteTrackLoaderTest extends Sequential(new FileCoderTest, new TrackLoaderTest)
 
 @DoNotDiscover
 class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {

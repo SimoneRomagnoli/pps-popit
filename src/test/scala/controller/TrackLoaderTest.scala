@@ -1,8 +1,8 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
 import akka.actor.typed.ActorRef
-import akka.actor.typed.scaladsl.AskPattern.{ schedulerFromActorSystem, Askable }
+import akka.actor.typed.scaladsl.AskPattern.{Askable, schedulerFromActorSystem}
 import commons.Futures.retrieve
 import controller.inout.TrackLoader.TrackLoaderActor
 import controller.inout.TrackLoader.TrackLoaderMessages._
@@ -11,6 +11,7 @@ import model.maps.Tracks.Track
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages.TrackSaved
 
+import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
 object TrackLoaderTest {}
@@ -24,7 +25,7 @@ class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
     "be able to save a new track" in {
       trackLoader ! CleanSavedTracks()
       trackLoader ! SaveActualTrack(Track(), 0, 0, controllerTest.ref)
-      controllerTest expectMessage TrackSaved()
+      controllerTest.expectMessage(10.seconds, TrackSaved())
     }
 
     "be able to retrieve a previously savedTrack" in {

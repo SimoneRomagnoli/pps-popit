@@ -80,15 +80,20 @@ object FileCoders {
     implicit class FileMonad(path: String) {
       def check: Option[String] = if (Files.notExists(Paths.get(path))) Some(path) else None
 
-      def create: Option[file.Path] =
+      def mkdir: Option[file.Path] =
         if (check.isDefined) Some(Files.createDirectories(Paths.get(check.get))) else None
+
+      def touch: Option[file.Path] =
+        if (check.isDefined) Some(Files.createFile(Paths.get(check.get))) else None
     }
 
     def setup(): Unit = for {
       checkFiles <- filesDir.check
       checkImages <- imagesDir.check
-      _ <- checkFiles.create
-      _ <- checkImages.create
+      checkJson <- jsonPath.check
+      _ <- checkFiles.mkdir
+      _ <- checkImages.mkdir
+      _ <- checkJson.touch
     } yield ()
 
   }

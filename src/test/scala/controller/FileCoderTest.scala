@@ -60,7 +60,6 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         Files.exists(Paths.get(filesDir)) shouldBe true
         coder.clean()
         Files.exists(Paths.get(filesDir)) shouldBe true
-        Files.notExists(Paths.get(jsonPath)) shouldBe true
         Files.list(Paths.get(imagesDir)).findFirst().isEmpty shouldBe true
       }
     }

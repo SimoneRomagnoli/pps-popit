@@ -28,8 +28,8 @@ object TowersTest {
 
 class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
-  "During a simple game" when {
-    "tower and balloon has just spawned, the tower" should {
+  "Towers" when {
+    "just created" should {
       "not see the balloon because it is across the map" in {
         (tower position) shouldBe towerPosition
         (balloon position) shouldBe balloonPosition
@@ -40,7 +40,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         arrow.bullet.isInstanceOf[Dart] shouldBe true
       }
     }
-    "the balloon goes near the tower, it" should {
+    "the balloon is nearing" should {
       "see the balloon because it is in tower's sight range" in {
         balloon = balloon in ((3.0, 2.0))
         (tower position) shouldBe towerPosition
@@ -49,8 +49,8 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         tower canSee balloon shouldBe true
       }
     }
-    "the tower can see the balloon, it" should {
-      "shot the balloon with the specified shot ratio" in {
+    "are able to see the balloon" should {
+      "shoot the balloon with the specified shot ratio" in {
         (tower shotRatio) shouldBe towerDefaultShotRatio
         tower canAttackAfter lastShotTime shouldBe true
         lastShotTime = System.currentTimeMillis().toDouble
@@ -59,7 +59,7 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         waitSomeTime()
         tower canAttackAfter lastShotTime shouldBe true
       }
-      "can change the shot frequency according to the shot ratio" in {
+      "be able to change the shot frequency according to the shot ratio" in {
         lastShotTime = 0.0
         val newTower: Tower[Dart] = tower has values ratio 1.0
         (newTower shotRatio) shouldBe 1.0

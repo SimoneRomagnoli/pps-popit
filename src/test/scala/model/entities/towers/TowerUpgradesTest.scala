@@ -28,8 +28,8 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
   val defaultLevel: Int = 1
   val nextLevel: Int = defaultLevel + 1
 
-  "According to the expected system behavior" when {
-    "the tower ratio is boosted" should {
+  "Tower PowerUps" when {
+    "the ratio is boosted" should {
       "change the shooting frequency" in {
 
         (arrowTower boost Ratio).shotRatio shouldBe shotRatios(
@@ -38,7 +38,7 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         (arrowTower sightRange) shouldBe sightRanges(arrowTower.bullet)
       }
     }
-    "the tower sight is boosted" should {
+    "the sight is boosted" should {
       "change the sight range" in {
         (arrowTower boost Sight).sightRange shouldBe sightRanges(
           arrowTower.bullet
@@ -53,8 +53,8 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         (boostedTower shotRatio) shouldBe shotRatios(arrowTower.bullet) * (1 / boostedRatioFactor)
       }
     }
-    "the tower get the ratio boost" should {
-      "detect a balloon that can't see before" in {
+    "the tower gets its sight boosted" should {
+      "detect a balloon that it couldn't see before" in {
         val balloon: Balloon =
           Simple(
             position = (arrowTower.sightRange + 2, arrowTower.position.y),
@@ -65,16 +65,16 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         (boostedTower canSee balloon) shouldBe true
       }
     }
-    "the tower get the damage boost" should {
-      "increment the bullet damage value" in {
+    "the tower gets its damage boosted" should {
+      "increment the bullet's damage value" in {
         arrowTower.bullet.damage shouldBe bulletDefaultDamage
         val boostedTower: Tower[Dart] = arrowTower boost Damage
         boostedTower.bullet.isInstanceOf[Dart] shouldBe true
         boostedTower.bullet.damage shouldBe (bulletDefaultDamage * Damage.factor)
       }
     }
-    "a normal tower see a camo balloon" should {
-      "not detect it, unless if is boosted" in {
+    "a normal tower sees a camo balloon" should {
+      "not detect it, unless it is boosted" in {
         val camo: Balloon = CamoBalloon(Simple(position = (1.0, 1.0), boundary = (1.0, 1.0)))
         (arrowTower canSee camo) shouldBe false
         val boostedTower: Tower[Dart] = arrowTower boost Camo
@@ -84,9 +84,9 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
     }
   }
 
-  "Implementing levels for powerups" when {
-    "a tower is boosted, it" should {
-      "increment its stats levels" in {
+  "PowerUps Levels" when {
+    "a tower is boosted" should {
+      "increment their stats levels" in {
         val tower: Tower[IceBall] = Ice tower
 
         tower levelOf Ratio shouldBe defaultLevel
@@ -118,8 +118,8 @@ class TowerUpgradesTest extends AnyWordSpec with Matchers {
         boostedTower levelOf Damage shouldBe nextLevel
       }
     }
-    "a tower is max boosted, it" should {
-      "has been reached max level" in {
+    "a tower is max boosted" should {
+      "have reached max level" in {
         var tower: Tower[Dart] = Arrow tower
 
         tower = tower boost Ratio

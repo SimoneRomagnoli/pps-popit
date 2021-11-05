@@ -35,7 +35,7 @@ object BulletActor {
  */
 case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
 
-  def default(): Behavior[Update] = Behaviors.receiveMessage {
+  def default(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case UpdateEntity(elapsedTime, entities, replyTo) =>
       bullet = bullet.update(elapsedTime).asInstanceOf[Bullet]
       if (bullet.exitedFromScreen()) {
@@ -53,7 +53,6 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
             Behaviors.same
         }
       }
-    case _ => Behaviors.same
   }
 
   /**

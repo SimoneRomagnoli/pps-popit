@@ -9,7 +9,8 @@ import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
 import view.View.ViewMessages.TrackSaved
-import java.awt.{ Rectangle, Robot }
+
+import java.awt.{ GraphicsEnvironment, Rectangle, Robot }
 import java.io.File
 import javax.imageio.ImageIO
 import controller.inout.FileCoders.CoderBuilder.separator
@@ -48,33 +49,26 @@ object TrackLoader {
    */
   case class TrackLoaderActor(ctx: ActorContext[Input], coder: FileCoder = FileCoder()) {
 
-    var savedTracks: List[Track] = List()
-    var actualTrack: Track = Track()
-
-    def default(): Behavior[Input] = Behaviors.receiveMessage {
+    def default(): Behavior[Input] = Behaviors.receiveMessagePartial {
 
       case CleanSavedTracks() =>
         coder.clean()
         Behaviors.same
 
       case SaveActualTrack(track, x, y, replyTo) =>
-        if (savedTracks.isEmpty) savedTracks = coder.deserialize()
-        savedTracks = savedTracks.appended(track)
+        var savedTracks: List[Track] = coder.deserialize()
+        savedTracks = savedTracks appended track
         ScreenShooter.takeScreen(x, y, savedTracks.size - 1)
         coder.serialize(savedTracks)
         replyTo ! TrackSaved()
         Behaviors.same
 
       case RetrieveSavedTracks(replyTo) =>
-        if (savedTracks.isEmpty) savedTracks = coder.deserialize()
-        replyTo ! SavedTracks(savedTracks)
+        replyTo ! SavedTracks(coder.deserialize())
         Behaviors.same
 
       case RetrieveTrack(trackID, replyTo) =>
-        replyTo ! SavedTrack(savedTracks(trackID))
-        Behaviors.same
-
-      case _ =>
+        replyTo ! SavedTrack(coder.deserialize()(trackID))
         Behaviors.same
     }
   }
@@ -84,7 +78,7 @@ object TrackLoader {
    */
   object ScreenShooter {
 
-    def takeScreen(x: Double, y: Double, index: Int): Unit = {
+    def takeScreen(x: Double, y: Double, index: Int): Unit = if (!GraphicsEnvironment.isHeadless) {
       val rectangle =
         new Rectangle(x.toInt, y.toInt, gameBoardWidth.toInt, gameBoardHeight.toInt)
       val bufferedImage = (new Robot).createScreenCapture(rectangle)

@@ -19,6 +19,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.nio.file.{ Files, Paths }
 import scala.language.{ implicitConversions, postfixOps }
+import scala.reflect.io.Path
 
 object FileCoderTest {
   val grid: Grid = Grid(16, 8)
@@ -40,12 +41,23 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         List(Track(trackFromTerm(engine.solve(Term.createTerm(query)).head.getTerm("P"))))
       )
 
-  val coder: FileCoder = FileCoder()
+  Path(appDir).deleteRecursively() // Clean directories tree to setup testing environment
+  Files.notExists(Paths.get(appDir)) shouldBe true
+  var coder: FileCoder = FileCoder()
+
   val emptyList: List[Track] = List()
 
-  "The controller" when {
-    "use a FileCoder" should {
-      "be able to serialize and deserialize the track list" in {
+  "The FileCoder" when {
+    "it just spawned" should {
+      "create the directory tree and a json file with an empty tracks list" in {
+        Files.exists(Paths.get(filesDir)) shouldBe true
+        Files.exists(Paths.get(imagesDir)) shouldBe true
+        Files.exists(Paths.get(jsonPath)) shouldBe true
+        coder.deserialize().isEmpty shouldBe true
+      }
+    }
+    "it is called" should {
+      "be able to serialize and deserialize the same list of tracks" in {
         coder.serialize(trackList)
 
         val list: List[Track] = coder.deserialize()
@@ -53,49 +65,22 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         for (i <- trackList.indices)
           trackList(i).equals(list(i)) shouldBe true
       }
+      "be able to handle the track list in case of empty list" in {
+        coder.serialize(emptyList)
 
-      "be able to clean the directories filepath" in {
+        val list: List[Track] = coder.deserialize()
+
+        list.isEmpty shouldBe true
+      }
+      "be able to restore the directories tree and the json file" in {
         coder.clean()
-        coder.save(trackList.asJson)
         Files.exists(Paths.get(filesDir)) shouldBe true
-        coder.clean()
-        Files.exists(Paths.get(filesDir)) shouldBe true
-        Files.notExists(Paths.get(jsonPath)) shouldBe true
+        Files.exists(Paths.get(imagesDir)) shouldBe true
+        Files.exists(Paths.get(jsonPath)) shouldBe true
+        coder.deserialize().isEmpty shouldBe true
         Files.list(Paths.get(imagesDir)).findFirst().isEmpty shouldBe true
       }
     }
-
-    "the json file contains an empty list of tracks" should {
-      "return an empty list" in {
-        coder.serialize(emptyList)
-
-        val list: List[Track] = coder.deserialize()
-
-        list.isEmpty shouldBe true
-      }
-    }
-
-    "try to save a track and the file does not exist" should {
-      "create a new file and save it without any error" in {
-        Files.deleteIfExists(Paths.get(coder.path))
-
-        coder.serialize(emptyList)
-
-        Files.exists(Paths.get(coder.path)) shouldBe true
-      }
-    }
-
-    "try to load the tracks list and the file does not exist" should {
-      "return an empty list of tracks" in {
-        Files.deleteIfExists(Paths.get(coder.path))
-
-        val list: List[Track] = coder.deserialize()
-
-        Files.exists(Paths.get(coder.path)) shouldBe true
-        list.isEmpty shouldBe true
-      }
-    }
-
   }
 
 }

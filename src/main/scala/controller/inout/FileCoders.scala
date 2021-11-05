@@ -2,14 +2,13 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath }
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup }
 import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
 import model.maps.Tracks.Track
 import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 
-import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file
 import java.nio.file.{ Files, Paths }
@@ -81,15 +80,27 @@ object FileCoders {
     implicit class FileMonad(path: String) {
       def check: Option[String] = if (Files.notExists(Paths.get(path))) Some(path) else None
 
-      def create: Option[file.Path] =
+      def mkdir: Option[file.Path] =
         if (check.isDefined) Some(Files.createDirectories(Paths.get(check.get))) else None
+
+      def touch: Option[file.Path] =
+        if (check.isDefined)
+          Some(
+            Files.write(
+              Paths.get(check.get),
+              List[Track]().asJson.toString().getBytes(StandardCharsets.UTF_8)
+            )
+          )
+        else None
     }
 
     def setup(): Unit = for {
       checkFiles <- filesDir.check
       checkImages <- imagesDir.check
-      _ <- checkFiles.create
-      _ <- checkImages.create
+      checkJson <- jsonPath.check
+      _ <- checkFiles.mkdir
+      _ <- checkImages.mkdir
+      _ <- checkJson.touch
     } yield ()
 
   }
@@ -130,16 +141,11 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
   override def save(json: Json): Unit =
     Files.write(Paths.get(path), json.toString().getBytes(StandardCharsets.UTF_8))
 
-  override def load(): Json = if (Files.exists(Paths.get(path))) {
+  override def load(): Json =
     parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
-  } else {
-    val empty: List[Track] = List()
-    save(empty.asJson)
-    parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
-  }
 
   override def clean(): Unit = {
-    if (!Path(appDir).deleteRecursively()) throw new IOException()
+    Path(appDir).deleteRecursively()
     CoderBuilder.setup()
   }
 
@@ -155,5 +161,4 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
       tracks <- IO(json.as[List[Track]])
       _ <- IO(CoderBuilder.tracks = tracks.getOrElse(List()))
     } yield ()).retrieve
-
 }

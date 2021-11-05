@@ -1,8 +1,8 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ActorTestKit, TestProbe}
+import akka.actor.testkit.typed.scaladsl.{ ActorTestKit, TestProbe }
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.GameLoopTest._
@@ -70,6 +70,7 @@ class GameLoopTest extends AnyWordSpec with BeforeAndAfterAll with Matchers {
     "stopped" should {
       "stop updating the model" in {
         gameLoop ! PauseGame()
+        waitSomeTime()
         val lastValue: Double = counter.value
         lastValue should be > 0.0
         waitSomeTime()

@@ -2,13 +2,13 @@ package model.actors
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, Behavior}
-import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartNextRound}
+import akka.actor.typed.{ ActorRef, Behavior }
+import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
 import controller.interaction.Messages.Update
 import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
-import model.actors.SpawnManagerTest.{balloonsSpawned, dummyModel, waitSomeTime}
-import model.entities.balloons.BalloonDecorations.{Camo, Lead, Regenerating}
+import model.actors.SpawnManagerTest.{ balloonsSpawned, dummyModel, waitSomeTime }
+import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
@@ -17,8 +17,8 @@ import model.managers.SpawnManager
 import model.managers.SpawnerMessages.StartRound
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
-import model.spawn.RoundBuilders.{RichIO, add}
-import model.spawn.Rounds.{Round, Streak}
+import model.spawn.RoundBuilders.{ add, RichIO }
+import model.spawn.Rounds.{ Round, Streak }
 import model.spawn.RoundsFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -46,7 +46,6 @@ class SpawnManagerTest
     with Matchers
     with BeforeAndAfterEach {
   val model: ActorRef[Update] = testKit.spawn(dummyModel)
-
 
   val nBalloons: Int = 5
   val simpleRound: Round = Round.of(Streak(nBalloons))
@@ -77,6 +76,7 @@ class SpawnManagerTest
     "told the start the next round" should {
       val spawner: ActorRef[Update] = testKit.spawn(SpawnManager(model, TimeSettings()))
       "start the round" in {
+        RoundsFactory.startGame()
         RoundsFactory.currentRound shouldBe 0
         spawner ! StartNextRound()
         waitSomeTime()

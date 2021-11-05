@@ -12,7 +12,7 @@ class BalloonsTest extends AnyWordSpec with Matchers {
   val instance: Balloon => Balloon = b => b
   val balloon: Balloon = instance(Red balloon)
 
-  "A balloon" when {
+  "A Balloon" when {
     "being created" should {
       "use sum types" in {
         assert(simple().isInstanceOf[Balloon])

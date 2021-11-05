@@ -17,14 +17,14 @@ class BulletsTest extends AnyFlatSpec with Matchers {
   val cannonBall: CannonBall = CannonBall(bulletDefaultRadius)
   val balloon: Balloon = (Red balloon) in (100.0, 100.0)
 
-  "A dart" should "have default position, speed, damage and toString" in {
+  "A Dart" should "have default position, speed, damage and toString" in {
     dart.position shouldBe defaultPosition
     dart.speed shouldBe bulletDefaultSpeed
     dart.damage shouldBe bulletDefaultDamage
     dart.toString shouldBe "DART"
   }
 
-  "A cannonBall" should "be a Dart with also a radius for the explosion" in {
+  "A CannonBall" should "be a Dart with also a radius for the explosion" in {
     cannonBall.position shouldBe defaultPosition
     cannonBall.speed shouldBe bulletDefaultSpeed
     cannonBall.damage shouldBe bulletDefaultDamage
@@ -33,7 +33,7 @@ class BulletsTest extends AnyFlatSpec with Matchers {
     cannonBall.toString shouldBe "CANNON-BALL"
   }
 
-  "An iceBall" should "be a cannonBall with also a freezingTime" in {
+  "An IceBall" should "be a cannonBall with also a freezingTime" in {
     iceBall.position shouldBe defaultPosition
     iceBall.speed shouldBe bulletDefaultSpeed
     iceBall.damage shouldBe bulletDefaultDamage
@@ -42,23 +42,23 @@ class BulletsTest extends AnyFlatSpec with Matchers {
     iceBall.toString shouldBe "ICE-BALL"
   }
 
-  "Dart, cannonBall and iceBall" should " be shoot" in {
+  "Dart, CannonBall and IceBall" should "be shot" in {
     shoot(dart).isInstanceOf[Dart] shouldBe true
     shoot(cannonBall).isInstanceOf[CannonBall] shouldBe true
     shoot(iceBall).isInstanceOf[IceBall] shouldBe true
   }
 
-  "The bullet damage" should "be able to be powered up" in {
+  "The Bullet Damage" should "be able to be powered up" in {
     val newDamage: Double = 3.0
     dart.hurt(newDamage)
     dart.damage shouldBe newDamage
   }
 
-  "A bullet" should "be able to move" in {
+  "A Bullet" should "be able to move" in {
     (dart at (2.0, 2.0)).update(5.0).position shouldBe fromTuple((10.0, 10.0))
   }
 
-  "A bullet" should "collide with a ballon" in {
+  "A Bullet" should "collide with a balloon" in {
     dart in (0.0, 0.0)
     dart at (100.0, 100.0)
     dart hit balloon shouldBe false
@@ -66,7 +66,7 @@ class BulletsTest extends AnyFlatSpec with Matchers {
     dart hit balloon shouldBe true
   }
 
-  "A bullet" should "recognize when it exit from the screen" in {
+  "A Bullet" should "realise when it goes out of the screen" in {
     dart in (0.0, 0.0)
     dart.exitedFromScreen() shouldBe false
     dart in (CommonValues.Screen.width + 1, 0.0)

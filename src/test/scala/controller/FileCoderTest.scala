@@ -43,8 +43,8 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val coder: FileCoder = FileCoder()
   val emptyList: List[Track] = List()
 
-  "The controller" when {
-    "use a FileCoder" should {
+  "The Controller" when {
+    "using a FileCoder" should {
       "be able to serialize and deserialize the track list" in {
         coder.serialize(trackList)
 
@@ -54,7 +54,7 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           trackList(i).equals(list(i)) shouldBe true
       }
 
-      "be able to clean the directories filepath" in {
+      "be able to clean the directories' filepath" in {
         coder.clean()
         coder.save(trackList.asJson)
         Files.exists(Paths.get(filesDir)) shouldBe true
@@ -63,7 +63,6 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         Files.list(Paths.get(imagesDir)).findFirst().isEmpty shouldBe true
       }
     }
-
     "the json file contains an empty list of tracks" should {
       "return an empty list" in {
         coder.serialize(emptyList)
@@ -73,9 +72,8 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         list.isEmpty shouldBe true
       }
     }
-
-    "try to save a track and the file does not exist" should {
-      "create a new file and save it without any error" in {
+    "trying to save a track and the file does not exist" should {
+      "create a new file and save it without errors" in {
         Files.deleteIfExists(Paths.get(coder.path))
 
         coder.serialize(emptyList)
@@ -84,7 +82,7 @@ class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       }
     }
 
-    "try to load the tracks list and the file does not exist" should {
+    "trying to load the tracks' list and the file does not exist" should {
       "return an empty list of tracks" in {
         Files.deleteIfExists(Paths.get(coder.path))
 

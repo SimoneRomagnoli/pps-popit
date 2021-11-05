@@ -11,7 +11,6 @@ import model.maps.Tracks.Track
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages.TrackSaved
 
-import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
 object TrackLoaderTest {}
@@ -20,22 +19,19 @@ class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val trackLoader: ActorRef[Input] = testKit.spawn(TrackLoaderActor())
   val controllerTest: TestProbe[Input] = testKit.createTestProbe[Input]()
 
-  "the trackLoader" should {
-
+  "The Track Loader" should {
     "be able to save a new track" in {
       trackLoader ! CleanSavedTracks()
       trackLoader ! SaveActualTrack(Track(), 0, 0, controllerTest.ref)
       controllerTest expectMessage TrackSaved()
     }
-
-    "be able to retrieve a previously savedTrack" in {
+    "be able to retrieve a previously saved track" in {
       retrieve(trackLoader ? (ref => RetrieveTrack(0, ref))) {
         case SavedTrack(track) =>
           track should not be null
         case _ => fail("A track was present but has not been retrieved")
       }
     }
-
     "be able to retrieve all the saved tracks" in {
       retrieve(trackLoader ? RetrieveSavedTracks) {
         case SavedTracks(tracks) =>

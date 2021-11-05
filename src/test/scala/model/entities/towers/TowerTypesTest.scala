@@ -12,9 +12,9 @@ import scala.language.postfixOps
 
 class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
-  "According to the specified type of the tower" when {
-    "a base tower is spawned, it" should {
-      "have the default attributes" in {
+  "TowerTypes" when {
+    "a base tower is spawned" should {
+      "have default attributes" in {
         val arrowTower: Tower[Dart] = Arrow tower
 
         (arrowTower position) shouldBe defaultPosition
@@ -26,8 +26,8 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         arrowTower.bullet.isInstanceOf[Dart] shouldBe true
       }
     }
-    "a cannon tower is spawned, it" should {
-      "have the default attributes" in {
+    "a cannon tower is spawned" should {
+      "have default attributes" in {
         val cannonTower: Tower[CannonBall] = Cannon tower
 
         (cannonTower position) shouldBe defaultPosition
@@ -39,8 +39,8 @@ class TowerTypesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         cannonTower.bullet.isInstanceOf[CannonBall] shouldBe true
       }
     }
-    "an ice tower is spawned, it" should {
-      "have the default attributes" in {
+    "an ice tower is spawned" should {
+      "have default attributes" in {
         val iceTower: Tower[IceBall] = Ice tower
 
         (iceTower position) shouldBe defaultPosition

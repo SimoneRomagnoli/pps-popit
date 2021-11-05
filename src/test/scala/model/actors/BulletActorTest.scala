@@ -31,15 +31,14 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
   val cannonBallActor: ActorRef[Update] = testKit.spawn(BulletActor(cannonBall))
   val model: TestProbe[Update] = testKit.createTestProbe[Update]()
 
-  "The bullet actor" when {
+  "The Bullet Actor" when {
     "asked to update" should {
       "update the position of its bullet" in {
         dartActor ! UpdateEntity(0.0, List(dart), model.ref)
         model expectMessage EntityUpdated(dart, dartActor)
       }
     }
-
-    "a bullet touch a balloon" should {
+    "a bullet touches a balloon" should {
       "hit it" in {
         dart in collisionPosition
         balloon = balloon in collisionPosition
@@ -50,15 +49,13 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
         model expectMessage BulletKilled(dartActor)
       }
     }
-
-    "a bullet exited the screen" should {
+    "a bullet goes out of the screen" should {
       "kill the bullet" in {
         dartOutsideActor ! UpdateEntity(0.0, List(dart), model.ref)
         model expectMessage BulletKilled(dartOutsideActor)
       }
     }
-
-    "an explosion bullet touch a ballon" should {
+    "an explosion bullet touches a balloon" should {
       "start an explosion " in {
         cannonBall in collisionPosition
         balloon = balloon in collisionPosition
@@ -66,7 +63,7 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
         cannonBallActor ! UpdateEntity(0.0, List(cannonBall, balloon, balloon2), model.ref)
         model expectMessage StartExplosion(cannonBall)
       }
-      "hit all the ballons in the area" in {
+      "hit all the balloons in the area" in {
         model expectMessage BalloonHit(cannonBall, List(balloon, balloon2))
       }
       "kill the bullet" in {

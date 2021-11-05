@@ -83,15 +83,15 @@ class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val balloonActor: ActorRef[Update] =
     testKit.spawn(dummyBalloonActor(Simple(position = balloonPosition, boundary = balloonBoundary)))
 
-  "The tower actor" when {
-    "has just been spawned, it" should {
+  "The Tower Actor" when {
+    "has just been spawned" should {
       "not see the balloon" in {
         model ! Step(balloonActor)
         waitSomeTime()
         balloonDetected shouldBe false
       }
     }
-    "the balloon moves through the map, it" should {
+    "the balloon moves through the map" should {
       "not see the balloon immediately, but after the second move" in {
         model ! Step(balloonActor)
         waitSomeTime()
@@ -100,7 +100,7 @@ class TowerActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         balloonDetected shouldBe true
       }
     }
-    "the balloon goes far away, it" should {
+    "the balloon goes far away" should {
       "not see the balloon any more" in {
         model ! Step(balloonActor)
         waitSomeTime()

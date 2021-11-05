@@ -33,7 +33,6 @@ object FileCoderTest {
 
 }
 
-@DoNotDiscover
 class FileCoderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val trackList: List[Track] =

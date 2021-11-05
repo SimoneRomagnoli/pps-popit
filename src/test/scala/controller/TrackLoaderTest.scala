@@ -16,9 +16,6 @@ import view.View.ViewMessages.TrackSaved
 import scala.language.postfixOps
 import scala.reflect.io.Path
 
-class CompleteTrackLoaderTest extends Sequential(new FileCoderTest, new TrackLoaderTest)
-
-@DoNotDiscover
 class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   Path(appDir).deleteRecursively() // Clean directories tree to setup testing environment

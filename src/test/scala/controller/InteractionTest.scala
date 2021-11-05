@@ -126,7 +126,6 @@ class InteractionTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
         view afterMessage NewGame(None) shouldReceive Some(NewGame(None))
         model shouldReceive Some(Stop())
         gameLoop shouldReceive Some(Stop())
-        view afterMessage RestartGame() shouldReceive Some(CanStartNextRound())
         model shouldReceive None
         gameLoop shouldReceive None
       }

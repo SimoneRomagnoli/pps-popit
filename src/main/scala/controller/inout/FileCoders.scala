@@ -2,7 +2,7 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup, FileMonad }
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup }
 import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps
@@ -137,10 +137,7 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
   override def load(): Json = if (Files.exists(Paths.get(path))) {
     parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
   } else {
-    for {
-      json <- path.check
-      _ <- json.touch
-    } yield ()
+    setup()
     save(List[Track]().asJson)
     parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
   }

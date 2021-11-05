@@ -25,6 +25,7 @@ class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   "The Track Loader" should {
     "be able to save a new track" in {
       trackLoader ! CleanSavedTracks()
+      Thread.sleep(500)
       trackLoader ! SaveActualTrack(Track(), 0, 0, controllerTest.ref)
       controllerTest expectMessage TrackSaved()
     }

@@ -62,7 +62,7 @@ object FileCoders {
   object CoderBuilder {
 
     val userHome: String = System.getProperty("user.home")
-    val separator: String = "/" //System.getProperty("file.separator")
+    val separator: String = System.getProperty("file.separator")
 
     val appDir: String = userHome + separator + ".popit"
 

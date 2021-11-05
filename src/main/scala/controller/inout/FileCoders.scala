@@ -2,7 +2,7 @@ package controller.inout
 
 import alice.tuprolog.Term
 import cats.effect.IO
-import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath, setup }
+import controller.inout.FileCoders.CoderBuilder.{ appDir, jsonPath }
 import controller.inout.FileCoders.{ trackDecoder, trackEncoder, CoderBuilder, RichCoder }
 import io.circe._
 import io.circe.syntax.EncoderOps

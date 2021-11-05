@@ -9,7 +9,6 @@ import controller.inout.TrackLoader.TrackLoaderActor
 import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
 import model.maps.Tracks.Track
-import org.scalatest.{ DoNotDiscover, Ignore, Sequential, Suites }
 import org.scalatest.wordspec.AnyWordSpecLike
 import view.View.ViewMessages.TrackSaved
 

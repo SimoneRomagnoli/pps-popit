@@ -4,10 +4,8 @@ import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import alice.tuprolog.Term
 import controller.FileCoderTest.{ engine, listSize, query }
 import controller.inout.FileCoder
-import controller.inout.FileCoders.{ trackEncoder, CoderBuilder }
 import controller.inout.FileCoders.CoderBuilder.{ appDir, filesDir, imagesDir, jsonPath }
 import controller.settings.Settings.Normal
-import io.circe.syntax.EncoderOps
 import model.maps.Grids.Grid
 import model.maps.Tracks.Directions.{ Left, Right }
 import model.maps.Tracks.Track
@@ -15,7 +13,6 @@ import model.maps.prolog.PrologUtils.Engines.Engine
 import model.maps.prolog.PrologUtils.Queries.PrologQuery
 import model.maps.prolog.PrologUtils.Solutions.trackFromTerm
 import model.maps.prolog.PrologUtils.Theories
-import org.scalatest.DoNotDiscover
 import org.scalatest.wordspec.AnyWordSpecLike
 
 import java.nio.file.{ Files, Paths }

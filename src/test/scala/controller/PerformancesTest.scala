@@ -13,7 +13,6 @@ import controller.interaction.GameLoop.GameLoopMessages._
 import controller.interaction.Messages.{ Input, Render, Update }
 import controller.settings.Settings.Settings
 import controller.settings.Settings.Time.{ delay, elapsedTime, TimeSettings }
-import model.Model.ModelActor
 import model.Model.ModelMessages.TickUpdate
 import model.actors.BalloonActor
 import model.entities.Entities.Entity
@@ -183,8 +182,6 @@ class PerformancesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   val model: ActorRef[Update] =
     testKit spawn runningModel(entities, actors, performancesStopper.ref)
-
-  //val model: ActorRef[Update] = testKit spawn ModelActor(Settings())
 
   val performancesWatcher: ActorRef[Input] = testKit spawn {
     Behaviors.setup { ctx: ActorContext[Input] =>

@@ -19,7 +19,7 @@ import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages._
-import model.managers.GameDynamicsMessages.{ Lose, Pay, WalletQuantity }
+import model.managers.GameDataMessages.{ Lose, Pay, WalletQuantity }
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
 import commons.Futures.retrieve

@@ -12,12 +12,12 @@ object Messages {
 
   trait SpawnManagerMessage extends Update
   trait EntitiesManagerMessage extends Update
-  trait GameDynamicsManagerMessage extends Update
+  trait GameDataManagerMessage extends Update
 
   sealed trait MessageType
   case object SpawnMessage extends MessageType
   case object EntityMessage extends MessageType
-  case object GameDynamicsMessage extends MessageType
+  case object GameDataMessage extends MessageType
 
   def messageTypes: Update => List[MessageType] = { msg =>
     @tailrec
@@ -27,8 +27,8 @@ object Messages {
           _messageTypes(msg, SpawnMessage :: types)
         case _: EntitiesManagerMessage if !types.contains(EntityMessage) =>
           _messageTypes(msg, EntityMessage :: types)
-        case _: GameDynamicsManagerMessage if !types.contains(GameDynamicsMessage) =>
-          _messageTypes(msg, GameDynamicsMessage :: types)
+        case _: GameDataManagerMessage if !types.contains(GameDataMessage) =>
+          _messageTypes(msg, GameDataMessage :: types)
         case _ => types
       }
     _messageTypes(msg)

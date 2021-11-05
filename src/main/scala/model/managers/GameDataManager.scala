@@ -4,10 +4,10 @@ import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
 import controller.interaction.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
-import controller.interaction.Messages.{ GameDynamicsManagerMessage, Input, Update }
+import controller.interaction.Messages.{ GameDataManagerMessage, Input, Update }
 import controller.settings.Settings.Settings
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
-import model.managers.GameDynamicsMessages.{
+import model.managers.GameDataMessages.{
   CurrentGameTrack,
   CurrentTrack,
   Gain,
@@ -20,20 +20,20 @@ import model.maps.Plots.{ Plotter, PrologPlotter }
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 
-object GameDynamicsMessages {
+object GameDataMessages {
 
   case class NewMap(replyTo: ActorRef[Input], withTrack: Option[Track])
       extends Update
-      with GameDynamicsManagerMessage
-  case class WalletQuantity(replyTo: ActorRef[Input]) extends Update with GameDynamicsManagerMessage
+      with GameDataManagerMessage
+  case class WalletQuantity(replyTo: ActorRef[Input]) extends Update with GameDataManagerMessage
 
   case class CurrentGameTrack(replyTo: ActorRef[Input])
       extends Update
-      with GameDynamicsManagerMessage
+      with GameDataManagerMessage
   case class CurrentTrack(track: Track) extends Input
-  case class Pay(amount: Int) extends Update with GameDynamicsManagerMessage
-  case class Gain(amount: Int) extends Update with GameDynamicsManagerMessage
-  case class Lose(amount: Int) extends Update with GameDynamicsManagerMessage
+  case class Pay(amount: Int) extends Update with GameDataManagerMessage
+  case class Gain(amount: Int) extends Update with GameDataManagerMessage
+  case class Lose(amount: Int) extends Update with GameDataManagerMessage
 }
 
 object GameDynamicsManager {

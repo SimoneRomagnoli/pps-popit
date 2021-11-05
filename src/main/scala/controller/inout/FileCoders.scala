@@ -84,7 +84,14 @@ object FileCoders {
         if (check.isDefined) Some(Files.createDirectories(Paths.get(check.get))) else None
 
       def touch: Option[file.Path] =
-        if (check.isDefined) Some(Files.createFile(Paths.get(check.get))) else None
+        if (check.isDefined)
+          Some(
+            Files.write(
+              Paths.get(check.get),
+              List[Track]().asJson.toString().getBytes(StandardCharsets.UTF_8)
+            )
+          )
+        else None
     }
 
     def setup(): Unit = for {
@@ -134,13 +141,8 @@ case class FileCoder(override val path: String = jsonPath) extends Coder {
   override def save(json: Json): Unit =
     Files.write(Paths.get(path), json.toString().getBytes(StandardCharsets.UTF_8))
 
-  override def load(): Json = if (Files.exists(Paths.get(path))) {
+  override def load(): Json =
     parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
-  } else {
-    setup()
-    save(List[Track]().asJson)
-    parser.parse(Files.readString(Paths.get(path), StandardCharsets.UTF_8)).getOrElse(Json.obj())
-  }
 
   override def clean(): Unit = {
     Path(appDir).deleteRecursively()

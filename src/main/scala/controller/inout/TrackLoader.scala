@@ -30,7 +30,8 @@ object TrackLoader {
     case class RetrieveTrack(trackID: Int, replyTo: ActorRef[Input]) extends Input
     case class SavedTracks(list: List[Track]) extends Input
     case class SavedTrack(track: Track) extends Input
-    case class CleanSavedTracks() extends Input
+    case class CleanSavedTracks(replyTo: ActorRef[Input]) extends Input
+    case class SavedTracksCleared() extends Input
   }
 
   object TrackLoaderActor {
@@ -51,8 +52,9 @@ object TrackLoader {
 
     def default(): Behavior[Input] = Behaviors.receiveMessagePartial {
 
-      case CleanSavedTracks() =>
+      case CleanSavedTracks(replyTo) =>
         coder.clean()
+        replyTo ! SavedTracksCleared()
         Behaviors.same
 
       case SaveActualTrack(track, x, y, replyTo) =>

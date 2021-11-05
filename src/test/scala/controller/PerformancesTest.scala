@@ -116,7 +116,8 @@ object PerformancesTest {
 
       case ModelUpdated(_, _) =>
         val finish: Long = System.currentTimeMillis()
-        val updateTime: Double = TimeUnit.MILLISECONDS.toMillis(finish - tickStarts(updates))
+        val updateTime: Double =
+          TimeUnit.MILLISECONDS.toMillis(finish - tickStarts(updates)).toDouble
         updates += 1
         performancesWatcher ! Performance(updateTime)
         Behaviors.same
@@ -145,7 +146,7 @@ object PerformancesTest {
         val currentRenderTime: Long = System.nanoTime()
         if (renders > 0) {
           val elapsedSinceLastRender: Double =
-            TimeUnit.NANOSECONDS.toMillis(currentRenderTime - lastRender)
+            TimeUnit.NANOSECONDS.toMillis(currentRenderTime - lastRender).toDouble
           timeAmongRenders += elapsedSinceLastRender
         }
         lastRender = currentRenderTime
@@ -172,7 +173,7 @@ class PerformancesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   val performancesStopper: TestProbe[Input] = testKit.createTestProbe[Input]()
   val track: Track = Track()
 
-  val numberOfActors: Int = 1000
+  val numberOfActors: Int = 10
 
   val entities: List[Balloon] =
     LazyList.continually(simple() on track in track.start).take(numberOfActors).toList
@@ -189,7 +190,7 @@ class PerformancesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
   }
 
   val gameLoop: ActorRef[Input] = testKit spawn {
-    PerformancesGameLoop(model, performancesWatcher, TimeSettings(timeRatio = 5.0))
+    PerformancesGameLoop(model, performancesWatcher, TimeSettings(timeRatio = 1.0))
   }
 
   val controller: ActorRef[Input] = testKit spawn {
@@ -211,7 +212,7 @@ class PerformancesTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
           retrieve(performancesWatcher ? Performances) {
             case AveragePerformances(updateAverageTime, renderAverageTime) =>
               println("Render Average Time: " + renderAverageTime + " milliseconds.")
-              println("Update Average Time: " + updateAverageTime + " milliseconds.")
+              println("Update Round Trip Average Time: " + updateAverageTime + " milliseconds.")
             case _ =>
           }
         }

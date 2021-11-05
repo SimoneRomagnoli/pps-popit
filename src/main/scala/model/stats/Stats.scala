@@ -6,7 +6,7 @@ package model.stats
  */
 object Stats {
 
-  val startingLife: Int = 100
+  val startingLife: Int = 10
   val startingWallet: Int = 200
   val startingRound: Int = 0
 

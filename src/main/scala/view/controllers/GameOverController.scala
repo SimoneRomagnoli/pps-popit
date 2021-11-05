@@ -1,12 +1,12 @@
 package view.controllers
 
+import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import controller.Controller.ControllerMessages.{ BackToMenu, RestartGame }
 import controller.interaction.Messages.{ Input, Message }
 import scalafx.geometry.Pos
-import scalafx.scene.control.ToggleButton
+import scalafx.scene.control.Button
 import scalafx.scene.layout.{ HBox, VBox }
 import scalafxml.core.macros.sfxml
-import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth }
 import view.render.Rendering
 
 import scala.concurrent.Future
@@ -24,8 +24,8 @@ class GameOverController(
     val gameOver: HBox,
     val gameOverVerticalContainer: VBox,
     val gameOverContainer: VBox,
-    val retryTrack: ToggleButton,
-    val quit: ToggleButton,
+    val retryTrack: Button,
+    val quit: Button,
     var parent: ViewGameController,
     var send: Input => Unit,
     var ask: Message => Future[Message])

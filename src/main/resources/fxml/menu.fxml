@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -20,9 +20,9 @@
                 <HBox styleClass="mainMenuButtons" alignment="CENTER">
                     <VBox HBox.hgrow="ALWAYS"/>
                     <VBox styleClass="everyMenuButtons">
-                        <ToggleButton text="New Game" fx:id="newGameBtn" styleClass="menuButton" maxWidth="Infinity"/>
-                        <ToggleButton text="Saved Tracks" fx:id="savedTracksBtn" styleClass="menuButton" maxWidth="Infinity"/>
-                        <ToggleButton text="Settings" fx:id="settingsBtn" styleClass="menuButton" maxWidth="Infinity"/>
+                        <Button text="New Game" fx:id="newGameBtn" styleClass="menuButton" maxWidth="Infinity"/>
+                        <Button text="Saved Tracks" fx:id="savedTracksBtn" styleClass="menuButton" maxWidth="Infinity"/>
+                        <Button text="Settings" fx:id="settingsBtn" styleClass="menuButton" maxWidth="Infinity"/>
                     </VBox>
                     <VBox HBox.hgrow="ALWAYS"/>
                 </HBox>

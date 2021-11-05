@@ -30,13 +30,13 @@
     <VBox fx:id="towerStatus" styleClass="inputBox, towerStatus" VBox.vgrow="ALWAYS"/>
     <VBox fx:id="startRoundContainer" styleClass="inputBox">
         <HBox>
-            <ToggleButton fx:id="startRound" mnemonicParsing="false" styleClass="inputButton, startRound"
+            <Button fx:id="startRound" mnemonicParsing="false" styleClass="inputButton, startRound"
                           VBox.vgrow="ALWAYS" text="     "/>
             <HBox HBox.hgrow="ALWAYS"/>
-            <ToggleButton fx:id="pauseRound" mnemonicParsing="false" styleClass="inputButton, pauseRound"
+            <Button fx:id="pauseRound" mnemonicParsing="false" styleClass="inputButton, pauseRound"
                           VBox.vgrow="ALWAYS" text="     "/>
             <HBox HBox.hgrow="ALWAYS"/>
-            <ToggleButton fx:id="forwardRounds" mnemonicParsing="false" styleClass="inputButton, forwardButton"
+            <Button fx:id="forwardRounds" mnemonicParsing="false" styleClass="inputButton, forwardButton"
                           VBox.vgrow="ALWAYS" text="     "/>
         </HBox>
     </VBox>

@@ -1,0 +1,22 @@
+@startuml
+
+[*] -> Running
+
+state Running {
+    state Run
+    state R.Dequeue
+    [*] -> R.Dequeue
+    R.Dequeue -> Run
+}
+
+state Updating {
+    state Update
+    state U.Dequeue
+    [*] -> U.Dequeue
+    U.Dequeue -> Update
+}
+
+Run -> Updating
+Update -> Running
+
+@enduml

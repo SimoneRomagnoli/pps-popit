@@ -21,7 +21,7 @@ import controller.settings.Settings.{ Difficulty, Settings }
 import model.Model.ModelActor
 import model.entities.Entities.Entity
 import model.managers.EntitiesMessages.PlaceTower
-import model.managers.GameDynamicsMessages.{ CurrentGameTrack, CurrentTrack, NewMap }
+import model.managers.GameDataMessages.{ CurrentGameTrack, CurrentTrack, NewMap }
 import model.maps.Tracks.Track
 import commons.Futures.retrieve
 import view.View.ViewMessages.{ RenderMap, RenderSavedTracks, RenderSettings, TrackSaved }
@@ -58,7 +58,7 @@ object Controller {
     case class StartNextRound()
         extends Input
         with SpawnManagerMessage
-        with GameDynamicsManagerMessage
+        with GameDataManagerMessage
         with EntitiesManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class CurrentWallet(amount: Int) extends Input

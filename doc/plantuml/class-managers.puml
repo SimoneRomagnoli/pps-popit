@@ -1,0 +1,40 @@
+@startuml
+
+class GameLoop {
+    +send(msg: Message): Unit
+}
+note left: Send method\nonly for\nsimplification\npurpose.
+class Model {
+    +forward(msg: Message): Unit
+}
+class EntitiesManager {
+    +running(): Behavior[Update]
+    +updating(): Behavior[Update]
+}
+class GameDataManager {
+    +default(): Behavior[Update]
+}
+class SpawnManager {
+    +waiting(): Behavior[Update]
+    +spawning(): Behavior[Update]
+}
+
+enum MessageType {
+    EntitiesManagerMessage
+    GameDataManagerMessage
+    SpawnManagerMessage
+}
+
+EntitiesManager -down-> Foo
+Foo -down-> SpawnManager
+SpawnManager -down-> Bar
+Bar -down-> GameDataManager
+hide Bar
+hide Foo
+GameLoop -right-> Model
+Model -left- MessageType
+Model -up-> EntitiesManager
+Model -right-> SpawnManager
+Model -right-> GameDataManager
+
+@enduml

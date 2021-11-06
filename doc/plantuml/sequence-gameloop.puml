@@ -1,0 +1,13 @@
+@startuml
+control View
+control GameLoop
+control Model
+
+loop
+    GameLoop -> GameLoop: Tick
+    GameLoop -> Model: TickUpdate
+    Model -> Model: UpdateEntities
+    GameLoop <-- Model: ModelUpdated
+    GameLoop -> View: RenderEntities
+end
+@enduml

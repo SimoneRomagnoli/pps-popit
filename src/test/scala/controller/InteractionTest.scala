@@ -1,29 +1,29 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
-import akka.actor.typed.scaladsl.AskPattern.{ schedulerFromActorSystem, Askable }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
+import akka.actor.typed.scaladsl.AskPattern.{Askable, schedulerFromActorSystem}
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ ActorRef, Behavior }
+import akka.actor.typed.{ActorRef, Behavior}
 import commons.Futures.retrieve
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.InteractionTest.buildControllerProbes
-import controller.interaction.GameLoop.GameLoopMessages.{ CanStartNextRound, Stop }
-import controller.interaction.Messages.{ Input, Render, Update, WithReplyTo }
+import controller.interaction.GameLoop.GameLoopMessages.Stop
+import controller.interaction.Messages.{Input, Render, Update, WithReplyTo}
 import controller.settings.Settings.Time.Constants._
 import controller.settings.Settings.Time.TimeSettings
-import controller.settings.Settings.{ Hard, Settings }
+import controller.settings.Settings.{Hard, Settings}
 import model.entities.towers.TowerTypes.arrow
 import model.managers.EntitiesMessages.PlaceTower
-import model.managers.GameDynamicsMessages.{ NewMap, WalletQuantity }
+import model.managers.GameDataMessages.{NewMap, WalletQuantity}
 import model.maps.Cells.GridCell
 import model.stats.Stats
 import org.scalatest.wordspec.AnyWordSpecLike
-import view.View.ViewMessages.{ RenderSettings, TrackSaved }
+import view.View.ViewMessages.{RenderSettings, TrackSaved}
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
-import scala.language.{ implicitConversions, postfixOps }
+import scala.language.{implicitConversions, postfixOps}
 
 object InteractionTest {
 

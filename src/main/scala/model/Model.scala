@@ -21,7 +21,7 @@ object Model {
     case class TickUpdate(elapsedTime: Double, replyTo: ActorRef[Input])
         extends Update
         with EntitiesManagerMessage
-        with GameDynamicsManagerMessage
+        with GameDataManagerMessage
 
     case class TrackChanged(newTrack: Track)
         extends Update
@@ -51,10 +51,8 @@ object Model {
         SpawnMessage
       ) :: handlers
       handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
-      handlers = (
-        ctx.spawnAnonymous(GameDynamicsManager(ctx.self, settings)),
-        GameDynamicsMessage
-      ) :: handlers
+      handlers =
+        (ctx.spawnAnonymous(GameDynamicsManager(ctx.self, settings)), GameDataMessage) :: handlers
       default()
     }
 
@@ -64,11 +62,11 @@ object Model {
           Behaviors.stopped
 
         case msg =>
-          handle(msg)
+          forward(msg)
           Behaviors.same
       }
 
-    def handle(msg: Update): Unit = msg match {
+    def forward(msg: Update): Unit = msg match {
       case WithReplyTo(m, _) => choose(messageTypes(m)).foreach(_ ! msg)
       case msg               => choose(messageTypes(msg)).foreach(_ ! msg)
     }

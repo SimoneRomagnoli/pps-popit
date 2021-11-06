@@ -7,7 +7,7 @@ import controller.interaction.Messages.{ EntitiesManagerMessage, Update }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.Bullets.{ Bullet, Ice }
 import model.managers.EntitiesMessages.{ EntityUpdated, ExitedBalloon, UpdateEntity }
-import model.managers.GameDynamicsMessages.Gain
+import model.managers.GameDataMessages.Gain
 import commons.CommonValues
 import commons.CommonValues.Game.balloonHitGain
 

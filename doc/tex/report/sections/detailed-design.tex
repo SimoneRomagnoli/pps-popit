@@ -2,5 +2,82 @@
 In questa sezione viene effettuata un'analisi del design di dettaglio, evidenziando aspetti interni ai componenti del
 sistema, senza esplorare l'implementazione effettiva del codice.
 
-\subsection{Design del modello}
-A partire dalla analisi del dominio...
+\subsection{Design del Modello}
+A partire dall'analisi dei requisiti funzionali del sistema, sono stati individuati gli aspetti fondamentali all'interno
+del modello di gioco. Nello specifico, sono emerse due macro-categorie:
+\begin{itemize}
+    \item \textbf{Elementi Statici} - ovvero tutti gli aspetti che trascendono dalla singola partita (gerarchia e logica 
+    delle entità).
+    \item \textbf{Elementi Dinamici} - ovvero tutte le dinamiche che dipendono strettamente dalla partita in corso.
+\end{itemize}
+
+\subsubsection{Elementi Statici}
+
+\subsubsection{Elementi Dinamici}
+Inizialmente, è stato progettato il \texttt{Model} in modo che gestisse tutti gli aspetti dinamici del sistema.
+Con l'espansione di tali elementi, il \texttt{Model} si è rivelato essere poco scalabile, oltre a doversi occupare di
+aspetti logicamente distanti tra loro: quindi, è stato riprogettato per comunicare con degli appositi \textit{manager}
+per ciascuno degli aspetti dinamici rilevati. Nello specifico, sono state riscontrate tre logiche fondamentali del
+modello:
+\begin{itemize}
+    \item \textbf{Gestione delle entità in gioco} - ovvero tutte le interazioni con le entità che devono essere
+    aggiornate nel corso della partita.
+    \item \textbf{Generazione dei palloncini} - ovvero le politiche di \textit{spawn} dei palloncini, tenendo conto dei
+    diversi tipi, della quantità, dell'ordine e del \textit{round} corrente.
+    \item \textbf{Gestione dei dati di gioco} - ovvero il mantenimento delle statistiche di una partita, quali i punti
+    vita, il denaro e la traccia di gioco.
+\end{itemize}
+
+Pertanto, il \texttt{Model} funge esclusivamente da \textit{relay} di messaggi, ridirezionandoli ai manager interessati:
+tale design è fortemente ispirato al pattern \textbf{Facade} \cite{FacadePattern} e al tipico pattern di delegazione
+spesso utilizzato in \textit{Akka}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\linewidth]{img/class-managers}
+    \caption{Diagramma dei \textit{manager}.}
+    \label{fig:managers}
+\end{figure}
+
+Nello specifico, il \textit{manager} delle entità è composto da due comportamenti principali:
+\begin{itemize}
+    \item \textbf{Running} - in cui vengono ricevuti e gestiti i messaggi provenienti da tutto il dominio escluse le
+    entità, a partire dal \texttt{TickUpdate}, ossia il messaggio di aggiornamento del \texttt{GameLoop}.
+    \item \textbf{Updating} - in cui attende che tutte le entità di gioco siano state aggiornate dai corrispettivi
+    attori, per poi notificare il \texttt{GameLoop} e tornare al comportamento precedente.
+\end{itemize}
+Questa suddivisione è stata pensata per dare priorità ai messaggi in base allo stato di aggiornamento dei singoli attori
+rappresentanti le entità: infatti, nel caso in cui il \textit{manager} ricevesse un messaggio mentre si trova nel
+comportamento sbagliato, questi lo accoda per poi soddisfare la richiesta appena possibile.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{img/state-entities-manager}
+    \caption{Diagramma di stato UML del \textit{manager} delle entità.}
+    \label{fig:entities-manager}
+\end{figure}
+
+Per quanto riguarda il \textit{manager} della generazione dei palloncini, sono stati individuati due
+macro-comportamenti:
+\begin{itemize}
+    \item \textbf{Waiting} - in cui attende un messaggio che comunica l'inizio del nuovo \textit{round}.
+    \item \textbf{Spawning} - in cui effettua la generazione dei palloncini presenti all'interno del \textit{round}:
+    tale comportamento si può ulteriormente suddividere in:
+    \begin{itemize}
+        \item \textbf{Spawning Round} - controlla se ci sono altre \textit{streak} di palloncini da generare: in caso
+        positivo ne ordina la generazione, altrimenti ritorna in \texttt{Waiting}.
+        \item \textbf{Spawning Streak} - genera i palloncini appartenenti ad una \textit{streak}.
+        \item \textbf{Paused} - nel caso il gioco venga messo in pausa durante la generazione di palloncini, anche
+        quest'ultima dovrebbe essere temporaneamente sospesa.
+    \end{itemize}
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\linewidth]{img/state-spawn-manager}
+    \caption{Diagramma di stato UML del \textit{manager} della generazione dei palloncini.}
+    \label{fig:spawn-manager}
+\end{figure}
+
+Infine, il \textit{manager} dei dati di gioco è semplicemente composto da un solo comportamento in cui modifica o
+inoltra i dati quando richiesto.

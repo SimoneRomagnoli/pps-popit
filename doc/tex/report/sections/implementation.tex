@@ -78,3 +78,11 @@ override def pop(bullet: Bullet): Option[Balloon] = LazyList
   .last
 \end{lstlisting}
 
+Per quanto riguarda invece i potenziamenti dei palloncini, essi sono stati implementati sfruttando il pattern
+\textbf{Decorator} \cite{gof}. Un potenziamento può quindi essere concettualmente pensato come un \textit{wrapper} per un
+palloncino: grazie al pattern appena citato è inoltre possibile avvologere un palloncino con più potenziamenti
+simultaneamente. In particolare, è stata implementata una classe astratta \texttt{BalloonDecoration} in cui vengono
+ridefiniti alcuni metodi comuni alle decorazioni contrete. È stato definito il metodo \texttt{retrieve}: ciò rende i
+metodi del \texttt{trait Balloon} che lo utilizzavano dei \textbf{Template Method} \cite{gof}. Inoltre, il metodo
+\texttt{instance} che verrà definito dalle sotto-classi concrete e che permette di avvolgere un palloncino con un
+potenziamento. Anche in questo caso viene sfruttato il pattern \textbf{Template Method}.

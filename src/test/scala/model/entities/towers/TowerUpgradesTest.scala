@@ -23,7 +23,7 @@ import scala.language.postfixOps
 class TowerUpgradesTest extends AnyWordSpec with Matchers {
 
   val arrowTower: Tower[Dart] =
-    (Arrow tower) has values sight towerDefaultSightRange ratio towerDefaultShotRatio
+    (Arrow tower) sight towerDefaultSightRange ratio towerDefaultShotRatio
 
   val defaultLevel: Int = 1
   val nextLevel: Int = defaultLevel + 1

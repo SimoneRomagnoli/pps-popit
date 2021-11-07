@@ -10,8 +10,6 @@ import commons.CommonValues.Screen.cellSize
 
 import scala.language.{ implicitConversions, postfixOps }
 
-object values
-
 object Towers {
 
   /**
@@ -28,8 +26,6 @@ object Towers {
 
     override def in(pos: Vector2D): Tower[B]
     override def rotateTo(dir: Vector2D): Tower[B]
-
-    def has(v: values.type): Tower[B] = this
 
     override def ratio(ratio: Double): Tower[B]
 

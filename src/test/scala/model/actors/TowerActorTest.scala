@@ -7,7 +7,6 @@ import controller.interaction.Messages._
 import model.entities.balloons.Balloons.{ Balloon, Simple }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.TowerTypes.Arrow
-import model.entities.towers.values
 import model.entities.bullets.Bullets.{ Bullet, Dart }
 import model.Positions.Vector2D
 import model.actors.TowerActorTest.TestMessages.{ BalloonMoved, Step, UpdatePosition }
@@ -33,7 +32,7 @@ object TowerActorTest {
   var balloonDetected: Boolean = false
 
   val tower: Tower[Dart] =
-    (Arrow tower) in towerPosition has values sight 1.0
+    ((Arrow tower) in towerPosition) sight 1.0
 
   var currentDirection: Vector2D = (0.0, 0.0)
   var previousDirection: Vector2D = tower.direction

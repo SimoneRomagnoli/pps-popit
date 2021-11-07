@@ -1,0 +1,16 @@
+\begin{lstlisting}[label=code:prolog-engine, language=Scala, caption=Motore TuProlog]
+/**
+ * A Prolog engine that solves queries.
+ *
+ * @param theory,
+ *   the theory that the engine uses to solve queries.
+ */
+case class PrologEngine(theory: Theory) extends Engine {
+  val engine: Prolog = new Prolog
+  engine.setTheory(theory)
+
+  override def solve: Term => LazyList[SolveInfo] = term =>
+    LazyList.continually(engine solve term)
+
+}
+\end{lstlisting}

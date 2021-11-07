@@ -1,12 +1,13 @@
-\newpage
 \section{Implementazione}
 In questa sezione vengono analizzati gli aspetti implementativi del sistema, facendo eventualmente riferimento al codice
 sviluppato. Nello specifico, verranno approfonditi solamente gli elementi che non sono stati esplorati a pieno nella
 sezione Design di Dettaglio o che si ritengono fondamentali nello sviluppo di un progetto di tipo "game" come quello in
-discussione.
+discussione. Per riflettere la suddivisione del lavoro durante il processo di sviluppo, questa sezione presenta una
+parte descrittiva per ognuno dei membri del team.
 
+\subsection{Tommaso Mandoloni}
 
-\subsection{Marcantoni}
+\subsection{Alessandro Marcantoni}
 Il mio compito all'interno del progetto è stato quello di realizzare il \texttt{GameLoop}, i palloncini (l'entità base,
 i vari "potenziamenti" e infine il rispettivo attore), la gestione dei round (con relativa DSL per la loro creazione e
 l'attore che si occupa dello \textit{spawn} dei palloncini) e la suddivisione della logica del model nei tre
@@ -26,10 +27,10 @@ la lista di entità provenienti dal \texttt{Model}. Le interazioni appena descri
 \ref{fig:sequence-gameloop}.
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=.5\linewidth]{img/sequence-gameloop}
-  \caption{Diagramma di sequenza delle interazioni del \texttt{GameLoop}.}
-  \label{fig:sequence-gameloop}
+    \centering
+    \includegraphics[width=.5\linewidth]{img/sequence-gameloop}
+    \caption{Diagramma di sequenza delle interazioni del \texttt{GameLoop}.}
+    \label{fig:sequence-gameloop}
 \end{figure}
 
 \subsubsection{Palloncini}
@@ -42,12 +43,9 @@ Per quanto riguarda la loro struttura, i palloncini possono essere \texttt{Simpl
 interno, o \texttt{Complex} altrimenti. Tale implementazione permette di rappresentare in modo intuitivo l'effettivo
 dominio in quanto, un palloncino complesso, quando scoppiato, deve mostrare il palloncino da lui nascosto.
 
-\begin{lstlisting}[language=Scala, caption=Implementazione dei palloncini, label=lst:balloons]
-trait Balloon extends Entity with TrackFollowing with Poppable { ... }
-case class Simple(override val ...) extends Balloon
-case class Complex(balloon: Balloon) extends Balloon
-\end{lstlisting}
-Come mostrato nel listato \ref{lst:balloons}, tale implementazione rispecchia quella di un \textbf{sum type}: struttura
+\input{code/poppables}
+
+Come mostrato nel listato \ref{code:poppables}, tale implementazione rispecchia quella di un \textbf{sum type}: struttura
 dati tipica della programmazione funzionale.
 
 Degni di nota all'interno del \texttt{trait Balloon} sono i metodi \texttt{change} e \texttt{retrieve}. I palloncini
@@ -60,23 +58,7 @@ ognuno rappresenta il palloncino risultante dall'esplosione del precedente. L'ut
 attraverso il comportamento monadico (sfruttato dal metodo \texttt{flatMap}), di gestire il caso in cui il palloncino
 scoppi completamente e di portare avanti la computazione anche in tale situazione.
 
-\begin{lstlisting}[language=Scala, caption=Implementazinoe dei palloncini, label=lst:balloons]
-protected[balloons] def retrieve[T](f: Balloon => T): T = this match {
-  case Complex(balloon) => balloon retrieve f
-  case s => f(s)
-}
-protected[balloons] def change(f: => Balloon): Balloon = this match {
-  case Complex(balloon) => complex(balloon change f)
-  case _ => f
-}
-override def pop(bullet: Bullet): Option[Balloon] = LazyList
-  .iterate(Option(this))(_ flatMap {
-    case Complex(balloon) => Some(balloon following this)
-    case _ => None
-  })
-  .take(bullet.damage.toInt + 1)
-  .last
-\end{lstlisting}
+\input{code/pop}
 
 Per quanto riguarda invece i potenziamenti dei palloncini, essi sono stati implementati sfruttando il pattern
 \textbf{Decorator} \cite{gof}. Un potenziamento può quindi essere concettualmente pensato come un \textit{wrapper} per un
@@ -86,3 +68,59 @@ ridefiniti alcuni metodi comuni alle decorazioni contrete. È stato definito il 
 metodi del \texttt{trait Balloon} che lo utilizzavano dei \textbf{Template Method} \cite{gof}. Inoltre, il metodo
 \texttt{instance} che verrà definito dalle sotto-classi concrete e che permette di avvolgere un palloncino con un
 potenziamento. Anche in questo caso viene sfruttato il pattern \textbf{Template Method}.
+
+\subsection{Matteo Ragazzini}
+
+\subsection{Simone Romagnoli}
+Fungendo da \textit{product owner}, le porzioni di progetto di cui mi sono occupato sono molteplici: oltre ad aver 
+proposto il design dell'architettura complessiva, ho partecipato all'implementazione di svariate parti del sistema e, a 
+volte, ho rivalutato l'effettiva scrittura di alcune funzionalità. Di seguito, descrivo le parti significative del mio 
+lavoro, focalizzandomi sugli aspetti implementativi importanti per la totalità del progetto.
+
+\subsubsection{Tracce di gioco}
+La mappa del gioco è descritta da una griglia invisibile composta da celle: le tracce non sono altro
+che una sequenza ordinata di celle adiacenti, a partire dal bordo sinistro dello schermo, e a terminare in quello
+destro. Per elaborare il tracciato che i palloncini seguono durante la partita, ho deciso di sfruttare la programmazione
+logica, e, nello specifico, la libreria \texttt{it.unibo.alice.tuprolog} \cite{TuProlog}. In ausilio alla interazione
+\textit{Scala-Prolog}, è stato implementato un motore specifico \ref{code:prolog-engine} che risolve le query in input,
+trovando una traccia con fattori di casualità.
+
+\input{code/engine}
+
+Le query vengono formulate prendendo in input tre parametri:
+\begin{itemize}
+    \item una cella d'inizio;
+    \item una cella di fine;
+    \item la difficoltà di gioco.
+\end{itemize}
+
+Sulla base di questi, viene trovata una soluzione con la teoria sviluppata: il metodo tradizionale per trovare una
+traccia, sarebbe quello di calcolare tutti i possibili percorsi dalla cella d'inizio a quella di fine e sceglierne uno
+casualmente; tuttavia, questo approccio è risultato essere troppo oneroso, già a partire da griglie di dimensione
+$5 \times 5$. Il metodo utilizzato per individuare una traccia soddisfacente, è stato quello di disegnarne una
+introducendo fattori di casualità nel processo di scelta delle celle, ad esempio, implicando un cambiamento di direzione
+sempre più probabile con l'aumentare di celle consecutive aventi lo stesso orientamento. Anche la difficoltà di gioco
+è un fattore determinante: la traccia, infatti, non torna mai verso la cella d'inizio quando la difficoltà è difficile,
+in modo da accorciare la traccia e facilitare i palloncini, mentre, in modalità facile, è più probabile ottenere una
+traccia più lunga. Nel listato \ref{code:prolog-theory}, si mostra l'algoritmo di individuazione del percorso preso
+dalla teoria \textit{prolog}.
+
+\input{code/theory}
+
+\subsubsection{Abilità di TrackFollowing}
+Per muovere i palloncini sulla traccia, sarebbe corretto rispettare la gerarchia di entità mostrata nella sezione
+Design di dettaglio, in particolare, senza modificare l'interfaccia \texttt{MovementAbility}, bensì aggiungendo una
+funzionalità ad essa. Quindi è stato pensato un meccanismo che associa una posizione lineare al palloncino sulla
+traccia bidimensionale: il \texttt{TrackFollowing}.
+
+\input{code/track-following}
+
+Il listato \ref{code:track-following} mostra come l'abilità di movimento viene sovrascritta seguendo la posizione
+lineare nella traccia. Per approfondire, la posizione lineare è stata pensata come un \texttt{Double} la cui parte
+intera rappresenta l'indice della cella occupata dal palloncino nella traccia, mentre la parte decimale indica la
+percentuale attraversata della cella stessa.
+
+\subsubsection{FXML Controllers}
+\subsubsection{Rendering DSL}
+
+

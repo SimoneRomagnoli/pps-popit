@@ -1,0 +1,17 @@
+\begin{lstlisting}[label=code:pop, language=Scala, caption=Implementazinoe dei palloncini]
+protected[balloons] def retrieve[T](f: Balloon => T): T = this match {
+  case Complex(balloon) => balloon retrieve f
+  case s => f(s)
+}
+protected[balloons] def change(f: => Balloon): Balloon = this match {
+  case Complex(balloon) => complex(balloon change f)
+  case _ => f
+}
+override def pop(bullet: Bullet): Option[Balloon] = LazyList
+  .iterate(Option(this))(_ flatMap {
+    case Complex(balloon) => Some(balloon following this)
+    case _ => None
+  })
+  .take(bullet.damage.toInt + 1)
+  .last
+\end{lstlisting}

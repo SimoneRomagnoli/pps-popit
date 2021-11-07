@@ -19,7 +19,7 @@
 \usepackage{amsmath}
 \usepackage{latexsym}
 \usepackage{amsthm}
-\usepackage{cite}
+%\usepackage{cite}
 \usepackage{listings}
 %\usepackage{minted}
 \usepackage{hyperref}
@@ -49,36 +49,40 @@
 \hypersetup{colorlinks=false, linkcolor=blue, urlcolor=blue}
 %\tikzstyle{mybox} = [draw=black, very thick, rectangle, inner ysep=5pt, inner xsep=5pt]
 %\captionsetup{tableposition=top,figureposition=bottom,font=small}
-%\bibliographystyle{unsrt}
-\bibliographystyle{unsrtnat}
 
-\definecolor{dkgreen}{rgb}{0,0.6,0}
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
-%\definecolor{lightgoldenrodyellow}{rgb}{0.98, 0.98, 0.82}
-%definecolor{bisque}{rgb}{1.0, 0.89, 0.77}
-\definecolor{ghostwhite}{rgb}{0.97, 0.97, 1.0}
-%\definecolor{linen}{rgb}{0.98, 0.94, 0.9}
-\lstset{frame=tb,
-   language=Java,
-   aboveskip=3mm,
-   belowskip=3mm,
-   showstringspaces=false,
-   columns=flexible,
-   basicstyle={\small\ttfamily},
+\usepackage[backend=biber]{biblatex}
+\addbibresource{bibliography}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+   backgroundcolor=\color{backcolour},
+   commentstyle=\color{codegreen},
+   keywordstyle=\color{magenta},
+   numberstyle=\tiny\color{codegray},
+   stringstyle=\color{codepurple},
+   basicstyle=\ttfamily\footnotesize,
+   breakatwhitespace=false,
+   breaklines=true,
+   captionpos=b,
+   keepspaces=true,
    numbers=left,
-   numberstyle=\color{gray},
-   keywordstyle=\color{blue},
-   commentstyle=\color{dkgreen},
-   stringstyle=\color{mauve},
-   breaklines=true,
-   breakatwhitespace=true,
-   tabsize=1,
-   backgroundcolor=\color{ghostwhite},
-   breaklines=true,
-  %postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
-   }
-   
+   numbersep=5pt,
+   showspaces=false,
+   showstringspaces=false,
+   showtabs=false,
+   tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
 %\captionsetup{tableposition=top,figureposition=bottom,font=small,format=hang,labelfont={sf,bf}}
 
 

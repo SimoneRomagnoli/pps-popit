@@ -1,0 +1,42 @@
+\begin{lstlisting}[label=code:track-following, language=Scala, caption=Interfaccia estesa dai palloncini per rimanere
+sul tracciato]
+/**
+   * Adds to the [[Entity]] the ability to follow a [[Track]]:
+   *   - has a [[Track]]
+   *   - can change the [[Track]]
+   *   - can follow another [[TrackFollowing]]
+   *   - moves on the track when updating
+   */
+  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] { balloon: Balloon =>
+    private var linearPosition: Double = 0.0
+
+    def track: Track
+
+    def on(track: Track): TrackFollowing
+
+    def following(trackFollowing: TrackFollowing): Balloon =
+      following(trackFollowing.linearPosition).asInstanceOf[Balloon]
+
+    private def following(lp: Double): TrackFollowing = {
+      this.linearPosition = lp
+      this
+    }
+
+    override def compareTo(o: TrackFollowing): Int = linearPosition - o.linearPosition match {
+      case d if d > 0 => 1
+      case d if d < 0 => -1
+      case _          => 0
+    }
+
+    override protected def move(dt: Double): Entity = {
+      linearPosition += (track directionIn linearPosition match {
+        case Up | Down => speed.y
+        case _         => speed.x
+      }) * dt
+      this
+        .in(track exactPositionFrom linearPosition)
+        .asInstanceOf[TrackFollowing]
+        .following(linearPosition)
+    }
+  }
+\end{lstlisting}

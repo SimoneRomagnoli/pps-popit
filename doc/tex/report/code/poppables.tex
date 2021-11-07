@@ -1,0 +1,5 @@
+\begin{lstlisting}[label=code:poppables, language=Scala, caption=Implementazione dei palloncini]
+trait Balloon extends Entity with TrackFollowing with Poppable { ... }
+case class Simple(override val ...) extends Balloon
+case class Complex(balloon: Balloon) extends Balloon
+\end{lstlisting}

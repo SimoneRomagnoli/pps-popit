@@ -25,11 +25,11 @@
 \usepackage{hyperref}
 \usepackage[italian]{varioref}
 %\usepackage{cleveref}
-%\usepackage[square,numbers,sort]{natbib}
+\usepackage{natbib}
 %\usepackage{color}
 %\usepackage{caption}
 %\usepackage{comment}
-%\usepackage{tikz}
+\usepackage{tikz}
 %\usepackage[normalem]{ulem}
 \usepackage[textwidth=14cm]{geometry}
 \usepackage{float}
@@ -50,22 +50,19 @@
 %\tikzstyle{mybox} = [draw=black, very thick, rectangle, inner ysep=5pt, inner xsep=5pt]
 %\captionsetup{tableposition=top,figureposition=bottom,font=small}
 
-\usepackage[backend=biber]{biblatex}
-\addbibresource{bibliography}
-
-\usepackage{listings}
-\usepackage{xcolor}
+%\usepackage[backend=biber]{biblatex}
+%\addbibresource{bibliography.bib}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\lstdefinestyle{mystyle}{
+\lstdefinestyle{code-style}{
    backgroundcolor=\color{backcolour},
    commentstyle=\color{codegreen},
    keywordstyle=\color{magenta},
-   numberstyle=\tiny\color{codegray},
+   numberstyle=\color{codegray},
    stringstyle=\color{codepurple},
    basicstyle=\ttfamily\footnotesize,
    breakatwhitespace=false,
@@ -80,7 +77,7 @@
    tabsize=2
 }
 
-\lstset{style=mystyle}
+\lstset{style=code-style}
 
 
 %\captionsetup{tableposition=top,figureposition=bottom,font=small,format=hang,labelfont={sf,bf}}

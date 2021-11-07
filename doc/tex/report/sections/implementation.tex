@@ -1,3 +1,4 @@
+\newpage
 \section{Implementazione}
 In questa sezione vengono analizzati gli aspetti implementativi del sistema, facendo eventualmente riferimento al codice
 sviluppato. Nello specifico, verranno approfonditi solamente gli elementi che non sono stati esplorati a pieno nella
@@ -164,6 +165,18 @@ metodi del \texttt{trait Balloon} che lo utilizzavano dei \textbf{Template Metho
 \texttt{instance} che verrà definito dalle sotto-classi concrete e che permette di avvolgere un palloncino con un
 potenziamento. Anche in questo caso viene sfruttato il pattern \textbf{Template Method}.
 
+Infine, l'attore del palloncino implementa tutti quei comportamenti che non sono intrinsechi al palloncino stesso ma che
+riguardano interazioni con altre entità o con l'ambiente. Ad esempio, vengono effettuati controlli per capire se esso è
+arrivato alla fine del percorso oppure ne vengono gestiti l'esplosione e il congelamento come mostrato in figura
+\ref{fig:state-balloon-actor}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{img/state-balloon-actor}
+    \caption{Diagramma di stato dell'attore del palloncino.}
+    \label{fig:state-balloon-actor}
+\end{figure}
+
 \subsection{Matteo Ragazzini}
 
 \subsection{Simone Romagnoli}
@@ -176,7 +189,7 @@ lavoro, focalizzandomi sugli aspetti implementativi importanti per la totalità 
 La mappa del gioco è descritta da una griglia invisibile composta da celle: le tracce non sono altro
 che una sequenza ordinata di celle adiacenti, a partire dal bordo sinistro dello schermo, e a terminare in quello
 destro. Per elaborare il tracciato che i palloncini seguono durante la partita, ho deciso di sfruttare la programmazione
-logica, e, nello specifico, la libreria \texttt{it.unibo.alice.tuprolog} \cite{TuProlog}. In ausilio alla interazione
+logica, e, nello specifico, la libreria \texttt{it.unibo.alice.tuprolog} \cite{tp}. In ausilio alla interazione
 \textit{Scala-Prolog}, è stato implementato un motore specifico \ref{code:prolog-engine} che risolve le query in input,
 trovando una traccia con fattori di casualità.
 

@@ -1,4 +1,4 @@
-\usepackage{listings}\begin{lstlisting}[language=Scala, caption=Impliciti per le operazioni di codifica, label=code:coder]
+\begin{lstlisting}[language=Scala, caption=Impliciti per le operazioni di codifica, label=code:coder]
 implicit val trackEncoder: Encoder[List[Track]] =
     (list: List[Track]) => {
     var objects: List[Json] = List()

@@ -6,6 +6,52 @@ discussione. Per riflettere la suddivisione del lavoro durante il processo di sv
 parte descrittiva per ognuno dei membri del team.
 
 \subsection{Tommaso Mandoloni}
+Il mio compito all'interno del progetto, oltre che collaborare con il team per implementare aspetti e funzionalità
+comuni di Model, Controller e design, è stato quello di strutturare e implementare le torri di gioco, intese come entità
+di base, i loro potenziamenti e infine l'attore che ne incapsula il comportamento. Inoltre mi sono occupato di tutta
+la parte di serializzazione e deserializzazione, in modo da poter wrappare gli oggetti in strutture dati salvabili su
+file.
+
+\subsubsection{File Coder}
+L'oggetto \texttt{FileCoder} nasce dall'esigenza di poter salvare i dati di gioco su file in modo da poterli
+ripristinare per dare all'utente la possibilità di rigiocare le sue partite preferite. In particolare si tratta della
+possibilità per l'utente di poter salvare su file le sue mappe preferite in modo da poterle rigiocare. Il
+\texttt{FileCoder} quindi lavora principalmente con due tipologie di strutture dati: un file \textit{json}, in cui
+vengono indicizzate e salvate le mappe di gioco, e una lista di tracce.
+
+Il suo compito è quello di serializzare e deserializzare il file \textit{json}, tenendolo aggiornato sulle nuove
+tracce che l'utente intende salvare. Per supportare la fase implementativa è stata utilizzata la libreria \textit{io
+.circe} che agevola la trasformazione di oggetti in file di tipo json. In particolare sono stati implementati due
+\textit{custom codecs}, ossia un \texttt{Encoder} che permette di trasformare una lista di tracce nel rispettivo
+oggetto \texttt{Json} che andrà poi salvato su file, mantenendone l'indicizzazione e la sequenza di coordinate delle
+celle utilizzate per individuare la traccia di gioco, e un \texttt{Decoder} che svolge l'operazione contraria,
+prendendo in input un oggetto Json e trasformandolo nella rispettiva lista di tracce, in modo da poterla modificare o
+aggiornare durante la fase di gioco. Per realizzare entrambe le funzionalità di codifica, si è scelto di implementare
+le operazioni all'interno di oggetti impliciti in modo che fosse sufficiente richiamare la codifica direttamente sul
+tipo di file interessato: in questo modo infatti per trasformare una lista di tracce in un oggetto json, sarà
+sufficiente richiamare il metodo \texttt{.asJson} direttamente su una \texttt{List[Track]}, mentre viceversa per
+ritornare una lista di tracce da un oggetto json basterà invocare direttamente sull'oggetto il metodo \texttt{.as[List[Track]]}.
+
+\input{code/coder.tex}
+
+Le effettive operazioni di salvataggio su file e caricamento da esso, sono state implementate tramite
+\textit{for-comprehension} sfruttando la libreria \textit{cats.effects.IO}, grazie alla quale è stato possibile
+definire una sequenza di operazioni da eseguire incapsulandone i side effects, garantendone l'esecuzione in un
+ambiente safe dal momento che si parla di scrittura e lettura su file esterni. In questo modo si riesce a mantenere
+una struttura di codice molto pulita e intuitiva rispettando il KISS principle e sfruttando a pieno la programmazione
+funzionale.
+
+Compito estremamente importante del \texttt{FileCoder} è anche quello di eseguire un corretto setup dell'albero delle
+directory di gioco una volta avviato. Infatti dovrà preoccuparsi di controllare se i le cartelle che conterranno i
+file di gioco, ossia il \textit{json} delle tracce e gli screenshot delle mappe, in modo da non incorrere in errori
+durante la fase di scrittura e lettura, e, in caso siano assenti, crearle a run-time. Anche in questo caso, per
+rispettare il principio KISS e sfruttare i costrutti funzionali, si è scelto di creare all'interno di un
+\texttt{Builder}, una monade appositamente strutturata per facilitare le operazioni di setup. Infatti in questo modo
+sarà possibile controllare l'esistenza delle directories di gioco all'interno del file system ed eventualmente
+crearle, tutto attraverso poche righe di codice eseguite all'interno di un metodo \texttt{setup} che sfrutta una
+sequenza di operazioni eseguite tramite \textit{for-comprehension}.
+
+\input{code/setup.tex}
 
 \subsection{Alessandro Marcantoni}
 Il mio compito all'interno del progetto è stato quello di realizzare il \texttt{GameLoop}, i palloncini (l'entità base,

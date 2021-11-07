@@ -1,0 +1,24 @@
+@startuml
+
+
+state c <<choice>>
+state d <<choice>>
+state e <<choice>>
+state f <<choice>>
+
+[*] -> Default
+Default -up-> c: UpdateEntity
+c --> Default: [!OutOfBounds]
+c --> [*]: [OutOfBounds]
+Default -right-> d: Hit
+d --> [*]: [Dead]
+d -right-> e: [StillAlive]
+e --> Default: [!IceBullet]
+e --> Frozen: [IceBullet]\n\freeze
+Frozen --> f: Hit
+f --> [*]: [Dead]
+f --> Frozen: [StillAlive]
+Frozen --> Frozen: UpdateEntity
+Frozen --> Default: Unfreeze
+
+@enduml

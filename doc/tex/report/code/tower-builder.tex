@@ -1,0 +1,11 @@
+\begin{lstlisting}[label=code:builder, language=Scala, caption=Builder delle tipologie di torre]
+object TowerBuilders {
+    implicit def genericTowerBuilder[B <: Bullet]: TowerBuilder[B] = BaseTower[B](_)
+    implicit val dartTowerBuilder: TowerBuilder[Dart] = BaseTower[Dart](_)
+    implicit val iceTowerBuilder: TowerBuilder[IceBall] = BaseTower[IceBall](_)
+    implicit val cannonTowerBuilder: TowerBuilder[CannonBall] = BaseTower[CannonBall](_)
+  }
+
+  def of[B <: Bullet](bullet: B)(implicit towerBuilder: TowerBuilder[B]): Tower[B] =
+    towerBuilder.build(bullet).sight(sightRanges(bullet)).ratio(shotRatios(bullet))
+\end{lstlisting}

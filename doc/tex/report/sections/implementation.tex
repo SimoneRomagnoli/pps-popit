@@ -70,6 +70,18 @@ metodi del \texttt{trait Balloon} che lo utilizzavano dei \textbf{Template Metho
 \texttt{instance} che verrà definito dalle sotto-classi concrete e che permette di avvolgere un palloncino con un
 potenziamento. Anche in questo caso viene sfruttato il pattern \textbf{Template Method}.
 
+Infine, l'attore del palloncino implementa tutti quei comportamenti che non sono intrinsechi al palloncino stesso ma che
+riguardano interazioni con altre entità o con l'ambiente. Ad esempio, vengono effettuati controlli per capire se esso è
+arrivato alla fine del percorso oppure ne vengono gestiti l'esplosione e il congelamento come mostrato in figura
+\ref{fig:state-balloon-actor}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{img/state-balloon-actor}
+    \caption{Diagramma di stato dell'attore del palloncino.}
+    \label{fig:state-balloon-actor}
+\end{figure}
+
 \subsection{Matteo Ragazzini}
 
 \subsection{Simone Romagnoli}

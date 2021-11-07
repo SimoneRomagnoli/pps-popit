@@ -27,10 +27,6 @@ class TrackLoaderTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
       trackLoader ! CleanSavedTracks(controllerTest.ref)
       controllerTest expectMessage SavedTracksCleared()
     }
-    "be able to save a new track" in {
-      trackLoader ! SaveActualTrack(Track(), 0, 0, controllerTest.ref)
-      controllerTest expectMessage TrackSaved()
-    }
     "be able to retrieve a previously saved track" in {
       retrieve(trackLoader ? (ref => RetrieveTrack(0, ref))) {
         case SavedTrack(track) =>

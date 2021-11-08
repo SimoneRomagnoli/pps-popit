@@ -1,6 +1,5 @@
 \begin{lstlisting}[language=Scala, caption=Impliciti per le operazioni di codifica, label=code:coder]
-implicit val trackEncoder: Encoder[List[Track]] =
-    (list: List[Track]) => {
+implicit val trackEncoder: Encoder[List[Track]] = (list: List[Track]) => {
     var objects: List[Json] = List()
 
     for (i <- list.indices)
@@ -10,35 +9,26 @@ implicit val trackEncoder: Encoder[List[Track]] =
           (
             "cells",
             Json.fromValues(
-              list(i).cells
-              .map(cell =>
-                Json.fromString(
-                    "c(" + cell.x + ", " + cell.y + ")")
-              )
+              list(i).cells.map(cell => Json.fromString("c(" + cell.x + ", " + cell.y + ")"))
             )
           )
         )
       )
     Json.obj(("tracks", Json.fromValues(objects)))
-}
+  }
 
-implicit val trackDecoder: Decoder[List[Track]] =
-    (c: HCursor) => {
+  implicit val trackDecoder: Decoder[List[Track]] = (c: HCursor) => {
     val tracks = c
       .downField("tracks")
       .focus
       .flatMap(_.asArray)
       .getOrElse(Vector.empty)
-      .flatMap(_.hcursor
-                .downField("cells")
-                .as[List[String]]
-                .toOption)
-      .map(s => Term.createTerm(
-                    s.mkString("[", ", ", "]")))
+      .flatMap(_.hcursor.downField("cells").as[List[String]].toOption)
+      .map(s => Term.createTerm(s.mkString("[", ", ", "]")))
       .map(trackFromTerm)
       .toList
       .map(Track(_))
 
     Right(tracks)
-}
+  }
 \end{lstlisting}

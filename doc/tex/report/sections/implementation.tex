@@ -103,6 +103,20 @@ potenziamenti fornire alla torre, al fine di massimizzare il punteggio di gioco.
 delle torri è stata implementata come una \textbf{implicit class} proprio sulla classe base della torre, in modo da
 renderle diposnibile il metodo \textit{boost} anche se non fa parte della sua struttura fisica.
 
+Il comportamento delle entità \texttt{Tower} è incapsulato all'interno di un attore, in modo da rispettare il modello
+ad attori sul quale si basa l'intera progettazione e struttura di gioco. Il \texttt{TowerActor} viene istanziato una
+volta che il player ha deciso di posizionare una torre all'interno della mappa di gioco, e il suo unico compito è
+quello di reagire agli eventi di gioco e comportarsi di conseguenza: infatti entrerà in una fase di
+\textit{detecting} dove dovrà verificare se stanno passando dei pallonicini all'interno del campo visivo della torre,
+e, in caso il suo rateo di fuoco glielo permetta, sparare un proiettile nella direzione del palloncino individuato.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{img/tower-actor}
+    \caption{Diagramma di sequenza dell'attore delle torri.}
+    \label{fig:tower-actor}
+\end{figure}
+
 \subsection{Alessandro Marcantoni}
 Il mio compito all'interno del progetto è stato quello di realizzare il \texttt{GameLoop}, i palloncini (l'entità base,
 i vari "potenziamenti" e infine il rispettivo attore), la gestione dei round (con relativa DSL per la loro creazione e

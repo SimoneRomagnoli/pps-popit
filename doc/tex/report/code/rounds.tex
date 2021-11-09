@@ -1,0 +1,7 @@
+\begin{lstlisting}[label=code:rounds, language=Scala, caption=Esempio di dichiarazione di un \texttt{Round} mediante DSL.]
+Round.of(
+  Streak(n) :- balloonLife,
+  Streak(m) :- (balloonLife & balloonType1 & balloonType2 & ...),
+  (Streak(l) :- (balloonLife & balloonType1 & balloonType2 & ...) @@ delay),
+)
+\end{lstlisting}

@@ -1,9 +1,8 @@
 package model
 
 import model.entities.Entities.Entity
-import model.entities.balloons.Balloons.Balloon
 
-import scala.language.{ implicitConversions, postfixOps }
+import scala.language.{ implicitConversions, postfixOps, reflectiveCalls }
 
 object Positions {
 
@@ -29,14 +28,14 @@ object Positions {
     def -(other: Vector2D): Vector2D = (v.x - other.x, v.y - other.y)
     def *(value: Double): Vector2D = (v.x * value, v.y * value)
 
-    def intersectsWith(balloon: Balloon)(radius: Double): Boolean =
-      distanceVector(v)(balloon position) match {
-        case Vector2DImpl(x, _) if x > ((balloon.boundary._1 / 2) + radius) => false
-        case Vector2DImpl(_, y) if y > ((balloon.boundary._2 / 2) + radius) => false
-        case Vector2DImpl(x, _) if x <= (balloon.boundary._1 / 2)           => true
-        case Vector2DImpl(_, y) if y <= (balloon.boundary._2 / 2)           => true
+    def intersectsWith(entity: Entity)(radius: Double): Boolean =
+      distanceVector(v)(entity position) match {
+        case Vector2DImpl(x, _) if x > ((entity.boundary._1 / 2) + radius) => false
+        case Vector2DImpl(_, y) if y > ((entity.boundary._2 / 2) + radius) => false
+        case Vector2DImpl(x, _) if x <= (entity.boundary._1 / 2)           => true
+        case Vector2DImpl(_, y) if y <= (entity.boundary._2 / 2)           => true
         case distance =>
-          squareDistance(distance)((balloon.boundary._1 / 2, balloon.boundary._2 / 2)) <= Math.pow(
+          squareDistance(distance)((entity.boundary._1 / 2, entity.boundary._2 / 2)) <= Math.pow(
             radius,
             2
           )

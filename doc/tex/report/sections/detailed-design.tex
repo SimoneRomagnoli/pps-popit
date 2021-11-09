@@ -81,3 +81,34 @@ macro-comportamenti:
 
 Infine, il \textit{manager} dei dati di gioco è semplicemente composto da un solo comportamento in cui modifica o
 inoltra i dati quando richiesto.
+
+\subsection{Design della View}
+Come anticipato, per poter comunicare con il \texttt{Controller}, anche la \texttt{View} è stata progettata come un
+attore. Vista la dipendenza del progetto da \textit{ScalaFX}, il suo compito principale è quello di agire su un insieme
+di \textit{controller fxml} che contengono elementi grafici, e che permettono di modificare il contenuto
+dell'interfaccia grafica. Data la complessità di queste componenti grafiche, l'attore della \texttt{View} è stato
+modellato con un comportamento per ciascuna pagina del gioco:
+\begin{itemize}
+    \item inMenu, relativo al pagina del menù principale;
+    \item inGame, relativo alla pagina di gioco;
+    \item inSettings, relativo alla pagina delle impostazioni di gioco;
+    \item inSavedTracks, relativo alla pagina in cui si possono vedere le tracce di partite già giocate.
+\end{itemize}
+
+La suddivisione (mostrata in figura \ref{fig:view-behaviors}) permette di ottenere accesso agli elementi grafici
+solamente quando lo \textbf{stato} dell'attore lo concede e di semplificare l'implementazione dei \textit{controller}
+non dovendone gestire l'interazione. Quindi, si potrebbe concludere che la \texttt{View} funga da \textbf{Facade}
+\cite{FacadePattern}, con un'ulteriore fattore di modularizzazione dovuta all'introduzione dei comportamenti dell'attore.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{img/state-view-behaviors}
+    \caption{Diagramma di stato UML dei comportamenti della \texttt{View}, che riflette la navigazione tra le pagine
+    del sistema.}
+    \label{fig:view-behaviors}
+\end{figure}
+
+Inoltre, per rispettare al meglio il pattern \textit{MVC}, il componente in discussione non ha alcun riferimento al
+\texttt{Controller}, bensì viene sfruttato l'\textit{higher order} e vengono passati i metodi di invio e richiesta di
+messaggi a ciascun \textit{controller fxml}, in modo da lasciare gli aspetti di input esclusivamente al
+\texttt{Controller}.

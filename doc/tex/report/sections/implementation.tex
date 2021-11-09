@@ -285,9 +285,9 @@ in gioco.
 \end{figure}
 
 \subsection{Simone Romagnoli}
-Fungendo da \textit{product owner}, le porzioni di progetto di cui mi sono occupato sono molteplici: oltre ad aver 
-proposto il design dell'architettura complessiva, ho partecipato all'implementazione di svariate parti del sistema e, a 
-volte, ho rivalutato l'effettiva scrittura di alcune funzionalità. Di seguito, descrivo le parti significative del mio 
+Fungendo da \textit{product owner}, le porzioni di progetto di cui mi sono occupato sono molteplici: oltre ad aver
+proposto il design dell'architettura complessiva, ho partecipato all'implementazione di svariate parti del sistema e, a
+volte, ho rivalutato l'effettiva scrittura di alcune funzionalità. Di seguito, descrivo le parti significative del mio
 lavoro, focalizzandomi sugli aspetti implementativi importanti per la totalità del progetto.
 
 \subsubsection{Tracce di gioco}
@@ -315,10 +315,7 @@ introducendo fattori di casualità nel processo di scelta delle celle, ad esempi
 sempre più probabile con l'aumentare di celle consecutive aventi lo stesso orientamento. Anche la difficoltà di gioco
 è un fattore determinante: la traccia, infatti, non torna mai verso la cella d'inizio quando la difficoltà è difficile,
 in modo da accorciare la traccia e facilitare i palloncini, mentre, in modalità facile, è più probabile ottenere una
-traccia più lunga. Nel listato \ref{code:prolog-theory}, si mostra l'algoritmo di individuazione del percorso preso
-dalla teoria \textit{prolog}.
-
-\input{code/theory}
+traccia più lunga.
 
 \subsubsection{Abilità di TrackFollowing}
 Per muovere i palloncini sulla traccia, sarebbe corretto rispettare la gerarchia di entità mostrata nella sezione
@@ -333,7 +330,23 @@ lineare nella traccia. Per approfondire, la posizione lineare è stata pensata c
 intera rappresenta l'indice della cella occupata dal palloncino nella traccia, mentre la parte decimale indica la
 percentuale attraversata della cella stessa.
 
-\subsubsection{FXML Controllers}
 \subsubsection{Rendering DSL}
+Vista la complessità dei \textit{controller fxml}, è stato implementato un \textit{domain-specific language} che
+semplifica la creazione di elementi grafici con una sintassi espressiva e sintetica. A tale scopo, è stato creato
+l'oggetto \texttt{Rendering} che fornisce un metodo per disegnare oggetti di diverso tipo: per farlo, è stato
+implementato un generico \texttt{Drawer} che, con un meccanismo simile a quello delle \textit{type-class}, permette di
+disegnare svariate entità. Il listato \ref{code:rendering} mostra gli strumenti utilizzati per tale procedura.
+
+\input{code/rendering}
+
+In questo modo, viene semplificata la creazione di elementi grafici comuni in più \textit{controller fxml}, come, ad
+esempio, le torri disegnate sia nel \texttt{GameController} sia nel \texttt{GameMenuController}. L'interfaccia
+\texttt{Renderable} è semplicemente un contenitore di \texttt{Shape} di \textit{ScalaFX}. Inoltre, si sottolinea che il
+\texttt{Drawer} deve essere necessariamente controvariante per via della gerarchia di entità da renderizzare: infatti,
+ha senso che un \texttt{Drawer[Entity]} sappia disegnare una torre, mentre un \texttt{Drawer[Tower]} non sappia
+disegnare una entità, rendendo, di fatto, il primo sottotipo del secondo. Nel listato \ref{code:view-draw} si mostrano
+due diverse applicazioni del \textit{domain-specific language} appena descritto.
+
+\input{code/view-draw}
 
 

@@ -100,8 +100,9 @@ Inoltre ogni torre dispone di una funzionalità di \textit{boosting} aggiuntiva 
 dei suoi campi durante il gioco, in modo che con l'aumentare dei round e quindi della difficoltà, il giocatore riesca
 comunque ad avere un supporto adeguato per vincere i round. Rimane nella strategia del player capire quando e quali
 potenziamenti fornire alla torre, al fine di massimizzare il punteggio di gioco. La funzionalità di potenziamento
-delle torri è stata implementata come una \textbf{implicit class} proprio sulla classe base della torre, in modo da
-renderle diposnibile il metodo \textit{boost} anche se non fa parte della sua struttura fisica.
+delle torri è stata implementata come una \textbf{implicit class} proprio sulla classe base della torre seguendo il
+principio del \textit{Pimp My Library}, in modo da rendere disponibile il metodo \textit{boost} anche se non fa
+parte della sua struttura fisica.
 
 Il comportamento delle entità \texttt{Tower} è incapsulato all'interno di un attore, in modo da rispettare il modello
 ad attori sul quale si basa l'intera progettazione e struttura di gioco. Il \texttt{TowerActor} viene istanziato una

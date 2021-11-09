@@ -1,0 +1,68 @@
+@startuml
+
+class Bullet
+class Balloon
+class Tower
+
+interface Entity {
+    +position: Vector2D
+    +in(position: Vector2D): Entity
+    +update(elapsed: Double): Entity
+}
+
+interface MovementAbility {
+    +speed: Vector2D
+    +at(speed: Vector2D): Entity
+    -move(elapsed: Double): Entity
+}
+Entity <|-down- MovementAbility
+
+interface TrackFollowing {
+    +track: Track
+    +on(track: Track): TrackFollowing
+    +following(trackFollowing: TrackFollowing): Balloon
+    +compareTo(other: TrackFollowing): Int
+}
+MovementAbility <|-down- TrackFollowing
+
+interface PoppingAbility {
+    +life: Int
+    +pop(bullet: Bullet): Option[Entity]
+}
+Entity <|-down- PoppingAbility
+
+interface SightAbility {
+    +sightRange: Double
+    +sight(radius: Double): SightAbility
+    +isInSightRange(entity: Entity): Boolean
+}
+Entity <|-down- SightAbility
+
+interface EnhancedSightAbility
+SightAbility <|-down- EnhancedSightAbility
+
+interface RotationAbility {
+    +direction: Vector2D
+    +rotateTo(direction: Vector2D): RotationAbility
+}
+Entity <|-down- RotationAbility
+
+interface ShootingAbility {
+    +shotRatio: Double
+    +bullet: Bullet
+    +ratio(ratio: Double): ShootingAbility
+    +damage(bullet: Bullet): ShootingAbility
+}
+Entity <|-down- ShootingAbility
+
+TrackFollowing <|.down. Balloon
+PoppingAbility <|.down.. Balloon
+
+MovementAbility <|.down. Bullet
+
+SightAbility <|.down. Tower
+RotationAbility <|.down. Tower
+ShootingAbility <|.down. Tower
+
+
+@enduml

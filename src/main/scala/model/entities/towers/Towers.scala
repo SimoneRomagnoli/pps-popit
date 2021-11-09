@@ -1,7 +1,13 @@
 package model.entities.towers
 
 import model.Positions.{ defaultPosition, Vector2D }
-import model.entities.Entities.{ EnhancedSightAbility, Entity, ShotAbility, SightAbility }
+import model.entities.Entities.{
+  EnhancedSightAbility,
+  Entity,
+  RotationAbility,
+  ShootingAbility,
+  SightAbility
+}
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Fire, Ice, IceBall }
 import model.entities.towers.TowerValues._
 import model.entities.towers.Towers.Tower
@@ -19,7 +25,11 @@ object Towers {
    * @tparam B
    *   is the type of the bullet it can shoot
    */
-  trait Tower[+B <: Bullet] extends Entity with SightAbility with ShotAbility {
+  trait Tower[+B <: Bullet]
+      extends Entity
+      with SightAbility
+      with ShootingAbility
+      with RotationAbility {
     type Boundary = (Double, Double)
 
     def bullet: B

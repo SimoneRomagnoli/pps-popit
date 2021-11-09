@@ -78,16 +78,6 @@ class SpawnManagerTest
   override def beforeEach(): Unit = balloonsSpawned = List()
 
   "The spawner" when {
-    "told the start the next round" should {
-      val spawner: ActorRef[Update] = testKit.spawn(SpawnManager(model, TimeSettings()))
-      "start the round" in {
-        RoundsFactory.startGame()
-        RoundsFactory.currentRound shouldBe 0
-        spawner ! StartNextRound()
-        waitSomeTime()
-        RoundsFactory.currentRound shouldBe 1
-      }
-    }
     "the track changes" should {
       val spawner: ActorRef[Update] = testKit.spawn(SpawnManager(model, TimeSettings()))
       val track: Track = Track(Seq(Cell(0, 0)))

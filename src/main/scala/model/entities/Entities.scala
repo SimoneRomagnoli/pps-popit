@@ -144,7 +144,7 @@ object Entities {
    * Adds to the [[Entity]] the ability to be popped. It also introduces the concept of life, which
    * represents the amount of times it has to be hit in order to pop.
    */
-  trait Poppable extends Entity {
+  trait PoppingAbility extends Entity {
 
     /**
      * @return
@@ -167,11 +167,9 @@ object Entities {
    */
   trait SightAbility extends Entity {
     def sightRange: Double
-    def direction: Vector2D
 
-    def rotateTo(dir: Vector2D): SightAbility
     def sight(radius: Double): SightAbility
-    def isInSightRange(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
+    def isInSightRange(entity: Entity): Boolean = position.intersectsWith(entity)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
       case CamoBalloon(_)          => false
@@ -188,15 +186,24 @@ object Entities {
   }
 
   /**
+   * Adds to the [[Entity]] the ability to rotate towards a direction.
+   */
+  trait RotationAbility extends Entity {
+    def direction: Vector2D
+
+    def rotateTo(dir: Vector2D): RotationAbility
+  }
+
+  /**
    * Adds to the [[Entity]] the ability to shoot a [[Bullet]].
    */
-  trait ShotAbility extends Entity {
+  trait ShootingAbility extends Entity {
     def bullet: Bullet
     def shotRatio: Double
 
-    def ratio(ratio: Double): ShotAbility
+    def ratio(ratio: Double): ShootingAbility
 
-    def damage(ammo: Bullet): ShotAbility
+    def damage(ammo: Bullet): ShootingAbility
 
     def canAttackAfter: Double => Boolean =
       lastShotTime => (System.currentTimeMillis() - lastShotTime) / 1000.0 >= shotRatio

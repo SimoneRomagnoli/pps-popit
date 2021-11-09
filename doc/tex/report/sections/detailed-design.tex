@@ -6,12 +6,56 @@ sistema, senza esplorare l'implementazione effettiva del codice.
 A partire dall'analisi dei requisiti funzionali del sistema, sono stati individuati gli aspetti fondamentali all'interno
 del modello di gioco. Nello specifico, sono emerse due macro-categorie:
 \begin{itemize}
-    \item \textbf{Elementi Statici} - ovvero tutti gli aspetti che trascendono dalla singola partita (gerarchia e logica 
-    delle entità).
+    \item \textbf{Elementi Statici} - ovvero tutti gli aspetti che trascendono dalla singola partita.
     \item \textbf{Elementi Dinamici} - ovvero tutte le dinamiche che dipendono strettamente dalla partita in corso.
 \end{itemize}
 
 \subsubsection{Elementi Statici}
+Dall'analisi dei requisiti, è emerso che le entità in gioco presentano tratti comuni e caratteristiche specifiche. In
+particolare, un'entità deve possedere una posizione nello spazio di gioco e una dimensione; quindi, è stato modellato
+un primo tratto comune \texttt{Entity} che rappresenta ogni oggetto sulla mappa, associandoci una posizione e una
+dimensione. A partire da questo, sono state analizzate le entità da rappresentare, andando ad individuare una gerarchia
+di caratteristiche atomiche che permettono di definire ogni sottotipo di \texttt{Entity} come combinazione di queste
+ultime. Tali abilità, mostrate in figura \ref{fig:class-entity-hierarchy}, sono:
+\begin{itemize}
+    \item \texttt{Movement Ability} - aggiunge all'entità la capacità di cambiare la propria posizione in base alla
+    propria velocità.
+    \item \texttt{Track Following} - modifica la capacità di movimento limitando l'entità all'interno della traccia di
+    gioco.
+    \item \texttt{Popping Ability} - aggiunge all'entità una vita che può essere ridotta con un "pop" (chiamato così
+    poiché concerne solamente i palloncini).
+    \item \texttt{Sight Ability} - aggiunge all'entità la capacità di vedere altre entità all'interno del proprio campo
+    visivo.
+    \item \texttt{Enhanced Sight Ability} - aggiunge alla \texttt{Sight Ability} la capacità di vedere eventuali entità
+    invisibili.
+    \item \texttt{Rotation Ability} - aggiunge all'entità la capacità di ruotare su se stessa, modificando la propria
+    direzione.
+    \item \texttt{Shooting Ability} - aggiunge all'entità la capacità di sparare proiettili.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{img/class-entity-hierarchy-extended}
+    \caption{Diagramma delle classi della gerarchia di entità.}
+    \label{fig:class-entity-abilities}
+\end{figure}
+
+Grazie a queste, è possibile esprimere le entità di gioco come segue:
+\begin{itemize}
+    \item Proiettile - entità con \texttt{Movement Ability} ed eventuale \texttt{Sight Ability} nel caso in cui possa
+    esplodere, includendo nell'esplosione le entità all'interno del proprio campo visivo.
+    \item Torre - entità con \texttt{Rotation Ability}, \texttt{Shooting Ability} e \texttt{Sight Ability}: infatti, le
+    torri non possono muoversi, una volta istanziate, ma possono ruotare su se stesse e sparare proiettili verso i
+    palloncini che rientrano nel loro campo visivo; eventualmente, la visione delle torri può essere potenziata con la
+    \texttt{Enhanced Sight Ability}, per vedere palloncini invisibili.
+    \item Palloncini - entità che si muove sulla traccia (\texttt{Track Following}) e che può essere scoppiata (
+    \texttt{Popping Ability}).
+\end{itemize}
+
+Date le specifiche, è stato inoltre necessario definire un ulteriore sistema di riferimento spaziale che rappresenti la
+mappa di gioco; è stata quindi realizzata una griglia sottostante all'interfaccia, che suddivide la mappa in celle per
+riuscire a individuare punti a due coordinate nello spazio. Così facendo, è anche possibile rappresentare la traccia di
+gioco come una sequenza ordinata di celle della griglia.
 
 \subsubsection{Elementi Dinamici}
 Inizialmente, è stato progettato il \texttt{Model} in modo che gestisse tutti gli aspetti dinamici del sistema.

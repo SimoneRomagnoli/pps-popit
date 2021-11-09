@@ -82,9 +82,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
         default()
 
       case Hit(bullet, replyTo) =>
-        hit(bullet, replyTo) { case _ =>
-          Behaviors.same
-        }
+        hit(bullet, replyTo)(_ => Behaviors.same)
 
       case UpdateEntity(_, _, replyTo) =>
         replyTo ! EntityUpdated(balloon, ctx.self)
@@ -93,7 +91,7 @@ case class BalloonActor private (ctx: ActorContext[Update], var balloon: Balloon
   }
 
   private def hit(bullet: Bullet, replyTo: ActorRef[Update])(
-      bulletHandler: PartialFunction[Bullet, Behavior[Update]]): Behavior[Update] =
+      bulletHandler: Bullet => Behavior[Update]): Behavior[Update] =
     balloon.pop(bullet) match {
       case None =>
         replyTo ! Gain(balloonHitGain)

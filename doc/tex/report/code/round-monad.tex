@@ -1,0 +1,11 @@
+\begin{lstlisting}[label=code:roundmonad, language=Scala, caption=Esempio di dichiarazione di un \texttt{Round} mediante sintassi monadica.]
+(for {
+  _ <- define()
+  _ <- add(streak1)
+  _ <- add(streak2)
+} yield ()).built
+
+(for {
+  _ <- add(streak3)
+} yield ()).built
+\end{lstlisting}

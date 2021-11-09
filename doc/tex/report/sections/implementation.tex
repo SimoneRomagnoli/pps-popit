@@ -177,6 +177,31 @@ arrivato alla fine del percorso oppure ne vengono gestiti l'esplosione e il cong
     \label{fig:state-balloon-actor}
 \end{figure}
 
+\subsubsection{Rounds}
+I \textit{round} è rappresentato da una sequenza prestabilita di palloncini che attraversano il percorso e minacciano le
+vite a disposizione del giocatore. All'interno di uno stesso \textit{round} possono essere presenti più "ondate" di
+palloncini e queste ultime prendono il nome di \texttt{Streak}. L'implementazione più naturale consiste quindi nel
+definire un \texttt{Round} come sequenza di \texttt{Streak}, ognuna delle quali è caratterizzata da diversi attributi:
+\begin{itemize}
+    \item La quantità di palloncini;
+    \item Informazioni riguardo al tipo del palloncino: la sua vita ed eventuali potenziamenti;
+    \item Il tempo che intercorre tra la generazione di un palloncino e quella del successivo.
+\end{itemize}
+
+Per poter definire in modo elegante e conciso un \texttt{Round}, è stata implementata una DSL che quindi permette di
+utilizzare la sintassi indicata nel listato \ref{code:rounds} dove \texttt{n}, \texttt{m} e \texttt{l} rappresentano il
+numero di palloncini all'interno della \texttt{Streak} corrispondente.
+\input{code/rounds}
+
+Inoltre, è stata resa disponibile anche una sintassi monadica per la definizione del \texttt{Round}. Tale approccio si è
+rivelato utile soprattutto per la definizione di \textit{round} più complessi e per garantire maggiore flessiblità: il
+precedente approccio obbligava infatti ad inserire tutte le \texttt{Streak} al momento della creazione di un'istanza di
+\texttt{Round}, mentre in questo modo è possibile aggiungere \texttt{Streak} in momenti diversi e, quando si è
+soddisfatti del risultato, generare il \texttt{Round} complessivo. È possibile apprezzare tale sintassi, realizzata
+sfruttando la monade \texttt{IO} della libreria \textit{cats} \cite{cats-effects}, all'interno del listato
+\ref{code:roundmonad}.
+\input{code/round-monad}
+
 \subsection{Matteo Ragazzini}
 
 \subsection{Simone Romagnoli}

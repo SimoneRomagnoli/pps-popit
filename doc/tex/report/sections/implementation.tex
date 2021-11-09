@@ -147,17 +147,21 @@ la lista di entità provenienti dal \texttt{Model}. Le interazioni appena descri
 \subsubsection{Palloncini}
 I palloncini rappresentano una delle entità fondamentali del gioco. In particolare, essi sono in grado di muoversi
 seguendo un percorso e possono essere scoppiati da un proiettile: pertanto, il \texttt{trait Balloon} estende il
-\texttt{trait Entity} a cui aggiunge poi le abilità \texttt{TrackFollowing} e \texttt{Poppable} mediante il meccanismo
-di \textbf{mixin}.
+\texttt{trait Entity} a cui aggiunge poi le abilità \texttt{TrackFollowing} e \texttt{PoppingAbility} mediante il
+meccanismo di \textbf{mixin}.
 
 Per quanto riguarda la loro struttura, i palloncini possono essere \texttt{Simple}, se non ne includono altri al loro
 interno, o \texttt{Complex} altrimenti. Tale implementazione permette di rappresentare in modo intuitivo l'effettivo
 dominio in quanto, un palloncino complesso, quando scoppiato, deve mostrare il palloncino da lui nascosto.
 
-\input{code/poppables}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.3\linewidth]{img/class-balloons}
+    \caption{Diagramma di classi dei palloncini.}
+    \label{fig:class-balloons}
+\end{figure}
 
-Come mostrato nel listato \ref{code:poppables}, tale implementazione rispecchia quella di un \textbf{sum type}: struttura
-dati tipica della programmazione funzionale.
+Tale implementazione rispecchia quella di un \textbf{sum type}: struttura dati tipica della programmazione funzionale.
 
 Degni di nota all'interno del \texttt{trait Balloon} sono i metodi \texttt{change} e \texttt{retrieve}. I palloncini
 espongono diversi metodi per accedere o cambiare il valore di proprietà che sono contenute all'interno del

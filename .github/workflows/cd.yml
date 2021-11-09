@@ -6,11 +6,8 @@ on:
 
 jobs:
   build:
-    name: Create jars
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+    name: Create jar
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
@@ -32,7 +29,7 @@ jobs:
         id: create_release
         uses: actions/upload-artifact@v2
         with:
-          name: pps-popit-${{ matrix.os }}
+          name: pps-popit
           path: target/scala-2.13/*.jar
           retention-days: 1
 
@@ -42,19 +39,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
-      - name: Rename artifacts
-        run: mv pps-popit-windows-latest/*.jar pps-popit-windows-latest/pps-popit-windows.jar
-      - name: Rename artifacts
-        run: mv pps-popit-ubuntu-latest/*.jar pps-popit-ubuntu-latest/pps-popit-ubuntu.jar
-      - name: Rename artifacts
-        run: mv pps-popit-macos-latest/*.jar pps-popit-macos-latest/pps-popit-macos.jar
+      - name: Rename artifact
+        run: mv pps-popit/*.jar pps-popit/pps-popit.jar
       - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "0.3.0"
-          prerelease: true
-          title: "Scrum Sprint 3 - Release"
-          files: |
-            pps-popit-windows-latest/*.jar
-            pps-popit-macos-latest/*.jar
-            pps-popit-ubuntu-latest/*.jar
+          automatic_release_tag: "0.4.0"
+          prerelease: false
+          title: "Scrum Sprint 4 - Release"
+          files: pps-popit/*.jar

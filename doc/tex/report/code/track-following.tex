@@ -1,13 +1,6 @@
-\begin{lstlisting}[label=code:track-following, language=Scala, caption=Interfaccia estesa dai palloncini per rimanere
-sul tracciato]
-/**
-   * Adds to the [[Entity]] the ability to follow a [[Track]]:
-   *   - has a [[Track]]
-   *   - can change the [[Track]]
-   *   - can follow another [[TrackFollowing]]
-   *   - moves on the track when updating
-   */
-  trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] { balloon: Balloon =>
+\begin{lstlisting}[label=code:track-following, language=Scala, caption=Interfaccia per rimanere sul tracciato]
+/** Adds to the entity the ability to follow a track. */
+trait TrackFollowing extends MovementAbility with Comparable[TrackFollowing] { balloon: Balloon =>
     private var linearPosition: Double = 0.0
 
     def track: Track
@@ -38,5 +31,5 @@ sul tracciato]
         .asInstanceOf[TrackFollowing]
         .following(linearPosition)
     }
-  }
+}
 \end{lstlisting}

@@ -1,10 +1,5 @@
 \begin{lstlisting}[label=code:prolog-engine, language=Scala, caption=Motore TuProlog]
-/**
- * A Prolog engine that solves queries.
- *
- * @param theory,
- *   the theory that the engine uses to solve queries.
- */
+/** A Prolog engine that solves queries. */
 case class PrologEngine(theory: Theory) extends Engine {
   val engine: Prolog = new Prolog
   engine.setTheory(theory)

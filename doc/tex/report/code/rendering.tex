@@ -1,0 +1,21 @@
+\begin{lstlisting}[label=code:rendering, language=Scala, caption=Implementazione della \textit{dsl} \texttt{Rendering}]
+/** Simulates a DSL for rendering logic entities. */
+object Rendering {
+
+  /** Draws a generic element with an implicit drawer. */
+  def a[T](element: T)(implicit drawer: Drawer[T]): Renderable = drawer.draw(element)
+
+  /** Contains all the implicit drawers that allow to render graphical elements. */
+  object Drawers {
+
+    /** Allows to turn a generic element into a [[Renderable]]. */
+    trait Drawer[-T] {
+      def draw(elem: T): Renderable
+    }
+
+    implicit val gridDrawer = ...
+    implicit val trackDrawer = ...
+    implicit val entityDrawer = ...
+  }
+}
+\end{lstlisting}

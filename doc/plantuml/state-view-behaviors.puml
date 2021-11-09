@@ -1,0 +1,13 @@
+@startuml
+
+[*] --> inMenu
+
+inMenu -down-> inSettings
+inSettings -up-> inMenu
+inMenu -down-> inGame
+inGame -up-> inMenu
+inMenu -down-> inSavedTracks
+inSavedTracks --> inMenu
+inSavedTracks --> inGame
+
+@enduml

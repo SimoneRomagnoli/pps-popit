@@ -1,0 +1,13 @@
+\begin{lstlisting}[label=code:view-draw, language=Scala, caption=Applicazione della \textit{dsl} \texttt{Rendering}]
+/** Renders a track into the proper pane. */
+override def draw(track: Track): Unit = Platform runLater {
+    Rendering a track into trackPane.children
+    trackChoiceController.show()
+}
+
+/** Renders a list of entities into the proper pane. */
+override def draw(entities: List[Entity]): Unit = Platform runLater {
+    entitiesPane.children.clear()
+    entities foreach (entity => Rendering a entity into entitiesPane.children)
+}
+\end{lstlisting}

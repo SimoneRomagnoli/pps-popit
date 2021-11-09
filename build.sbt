@@ -29,9 +29,9 @@ scalacOptions ++= Seq(
 )
 
 lazy val javaFxLibrary = for {
-  module <- Seq("controls", "fxml", "graphics", "media")
+  module <- Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
   os <- Seq("win", "mac", "linux")
-} yield "org.openjfx" % s"javafx-$module" % "16" classifier os
+} yield "org.openjfx" % s"javafx-$module" % "15.0.1" classifier os
 
 libraryDependencies ++= javaFxLibrary
 

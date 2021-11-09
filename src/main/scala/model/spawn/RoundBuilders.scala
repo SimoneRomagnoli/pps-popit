@@ -11,7 +11,7 @@ object RoundBuilders {
   object RoundBuilder {
     var round: Seq[Streak] = Seq()
 
-    def empty(): Unit = round = Seq()
+    def define(): IO[Unit] = round = Seq()
 
     def get: Round = Round(round.reverse)
   }
@@ -25,11 +25,9 @@ object RoundBuilders {
   implicit class RichIO(io: IO[Unit]) {
 
     /** Returns the [[Round]] built. */
-    def get: Round = {
+    def built: Round = {
       io.unsafeRunSync()
-      val r: Round = RoundBuilder.get
-      RoundBuilder.empty()
-      r
+      RoundBuilder.get
     }
   }
 

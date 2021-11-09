@@ -2,13 +2,13 @@ package model.actors
 
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartNextRound}
 import controller.interaction.Messages.Update
 import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
-import model.actors.SpawnManagerTest.{ balloonsSpawned, dummyModel, waitSomeTime }
-import model.entities.balloons.BalloonDecorations.{ Camo, Lead, Regenerating }
+import model.actors.SpawnManagerTest.{balloonsSpawned, dummyModel, waitSomeTime}
+import model.entities.balloons.BalloonDecorations.{Camo, Lead, Regenerating}
 import model.entities.balloons.BalloonLives._
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
@@ -17,8 +17,9 @@ import model.managers.SpawnManager
 import model.managers.SpawnerMessages.StartRound
 import model.maps.Cells.Cell
 import model.maps.Tracks.Track
-import model.spawn.RoundBuilders.{ add, RichIO }
-import model.spawn.Rounds.{ Round, Streak }
+import model.spawn.RoundBuilders.RoundBuilder.define
+import model.spawn.RoundBuilders.{RichIO, add}
+import model.spawn.Rounds.{Round, Streak}
 import model.spawn.RoundsFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -50,14 +51,18 @@ class SpawnManagerTest
   val nBalloons: Int = 5
   val simpleRound: Round = Round.of(Streak(nBalloons))
 
-  val simpleRoundBalloons: List[Balloon] =
-    LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
-
-  val complexRound: Round = (for {
+  (for {
+    _ <- define()
     _ <- add((Streak(nBalloons) :- Red) @@ 50.milliseconds)
     _ <- add((Streak(nBalloons) :- (Blue & Camo & Regenerating)) @@ 50.milliseconds)
+  } yield ()).built
+
+  val complexRound: Round = (for {
     _ <- add((Streak(nBalloons) :- (Green & Lead & Camo)) @@ 50.milliseconds)
-  } yield ()).get
+  } yield ()).built
+
+  val simpleRoundBalloons: List[Balloon] =
+    LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList
 
   val complexRoundBalloons: List[Balloon] =
     (LazyList.iterate(Red balloon)(b => b).take(nBalloons).toList appendedAll

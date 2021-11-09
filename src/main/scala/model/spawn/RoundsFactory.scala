@@ -1,11 +1,12 @@
 package model.spawn
 
 import cats.effect.IO
-import model.entities.balloons.BalloonDecorations.{ BalloonType, Camo, Lead, Regenerating }
-import model.entities.balloons.BalloonLives.{ Blue, Green, Red }
+import model.entities.balloons.BalloonDecorations.{BalloonType, Camo, Lead, Regenerating}
+import model.entities.balloons.BalloonLives.{Blue, Green, Red}
 import model.spawn.BalloonsFunctions._
-import model.spawn.RoundBuilders.{ add, RichIO }
-import model.spawn.Rounds.{ Round, Streak }
+import model.spawn.RoundBuilders.RoundBuilder.define
+import model.spawn.RoundBuilders.{RichIO, add}
+import model.spawn.Rounds.{Round, Streak}
 
 import scala.concurrent.duration.DurationInt
 
@@ -19,8 +20,9 @@ object RoundsFactory {
 
   def nextRound(): Round = (for {
     _ <- incrementRound()
+    _ <- define()
     _ <- chooseRound(round)
-  } yield ()).get
+  } yield ()).built
 
   private def chooseRound(round: Int): IO[Unit] = round match {
     case i if i < easyRoundLimit => easyRounds(round)

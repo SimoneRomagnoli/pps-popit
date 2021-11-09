@@ -47,7 +47,6 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % Test, // sbt's test interface for JUnit 4
   "org.junit.jupiter" % "junit-jupiter" % "5.7.1" % Test, // aggregator of junit-jupiter-api and junit-jupiter-engine (runtime)
   "org.junit.jupiter" % "junit-jupiter-engine" % "5.7.1" % Test, // for org.junit.platform
-  "net.aichler" % "jupiter-interface" % "0.8.4" % Test,
   "org.scalatest" %% "scalatest" % "3.1.0" % Test,
   "org.junit.vintage" % "junit-vintage-engine" % "5.7.1" % Test,
   "org.junit.platform" % "junit-platform-launcher" % "1.7.1" % Test,

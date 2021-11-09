@@ -37,7 +37,9 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case UpdateEntity(elapsedTime, entities, replyTo) =>
+      println("inside actor 1: " + bullet.position)
       bullet = bullet.update(elapsedTime).asInstanceOf[Bullet]
+      println("inside actor 2: " + bullet.position)
       if (bullet.exitedFromScreen()) {
         replyTo ! BulletKilled(ctx.self)
         Behaviors.stopped

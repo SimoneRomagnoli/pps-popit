@@ -5,7 +5,7 @@ import model.Positions.{ defaultPosition, fromTuple }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletValues._
-import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall, Shooting }
+import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, IceBall, Shooting }
 import model.entities.towers.TowerTypes.{ Arrow, Cannon, Ice }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -14,7 +14,7 @@ import scala.language.postfixOps
 
 class BulletsTest extends AnyFlatSpec with Matchers {
   val iceBall: IceBall = IceBall()
-  val dart: Dart = Dart()
+  var dart: Bullet = Dart()
   val cannonBall: CannonBall = CannonBall()
   val balloon: Balloon = (Red balloon) in (100.0, 100.0)
 
@@ -52,7 +52,7 @@ class BulletsTest extends AnyFlatSpec with Matchers {
 
   "The Bullet Damage" should "be able to be powered up" in {
     val newDamage: Double = 3.0
-    dart.hurt(newDamage)
+    dart = dart.hurt(newDamage)
     dart.damage shouldBe newDamage
   }
 
@@ -61,23 +61,23 @@ class BulletsTest extends AnyFlatSpec with Matchers {
   }
 
   "A Bullet" should "collide with a balloon" in {
-    dart in (0.0, 0.0)
-    dart at (100.0, 100.0)
+    dart = dart in (0.0, 0.0)
+    dart = dart at (100.0, 100.0)
     dart hit balloon shouldBe false
-    dart.update(1.0)
+    dart = dart.update(1.0).asInstanceOf[Bullet]
     dart hit balloon shouldBe true
   }
 
   "A Bullet" should "realise when it goes out of the screen" in {
-    dart in (0.0, 0.0)
+    dart = dart in (0.0, 0.0)
     dart.exitedFromScreen() shouldBe false
-    dart in (CommonValues.Screen.width + 1, 0.0)
+    dart = dart in (CommonValues.Screen.width + 1, 0.0)
     dart.exitedFromScreen() shouldBe true
-    dart in (0.0, CommonValues.Screen.height + 1)
+    dart = dart in (0.0, CommonValues.Screen.height + 1)
     dart.exitedFromScreen() shouldBe true
-    dart in (-1.0, 0.0)
+    dart = dart in (-1.0, 0.0)
     dart.exitedFromScreen() shouldBe true
-    dart in (0.0, -1.0)
+    dart = dart in (0.0, -1.0)
     dart.exitedFromScreen() shouldBe true
   }
 }

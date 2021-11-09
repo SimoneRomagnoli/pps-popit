@@ -7,8 +7,7 @@ import model.actors.BulletActorTest._
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.BulletValues.bulletDefaultSightRange
-import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Explosion }
+import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart }
 import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -16,12 +15,12 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import scala.language.postfixOps
 
 object BulletActorTest {
+  var collisionPosition: (Double, Double) = (100.0, 100.0)
   var outsideDart: Bullet = Dart() in (Double.MaxValue, 0.0)
   var dart: Bullet = Dart()
-  var cannonBall: Explosion = CannonBall()
+  var cannonBall: Bullet = CannonBall() in collisionPosition
   var balloon: Balloon = Red balloon
   var balloon2: Balloon = Red balloon
-  var collisionPosition: (Double, Double) = (100.0, 100.0)
 
 }
 
@@ -34,16 +33,19 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
   "The Bullet Actor" when {
     "asked to update" should {
       "update the position of its bullet" in {
+        dart = Dart()
         dartActor ! UpdateEntity(0.0, List(dart), model.ref)
         model expectMessage EntityUpdated(dart, dartActor)
       }
     }
     "a bullet touches a balloon" should {
+
+      dart = dart in collisionPosition
+      balloon = balloon in collisionPosition
+      val dartActor: ActorRef[Update] = testKit.spawn(BulletActor(dart in collisionPosition))
       "hit it" in {
-        dart in collisionPosition
-        balloon = balloon in collisionPosition
         dartActor ! UpdateEntity(0.0, List(dart, balloon), model.ref)
-        model expectMessage BalloonHit(dart, List(balloon))
+        model expectMessage BalloonHit(dart in collisionPosition, List(balloon))
       }
       "kill the bullet" in {
         model expectMessage BulletKilled(dartActor)
@@ -57,7 +59,7 @@ class BulletActorTest extends ScalaTestWithActorTestKit with AnyWordSpecLike wit
     }
     "an explosion bullet touches a balloon" should {
       "start an explosion " in {
-        cannonBall in collisionPosition
+        cannonBall = cannonBall in collisionPosition
         balloon = balloon in collisionPosition
         balloon2 = balloon2 in collisionPosition
         cannonBallActor ! UpdateEntity(0.0, List(cannonBall, balloon, balloon2), model.ref)

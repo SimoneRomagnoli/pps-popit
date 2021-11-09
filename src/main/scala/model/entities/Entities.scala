@@ -167,9 +167,7 @@ object Entities {
    */
   trait SightAbility extends Entity {
     def sightRange: Double
-    def direction: Vector2D
 
-    def rotateTo(dir: Vector2D): SightAbility
     def sight(radius: Double): SightAbility
     def isInSightRange(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
 
@@ -185,6 +183,15 @@ object Entities {
    */
   trait EnhancedSightAbility extends SightAbility {
     override def canSee(balloon: Balloon): Boolean = isInSightRange(balloon)
+  }
+
+  /**
+   * Adds to the [[Entity]] the ability to rotate towards a direction.
+   */
+  trait RotationAbility extends Entity {
+    def direction: Vector2D
+
+    def rotateTo(dir: Vector2D): RotationAbility
   }
 
   /**

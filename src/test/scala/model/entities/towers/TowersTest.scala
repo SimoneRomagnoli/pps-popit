@@ -30,6 +30,12 @@ class TowersTest extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
   "Towers" when {
     "just created" should {
+      "be able to change its direction" in {
+        val direction = tower.direction
+        tower.direction == direction shouldBe true
+        val newTower = tower rotateTo balloonPosition
+        newTower.direction != direction shouldBe true
+      }
       "not see the balloon because it is across the map" in {
         (tower position) shouldBe towerPosition
         (balloon position) shouldBe balloonPosition

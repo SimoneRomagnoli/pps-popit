@@ -144,7 +144,7 @@ object Entities {
    * Adds to the [[Entity]] the ability to be popped. It also introduces the concept of life, which
    * represents the amount of times it has to be hit in order to pop.
    */
-  trait Poppable extends Entity {
+  trait PoppingAbility extends Entity {
 
     /**
      * @return
@@ -197,13 +197,13 @@ object Entities {
   /**
    * Adds to the [[Entity]] the ability to shoot a [[Bullet]].
    */
-  trait ShotAbility extends Entity {
+  trait ShootingAbility extends Entity {
     def bullet: Bullet
     def shotRatio: Double
 
-    def ratio(ratio: Double): ShotAbility
+    def ratio(ratio: Double): ShootingAbility
 
-    def damage(ammo: Bullet): ShotAbility
+    def damage(ammo: Bullet): ShootingAbility
 
     def canAttackAfter: Double => Boolean =
       lastShotTime => (System.currentTimeMillis() - lastShotTime) / 1000.0 >= shotRatio

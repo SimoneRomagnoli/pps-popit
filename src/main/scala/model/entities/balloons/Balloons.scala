@@ -1,7 +1,7 @@
 package model.entities.balloons
 
 import model.Positions.{ defaultPosition, Vector2D }
-import model.entities.Entities.{ Entity, Poppable, TrackFollowing }
+import model.entities.Entities.{ Entity, PoppingAbility, TrackFollowing }
 import model.entities.balloons.BalloonValues.{ balloonDefaultBoundary, balloonDefaultSpeed }
 import model.entities.bullets.Bullets.Bullet
 import model.maps.Tracks.Track
@@ -13,9 +13,9 @@ object Balloons {
 
   /**
    * A [[Balloon]] is the main [[Entity]] of the game which has the ability to move on a [[Track]]
-   * thanks to [[TrackFollowing]] and to be popped thanks to [[Poppable]].
+   * thanks to [[TrackFollowing]] and to be popped thanks to [[PoppingAbility]].
    */
-  trait Balloon extends Entity with TrackFollowing with Poppable {
+  trait Balloon extends Entity with TrackFollowing with PoppingAbility {
     type Boundary = (Double, Double)
 
     protected[balloons] def retrieve[T](f: Balloon => T): T = this match {

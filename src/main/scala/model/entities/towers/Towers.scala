@@ -5,7 +5,7 @@ import model.entities.Entities.{
   EnhancedSightAbility,
   Entity,
   RotationAbility,
-  ShotAbility,
+  ShootingAbility,
   SightAbility
 }
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Fire, Ice, IceBall }
@@ -25,7 +25,11 @@ object Towers {
    * @tparam B
    *   is the type of the bullet it can shoot
    */
-  trait Tower[+B <: Bullet] extends Entity with SightAbility with ShotAbility with RotationAbility {
+  trait Tower[+B <: Bullet]
+      extends Entity
+      with SightAbility
+      with ShootingAbility
+      with RotationAbility {
     type Boundary = (Double, Double)
 
     def bullet: B

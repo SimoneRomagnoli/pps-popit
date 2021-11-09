@@ -10,28 +10,18 @@ import scala.language.implicitConversions
  * Utility constructs for Rendering DSL.
  */
 object Renders {
-  sealed trait RenderMode
-  case object single extends RenderMode
-  case object sequence extends RenderMode
 
   /** Represents a container for view objects. */
-  sealed trait ToBeRendered {
+  sealed trait Renderable {
+    def shapes: Seq[Shape]
     def into(buffer: ObservableBuffer[Node]): Unit
-    def outOf(buffer: ObservableBuffer[Node]): Unit
-    def as(renderMode: RenderMode): Seq[Shape]
+    def asSingle: Shape = shapes.head
   }
 
   /** Wrapper for view-ready shapes. */
-  case class Rendered(shapes: Seq[Shape]) extends ToBeRendered {
+  case class Rendered(override val shapes: Seq[Shape]) extends Renderable {
     override def into(buffer: ObservableBuffer[Node]): Unit = shapes foreach (buffer += _)
-
-    override def outOf(buffer: ObservableBuffer[Node]): Unit = shapes foreach (buffer -= _)
-
-    override def as(renderMode: RenderMode): Seq[Shape] = renderMode match {
-      case _ => shapes
-    }
   }
 
-  implicit def toSingle(shapes: Seq[Shape]): Shape = shapes.head
   implicit def renderSingle(shape: Shape): Seq[Shape] = Seq(shape)
 }

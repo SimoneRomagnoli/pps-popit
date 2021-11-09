@@ -15,6 +15,7 @@ import scalafxml.core.macros.{ nested, sfxml }
 import commons.CommonValues
 import commons.CommonValues.Maps.gameGrid
 import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import view.render.Rendering.Drawers._
 import view.render.{ Animating, Rendering }
 
 import scala.concurrent.Future
@@ -130,7 +131,7 @@ class GameController(
 
   override def draw(entities: List[Entity]): Unit = Platform runLater {
     entitiesPane.children.clear()
-    entities foreach (entity => Rendering an entity into entitiesPane.children)
+    entities foreach (entity => Rendering a entity into entitiesPane.children)
   }
 
   override def animate(entity: Entity): Unit = Platform runLater {
@@ -202,7 +203,9 @@ class GameController(
     def highlight(tower: Option[Tower[_]]): Unit = {
       highlightPane.children.clear()
       if (tower.isDefined) {
-        Rendering sightOf tower.get into highlightPane.children
+        val sightRange: (Double, Double, Double) =
+          (tower.get.position.x, tower.get.position.y, tower.get.sightRange)
+        Rendering a sightRange into highlightPane.children
       }
     }
 

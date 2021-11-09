@@ -20,7 +20,8 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.{ Ellipse, Rectangle, Shape }
 import commons.CommonValues.Screen.cellSize
 import view.render.Drawings._
-import view.render.Renders.{ renderSingle, Rendered, ToBeRendered }
+import view.render.Rendering.Drawers.Drawer
+import view.render.Renders.{ renderSingle, Renderable, Rendered }
 
 import scala.annotation.tailrec
 import scala.language.{ implicitConversions, reflectiveCalls }
@@ -31,80 +32,6 @@ import scala.language.{ implicitConversions, reflectiveCalls }
 object Rendering {
   import view.render.Rendering.RenderingPatterns._
   val drawing: Drawing = Drawing(GameDrawings())
-  val defaultWidth: Double = 400.0
-  val defaultHeight: Double = 200.0
-
-  /** Renders a [[Grid]] with grass drawings. */
-  def a(grid: Grid): ToBeRendered = Rendered {
-    grid.cells map { cell =>
-      val rect: Shape = Rendering a cell
-      rect.setFill(drawing the Grass)
-      rect
-    }
-  }
-
-  def a(entity: Entity): ToBeRendered = an(entity)
-
-  /** Renders an [[Entity]] with its corresponding drawing. */
-  def an(entity: Entity): ToBeRendered = Rendered {
-    implicit val rectangle: Rectangle = Rectangle(
-      entity.position.x - entity.boundary._1 / 2,
-      entity.position.y - entity.boundary._2 / 2,
-      entity.boundary._1,
-      entity.boundary._2
-    )
-    rectangle.setFill(drawing the Item(entity))
-    entity match {
-      case bullet: Bullet =>
-        rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
-      case tower: Tower[_] =>
-        rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
-        rectangle.styleClass += "tower"
-      case decoration: BalloonDecoration =>
-        val effects: Seq[Blend] = patternsOf(decoration).map(toBlend)
-        for (i <- 0 until effects.size - 1) effects(i).bottomInput = effects(i + 1)
-        //effects.sliding(2).foreach(couple => couple.head.bottomInput = couple.last)
-        rectangle.setEffect(effects.head)
-
-      case _ =>
-    }
-    rectangle
-  }
-
-  /** Renders the sight range of a [[Tower]]. */
-  def sightOf(tower: Tower[_]): ToBeRendered = Rendered {
-    val range: Ellipse =
-      Ellipse(tower.position.x, tower.position.y, tower.sightRange, tower.sightRange)
-    range.opacity = 0.3
-    range.setFill(Color.LightGray)
-    range
-  }
-
-  /** Renders a [[Cell]] just with a square [[Shape]]. */
-  def a(cell: Cell): Shape =
-    Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
-
-  /** Renders a [[Track]] as a sequence of road drawings. */
-  def a(track: Track): ToBeRendered = Rendered {
-    track.cells
-      .prepended(GridCell(-1, 0, Right))
-      .sliding(2)
-      .map { couple =>
-        val dir: String = couple.head.direction.toString + "-" + couple.last.direction.toString
-        val cell: Cell = couple.last
-        val rect: Shape = Rendering a cell
-        rect.setFill(drawing the Road(dir))
-        rect
-      }
-      .toSeq
-  }
-
-  /** Renders a [[ImagePattern]] just with a square [[Shape]]. */
-  def a(image: ImagePattern): ToBeRendered = Rendered {
-    val rectangle: Rectangle = Rectangle(defaultWidth, defaultHeight)
-    rectangle.setFill(image)
-    rectangle
-  }
 
   /** Sets the layout of the specified region with the specified width and height. */
   def setLayout(region: Region, width: Double, height: Double): Unit = {
@@ -112,6 +39,112 @@ object Rendering {
     region.minWidth = width
     region.maxHeight = height
     region.minHeight = height
+  }
+
+  /**
+   * Draws a generic element in a [[Shape]] and gives the possibility to put it in a ScalaFX node.
+   *
+   * @param element,
+   *   the generic element to be drawn
+   * @param drawer,
+   *   the implicit [[Drawer]] that defines how the drawing happens
+   * @tparam T,
+   *   the type of the drawn element
+   * @return
+   *   a [[Renderable]] element
+   */
+  def a[T](element: T)(implicit drawer: Drawer[T]): Renderable = drawer.draw(element)
+
+  /** Contains all the implicit drawers that allow to render graphical elements. */
+  object Drawers {
+
+    /**
+     * Allows to turn a generic element into a [[Renderable]]. It is necessarily contravariant
+     * because of the entities' hierarchy: an entities drawer should be able to draw any [[Entity]]
+     * sub-type.
+     *
+     * @tparam T,
+     *   the type of the element to be drawn.
+     */
+    trait Drawer[-T] {
+      def draw(elem: T): Renderable
+    }
+
+    /** Renders a [[Grid]] with grass drawings. */
+    implicit val gridDrawer: Drawer[Grid] = (grid: Grid) =>
+      Rendered {
+        grid.cells map { cell =>
+          val rect: Shape = (Rendering a cell).asSingle
+          rect.setFill(drawing the Grass)
+          rect
+        }
+      }
+
+    /** Renders a [[Cell]] just with a square [[Shape]]. */
+    implicit val cellDrawer: Drawer[Cell] = (cell: Cell) =>
+      Rendered {
+        Rectangle(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize)
+      }
+
+    /** Renders a [[Track]] as a sequence of road drawings. */
+    implicit val trackDrawer: Drawer[Track] = (track: Track) =>
+      Rendered {
+        track.cells
+          .prepended(GridCell(-1, 0, Right))
+          .sliding(2)
+          .map { couple =>
+            val dir: String = couple.head.direction.toString + "-" + couple.last.direction.toString
+            val cell: Cell = couple.last
+            val rect: Shape = (Rendering a cell).asSingle
+            rect.setFill(drawing the Road(dir))
+            rect
+          }
+          .toSeq
+      }
+
+    /** Renders the sight range of a [[Tower]]. */
+    implicit val towerSightDrawer: Drawer[(Double, Double, Double)] =
+      (t: (Double, Double, Double)) =>
+        Rendered {
+          val range: Ellipse = Ellipse(t._1, t._2, t._3, t._3)
+          range.opacity = 0.3
+          range.setFill(Color.LightGray)
+          range
+        }
+
+    /** Renders an [[Entity]] with its corresponding drawing. */
+    implicit val entityDrawer: Drawer[Entity] = (entity: Entity) =>
+      Rendered {
+        implicit val rectangle: Rectangle = Rectangle(
+          entity.position.x - entity.boundary._1 / 2,
+          entity.position.y - entity.boundary._2 / 2,
+          entity.boundary._1,
+          entity.boundary._2
+        )
+        rectangle.setFill(drawing the Item(entity))
+        entity match {
+          case bullet: Bullet =>
+            rectangle.rotate = Math.atan2(bullet.speed.y, bullet.speed.x) * 180 / Math.PI
+          case tower: Tower[_] =>
+            rectangle.rotate = Math.atan2(tower.direction.y, tower.direction.x) * 180 / Math.PI
+            rectangle.styleClass += "tower"
+          case decoration: BalloonDecoration =>
+            val effects: Seq[Blend] = patternsOf(decoration).map(toBlend)
+            for (i <- 0 until effects.size - 1) effects(i).bottomInput = effects(i + 1)
+            rectangle.setEffect(effects.head)
+
+          case _ =>
+        }
+        rectangle
+      }
+
+    /** Renders a [[ImagePattern]] just with a square [[Shape]]. */
+    implicit val imagePatternDrawer: Drawer[ImagePattern] = (image: ImagePattern) =>
+      Rendered {
+        val rectangle: Rectangle = Rectangle(image.getImage.getWidth, image.getImage.getHeight)
+        rectangle.setFill(image)
+        rectangle
+      }
   }
 
   /** Contains methods for blending balloon patterns. */

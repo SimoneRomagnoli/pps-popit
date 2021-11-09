@@ -25,7 +25,7 @@ import scalafx.scene.layout._
 import scalafx.scene.shape.Shape
 import scalafxml.core.macros.sfxml
 import view.render.Rendering
-import view.render.Renders.{ single, toSingle }
+import view.render.Rendering.Drawers._
 
 import scala.concurrent.Future
 
@@ -122,7 +122,7 @@ class GameMenuController(
       highlight(None)
     } else {
       currentCell = cell
-      addToTowerStatus(Rendering a tower as single)
+      addToTowerStatus((Rendering a tower).asSingle)
       addToTowerStatus("Sight Range", tower levelOf Sight, Sight)
       addToTowerStatus("Bullet Damage", tower levelOf Damage, Damage)
       addToTowerStatus("Shot Ratio", tower levelOf Ratio, Ratio)
@@ -212,7 +212,7 @@ class GameMenuController(
       TowerTypes.values.foreach { towerValue =>
         val towerType: TowerType[B] = towerValue.asInstanceOf[TowerType[B]]
         val tower: Tower[B] = towerType.tower
-        val renderedTower: Shape = Rendering a tower as single
+        val renderedTower: Shape = (Rendering a tower).asSingle
         val towerBox: HBox = new HBox(renderedTower)
         towerBox.styleClass += "towerBox"
         towerBox.setCursor(Cursor.Hand)

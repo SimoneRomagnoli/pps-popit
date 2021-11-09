@@ -169,7 +169,7 @@ object Entities {
     def sightRange: Double
 
     def sight(radius: Double): SightAbility
-    def isInSightRange(balloon: Balloon): Boolean = position.intersectsWith(balloon)(sightRange)
+    def isInSightRange(entity: Entity): Boolean = position.intersectsWith(entity)(sightRange)
 
     def canSee(balloon: Balloon): Boolean = balloon match {
       case CamoBalloon(_)          => false

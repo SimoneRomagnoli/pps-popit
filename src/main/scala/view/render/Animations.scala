@@ -17,6 +17,13 @@ object Animations {
 
   case class Moving(images: Animations = Animations()) {
 
+    /**
+     * Method that effectively animate an [[Animation]] by generating a [[Timeline]]
+     * @param animation
+     *   the animation to be animated
+     * @return
+     *   the timeline correspondent to the animation
+     */
     def the(animation: Animation): Timeline = animation match {
       case Item(entity, shape) =>
         entity match {

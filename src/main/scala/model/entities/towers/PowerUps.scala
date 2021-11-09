@@ -43,11 +43,11 @@ object PowerUps {
     def boost(powerUp: TowerPowerUp): Tower[B] =
       powerUp match {
         case Ratio =>
-          tower has values ratio tower.shotRatio * (1 / powerUp.factor)
+          tower ratio tower.shotRatio * (1 / powerUp.factor)
         case Sight =>
-          tower has values sight tower.sightRange * powerUp.factor
+          tower sight tower.sightRange * powerUp.factor
         case Damage =>
-          tower has values damage tower.bullet.hurt(tower.bullet.damage * powerUp.factor)
+          tower damage tower.bullet.hurt(tower.bullet.damage * powerUp.factor)
         case Camo =>
           new BaseTower(tower) with EnhancedSightAbility
         case _ => tower

@@ -103,6 +103,20 @@ potenziamenti fornire alla torre, al fine di massimizzare il punteggio di gioco.
 delle torri è stata implementata come una \textbf{implicit class} proprio sulla classe base della torre, in modo da
 renderle diposnibile il metodo \textit{boost} anche se non fa parte della sua struttura fisica.
 
+Il comportamento delle entità \texttt{Tower} è incapsulato all'interno di un attore, in modo da rispettare il modello
+ad attori sul quale si basa l'intera progettazione e struttura di gioco. Il \texttt{TowerActor} viene istanziato una
+volta che il player ha deciso di posizionare una torre all'interno della mappa di gioco, e il suo unico compito è
+quello di reagire agli eventi di gioco e comportarsi di conseguenza: infatti entrerà in una fase di
+\textit{detecting} dove dovrà verificare se stanno passando dei pallonicini all'interno del campo visivo della torre,
+e, in caso il suo rateo di fuoco glielo permetta, sparare un proiettile nella direzione del palloncino individuato.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{img/tower-actor}
+    \caption{Diagramma di sequenza dell'attore delle torri.}
+    \label{fig:tower-actor}
+\end{figure}
+
 \subsection{Alessandro Marcantoni}
 Il mio compito all'interno del progetto è stato quello di realizzare il \texttt{GameLoop}, i palloncini (l'entità base,
 i vari "potenziamenti" e infine il rispettivo attore), la gestione dei round (con relativa DSL per la loro creazione e
@@ -202,7 +216,73 @@ sfruttando la monade \texttt{IO} della libreria \textit{cats} \cite{cats-effects
 \ref{code:roundmonad}.
 \input{code/round-monad}
 
-\subsection{Matteo Ragazzini}
+\subsection{Matteo Ragazzini}\label{subsec:matteo-ragazzini}
+Il mio compito all'interno del progetto, è stato quello di realizzare il \texttt{TrackLoader} e la relativa pagina
+\texttt{SavedTracks}, implementare la gerarchia di proiettili e l'attore che ne definisce il comportamento ed infine
+gestire l'insermento di animazioni sfruttando il meccanismo delle \textbf{timeline}.
+Ho inoltre collaborato con gli altri membri del team durante la fase di design delle entità, in particolare
+in fase di integrazione dei proiettili con torri e palloncini.
+
+
+\subsubsection{Track Loader}\label{subsec:track-loader}
+Uno dei requisiti funzionali espresso dal committente riguardava la possibilità di salvare una traccia di gioco ed in seguito
+creare a partire da questa una nuova partita. Per soddisfare tale requisito ho realizzato la pagina relativa alle
+tracce precedentemente salvate \texttt{Saved Tracks} con il relativo controller FXML e l'attore che gestisce il salvataggio
+e il caricamento di tali tracce \texttt{TrackLoader}. Quest'ultimo, per ottenere persistenza fa uso del
+del \texttt{FileCoder} realizzato da Tommaso Mandoloni per la scrittura e lettura su file.
+
+Il \texttt{TrackLoader} ha tre compiti fondamentali: restituire alla pagina \texttt{Saved Tracks} tutte le tracce precendentemente salvate,
+fornire al \texttt{Model} la traccia selezionata dall'utente in modo che quest'ultimo possa caricare una nuova partita,
+salvare una nuova traccia, realizzando tramite lo \texttt{ScreenSchooter} un screenshot di quest'ultima
+in modo da fornire all'utente un riscontro visivo all'interno della pagina \texttt{Saved Tracks}.
+
+L'interazione fra \texttt{TrackLoader} e \texttt{FileCoder} è riportata nel diagramma di sequenza in \ref{fig:sequence-track-loader}.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.57\linewidth]{img/sequence-track-loader}
+    \caption{Diagramma di sequenza dell'interazione fra \texttt{TrackLoader}, \texttt{FileCoder} e \texttt{Controller}.}
+    \label{fig:sequence-track-loader}
+\end{figure}
+
+
+
+\subsubsection{Proiettili}
+I proiettili rappresentano all'interno del gioco il componente in grado di infliggere danni ai palloncini e quindi affrontare
+ogni round. I proiettili vengono sparati con una certa frequenza di fuoco dalle torri ogni qualvolta un palloncino entra nel
+loro campo visivo. I proiettili a seconda che siano freccette o proiettili esplosivi, infliggono danno ad un singolo palloncino
+o a tutti i palloncini presenti all'iterno di un'area.
+
+Il \texttt{trait Bullet} è quindi rappresentato dall'estensione del \texttt{trait Entity} a cui è stata aggiunnta
+l'abilità di movimento ( \texttt{Movement Ability})
+
+In fase di definizione dei requisiti sono stati individuati 3 tipi diversi di proiettili: freccetta, bomba e palla di neve.
+Nel modellare tali entità è stato utile ricorrere al meccanismo dei \textbf{mixin}, è stato quindi definito il trait \texttt{Explosion}
+per modellare un proiettile in grado di esplodere all'interno di un'area, e due trait che estendono da quest'ultimo:
+\texttt{Ice} e \texttt{Fire}.
+In questo modo le bombe e le palle di neve sono state definite rispettivamente come:
+\begin{itemize}
+    \item \texttt{Cannonball \textbf{extends} BasicBullet with \textbf{Fire}}
+    \item \texttt{Iceball \textbf{extends} BasicBullet with \textbf{Ice}}.
+\end{itemize}
+
+Avendo adottato una architettura ad attori ogni proiettile, in fase di creazione, viene associato ad un attore che ne definisce
+il comportamento, mostrato in \ref{fig:sequence-bullet-actor}. Tale attore presenta due \texttt{Behaviour}: \texttt{default} e \texttt{exploding}.
+Quando l'attore è nel behaviour di \texttt{default} aggiorna la posizione del bullet, verifica che questo non esca dal campo visivo e
+cosa più importante controlla che non sussistano collisioni con palloncino caso nel cui, l'attore cambia comportamento
+passando ad \texttt{explosion}.
+In \texttt{explosion} l'attore notifica il model con la lista di palloncini colpiti, in caso il bullet sia di tipo
+\texttt{Explosion} ne avvia l'animazione ed infine notifica il model chiedendo di rimuovere il bullet dalla lista di entità
+in gioco.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{img/sequence-bullet-actor}
+    \caption{Diagramma di sequenza delle interazioni del \texttt{bulletActor}.}
+    \label{fig:sequence-bullet-actor}
+\end{figure}
 
 \subsection{Simone Romagnoli}
 Fungendo da \textit{product owner}, le porzioni di progetto di cui mi sono occupato sono molteplici: oltre ad aver 

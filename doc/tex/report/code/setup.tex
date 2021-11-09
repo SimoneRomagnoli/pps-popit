@@ -1,28 +1,18 @@
 \begin{lstlisting}[language=Scala, caption=Monade per le operazioni di setup, label=lst:setup]
 implicit class FileMonad(path: String) {
-  def check: Option[String] =
-    if (Files.notExists(Paths.get(path)))
-      Some(path)
-    else
-      None
+      def check: Option[String] = if (Files.notExists(Paths.get(path))) Some(path) else None
 
-  def mkdir: Option[file.Path] =
-    if (check.isDefined)
-      Some(Files.createDirectories(Paths.get(check.get)))
-    else
-      None
+      def mkdir: Option[file.Path] =
+        if (check.isDefined) Some(Files.createDirectories(Paths.get(check.get))) else None
 
-  def touch: Option[file.Path] =
-    if (check.isDefined)
-      Some(
-        Files.write(
-          Paths.get(check.get),
-          List[Track]().asJson
-                       .toString()
-                       .getBytes(StandardCharsets.UTF_8)
-        )
-      )
-    else
-      None
-}
+      def touch: Option[file.Path] =
+        if (check.isDefined)
+          Some(
+            Files.write(
+              Paths.get(check.get),
+              List[Track]().asJson.toString().getBytes(StandardCharsets.UTF_8)
+            )
+          )
+        else None
+    }
 \end{lstlisting}

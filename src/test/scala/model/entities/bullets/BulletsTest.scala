@@ -5,16 +5,17 @@ import model.Positions.{ defaultPosition, fromTuple }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletValues._
-import model.entities.bullets.Bullets.{ shoot, CannonBall, Dart, IceBall }
+import model.entities.bullets.Bullets.{ CannonBall, Dart, IceBall, Shooting }
+import model.entities.towers.TowerTypes.{ Arrow, Cannon, Ice }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import scala.language.postfixOps
 
 class BulletsTest extends AnyFlatSpec with Matchers {
-  val iceBall: IceBall = IceBall(bulletDefaultRadius, bulletFreezingTime)
+  val iceBall: IceBall = IceBall()
   val dart: Dart = Dart()
-  val cannonBall: CannonBall = CannonBall(bulletDefaultRadius)
+  val cannonBall: CannonBall = CannonBall()
   val balloon: Balloon = (Red balloon) in (100.0, 100.0)
 
   "A Dart" should "have default position, speed, damage and toString" in {
@@ -28,7 +29,7 @@ class BulletsTest extends AnyFlatSpec with Matchers {
     cannonBall.position shouldBe defaultPosition
     cannonBall.speed shouldBe bulletDefaultSpeed
     cannonBall.damage shouldBe bulletDefaultDamage
-    cannonBall.radius shouldBe bulletDefaultRadius
+    cannonBall.sightRange shouldBe bulletDefaultSightRange
 
     cannonBall.toString shouldBe "CANNON-BALL"
   }
@@ -37,15 +38,16 @@ class BulletsTest extends AnyFlatSpec with Matchers {
     iceBall.position shouldBe defaultPosition
     iceBall.speed shouldBe bulletDefaultSpeed
     iceBall.damage shouldBe bulletDefaultDamage
-    iceBall.radius shouldBe bulletDefaultRadius
+    iceBall.sightRange shouldBe bulletDefaultSightRange
     iceBall.freezingTime shouldBe bulletFreezingTime
     iceBall.toString shouldBe "ICE-BALL"
   }
 
   "Dart, CannonBall and IceBall" should "be shot" in {
-    shoot(dart).isInstanceOf[Dart] shouldBe true
-    shoot(cannonBall).isInstanceOf[CannonBall] shouldBe true
-    shoot(iceBall).isInstanceOf[IceBall] shouldBe true
+
+    (Shooting from (Arrow tower)).isInstanceOf[Dart] shouldBe true
+    (Shooting from (Cannon tower)).isInstanceOf[CannonBall] shouldBe true
+    (Shooting from (Ice tower)).isInstanceOf[IceBall] shouldBe true
   }
 
   "The Bullet Damage" should "be able to be powered up" in {

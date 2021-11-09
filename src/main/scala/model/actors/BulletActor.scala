@@ -72,9 +72,9 @@ case class BulletActor private (ctx: ActorContext[Update], var bullet: Bullet) {
       bullet: Bullet,
       replyTo: ActorRef[Update]): Behavior[Update] = {
     bullet match {
-      case bullet: Explosion =>
-        replyTo ! StartExplosion(bullet)
-        replyTo ! BalloonHit(bullet, balloons.filter(bullet include _))
+      case explosion: Explosion =>
+        replyTo ! StartExplosion(explosion)
+        replyTo ! BalloonHit(explosion, balloons.filter(explosion isInSightRange _))
       case bullet =>
         replyTo ! BalloonHit(bullet, List(balloons.filter(bullet hit _).sorted.reverse.head))
     }

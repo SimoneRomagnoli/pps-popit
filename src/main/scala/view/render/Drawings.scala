@@ -53,14 +53,14 @@ object Drawings {
                   case 2 => drawing.blueBalloon
                   case 3 => drawing.greenBalloon
                 }
-              case Dart()        => drawing.dart
-              case CannonBall(_) => drawing.cannonBall
-              case IceBall(_, _) => drawing.iceBall
+              case Dart(_)          => drawing.dart
+              case CannonBall(_, _) => drawing.cannonBall
+              case IceBall(_, _, _) => drawing.iceBall
               case BaseTower(b, _, _, _, _, _) =>
                 b match {
-                  case Dart()        => drawing.arrowTower
-                  case CannonBall(_) => drawing.cannonTower
-                  case IceBall(_, _) => drawing.iceTower
+                  case Dart(_)          => drawing.arrowTower
+                  case CannonBall(_, _) => drawing.cannonTower
+                  case IceBall(_, _, _) => drawing.iceTower
                 }
             }
           case _ => null

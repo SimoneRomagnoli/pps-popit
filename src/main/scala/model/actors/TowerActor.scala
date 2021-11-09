@@ -8,7 +8,7 @@ import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon
 import model.entities.bullets.BulletValues.bulletSpeedFactor
 import model.entities.bullets.Bullets
-import model.entities.bullets.Bullets.Bullet
+import model.entities.bullets.Bullets.{ Bullet, Shooting }
 import model.entities.towers.Towers.Tower
 import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
 import model.managers.EntitiesMessages.{ EntitySpawned, EntityUpdated, UpdateEntity }
@@ -44,8 +44,7 @@ case class TowerActor[B <: Bullet](
           tower = tower rotateTo normalized(vector(tower.position)(b.position))
           if (tower canShootAfter shootingTime) {
             shootingTime = 0.0
-            val bullet: Bullet =
-              (Bullets shoot tower.bullet) in tower.position at tower.direction * bulletSpeedFactor
+            val bullet: Bullet = Shooting from tower
             val bulletActor: ActorRef[Update] = ctx.spawnAnonymous(BulletActor(bullet))
             replyTo ! EntitySpawned(bullet, bulletActor)
           }

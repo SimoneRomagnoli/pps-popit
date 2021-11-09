@@ -7,7 +7,7 @@ import model.actors.BulletActorTest._
 import model.actors.BulletMessages.{ BalloonHit, BulletKilled, StartExplosion }
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.BulletValues.bulletDefaultRadius
+import model.entities.bullets.BulletValues.bulletDefaultSightRange
 import model.entities.bullets.Bullets.{ Bullet, CannonBall, Dart, Explosion }
 import model.managers.EntitiesMessages.{ EntityUpdated, UpdateEntity }
 import org.scalatest.matchers.should.Matchers
@@ -18,7 +18,7 @@ import scala.language.postfixOps
 object BulletActorTest {
   var outsideDart: Bullet = Dart() in (Double.MaxValue, 0.0)
   var dart: Bullet = Dart()
-  var cannonBall: Explosion = CannonBall(bulletDefaultRadius)
+  var cannonBall: Explosion = CannonBall()
   var balloon: Balloon = Red balloon
   var balloon2: Balloon = Red balloon
   var collisionPosition: (Double, Double) = (100.0, 100.0)

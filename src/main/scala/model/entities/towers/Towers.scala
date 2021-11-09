@@ -137,9 +137,9 @@ object TowerTypes extends Enumeration {
   case class TowerType[B <: Bullet](tower: Tower[B], cost: Int) extends Val {
 
     def spawn: Tower[Bullet] = tower.bullet match {
-      case Dart()        => Towers of Dart()
-      case CannonBall(_) => Towers of CannonBall()
-      case IceBall(_, _) => Towers of IceBall()
+      case Dart(_)          => Towers of Dart()
+      case CannonBall(_, _) => Towers of CannonBall()
+      case IceBall(_, _, _) => Towers of IceBall()
     }
   }
 

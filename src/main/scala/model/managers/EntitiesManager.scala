@@ -152,7 +152,8 @@ case class EntityManager private (
 
         case BoostTowerIn(cell, powerUp) =>
           val (towerActor, towerInstance) = entities.collect {
-            case EntityActor(actorRef, entity) if cell.contains(entity.position) =>
+            case EntityActor(actorRef, entity)
+                if entity.isInstanceOf[Tower[_]] && cell.contains(entity.position) =>
               (actorRef, entity.asInstanceOf[Tower[Bullet]])
           }.head
           if ((towerInstance levelOf powerUp) != maxLevel) {

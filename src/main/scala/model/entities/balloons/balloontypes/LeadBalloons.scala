@@ -23,8 +23,8 @@ object LeadBalloons {
     override def instance(balloon: Balloon): BalloonDecoration = lead(balloon)
 
     override def pop(bullet: Bullet): Option[BalloonDecoration] = bullet match {
-      case CannonBall(_) => super.pop(bullet)
-      case _             => Option(this)
+      case CannonBall(_, _) => super.pop(bullet)
+      case _                => Option(this)
     }
   }
 

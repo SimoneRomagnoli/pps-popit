@@ -12,17 +12,18 @@ import scala.language.postfixOps
 
 object Animations {
 
-  sealed trait Animable
-  case class Item(entity: Entity, shape: Shape) extends Animable
+  sealed trait Animation
+  case class Item(entity: Entity, shape: Shape) extends Animation
 
   case class Moving(images: Animations = Animations()) {
 
-    def the(animable: Animable): Timeline = animable match {
+    def the(animation: Animation): Timeline = animation match {
       case Item(entity, shape) =>
         entity match {
           case _: CannonBall =>
             new Timeline {
               autoReverse = false
+
               cycleCount = 1
 
               keyFrames = Seq(

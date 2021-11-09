@@ -15,6 +15,7 @@ import scalafxml.core.macros.{ nested, sfxml }
 import commons.CommonValues
 import commons.CommonValues.Maps.gameGrid
 import commons.CommonValues.View.{ gameBoardHeight, gameBoardWidth, gameMenuHeight, gameMenuWidth }
+import view.render.Animating.Animators.entityAnimator
 import view.render.Rendering.Drawers._
 import view.render.{ Animating, Rendering }
 

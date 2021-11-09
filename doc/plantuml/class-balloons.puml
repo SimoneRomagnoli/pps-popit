@@ -6,6 +6,6 @@ class Complex
 
 Balloon <|.. Simple
 Balloon <|.. Complex
-Complex *-- Balloon
+Complex o-- Balloon
 
 @enduml

@@ -1,16 +1,12 @@
 package model.stats
 
 import model.stats.Stats.GameStats
-import model.stats.StatsTest._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-object StatsTest {
-  val stats: GameStats = GameStats()
-  val amount: Int = 10
-}
-
 class StatsTest extends AnyWordSpec with Matchers {
+  var stats: GameStats = GameStats()
+  val amount: Int = 10
 
   "The Stats" when {
     "just created" should {
@@ -22,13 +18,13 @@ class StatsTest extends AnyWordSpec with Matchers {
     }
     "modified" should {
       "change its values" in {
-        stats pay amount
+        stats = stats pay amount
         stats.wallet shouldBe Stats.startingWallet - amount
-        stats gain amount
+        stats = stats gain amount
         stats.wallet shouldBe Stats.startingWallet
-        stats lose amount
+        stats = stats lose amount
         stats.life shouldBe Stats.startingLife - amount
-        stats.nextRound()
+        stats = stats.updateRound(1)
         stats.round shouldBe Stats.startingRound + 1
       }
     }

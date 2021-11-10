@@ -14,10 +14,10 @@ object Stats {
     def life: Int
     def wallet: Int
     def round: Int
-    def gain(money: Int): Unit
-    def pay(money: Int): Unit
-    def lose(lifePoints: Int): Unit
-    def nextRound(): Unit
+    def gain(money: Int): GameStats
+    def pay(money: Int): GameStats
+    def lose(lifePoints: Int): GameStats
+    def updateRound(round: Int): GameStats
   }
 
   object GameStats {
@@ -30,9 +30,9 @@ object Stats {
   }
 
   case class GameStatistics(var life: Int, var wallet: Int, var round: Int) extends GameStats {
-    override def gain(money: Int): Unit = wallet += money
-    override def pay(money: Int): Unit = wallet -= money
-    override def lose(lifePoints: Int): Unit = life -= lifePoints
-    override def nextRound(): Unit = round += 1
+    override def gain(money: Int): GameStats = GameStatistics(life, wallet + money, round)
+    override def pay(money: Int): GameStats = GameStatistics(life, wallet - money, round)
+    override def lose(lifePoints: Int): GameStats = GameStatistics(life - lifePoints, wallet, round)
+    override def updateRound(r: Int): GameStats = GameStatistics(life, wallet, r)
   }
 }

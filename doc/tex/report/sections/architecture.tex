@@ -16,7 +16,7 @@ implementazione dell'interfaccia grafica senza dover applicare alcuna modifica a
 \subsection{Modello ad Attori}
 La presenza di un elevato numero di entità all'interno dell'applicazione ha portato alla luce l'esigenza di gestire,
 già a livello architetturale, la possibilità di sfruttare a pieno la potenza della cpu rendendo quindi il programma
-concorrente. In particolare, per astrarre dalla gestione problematiche tipiche di sistemi concorrenti
+concorrente. In particolare, per astrarre dalla gestione di problematiche tipiche di sistemi concorrenti
 (mutua eclusione e corse critiche) si è deciso di adottare un approccio basato su attori. Dal momento che ogni attore
 incapsula al suo interno un flusso di controllo basato su \textit{event loop} e che le interazioni avvengono
 esclusivamente attraverso scambio di messaggi, non è necessario gestire meccanismi di sincronizzazione.
@@ -89,31 +89,37 @@ applicato al pattern \textbf{MVC}.
     \centering
     \begin{tikzpicture}
         \begin{axis}[
-        xmin=0, xmax=2000,
-        ymin=0, ymax=50,
-        xtick={10,100,500,1000,2000},
-        minor ytick={0,2.5,...,50},
+        xmin=0, xmax=100,
+        ymin=0, ymax=700,
+        xtick={5,15,30,50,75,100},
+        minor ytick={0,50,...,700},
         axis x line=bottom,
         axis y line=left,
         axis x discontinuity=crunch,
         ymajorgrids=true,
         yminorgrids=true,
         xlabel={Numero di attori}, ylabel={Tempo di aggiornamento (ms)}, title={},
-        axis on top=true, clip=false,  width=\textwidth, height=.5\textwidth
+        axis on top=true, clip=false,  width=\textwidth, height=.5\textwidth,
+        legend style={
+            at={(0,0)},
+            anchor=north east,
+            at={(axis description cs:0.5,-0.2)}}
         ]
         \addplot [mark=*, mark options={solid}, smooth, color=blue] coordinates {
-            (10, 29.5)
-            (100, 29.5)
-            (500, 29.6)
-            (1000, 29.4)
-            (2000, 29.3)
+            (5, 29.5)
+            (15, 29.5)
+            (30, 29.6)
+            (50, 29.4)
+            (75, 29.3)
+            (100, 30.4)
         };
         \addplot [mark=*, mark options={solid}, smooth, color=green] coordinates {
-            (10, 0.4)
-            (100, 0.8)
-            (500, 2.8)
-            (1000, 6.7)
-            (2000, 17.9)
+            (5, 607.5)
+            (15, 611.4)
+            (30, 612.1)
+            (50, 613.9)
+            (75, 610.9)
+            (100, 612.6)
         };
         \legend{Tempo di aggiornamento della \textit{View}, Round Trip Time di un messaggio di \texttt{Update}};
         \end{axis}
@@ -125,9 +131,7 @@ applicato al pattern \textbf{MVC}.
 Per ottenere i risultati mostrati in figura \ref{fig:performance-evaluation}, sono state effettuate diverse misurazioni
 e ne è stata calcolata la media. In particolare, vengono mostrati i tempi di aggiornamento della \texttt{View} e il
 tempo che impiega un messaggio di \texttt{Update} a partire dal \texttt{GameLoop}, aggiornare il \texttt{Model} e
-tornare al mittente. Come ci si aspettava, la frequenza di aggiornamento della \texttt{View} resta pressochè la stessa
-(all'incirca 30 millisecondi), mentre il \textit{round trip time} di un \texttt{Update} cresce notevolmente con
-l'aumentare del numero di attori: questo potrebbe risultare in effettivi rallentamenti nel caso in cui superi il tempo
-di aggiornamento della \texttt{View}; tuttavia, all'interno del sistema sviluppato, il numero degli attori raggiunge a
-fatica l'ordine delle centinaia, e, pertanto, il modello ad attori (nel concentrato) è stato valutato positivamente per
-questo progetto.
+tornare al mittente. Come ci si aspettava, i valori misurati non variano notevolmente con l'aumentare del numero degli
+attori: la frequenza d'aggiornamento della \texttt{View} si mantiene attorno ai 30 millisecondi, mentre il
+\textit{round-trip time} degli \texttt{Update} attorno ai 600 millisecondi. Si conclude che il paradigma ad attori
+non comporta problemi di scalabilità sul numero di entità nel modello.

@@ -1,4 +1,5 @@
 \section{Design di Dettaglio}
+\label{sec:detailed-design}
 In questa sezione viene effettuata un'analisi del design di dettaglio, evidenziando aspetti interni ai componenti del
 sistema, senza esplorare l'implementazione effettiva del codice.
 
@@ -16,7 +17,7 @@ particolare, un'entità deve possedere una posizione nello spazio di gioco e una
 un primo tratto comune \texttt{Entity} che rappresenta ogni oggetto sulla mappa, associandoci una posizione e una
 dimensione. A partire da questo, sono state analizzate le entità da rappresentare, andando ad individuare una gerarchia
 di caratteristiche atomiche che permettono di definire ogni sottotipo di \texttt{Entity} come combinazione di queste
-ultime. Tali abilità, mostrate in figura \ref{fig:class-entity-hierarchy}, sono:
+ultime. Tali abilità, mostrate in figura \ref{fig:class-entity-hierarchy-extended}, sono:
 \begin{itemize}
     \item \texttt{Movement Ability} - aggiunge all'entità la capacità di cambiare la propria posizione in base alla
     propria velocità.
@@ -37,7 +38,7 @@ ultime. Tali abilità, mostrate in figura \ref{fig:class-entity-hierarchy}, sono
     \centering
     \includegraphics[width=\linewidth]{img/class-entity-hierarchy-extended}
     \caption{Diagramma delle classi della gerarchia di entità.}
-    \label{fig:class-entity-abilities}
+    \label{fig:class-entity-hierarchy-extended}
 \end{figure}
 
 Grazie a queste, è possibile esprimere le entità di gioco come segue:
@@ -48,18 +49,20 @@ Grazie a queste, è possibile esprimere le entità di gioco come segue:
     torri non possono muoversi, una volta istanziate, ma possono ruotare su se stesse e sparare proiettili verso i
     palloncini che rientrano nel loro campo visivo; eventualmente, la visione delle torri può essere potenziata con la
     \texttt{Enhanced Sight Ability}, per vedere palloncini invisibili.
-    \item Palloncini - entità che si muove sulla traccia (\texttt{Track Following}) e che può essere scoppiata (
-    \texttt{Popping Ability}).
+    \item Palloncino - entità che si muove sulla traccia (\texttt{Track Following}) e che può essere scoppiata
+    (\texttt{Popping Ability}).
 \end{itemize}
+Vista la natura del sistema da realizzare, ogni entità appena descritta presenta una controparte reattiva, ovvero un
+attore, che si occupa del corretto aggiornamento della stessa e delle sue interazioni all'interno del dominio.
 
-Date le specifiche, è stato inoltre necessario definire un ulteriore sistema di riferimento spaziale che rappresenti la
+Inoltre, date le specifiche, è stato necessario definire un ulteriore sistema di riferimento spaziale che rappresenti la
 mappa di gioco; è stata quindi realizzata una griglia sottostante all'interfaccia, che suddivide la mappa in celle per
 riuscire a individuare punti a due coordinate nello spazio. Così facendo, è anche possibile rappresentare la traccia di
 gioco come una sequenza ordinata di celle della griglia.
 
 \subsubsection{Elementi Dinamici}
 Inizialmente, è stato progettato il \texttt{Model} in modo che gestisse tutti gli aspetti dinamici del sistema.
-Con l'espansione di tali elementi, il \texttt{Model} si è rivelato essere poco scalabile, oltre a doversi occupare di
+Con l'espansione di tali elementi, il \texttt{Model} si è rivelato essere poco scalabile, oltre che doversi occupare di
 aspetti logicamente distanti tra loro: quindi, è stato riprogettato per comunicare con degli appositi \textit{manager}
 per ciascuno degli aspetti dinamici rilevati. Nello specifico, sono state riscontrate tre logiche fondamentali del
 modello:

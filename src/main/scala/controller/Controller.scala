@@ -58,7 +58,6 @@ object Controller {
     case class StartNextRound()
         extends Input
         with SpawnManagerMessage
-        with GameDataManagerMessage
         with EntitiesManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class CurrentWallet(amount: Int) extends Input

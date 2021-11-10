@@ -1,18 +1,19 @@
 package model.managers
 
-import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
-import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.{ PauseGame, ResumeGame, StartNextRound }
-import controller.interaction.Messages.{ Input, SpawnManagerMessage, Update }
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartNextRound}
+import controller.interaction.Messages.{Input, SpawnManagerMessage, Update}
 import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
 import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
-import model.managers.EntitiesMessages.{ DoneSpawning, EntitySpawned }
-import model.managers.SpawnerMessages.{ SpawnTick, StartRound }
+import model.managers.EntitiesMessages.{DoneSpawning, EntitySpawned}
+import model.managers.GameDataMessages.UpdateRound
+import model.managers.SpawnerMessages.{SpawnTick, StartRound}
 import model.maps.Tracks.Track
-import model.spawn.Rounds.{ Round, Streak }
+import model.spawn.Rounds.{Round, Streak}
 import model.spawn.RoundsFactory
 
 import scala.language.postfixOps
@@ -56,6 +57,7 @@ case class Spawner private (
   def waiting(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case StartNextRound() =>
       ctx.self ! StartRound(RoundsFactory.nextRound())
+      model ! UpdateRound(RoundsFactory.currentRound)
       Behaviors.same
 
     case StartRound(round) =>

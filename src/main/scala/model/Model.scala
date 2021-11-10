@@ -5,7 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.interaction.GameLoop.GameLoopMessages.Stop
 import controller.interaction.Messages._
 import controller.settings.Settings.Settings
-import model.managers.{ EntitiesManager, GameDynamicsManager, SpawnManager }
+import model.managers.{ EntitiesManager, GameDataManager, SpawnManager }
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -52,7 +52,7 @@ object Model {
       ) :: handlers
       handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
       handlers =
-        (ctx.spawnAnonymous(GameDynamicsManager(ctx.self, settings)), GameDataMessage) :: handlers
+        (ctx.spawnAnonymous(GameDataManager(ctx.self, settings)), GameDataMessage) :: handlers
       default()
     }
 

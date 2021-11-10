@@ -1,21 +1,20 @@
 package view.controllers
 
-import controller.interaction.Messages.{ Input, Message }
+import commons.CommonValues
+import commons.Futures.retrieve
+import controller.interaction.Messages.{Input, Message}
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import model.entities.bullets.Bullets.Bullet
 import model.entities.towers.TowerTypes.TowerType
 import model.entities.towers.Towers.Tower
-import model.managers.EntitiesMessages.{ PlaceTower, Selectable, Selected, TowerIn, TowerOption }
+import model.managers.EntitiesMessages._
 import model.maps.Cells.Cell
 import scalafx.application.Platform
 import scalafx.scene.Cursor
 import scalafx.scene.effect.ColorAdjust
 import scalafx.scene.layout.Pane
-import commons.CommonValues
-import commons.Futures.retrieve
-import scalafx.scene.shape.Rectangle
 
 import scala.concurrent.Future
 import scala.language.implicitConversions

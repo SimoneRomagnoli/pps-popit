@@ -2,15 +2,13 @@ package view.render
 
 import javafx.scene.Node
 import model.entities.Entities.Entity
-import model.entities.bullets.Bullets.{ CannonBall, IceBall }
+import model.entities.bullets.Bullets.{CannonBall, IceBall}
 import scalafx.animation.Timeline
 import scalafx.collections.ObservableBuffer
-import scalafx.scene.shape.{ Rectangle, Shape }
-import view.render.Animations.{ Item, Moving }
-import view.render.Rendering.Drawers.Drawer
-import view.render.Renders.Renderable
+import scalafx.scene.shape.{Rectangle, Shape}
+import view.render.Animations.{Item, Moving}
 
-import scala.language.{ implicitConversions, reflectiveCalls }
+import scala.language.{implicitConversions, reflectiveCalls}
 
 /**
  * Object that simulates a DSL for animating logic entities as timelines.

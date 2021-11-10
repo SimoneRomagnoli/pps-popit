@@ -211,6 +211,7 @@ Per poter definire in modo elegante e conciso un \texttt{Round}, è stata implem
 utilizzare la sintassi indicata nel listato \ref{code:rounds} dove \texttt{n}, \texttt{m} e \texttt{l} rappresentano il
 numero di palloncini all'interno della \texttt{Streak} corrispondente.
 \input{code/rounds}
+Tale sintassi è stata ottenuta sfruttando il pattern \textbf{Pimp My Library} applicato a diverse classi.
 
 Inoltre, è stata resa disponibile anche una sintassi monadica per la definizione del \texttt{Round}. Tale approccio si è
 rivelato utile soprattutto per la definizione di \textit{round} più complessi e per garantire maggiore flessiblità: il
@@ -220,6 +221,21 @@ soddisfatti del risultato, generare il \texttt{Round} complessivo. È possibile 
 sfruttando la monade \texttt{IO} della libreria \textit{cats} \cite{cats-effects}, all'interno del listato
 \ref{code:roundmonad}.
 \input{code/round-monad}
+
+\subsubsection{Model Refactor}
+La suddivisione della logica del \texttt{Model} nei \textit{manager} è stata resa possibile sfruttando il pattern di
+delegazione estremamente comune in \textit{Akka}. In particolare, ad ogni messaggio diretto verso il \texttt{Model} sono
+stati assegnati uno o più tipi. L'analisi di un messaggio pertanto produrrà una lista di \texttt{MessageType} che indica
+verso quale (o quali) \textit{manager} lo stesso messaggio verrà ridirezionato.
+
+\subsubsection{Positions}
+L'implementazione della posizione e della velocità caratterizzanti le entità è stata realizzata mediante un semplice
+\textbf{product type} \texttt{Vector2D}. Ciò permette di esprimere le coordinate di un'entità sulla mappa e le
+componenti orizzontale e verticale della sua velocità. Sfruttando il pattern \textbf{Pimp My Library} sono stati
+aggiunti metodi per la somma tra due \texttt{Vector2D} e per il prodotto con uno scalare in modo che queste operazioni
+possano essere effettuate in modo del tutto naturale. Infine, è stato aggiunto un metodo di conversione implicita per
+poter creare un \texttt{Vector2D} a partire da una \texttt{Tuple2[Double, Double]} in modo che la definizione risulti
+più immediata.
 
 \subsection{Matteo Ragazzini}\label{subsec:matteo-ragazzini}
 Il mio compito all'interno del progetto, è stato quello di realizzare il \texttt{TrackLoader} e la relativa pagina

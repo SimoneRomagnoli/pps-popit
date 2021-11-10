@@ -25,7 +25,6 @@ object Positions {
    */
   implicit class RichPosition(v: Vector2D) {
     def +(other: Vector2D): Vector2D = (v.x + other.x, v.y + other.y)
-    def -(other: Vector2D): Vector2D = (v.x - other.x, v.y - other.y)
     def *(value: Double): Vector2D = (v.x * value, v.y * value)
 
     def intersectsWith(entity: Entity)(radius: Double): Boolean =
@@ -50,17 +49,6 @@ object Positions {
    *   the [[Vector2D]] corresponding to the given [[Tuple2]].
    */
   implicit def fromTuple(t: (Double, Double)): Vector2DImpl = Vector2DImpl(t._1, t._2)
-
-  /**
-   * Calculates the distance between two points.
-   * @param from,
-   *   first position
-   * @param to,
-   *   second position
-   * @return
-   */
-  def distance(from: Vector2D)(to: Vector2D): Double =
-    Math.sqrt(squareDistance(from)(to))
 
   def squareDistance(from: Vector2D)(to: Vector2D): Double =
     Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2)

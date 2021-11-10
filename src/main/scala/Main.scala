@@ -1,18 +1,18 @@
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, ActorSystem, Scheduler}
+import akka.actor.typed.{ ActorRef, ActorSystem, Scheduler }
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import commons.CommonValues.Resources.{akkaConfiguration, fxmlRoot}
+import commons.CommonValues.Resources.{ akkaConfiguration, fxmlRoot }
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.interaction.Messages._
 import javafx.scene.layout.StackPane
 import scalafx.Includes._
-import scalafx.application.{JFXApp3, Platform}
+import scalafx.application.{ JFXApp3, Platform }
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
-import scalafxml.core.{FXMLLoader, NoDependencyResolver}
+import scalafxml.core.{ FXMLLoader, NoDependencyResolver }
 import view.View.ViewActor
 import view.controllers.ViewMainController
 

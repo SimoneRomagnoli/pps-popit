@@ -1,14 +1,14 @@
 package model.managers
 
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.Controller.ControllerMessages.CurrentWallet
-import controller.interaction.GameLoop.GameLoopMessages.{GameOver, GameStatsUpdated, MapCreated}
-import controller.interaction.Messages.{GameDataManagerMessage, Input, Update}
+import controller.interaction.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
+import controller.interaction.Messages.{ GameDataManagerMessage, Input, Update }
 import controller.settings.Settings.Settings
-import model.Model.ModelMessages.{TickUpdate, TrackChanged}
+import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
 import model.managers.GameDataMessages._
-import model.maps.Plots.{Plotter, PrologPlotter}
+import model.maps.Plots.{ Plotter, PrologPlotter }
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
 
@@ -35,7 +35,7 @@ object GameDataManager {
     }
 }
 
-case class DataManager private(
+case class DataManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
     settings: Settings,

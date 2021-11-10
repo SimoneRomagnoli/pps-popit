@@ -55,10 +55,7 @@ object Controller {
     case class SetFrameRate(frameRate: Double) extends SettingsMessage
     case class UpdateSettings() extends SettingsMessage
 
-    case class StartNextRound()
-        extends Input
-        with SpawnManagerMessage
-        with EntitiesManagerMessage
+    case class StartNextRound() extends Input with SpawnManagerMessage with EntitiesManagerMessage
     case class NewTimeRatio(value: Double) extends Input
     case class CurrentWallet(amount: Int) extends Input
     case class StartAnimation(entity: Entity) extends Render

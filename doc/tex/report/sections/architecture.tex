@@ -16,7 +16,7 @@ implementazione dell'interfaccia grafica senza dover applicare alcuna modifica a
 \subsection{Modello ad Attori}
 La presenza di un elevato numero di entità all'interno dell'applicazione ha portato alla luce l'esigenza di gestire,
 già a livello architetturale, la possibilità di sfruttare a pieno la potenza della cpu rendendo quindi il programma
-concorrente. In particolare, per astrarre dalla gestione problematiche tipiche di sistemi concorrenti
+concorrente. In particolare, per astrarre dalla gestione di problematiche tipiche di sistemi concorrenti
 (mutua eclusione e corse critiche) si è deciso di adottare un approccio basato su attori. Dal momento che ogni attore
 incapsula al suo interno un flusso di controllo basato su \textit{event loop} e che le interazioni avvengono
 esclusivamente attraverso scambio di messaggi, non è necessario gestire meccanismi di sincronizzazione.

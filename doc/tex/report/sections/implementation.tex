@@ -324,16 +324,15 @@ traccia più lunga.
 
 \subsubsection{Abilità di TrackFollowing}
 Per muovere i palloncini sulla traccia, sarebbe corretto rispettare la gerarchia di entità mostrata nella sezione
-Design di dettaglio, in particolare, senza modificare l'interfaccia \texttt{MovementAbility}, bensì aggiungendo una
+\ref{sec:detailed-design}, in particolare, senza modificare l'interfaccia \texttt{MovementAbility}, bensì aggiungendo una
 funzionalità ad essa. Quindi è stato pensato un meccanismo che associa una posizione lineare al palloncino sulla
-traccia bidimensionale: il \texttt{TrackFollowing}.
-
-\input{code/track-following}
-
-Il listato \ref{code:track-following} mostra come l'abilità di movimento viene sovrascritta seguendo la posizione
-lineare nella traccia. Per approfondire, la posizione lineare è stata pensata come un \texttt{Double} la cui parte
+traccia bidimensionale: il \texttt{TrackFollowing}. L'abilità di movimento viene sovrascritta in base alla posizione
+lineare nella traccia. Nello specifico, la posizione lineare è stata pensata come un \texttt{Double} la cui parte
 intera rappresenta l'indice della cella occupata dal palloncino nella traccia, mentre la parte decimale indica la
-percentuale attraversata della cella stessa.
+percentuale attraversata della cella stessa. Inoltre, la posizione lineare rende i palloncini effettivamente confrontabili,
+riuscendo a valutare quale di questi sia il più pericoloso poiché più vicino alla fine del percorso;
+infatti, l'interfaccia \texttt{Track Following} estende anche \texttt{Comparable}. Quest'ultima proprietà viene sfruttata
+anche a livello di renderizzazione disegnando i palloncini ordinati.
 
 \subsubsection{Rendering DSL}
 Vista la complessità dei \textit{controller fxml}, è stato implementato un \textit{domain-specific language} che

@@ -2,7 +2,7 @@ package view.controllers
 
 import commons.CommonValues
 import commons.Futures.retrieve
-import controller.interaction.Messages.{Input, Message}
+import controller.interaction.Messages.{ Input, Message }
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent

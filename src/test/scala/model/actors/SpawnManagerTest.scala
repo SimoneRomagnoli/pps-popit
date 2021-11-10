@@ -3,7 +3,7 @@ package model.actors
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import controller.Controller.ControllerMessages.{PauseGame, ResumeGame, StartNextRound}
+import controller.Controller.ControllerMessages.{PauseGame, ResumeGame}
 import controller.interaction.Messages.Update
 import controller.settings.Settings.Time.TimeSettings
 import model.Model.ModelMessages.TrackChanged
@@ -20,7 +20,6 @@ import model.maps.Tracks.Track
 import model.spawn.RoundBuilders.RoundBuilder.define
 import model.spawn.RoundBuilders.{RichIO, add}
 import model.spawn.Rounds.{Round, Streak}
-import model.spawn.RoundsFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

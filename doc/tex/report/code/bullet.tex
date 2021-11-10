@@ -1,0 +1,50 @@
+\begin{lstlisting}[label=code:bullet, language=Scala, caption=Implementazione dei bullet con focus sulla CannonBall]
+
+trait Bullet extends Entity with MovementAbility {
+    type Boundary = (Double, Double)
+
+    override def position: Vector2D = bullet.position
+    override def speed: Vector2D = bullet.speed
+    override def boundary: Boundary = bullet.boundary
+
+    override def in(pos: Vector2D): Bullet = instance(
+    BasicBullet(this.damage, pos, this.speed, this.boundary)
+    )
+
+    override def at(velocity: Vector2D): Bullet = instance(
+    BasicBullet(this.damage, this.position, velocity, this.boundary)
+    )
+
+    def damage: Double = bullet.damage
+    def hurt(d: Double): Bullet = instance(BasicBullet(d, this.position, this.speed, this.boundary))
+
+    def bullet: Bullet
+    def instance(bullet: Bullet): Bullet
+}
+
+case class BasicBullet(
+    override val damage: Double = bulletDefaultDamage,
+    override val position: Vector2D = defaultPosition,
+    override val speed: Vector2D = bulletDefaultSpeed,
+    override val boundary: (Double, Double) = bulletDefaultBoundary)
+    extends Bullet {
+    override def instance(b: Bullet): Bullet = b
+
+    override def bullet: Bullet = this
+}
+
+trait Explosion extends Bullet with SightAbility
+
+trait Fire extends Explosion
+
+/** Adds to the [[Bullet]] the exploding ability */
+case class CannonBall(
+   override val bullet: Bullet = BasicBullet(),
+   override val sightRange: Double = bulletDefaultSightRange)
+   extends Bullet
+   with Fire {
+   override def instance(b: Bullet): Bullet = CannonBall(b, sightRange)
+
+   override def sight(radius: Double): Explosion = CannonBall(bullet, radius)
+}
+\end{lstlisting}

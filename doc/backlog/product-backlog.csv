@@ -1,0 +1,83 @@
+,,,,,,,,
+,Sprint 1,,,,,,,
+,Sprint 2,,,,,,,
+,Sprint 3,,,,,,,
+,Sprint 4,,,,,,,
+,,,,,,,,
+,Backlog Item,Task,Developers,Estimated Effort (1-10),Effective Effort per Sprint,,,
+,,,,,1,2,3,4
+,Knowledge Crunching,Understanding what the game is about,ALL,6,4,1,1,
+,,Technology Analysis,ALL,6,4,2,,
+,,Game Pattern Definition (MVC - GameLoop),ALL,3,3,,,
+,,Choose Domain Entities and their types,ALL,4,4,,,
+,Continuous Integration,Studying Typical Approaches,ALL,3,3,,,
+,,Define ci Workflow,ALL,6,4,2,,
+,"Model, View, Controller",Structure a good Behavior for each component,Simone,8,3,1,4,
+,Game Loop,Structure a good Behavior for the Game Loop,Alessandro,5,4,,,1
+,Entities,Design Balloons with functional pattern,Alessandro,6,4,1,1,
+,,Design Balloons features,Alessandro,8,2,6,,
+,,Design of Bullets,Matteo,8,5,2,1,
+,,Design of Explosions,Matteo,5,,,5,
+,,Design Towers,Tommaso,8,8,,,
+,,Make towers more functional,Tommaso,7,,7,,
+,,Design Entities features as mixin of components,"Alessandro, Matteo, Tommaso",7,6,1,,
+,ScalaFX,Understand how to connect fxml and scala files,"Simone, Matteo, Tommaso",8,4,1,3,
+,Maps,Decide how to plot tracks,Simone,8,6,2,,
+,,Study Prolog and define a working Theory,Simone,8,7,1,,
+,,Show tracks in View,Simone,4,3,1,,
+,Quality Check,"Understand how strict the concept of ""good code"" has to be",Simone,5,5,,,
+,,Colleague's code inspection,Simone,8,2,2,2,2
+,Test Driven Development,Adhere as much as possible to the TDD workflow,Alessandro,8,2,3,2,1
+,,,Simone,10,4,4,2,2
+,,,Tommaso,8,2,2,2,2
+,,,Matteo,9,3,2,1,3
+,Continuous Delivery,Define cd Workflow,"Simone, Alessandro",5,,4,,1
+,View DSL,Rendering: render entities and maps,Simone,6,,3,,3
+,,Drawing: encapsulate all images,Simone,2,,2,,
+,,Animations: encapsulate all animations,Matteo,2,,2,,
+,,Understand Timelines,Matteo,4,,4,,
+,,Animating: render animations,Matteo,5,,2,,3
+,In-Game Menu,Define a lateral menu with fxml,Simone,7,,5,2,
+,,Write handlers in Scala,Simone,5,,3,2,
+,Actor Interaction,Understand how Entity Actors should interact through the Model,ALL,5,,5,,
+,,Handle interaction between Bullets and Balloons,"Matteo, Alessandro",6,,4,2,
+,,Handle interaction between Towers and Bullets,"Matteo, Tommaso",6,,4,2,
+,Rounds,Define Rounds,Alessandro,6,,5,1,
+,,Define Rounds DSL,Alessandro,5,,4,1,
+,Balloons,Define Balloons DSL,Alessandro,4,1,3,,
+,,Define Decoration DSL,Alessandro,4,,4,,
+,,Define Decoration Structure,Alessandro,8,,6,2,
+,,Define View-application of Decorative Patterns,Simone,5,,,5,
+,Managers,Model Analysis to make a good refactor (separation of concerns),"Alessandro, Simone",7,,,7,
+,,Entities Manager,"Alessandro, Simone",5,,,4,1
+,,Spawn Manager,Alessandro,6,,,5,1
+,,Design Game Levels,"Alessandro, Simone",5,,,5,
+,,Round Monadic DSL,Alessandro,6,,,5,1
+,,Track Loader,"Tommaso, Matteo",7,,,5,2
+,,Game Dynamics Manager,Simone,4,,,4,
+,Choosable Track,Define when the player has free choice on the track,"Matteo, Tommaso",4,,,4,
+,,Adapt View,Simone,5,,,5,
+,,Adapt Plotter and Prolog Engine,Simone,3,,,3,
+,Saved Tracks Page,Define a page with the previus tracks,Matteo,8,,,8,
+,,Integration with Serializer and Deserializer,"Matteo, Tommaso",4,,,4,
+,,Understanding IO library,Tommaso,3,,,3,
+,,Understanding Circe library to handle json parsing,Tommaso,3,,,3,
+,,Implement custom encoder to wrap a track list into json,Tommaso,7,,,8,
+,,Implement custom decoder to wrap a json file into track list,Tommaso,8,,,9,
+,,Design a good structure to handle save and write on file,Tommaso,6,,,7,
+,,Refactor code to build a monadic file coder,Tommaso,7,,,7,
+,Game Policies,Determine tower prices based on their game efficiency,"Simone, Tommaso",3,,,3,
+,,Insert initial price in tower builder,"Simone, Tommaso",4,,,4,
+,Settings,Add Difficulties,"Simone, Alessandro",4,,,4,
+,,Adapt Prolog Plotter to difficulties inserting them as parameter,Simone,6,,,6,
+,,Adapt Game Data to difficulties inserting them as parameter,Alessandro,2,,,2,
+,Style,Insert CSS code for styling fxml elements,"Simone, Matteo",5,,,2,3
+,,Make styling decisions,"Simone, Matteo",5,,,2,3
+,Time Settings,Add frame rate option settings,Alessandro,3,,,,3
+,,Add time ratio option settings,Alessandro,3,,,,3
+,PlantUML,Study plantUML documentation,ALL,5,,,,5
+,,Make diagrams with plantUML,ALL,5,,,,5
+,Refactor,Complete with missing ScalaDoc,ALL,1,,,,1
+,,Final code revision,ALL,4,,,,4
+,,Redefine visual elements like buttons,Matteo,2,,,,2
+,Report,Write Report,ALL,6,,1,2,3

@@ -38,13 +38,25 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
       - uses: actions/download-artifact@v2
-      - name: Rename artifact
+      - name: Build LaTeX report
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: report.tex
+          args: '-output-format=pdf -file-line-error -synctex=1 -halt-on-error -interaction=nonstopmode -shell-escape'
+          working_directory: doc/tex/report
+      - name: Rename jars
         run: mv pps-popit/*.jar pps-popit/pps-popit.jar
+      - name: Rename report
+        run: mv doc/tex/report/*.pdf doc/tex/report/popit-report.pdf
       - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "0.4.0"
           prerelease: false
           title: "Scrum Sprint 4 - Release"
-          files: pps-popit/*.jar
+          files: |
+            pps-popit/*.jar
+            doc/tex/report/popit-report.pdf

@@ -93,7 +93,8 @@ object Rendering {
           .prepended(GridCell(-1, 0, Right))
           .sliding(2)
           .map { couple =>
-            val dir: String = couple.head.direction.toString + "-" + couple.last.direction.toString
+            val dir: String = couple.head.direction.toString.toUpperCase + "-" + couple.last.direction.toString.toUpperCase
+            println(dir)
             val cell: Cell = couple.last
             val rect: Shape = (Rendering a cell).asSingle
             rect.setFill(drawing the Road(dir))
@@ -183,7 +184,7 @@ object Rendering {
      * @return
      *   the blend effect of the balloon pattern.
      */
-    def toBlend(pattern: BalloonPattern)(implicit rectangle: Rectangle): Blend = {
+    def toBlend(implicit rectangle: Rectangle): BalloonPattern => Blend = { pattern =>
       val image: ImagePattern = drawing the pattern
       val blend: Blend = new Blend()
       blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))

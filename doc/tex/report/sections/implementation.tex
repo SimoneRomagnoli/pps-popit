@@ -2,21 +2,20 @@
 \section{Implementazione}
 In questa sezione vengono analizzati gli aspetti implementativi del sistema, facendo eventualmente riferimento al codice
 sviluppato. Nello specifico, verranno approfonditi solamente gli elementi che non sono stati esplorati a pieno nella
-sezione Design di Dettaglio o che si ritengono fondamentali nello sviluppo di un progetto di tipo "game" come quello in
+sezione \ref{sec:detailed-design} o che si ritengono fondamentali nello sviluppo di un progetto di tipo "game" come quello in
 discussione. Per riflettere la suddivisione del lavoro durante il processo di sviluppo, questa sezione presenta una
 parte descrittiva per ognuno dei membri del team.
 
 \subsection{Tommaso Mandoloni}
 Il mio compito all'interno del progetto, oltre che collaborare con il team per implementare aspetti e funzionalità
 comuni di Model, Controller e design, è stato quello di strutturare e implementare le torri di gioco, intese come entità
-di base, i loro potenziamenti e infine l'attore che ne incapsula il comportamento. Inoltre mi sono occupato di tutta
+di base, i loro potenziamenti e infine l'attore che ne incapsula il comportamento. Inoltre, mi sono occupato di tutta
 la parte di serializzazione e deserializzazione, in modo da poter wrappare gli oggetti in strutture dati salvabili su
 file, oltre che nella collaborazione per la creazione di un attore che sfrutti queste funzionalità.
 
 \subsubsection{File Coder}
 L'oggetto \texttt{FileCoder} nasce dall'esigenza di poter salvare i dati di gioco su file in modo da poterli
-ripristinare per dare all'utente la possibilità di rigiocare le sue partite preferite. In particolare si tratta della
-possibilità per l'utente di poter salvare su file le sue mappe preferite in modo da poterle rigiocare. Il
+ripristinare per dare all'utente la possibilità di rigiocare le sue partite preferite. Il
 \texttt{FileCoder} quindi lavora principalmente con due tipologie di strutture dati: un file \textit{json}, in cui
 vengono indicizzate e salvate le mappe di gioco, e una lista di tracce.
 
@@ -56,7 +55,7 @@ sequenza di operazioni eseguite tramite \textit{for-comprehension}.
 \input{code/setup.tex}
 
 \subsubsection{Torri}
-Le torri, insieme ai pallonicini, sono le entità protagoniste del gioco. Infatti, una volta posizionato nella mappa
+Le torri, insieme ai palloncini, sono le entità protagoniste del gioco. Infatti, una volta posizionato nella mappa
 di gioco, potranno ruotare per mirare ai palloncini che passano all'interno del loro campo visivo, e sparare un
 proiettile specifico verso la loro direzione per poterli scoppiare: pertanto il \texttt{trait Tower} estende
 \texttt{Entity}, con l'aggiunta di \textbf{mixin} creati ad-hoc per conferire alla torre la capacità di visione di altre
@@ -71,13 +70,13 @@ a seguito di un'analisi di progettazione più approfondita: infatti si è poi sc
 deve possedere. Attraverso questo approccio infatti è stato possibile mantenere una metodologia del tutto funzionale
 per quanto riguarda la modifica dei valori delle caratteristiche della torre come la sua rotazione o il raggio del
 campo visivo: infatti, al contrario di un approccio orientato agli oggetti dove una volta modificati i campi
-richiesti veniva semplicemente aggiornato lo stesso oggetto, in questo caso attraverso l'utilizzo del meotodo
+richiesti veniva semplicemente aggiornato lo stesso oggetto, in questo caso attraverso l'utilizzo del metodo
 \textit{copy()} ogni volta che una torre deve aggiornare un suo campo, l'intero oggetto viene ricreato con i nuovi
 valori. In questo modo anche il codice risulta essere più chiaro e pulito, oltre che più funzionale.
 
 A questo punto, per mantenere la divisione delle torri per le varie tipologie, invece che creare delle sotto classi
 per ogni tipo di torre, si è scelto di utilizzare un meccanismo puramente funzionale ossia le \textbf{type class}. Le
-type class sono un costrutto tipicamente funzionale che supportano un meccanismo di polimorfismo ad-hoc, in grado
+type class sono un costrutto tipicamente funzionale che supporta un meccanismo di polimorfismo ad-hoc, in grado
 quindi di aggiungere funzionalità vincolate a un tipo di dato specifico ma senza toccare il codice. Infatti la classe
 \texttt{BaseTower[B]} è una type class sul tipo di proiettile B che utilizza. Per istanziare quindi le varie
 tipologie di torri, è stato adottata una rivisitazione del pattern \textbf{Builder}, specificando dei builder
@@ -86,17 +85,17 @@ impliciti che generano automaticamente il tipo di torre corretto passando in inp
 \input{code/tower-builder.tex}
 
 Seguendo questo approccio e sfruttando le potenzialità delle type class, si riesce a garantire enorme flessibilità ed
-estendibilità all'intera strttura delle torri, poiché nel caso venisse aggiunta in futura una nuova tipologia di
+estendibilità all'intera struttura delle torri, poiché nel caso venisse aggiunta in futuro una nuova tipologia di
 proiettile, sarà sufficiente creare lo specifico builder per istanziarne la tipologia di torre associata, senza
 doverne implementare una classe specifica.
 
-Al fine di agevolare la creazione delle torri di gioco, è stato creato un appostio DSL che permette di istanziare
+Al fine di agevolare la creazione delle torri di gioco, è stato creato un apposito DSL che permette di istanziare
 tipologie di torri specifiche con pochissime righe di codice e in via del tutto funzionale: ad esempio per istanziare
 una torre che lancia freccette, con i suoi valori default, basterà scrivere "Arrow tower spawn".
 
 \input{code/tower-spawn.tex}
 
-Inoltre ogni torre dispone di una funzionalità di \textit{boosting} aggiuntiva che le permette di incrementare i valori
+Inoltre, ogni torre dispone di una funzionalità di \textit{boosting} aggiuntiva che le permette di incrementare i valori
 dei suoi campi durante il gioco, in modo che con l'aumentare dei round e quindi della difficoltà, il giocatore riesca
 comunque ad avere un supporto adeguato per vincere i round. Rimane nella strategia del player capire quando e quali
 potenziamenti fornire alla torre, al fine di massimizzare il punteggio di gioco. La funzionalità di potenziamento
@@ -109,7 +108,7 @@ ad attori sul quale si basa l'intera progettazione e struttura di gioco. Il \tex
 volta che il player ha deciso di posizionare una torre all'interno della mappa di gioco, e il suo unico compito è
 quello di reagire agli eventi di gioco e comportarsi di conseguenza: infatti entrerà in una fase di
 \textit{detecting} dove dovrà verificare se stanno passando dei pallonicini all'interno del campo visivo della torre,
-e, in caso il suo rateo di fuoco glielo permetta, sparare un proiettile nella direzione del palloncino individuato.
+e, in caso il suo ratio di fuoco glielo permetta, sparare un proiettile nella direzione del palloncino individuato.
 
 \begin{figure}[H]
     \centering
@@ -179,8 +178,8 @@ Per quanto riguarda invece i potenziamenti dei palloncini, essi sono stati imple
 \textbf{Decorator} \cite{gof}. Un potenziamento può quindi essere concettualmente pensato come un \textit{wrapper} per un
 palloncino: grazie al pattern appena citato è inoltre possibile avvologere un palloncino con più potenziamenti
 simultaneamente. In particolare, è stata implementata una classe astratta \texttt{BalloonDecoration} in cui vengono
-ridefiniti alcuni metodi comuni alle decorazioni contrete. È stato definito il metodo \texttt{retrieve}: ciò rende i
-metodi del \texttt{trait Balloon} che lo utilizzavano dei \textbf{Template Method} \cite{gof}. Inoltre, il metodo
+ridefiniti alcuni metodi comuni alle decorazioni concrete. È stato ridefinito il metodo \texttt{retrieve}: ciò rende i
+metodi del \texttt{trait Balloon} che lo utilizzavano dei \textbf{Template Method} \cite{gof}. Inoltre, è stato inserito il metodo
 \texttt{instance} che verrà definito dalle sotto-classi concrete e che permette di avvolgere un palloncino con un
 potenziamento. Anche in questo caso viene sfruttato il pattern \textbf{Template Method}.
 
@@ -197,7 +196,7 @@ arrivato alla fine del percorso oppure ne vengono gestiti l'esplosione e il cong
 \end{figure}
 
 \subsubsection{Rounds}
-I \textit{round} è rappresentato da una sequenza prestabilita di palloncini che attraversano il percorso e minacciano le
+Il \textit{round} è rappresentato da una sequenza prestabilita di palloncini che attraversano il percorso e minacciano le
 vite a disposizione del giocatore. All'interno di uno stesso \textit{round} possono essere presenti più "ondate" di
 palloncini e queste ultime prendono il nome di \texttt{Streak}. L'implementazione più naturale consiste quindi nel
 definire un \texttt{Round} come sequenza di \texttt{Streak}, ognuna delle quali è caratterizzata da diversi attributi:
@@ -246,7 +245,7 @@ Inoltre, ho collaborato con gli altri membri del team durante la fase di integra
 \subsubsection{Proiettili}
 I proiettili rappresentano all'interno del gioco il componente di più basso livello, che viene sparato dalle torri
 per infliggere danni ai palloncini. Il \texttt{trait Bullet} è quindi rappresentato dall'estensione del
-\texttt{trait Entity} a cui è stata aggiunta l'abilità di movimento (\texttt{Movement Ability})
+\texttt{trait Entity} a cui è stata aggiunta l'abilità di movimento (\texttt{Movement Ability}).
 
 In fase di definizione dei requisiti sono stati individuati tre tipi diversi di proiettili: freccetta, bomba e palla di neve.
 Questi ultimi presentano un comportamento comune: possiedono una posizione, una velocità, una dimensione ed un danno, ma
@@ -254,21 +253,21 @@ la bomba e la palla di neve in quanto proiettili esplosivi devono infliggere dan
 la palla di neve possiede anche l'abilità di congelamento che, oltre ad infliggere danni, congela i palloncini colpiti
 lungo il tracciato.
 
-Per l'implementazione di \texttt{Dart}, \texttt{CannonbBall} e \texttt{IceBall} si è quindi partiti col definire una case class
+Per l'implementazione di \texttt{Dart}, \texttt{CannonBall} e \texttt{IceBall} si è quindi partiti col definire una case class
 di base, la \texttt{BasicBullet} che definisce i tratti comuni fra le tre entità. Successivamente si è deciso di realizzare
 le entità di più alto livello, come wrapper di una \texttt{BasicBullet}, alla quale vengono aggiunte delle proprietà.
 
 Per esempio, grazie alla buona gerarchia di carattereristiche definite in \texttt{Entity} è stato possibile riutilizzare
 il trait \texttt{SightRange} (inizialmente pensato per le torri) per dotare il trait \texttt{Explosion} dell'abilità di
 individuare la collisione con altre entità all'interno di un certo sightRange e quindi "esplodere". Tale trait è stato
-successivamente esteso da \texttt{Fire} e \texttt{Ice}, rispettivamente rappresentati esplosioni di fuoco e di ghiaccio.
+successivamente esteso da \texttt{Fire} e \texttt{Ice}, rispettivamente rappresentanti esplosioni di fuoco e di ghiaccio.
 
-A questo punto grazie ai \textbf{mixin} è stato possibile definire ad esempio una \texttt{CannonbBall} come
+A questo punto grazie ai \textbf{mixin} è stato possibile definire ad esempio una \texttt{CannonBall} come
 \texttt{Bullet} \textbf{with} Fire.
 
 Volendo seguire un approccio puramente funzionale i metodi di aggiornamento di un bullet devono crearne uno nuovo
 con i valori aggiornati. Questo comportamento è comune a tutti i bullet, ma l'aggiornamento
-di ognuno questi deve tornare il tipo di bullet corretto, per questo avrei dovuto implementare tali
+di ognuno di questi deve tornare il tipo di bullet corretto, per questo avrei dovuto implementare tali
 metodi all'interno di ogni tipo di proiettile. Per evitare un'inutile ripetizione
 di codice ho realizzato un metodo instance, di cui ogni sottoentità ne effettua l'override, per restituire l'istanza
 corretta del Bullet da ricreare. I metodi di aggiornamento sono stati quindi posti all'interno di BasicBullet e questi
@@ -276,8 +275,7 @@ richiamano il metodo \textbf{instance()}.
 
 Per favorire l'espressività del codice in fase di creazione di nuovi bullet, è stato realizzato un oggetto
 \textbf{Shooting} con metodo \textbf{from} che permette, passata una \textbf{[Tower[Bullet]]},
-di sparare un nuovo proiettile del tipo corrispondente alla tower, con il giusto danno, posizione e direzione:
-Shooting \textbf{from} Tower[Dart]
+di sparare un nuovo proiettile del tipo corrispondente alla tower, con il giusto danno, posizione e direzione.
 
 \begin{figure}[H]
     \centering
@@ -291,8 +289,8 @@ il comportamento (mostrato in figura \ref{fig:sequence-bullet-actor}).
 Tale attore presenta due \texttt{Behaviour}: \texttt{default} ed \texttt{exploding}.
 Quando l'attore è nel behaviour di \texttt{default} aggiorna la posizione del bullet, verifica che questo non esca dal campo visivo e
 cosa più importante controlla che non sussistano collisioni con dei palloncini, caso nel quale, l'attore cambia comportamento
-passando ad \texttt{explosion}.
-In \texttt{explosion} l'attore notifica il model con la lista di palloncini colpiti, in caso il bullet sia di tipo
+passando ad \texttt{exploding}.
+In \texttt{exploding} l'attore notifica il model con la lista di palloncini colpiti, in caso il bullet sia di tipo
 \texttt{Explosion} ne avvia l'animazione ed infine notifica il model chiedendo di rimuovere il bullet dalla lista di entità
 in gioco.
 
@@ -305,7 +303,7 @@ in gioco.
 
 \subsubsection{Track Loader}\label{subsec:track-loader}
 Uno dei requisiti funzionali espresso dal committente riguardava la possibilità di salvare una traccia di gioco ed in seguito
-creare a partire da quest'ultima una nuova partita. Per soddisfare tale requisito ho realizzato la pagina relativa alle
+creare, a partire da quest'ultima, una nuova partita. Per soddisfare tale requisito ho realizzato la pagina relativa alle
 tracce precedentemente salvate \texttt{Saved Tracks} con il relativo controller FXML \texttt{SavedTrackController} e l'attore che gestisce il salvataggio
 e il caricamento di tali tracce, il \texttt{TrackLoader}.
 
@@ -315,7 +313,7 @@ Il \texttt{TrackLoader} ha tre compiti fondamentali:
     dal main menù accede alla pagina \texttt{Saved Tracks};
     \item fornire al \texttt{Model} la traccia selezionata dall'utente nella pagina \texttt{Saved Tracks}.
     In questo modo il \texttt{Model} può procedere alla creazione di una nuova partita con la suddetta traccia;
-    \item salvare una nuova traccia, realizzando inoltre tramite lo \texttt{ScreenShooter} un screenshot di quest'ultima,
+    \item salvare una nuova traccia, realizzando inoltre tramite lo \texttt{ScreenShooter} uno screenshot di quest'ultima,
     in modo da fornire all'utente un riscontro visivo della traccia salvata all'interno della pagina \texttt{Saved Tracks}.
 \end{itemize}
 

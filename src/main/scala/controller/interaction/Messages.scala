@@ -39,6 +39,7 @@ object Messages {
       with Input
 
   object ActualMessage {
+
     def unapply(message: Update): Option[Update] = message match {
       case WithReplyTo(m, _) => Some(m)
       case m                 => Some(m)

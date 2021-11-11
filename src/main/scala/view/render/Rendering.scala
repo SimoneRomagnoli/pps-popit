@@ -94,7 +94,6 @@ object Rendering {
           .sliding(2)
           .map { couple =>
             val dir: String = couple.head.direction.toString.toUpperCase + "-" + couple.last.direction.toString.toUpperCase
-            println(dir)
             val cell: Cell = couple.last
             val rect: Shape = (Rendering a cell).asSingle
             rect.setFill(drawing the Road(dir))

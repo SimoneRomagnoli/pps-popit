@@ -6,17 +6,25 @@ import scala.annotation.tailrec
 
 object Messages {
   trait Message
+
   trait Render extends Message
+
   trait Input extends Message
+
   trait Update extends Message
 
   trait SpawnManagerMessage extends Update
+
   trait EntitiesManagerMessage extends Update
+
   trait GameDataManagerMessage extends Update
 
   sealed trait MessageType
+
   case object SpawnMessage extends MessageType
+
   case object EntityMessage extends MessageType
+
   case object GameDataMessage extends MessageType
 
   def messageTypes: Update => List[MessageType] = { msg =>
@@ -31,6 +39,7 @@ object Messages {
           _messageTypes(msg)(GameDataMessage :: types)
         case _ => types
       }
+
     _messageTypes(msg)
   }
 
@@ -43,7 +52,6 @@ object Messages {
     def unapply(message: Update): Option[Update] = message match {
       case WithReplyTo(m, _) => Some(m)
       case m                 => Some(m)
-      case _                 => None
     }
   }
 

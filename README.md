@@ -33,7 +33,7 @@ $ sbt test
 ```
 
 ## Report
-You can download the updated report on the developed project [here](https://www.overleaf.com/download/project/614475489b79f336b3888962/build/17c22518167-58c17a362d0e1599/output/output.pdf?compileGroup=priority&clsiserverid=clsi-pre-emp-e2-e-vkwd&popupDownload=true). 
+You can download the updated report on the developed project [here](https://github.com/SimoneRomagnoli/pps-popit/releases/tag/0.4.0). 
 
 ## Authors
 - Simone Romagnoli ([SimoneRomagnoli](https://github.com/SimoneRomagnoli))

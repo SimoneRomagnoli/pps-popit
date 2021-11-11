@@ -93,7 +93,8 @@ object Rendering {
           .prepended(GridCell(-1, 0, Right))
           .sliding(2)
           .map { couple =>
-            val dir: String = couple.head.direction.toString.toUpperCase + "-" + couple.last.direction.toString.toUpperCase
+            val dir: String =
+              couple.head.direction.toString.toUpperCase + "-" + couple.last.direction.toString.toUpperCase
             val cell: Cell = couple.last
             val rect: Shape = (Rendering a cell).asSingle
             rect.setFill(drawing the Road(dir))

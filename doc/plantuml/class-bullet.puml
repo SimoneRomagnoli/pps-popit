@@ -1,0 +1,67 @@
+@startuml
+interface Entity {
+    +position: Vector2D
+    +in(position: Vector2D): Entity
+    +update(elapsed: Double): Entity
+}
+
+interface MovementAbility {
+    +speed: Vector2D
+    +at(speed: Vector2D): Entity
+    -move(elapsed: Double): Entity
+}
+
+interface SightAbility {
+    +sightRange: Double
+    +sight(radius: Double): SightAbility
+    +isInSightRange(entity: Entity): Boolean
+}
+
+Entity <|-right- SightAbility
+Entity <|-left- MovementAbility
+
+interface Bullet {
+    +bullet: Bullet
+    +damage: Double
+    +hurt(d: Double): Bullet
+    -instance(b:Bullet): Bullet
+}
+
+Entity <|-down- Bullet
+MovementAbility <|-down- Bullet
+
+
+
+class BasicBullet {}
+
+Bullet <|-down- BasicBullet
+
+
+interface Explosion {}
+
+SightAbility <|-down- Explosion
+Bullet <|-right- Explosion
+
+interface Fire
+
+interface Ice {
+    +freezingTime: Double
+}
+
+Explosion <|-down- Fire
+Explosion <|-down- Ice
+
+class Dart {}
+
+Bullet <|-down-- Dart
+
+class CannonBall {}
+
+Bullet <|-down- CannonBall
+Fire <|-down- CannonBall
+
+class IceBall {}
+
+Bullet <|-down- IceBall
+Ice <|-down- IceBall
+@enduml

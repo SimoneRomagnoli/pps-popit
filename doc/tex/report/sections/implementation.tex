@@ -238,42 +238,10 @@ poter creare un \texttt{Vector2D} a partire da una \texttt{Tuple2[Double, Double
 più immediata.
 
 \subsection{Matteo Ragazzini}\label{subsec:matteo-ragazzini}
-Il mio compito all'interno del progetto, è stato quello di realizzare il \texttt{TrackLoader} e la relativa pagina
-\texttt{SavedTracks}, modellare la gerarchia di \texttt{Entity},  implementare i proiettili e l'attore che
-ne definisce il comportamento ed infine gestire l'insermento di animazioni sfruttando il meccanismo delle \textbf{timeline}.
+Il mio compito all'interno del progetto, è stato quello di modellare la gerarchia di \texttt{Entity},  implementare i
+proiettili e l'attore che ne definisce il comportamento, realizzare il \texttt{TrackLoader} e la relativa pagina
+\texttt{SavedTracks} ed infine gestire l'insermento di animazioni sfruttando il meccanismo delle \textbf{timeline}.
 Inoltre, ho collaborato con gli altri membri del team durante la fase di integrazione dei proiettili con torri e palloncini.
-
-
-\subsubsection{Track Loader}\label{subsec:track-loader}
-Uno dei requisiti funzionali espresso dal committente riguardava la possibilità di salvare una traccia di gioco ed in seguito
-creare a partire da quest'ultima una nuova partita. Per soddisfare tale requisito ho realizzato la pagina relativa alle
-tracce precedentemente salvate \texttt{Saved Tracks} con il relativo controller FXML \texttt{SavedTrackController} e l'attore che gestisce il salvataggio
-e il caricamento di tali tracce, il \texttt{TrackLoader}.
-
-Il \texttt{TrackLoader} ha tre compiti fondamentali:
-\begin{itemize}
-    \item restituire al \texttt{SavedTrackController} tutte le tracce precendentemente salvate quando l'utente
-        dal main menù accede alla pagina \texttt{Saved Tracks};
-    \item fornire al \texttt{Model} la traccia selezionata dall'utente nella pagina \texttt{Saved Tracks}.
-          In questo modo il \texttt{Model} può procedere alla creazione di una nuova partita con la suddetta traccia;
-    \item salvare una nuova traccia, realizzando inoltre tramite lo \texttt{ScreenShooter} un screenshot di quest'ultima,
-    in modo da fornire all'utente un riscontro visivo della traccia salvata all'interno della pagina \texttt{Saved Tracks}.
-\end{itemize}
-
-Per ottenere persistenza delle tracce salvate il \texttt{TrackLoader} fa uso di un \texttt{FileCoder}, componente realizzato
-da Tommaso Mandoloni per la serializzazione e deserializzazione di tracce su file.
-
-L'interazione fra \texttt{TrackLoader} e \texttt{FileCoder} è riportata nel diagramma di sequenza in figura \ref{fig:sequence-track-loader}.
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.57\linewidth]{img/sequence-track-loader}
-    \caption{Diagramma di sequenza dell'interazione fra \texttt{TrackLoader}, \texttt{FileCoder} e \texttt{Controller}.}
-    \label{fig:sequence-track-loader}
-\end{figure}
-
-
 
 \subsubsection{Proiettili}
 I proiettili rappresentano all'interno del gioco il componente di più basso livello, che viene sparato dalle torri
@@ -306,14 +274,21 @@ di codice ho realizzato un metodo instance, di cui ogni sottoentità ne effettua
 corretta del Bullet da ricreare. I metodi di aggiornamento sono stati quindi posti all'interno di BasicBullet e questi
 richiamano il metodo \textbf{instance()}.
 
-Infine è stato realizzato un oggetto \textbf{Shooting} con metodo \textbf{from} che permette passata una \textbf{[Tower[Bullet]]}
-di sparare un nuovo proiettile del tipo corrispondente alla tower, con il giusto danno, posizione e direzione.
+Per favorire l'espressività del codice in fase di creazione di nuovi bullet, è stato realizzato un oggetto
+\textbf{Shooting} con metodo \textbf{from} che permette, passata una \textbf{[Tower[Bullet]]},
+di sparare un nuovo proiettile del tipo corrispondente alla tower, con il giusto danno, posizione e direzione:
+Shooting \textbf{from} Tower[Dart]
 
-\input{code/bullet}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{img/class-bullet}
+    \caption{Diagramma delle classi rappresentante i \texttt{Bullet}.}
+    \label{fig:class-bullet}
+\end{figure}
 
-Avendo adottato una architettura ad attori, ogni proiettile, in fase di creazione, viene associato ad un attore che ne definisce
-il comportamento, mostrato in figura \ref{fig:sequence-bullet-actor}. Tale attore presenta due \texttt{Behaviour}: \
-texttt{default} ed \texttt{exploding}.
+Infine, avendo adottato una architettura ad attori, ogni proiettile, in fase di creazione, viene associato ad un attore che ne definisce
+il comportamento (mostrato in figura \ref{fig:sequence-bullet-actor}).
+Tale attore presenta due \texttt{Behaviour}: \texttt{default} ed \texttt{exploding}.
 Quando l'attore è nel behaviour di \texttt{default} aggiorna la posizione del bullet, verifica che questo non esca dal campo visivo e
 cosa più importante controlla che non sussistano collisioni con dei palloncini, caso nel quale, l'attore cambia comportamento
 passando ad \texttt{explosion}.
@@ -321,13 +296,33 @@ In \texttt{explosion} l'attore notifica il model con la lista di palloncini colp
 \texttt{Explosion} ne avvia l'animazione ed infine notifica il model chiedendo di rimuovere il bullet dalla lista di entità
 in gioco.
 
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{img/sequence-bullet-actor}
     \caption{Diagramma di sequenza delle interazioni del \texttt{bulletActor}.}
     \label{fig:sequence-bullet-actor}
 \end{figure}
+
+\subsubsection{Track Loader}\label{subsec:track-loader}
+Uno dei requisiti funzionali espresso dal committente riguardava la possibilità di salvare una traccia di gioco ed in seguito
+creare a partire da quest'ultima una nuova partita. Per soddisfare tale requisito ho realizzato la pagina relativa alle
+tracce precedentemente salvate \texttt{Saved Tracks} con il relativo controller FXML \texttt{SavedTrackController} e l'attore che gestisce il salvataggio
+e il caricamento di tali tracce, il \texttt{TrackLoader}.
+
+Il \texttt{TrackLoader} ha tre compiti fondamentali:
+\begin{itemize}
+    \item restituire al \texttt{SavedTrackController} tutte le tracce precendentemente salvate quando l'utente
+    dal main menù accede alla pagina \texttt{Saved Tracks};
+    \item fornire al \texttt{Model} la traccia selezionata dall'utente nella pagina \texttt{Saved Tracks}.
+    In questo modo il \texttt{Model} può procedere alla creazione di una nuova partita con la suddetta traccia;
+    \item salvare una nuova traccia, realizzando inoltre tramite lo \texttt{ScreenShooter} un screenshot di quest'ultima,
+    in modo da fornire all'utente un riscontro visivo della traccia salvata all'interno della pagina \texttt{Saved Tracks}.
+\end{itemize}
+
+Per ottenere persistenza delle tracce salvate il \texttt{TrackLoader} fa uso di un \texttt{FileCoder}, componente realizzato
+da Tommaso Mandoloni per la serializzazione e deserializzazione di tracce su file.
+
+%L'interazione fra \texttt{TrackLoader} e \texttt{FileCoder} è riportata nel diagramma di sequenza in figura \ref{fig:sequence-track-loader}.
 
 \subsection{Simone Romagnoli}
 Fungendo da \textit{product owner}, le porzioni di progetto di cui mi sono occupato sono molteplici: oltre ad aver

@@ -34,7 +34,7 @@ object Bullets {
     def hurt(d: Double): Bullet = instance(BasicBullet(d, this.position, this.speed, this.boundary))
 
     def bullet: Bullet
-    def instance(bullet: Bullet): Bullet
+    protected def instance(bullet: Bullet): Bullet
 
     def toString: String
   }

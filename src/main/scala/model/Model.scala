@@ -64,8 +64,8 @@ object Model {
       }
 
     def forward(msg: Update): Unit = msg match {
-      case WithReplyTo(m, _) => choose(messageTypes(m)).foreach(_ ! msg)
-      case msg               => choose(messageTypes(msg)).foreach(_ ! msg)
+      case ActualMessage(m) => choose(messageTypes(m)).foreach(_ ! msg)
+      case _                   =>
     }
 
     def choose(messageTypes: List[MessageType])(implicit

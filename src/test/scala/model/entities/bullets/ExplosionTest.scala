@@ -2,8 +2,7 @@ package model.entities.bullets
 
 import model.entities.balloons.BalloonLives.Red
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.BulletValues._
-import model.entities.bullets.Bullets.{ Bullet, CannonBall, Explosion, IceBall }
+import model.entities.bullets.Bullets.{CannonBall, Explosion, IceBall}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

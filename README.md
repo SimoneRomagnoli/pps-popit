@@ -1,5 +1,11 @@
 # pps-popit
-`pps-popit` is a single-player reproduction of the game [Bloons TD Battle](https://www.microsoft.com/en-us/p/bloons-td-battles/9nblggh6cwkl?activetab=pivot:overviewtab). The game consists in winning battles against the CPU popping balloons in many rounds, strategically placing towers on the map that shoot bullets at them. This project is developed for academic purposes for the course `Paradigmi di Programmazione e Sviluppo` of the master's degree `Ingegneria e Scienze Informatiche` of `University of Bologna` under the academic year 2020/2021.
+`pps-popit` is a reproduction of the single-player game
+[Bloons TD Battle](https://www.microsoft.com/en-us/p/bloons-td-battles/9nblggh6cwkl?activetab=pivot:overviewtab).
+In the game, players try to prevent balloons from reaching the end of a path by placing towers that can pop the balloons.
+The balloons' waves come in different rounds with increasing level of difficulty.
+
+This project is developed for academic purposes for the course`Paradigmi di Programmazione e Sviluppo`
+of the master's degree `Ingegneria e Scienze Informatiche` of `University of Bologna` under the academic year 2020/2021.
 
 ## Requirements
 The following dependencies are required to play `pps-popit`:

@@ -2,20 +2,12 @@ package model.managers
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
 import akka.actor.typed.{ ActorRef, Behavior }
-import controller.Controller.ControllerMessages.{ CurrentWallet, StartNextRound }
+import controller.Controller.ControllerMessages.CurrentWallet
 import controller.interaction.GameLoop.GameLoopMessages.{ GameOver, GameStatsUpdated, MapCreated }
 import controller.interaction.Messages.{ GameDataManagerMessage, Input, Update }
 import controller.settings.Settings.Settings
 import model.Model.ModelMessages.{ TickUpdate, TrackChanged }
-import model.managers.GameDataMessages.{
-  CurrentGameTrack,
-  CurrentTrack,
-  Gain,
-  Lose,
-  NewMap,
-  Pay,
-  WalletQuantity
-}
+import model.managers.GameDataMessages._
 import model.maps.Plots.{ Plotter, PrologPlotter }
 import model.maps.Tracks.Track
 import model.stats.Stats.GameStats
@@ -27,6 +19,7 @@ object GameDataMessages {
       with GameDataManagerMessage
   case class WalletQuantity(replyTo: ActorRef[Input]) extends Update with GameDataManagerMessage
 
+  case class UpdateRound(round: Int) extends Update with GameDataManagerMessage
   case class CurrentGameTrack(replyTo: ActorRef[Input]) extends Update with GameDataManagerMessage
   case class CurrentTrack(track: Track) extends Input
   case class Pay(amount: Int) extends Update with GameDataManagerMessage
@@ -34,25 +27,25 @@ object GameDataMessages {
   case class Lose(amount: Int) extends Update with GameDataManagerMessage
 }
 
-object GameDynamicsManager {
+object GameDataManager {
 
   def apply(model: ActorRef[Update], settings: Settings): Behavior[Update] =
     Behaviors.setup { ctx =>
-      DynamicsManager(ctx, model, settings).default()
+      DataManager(ctx, model, settings).default()
     }
 }
 
-case class DynamicsManager private (
+case class DataManager private (
     ctx: ActorContext[Update],
     model: ActorRef[Update],
     settings: Settings,
-    stats: GameStats = GameStats(),
     plotter: Plotter = PrologPlotter(),
+    var stats: GameStats = GameStats(),
     var track: Track = Track()) {
 
   def default(): Behavior[Update] = Behaviors.receiveMessage {
-    case StartNextRound() =>
-      stats.nextRound()
+    case UpdateRound(r) =>
+      stats = stats.updateRound(r)
       Behaviors.same
 
     case NewMap(replyTo, withTrack) =>
@@ -73,15 +66,15 @@ case class DynamicsManager private (
       Behaviors.same
 
     case Pay(amount) =>
-      stats pay amount
+      stats = stats pay amount
       Behaviors.same
 
     case Gain(amount) =>
-      stats gain (amount / settings.difficulty.level)
+      stats = stats gain (amount / settings.difficulty.level)
       Behaviors.same
 
     case Lose(amount) =>
-      stats lose amount
+      stats = stats lose amount
       Behaviors.same
 
     case TickUpdate(_, replyTo) =>

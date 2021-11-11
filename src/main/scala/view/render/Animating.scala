@@ -7,8 +7,6 @@ import scalafx.animation.Timeline
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.shape.{ Rectangle, Shape }
 import view.render.Animations.{ Item, Moving }
-import view.render.Rendering.Drawers.Drawer
-import view.render.Renders.Renderable
 
 import scala.language.{ implicitConversions, reflectiveCalls }
 

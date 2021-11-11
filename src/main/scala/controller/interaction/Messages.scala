@@ -21,14 +21,14 @@ object Messages {
 
   def messageTypes: Update => List[MessageType] = { msg =>
     @tailrec
-    def _messageTypes(msg: Update, types: List[MessageType] = List()): List[MessageType] =
+    def _messageTypes(msg: Update)(implicit types: List[MessageType] = List()): List[MessageType] =
       msg match {
         case _: SpawnManagerMessage if !types.contains(SpawnMessage) =>
-          _messageTypes(msg, SpawnMessage :: types)
+          _messageTypes(msg)(SpawnMessage :: types)
         case _: EntitiesManagerMessage if !types.contains(EntityMessage) =>
-          _messageTypes(msg, EntityMessage :: types)
+          _messageTypes(msg)(EntityMessage :: types)
         case _: GameDataManagerMessage if !types.contains(GameDataMessage) =>
-          _messageTypes(msg, GameDataMessage :: types)
+          _messageTypes(msg)(GameDataMessage :: types)
         case _ => types
       }
     _messageTypes(msg)
@@ -37,5 +37,14 @@ object Messages {
   case class WithReplyTo[T <: Update](message: T, replyTo: ActorRef[Input])
       extends Update
       with Input
+
+  object ActualMessage {
+
+    def unapply(message: Update): Option[Update] = message match {
+      case WithReplyTo(m, _) => Some(m)
+      case m                 => Some(m)
+      case _                 => None
+    }
+  }
 
 }

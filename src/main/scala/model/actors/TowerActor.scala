@@ -1,16 +1,14 @@
 package model.actors
 
-import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.{ ActorRef, Behavior }
 import controller.interaction.Messages._
 import model.Positions.{ normalized, vector }
 import model.actors.TowerMessages.{ Boost, TowerBoosted }
 import model.entities.balloons.Balloons.Balloon
-import model.entities.bullets.BulletValues.bulletSpeedFactor
-import model.entities.bullets.Bullets
 import model.entities.bullets.Bullets.{ Bullet, Shooting }
-import model.entities.towers.Towers.Tower
 import model.entities.towers.PowerUps.{ BoostedTower, TowerPowerUp }
+import model.entities.towers.Towers.Tower
 import model.managers.EntitiesMessages.{ EntitySpawned, EntityUpdated, UpdateEntity }
 
 import scala.language.postfixOps

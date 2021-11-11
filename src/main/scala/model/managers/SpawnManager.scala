@@ -10,6 +10,7 @@ import model.actors.BalloonActor
 import model.entities.balloons.Balloons.Balloon
 import model.entities.balloons.BalloonsFactory.RichBalloon
 import model.managers.EntitiesMessages.{ DoneSpawning, EntitySpawned }
+import model.managers.GameDataMessages.UpdateRound
 import model.managers.SpawnerMessages.{ SpawnTick, StartRound }
 import model.maps.Tracks.Track
 import model.spawn.Rounds.{ Round, Streak }
@@ -56,6 +57,7 @@ case class Spawner private (
   def waiting(): Behavior[Update] = Behaviors.receiveMessagePartial {
     case StartNextRound() =>
       ctx.self ! StartRound(RoundsFactory.nextRound())
+      model ! UpdateRound(RoundsFactory.currentRound)
       Behaviors.same
 
     case StartRound(round) =>

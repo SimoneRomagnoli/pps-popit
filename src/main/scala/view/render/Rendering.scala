@@ -183,7 +183,7 @@ object Rendering {
      * @return
      *   the blend effect of the balloon pattern.
      */
-    def toBlend(implicit rectangle: Rectangle): BalloonPattern => Blend = { pattern =>
+    def toBlend(pattern: BalloonPattern)(implicit rectangle: Rectangle): Blend = {
       val image: ImagePattern = drawing the pattern
       val blend: Blend = new Blend()
       blend.setTopInput(new ImageInput(image.getImage, rectangle.x.value, rectangle.y.value))

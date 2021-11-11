@@ -11,6 +11,11 @@ import scala.language.postfixOps
 
 object CommonValues {
 
+  object Resources {
+    val akkaConfiguration: String = "akka/application.conf"
+    val fxmlRoot: String = "/fxml/root.fxml"
+  }
+
   object Screen {
 
     val screenWidth: Double =

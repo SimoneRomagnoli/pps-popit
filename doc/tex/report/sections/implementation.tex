@@ -147,17 +147,21 @@ la lista di entità provenienti dal \texttt{Model}. Le interazioni appena descri
 \subsubsection{Palloncini}
 I palloncini rappresentano una delle entità fondamentali del gioco. In particolare, essi sono in grado di muoversi
 seguendo un percorso e possono essere scoppiati da un proiettile: pertanto, il \texttt{trait Balloon} estende il
-\texttt{trait Entity} a cui aggiunge poi le abilità \texttt{TrackFollowing} e \texttt{Poppable} mediante il meccanismo
-di \textbf{mixin}.
+\texttt{trait Entity} a cui aggiunge poi le abilità \texttt{TrackFollowing} e \texttt{PoppingAbility} mediante il
+meccanismo di \textbf{mixin}.
 
 Per quanto riguarda la loro struttura, i palloncini possono essere \texttt{Simple}, se non ne includono altri al loro
 interno, o \texttt{Complex} altrimenti. Tale implementazione permette di rappresentare in modo intuitivo l'effettivo
 dominio in quanto, un palloncino complesso, quando scoppiato, deve mostrare il palloncino da lui nascosto.
 
-\input{code/poppables}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.3\linewidth]{img/class-balloons}
+    \caption{Diagramma di classi dei palloncini.}
+    \label{fig:class-balloons}
+\end{figure}
 
-Come mostrato nel listato \ref{code:poppables}, tale implementazione rispecchia quella di un \textbf{sum type}: struttura
-dati tipica della programmazione funzionale.
+Tale implementazione rispecchia quella di un \textbf{sum type}: struttura dati tipica della programmazione funzionale.
 
 Degni di nota all'interno del \texttt{trait Balloon} sono i metodi \texttt{change} e \texttt{retrieve}. I palloncini
 espongono diversi metodi per accedere o cambiare il valore di proprietà che sono contenute all'interno del
@@ -207,6 +211,7 @@ Per poter definire in modo elegante e conciso un \texttt{Round}, è stata implem
 utilizzare la sintassi indicata nel listato \ref{code:rounds} dove \texttt{n}, \texttt{m} e \texttt{l} rappresentano il
 numero di palloncini all'interno della \texttt{Streak} corrispondente.
 \input{code/rounds}
+Tale sintassi è stata ottenuta sfruttando il pattern \textbf{Pimp My Library} applicato a diverse classi.
 
 Inoltre, è stata resa disponibile anche una sintassi monadica per la definizione del \texttt{Round}. Tale approccio si è
 rivelato utile soprattutto per la definizione di \textit{round} più complessi e per garantire maggiore flessiblità: il
@@ -216,6 +221,21 @@ soddisfatti del risultato, generare il \texttt{Round} complessivo. È possibile 
 sfruttando la monade \texttt{IO} della libreria \textit{cats} \cite{cats-effects}, all'interno del listato
 \ref{code:roundmonad}.
 \input{code/round-monad}
+
+\subsubsection{Model Refactor}
+La suddivisione della logica del \texttt{Model} nei \textit{manager} è stata resa possibile sfruttando il pattern di
+delegazione estremamente comune in \textit{Akka}. In particolare, ad ogni messaggio diretto verso il \texttt{Model} sono
+stati assegnati uno o più tipi. L'analisi di un messaggio pertanto produrrà una lista di \texttt{MessageType} che indica
+verso quale (o quali) \textit{manager} lo stesso messaggio verrà ridirezionato.
+
+\subsubsection{Positions}
+L'implementazione della posizione e della velocità caratterizzanti le entità è stata realizzata mediante un semplice
+\textbf{product type} \texttt{Vector2D}. Ciò permette di esprimere le coordinate di un'entità sulla mappa e le
+componenti orizzontale e verticale della sua velocità. Sfruttando il pattern \textbf{Pimp My Library} sono stati
+aggiunti metodi per la somma tra due \texttt{Vector2D} e per il prodotto con uno scalare in modo che queste operazioni
+possano essere effettuate in modo del tutto naturale. Infine, è stato aggiunto un metodo di conversione implicita per
+poter creare un \texttt{Vector2D} a partire da una \texttt{Tuple2[Double, Double]} in modo che la definizione risulti
+più immediata.
 
 \subsection{Matteo Ragazzini}\label{subsec:matteo-ragazzini}
 Il mio compito all'interno del progetto, è stato quello di modellare la gerarchia di \texttt{Entity},  implementare i
@@ -339,22 +359,21 @@ traccia più lunga.
 
 \subsubsection{Abilità di TrackFollowing}
 Per muovere i palloncini sulla traccia, sarebbe corretto rispettare la gerarchia di entità mostrata nella sezione
-Design di dettaglio, in particolare, senza modificare l'interfaccia \texttt{MovementAbility}, bensì aggiungendo una
+\ref{sec:detailed-design}, in particolare, senza modificare l'interfaccia \texttt{MovementAbility}, bensì aggiungendo una
 funzionalità ad essa. Quindi è stato pensato un meccanismo che associa una posizione lineare al palloncino sulla
-traccia bidimensionale: il \texttt{TrackFollowing}.
-
-\input{code/track-following}
-
-Il listato \ref{code:track-following} mostra come l'abilità di movimento viene sovrascritta seguendo la posizione
-lineare nella traccia. Per approfondire, la posizione lineare è stata pensata come un \texttt{Double} la cui parte
+traccia bidimensionale: il \texttt{TrackFollowing}. L'abilità di movimento viene sovrascritta in base alla posizione
+lineare nella traccia. Nello specifico, la posizione lineare è stata pensata come un \texttt{Double} la cui parte
 intera rappresenta l'indice della cella occupata dal palloncino nella traccia, mentre la parte decimale indica la
-percentuale attraversata della cella stessa.
+percentuale attraversata della cella stessa. Inoltre, la posizione lineare rende i palloncini effettivamente confrontabili,
+riuscendo a valutare quale di questi sia il più pericoloso poiché più vicino alla fine del percorso;
+infatti, l'interfaccia \texttt{Track Following} estende anche \texttt{Comparable}. Quest'ultima proprietà viene sfruttata
+anche a livello di renderizzazione disegnando i palloncini ordinati.
 
 \subsubsection{Rendering DSL}
 Vista la complessità dei \textit{controller fxml}, è stato implementato un \textit{domain-specific language} che
 semplifica la creazione di elementi grafici con una sintassi espressiva e sintetica. A tale scopo, è stato creato
 l'oggetto \texttt{Rendering} che fornisce un metodo per disegnare oggetti di diverso tipo: per farlo, è stato
-implementato un generico \texttt{Drawer} che, con un meccanismo simile a quello delle \textit{type-class}, permette di
+implementato un generico \texttt{Drawer} che, utilizzando il pattern \textit{type-class}, permette di
 disegnare svariate entità. Il listato \ref{code:rendering} mostra gli strumenti utilizzati per tale procedura.
 
 \input{code/rendering}

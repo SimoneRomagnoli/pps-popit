@@ -2,6 +2,8 @@ import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ ActorRef, ActorSystem, Scheduler }
 import akka.util.Timeout
+import com.typesafe.config.ConfigFactory
+import commons.CommonValues.Resources.{ akkaConfiguration, fxmlRoot }
 import controller.Controller.ControllerActor
 import controller.Controller.ControllerMessages._
 import controller.interaction.Messages._
@@ -14,6 +16,7 @@ import scalafxml.core.{ FXMLLoader, NoDependencyResolver }
 import view.View.ViewActor
 import view.controllers.ViewMainController
 
+import java.io.File
 import scala.concurrent.duration.DurationInt
 
 object Main extends JFXApp3 {
@@ -43,13 +46,14 @@ object Main extends JFXApp3 {
         mainController.setAsk(request => controller ? (ctx => ActorInteraction(ctx, request)))
         Behaviors.empty
       },
-      "system"
+      "system",
+      ConfigFactory.load(ConfigFactory.parseFile(new File(akkaConfiguration)))
     )
   }
 
   private def loadRootFXML(): FXMLLoader = {
     val loader: FXMLLoader =
-      new FXMLLoader(getClass.getResource("/fxml/root.fxml"), NoDependencyResolver)
+      new FXMLLoader(getClass.getResource(fxmlRoot), NoDependencyResolver)
     loader.load()
     loader
   }

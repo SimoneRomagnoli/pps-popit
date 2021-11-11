@@ -1,16 +1,14 @@
 package controller
 
-import akka.actor.testkit.typed.scaladsl.{ ScalaTestWithActorTestKit, TestProbe }
+import akka.actor.testkit.typed.scaladsl.{ScalaTestWithActorTestKit, TestProbe}
 import akka.actor.typed.ActorRef
-import akka.actor.typed.scaladsl.AskPattern.{ schedulerFromActorSystem, Askable }
+import akka.actor.typed.scaladsl.AskPattern.{Askable, schedulerFromActorSystem}
 import commons.Futures.retrieve
 import controller.inout.FileCoders.CoderBuilder.appDir
 import controller.inout.TrackLoader.TrackLoaderActor
 import controller.inout.TrackLoader.TrackLoaderMessages._
 import controller.interaction.Messages.Input
-import model.maps.Tracks.Track
 import org.scalatest.wordspec.AnyWordSpecLike
-import view.View.ViewMessages.TrackSaved
 
 import scala.language.postfixOps
 import scala.reflect.io.Path

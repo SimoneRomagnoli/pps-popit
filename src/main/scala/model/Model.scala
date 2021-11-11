@@ -5,7 +5,7 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import controller.interaction.GameLoop.GameLoopMessages.Stop
 import controller.interaction.Messages._
 import controller.settings.Settings.Settings
-import model.managers.{ EntitiesManager, GameDynamicsManager, SpawnManager }
+import model.managers.{ EntitiesManager, GameDataManager, SpawnManager }
 import model.maps.Tracks.Track
 
 import scala.language.postfixOps
@@ -46,13 +46,10 @@ object Model {
       var handlers: List[(ActorRef[Update], MessageType)] = List()) {
 
     def init(settings: Settings): Behavior[Update] = {
-      handlers = (
-        ctx.spawnAnonymous(SpawnManager(ctx.self, settings.timeSettings)),
-        SpawnMessage
-      ) :: handlers
-      handlers = (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) :: handlers
       handlers =
-        (ctx.spawnAnonymous(GameDynamicsManager(ctx.self, settings)), GameDataMessage) :: handlers
+        (ctx.spawnAnonymous(SpawnManager(ctx.self, settings.timeSettings)), SpawnMessage) ::
+          (ctx.spawnAnonymous(EntitiesManager(ctx.self)), EntityMessage) ::
+          (ctx.spawnAnonymous(GameDataManager(ctx.self, settings)), GameDataMessage) :: handlers
       default()
     }
 
@@ -67,8 +64,8 @@ object Model {
       }
 
     def forward(msg: Update): Unit = msg match {
-      case WithReplyTo(m, _) => choose(messageTypes(m)).foreach(_ ! msg)
-      case msg               => choose(messageTypes(msg)).foreach(_ ! msg)
+      case ActualMessage(m) => choose(messageTypes(m)).foreach(_ ! msg)
+      case _                =>
     }
 
     def choose(messageTypes: List[MessageType])(implicit
